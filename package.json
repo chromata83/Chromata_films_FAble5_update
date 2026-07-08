@@ -1,0 +1,30 @@
+{
+  "name": "chromata-films-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chromata Films — award-winning luxury destination wedding cinematography. Static site: GSAP + ScrollTrigger + Lenis, no bundler.",
+  "homepage": "https://www.chromatafilms.com",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-pages.mjs",
+    "start": "npx --yes serve -l 8137 .",
+    "serve": "npx --yes serve -l 8137 ."
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "hostinger": {
+    "framework": "static",
+    "outputDirectory": ".",
+    "entryFile": "index.html"
+  },
+  "keywords": [
+    "wedding",
+    "cinematography",
+    "chromata-films",
+    "static-site",
+    "gsap"
+  ],
+  "author": "Chromata Films <contact@chromatafilms.com>",
+  "license": "UNLICENSED"
+}
