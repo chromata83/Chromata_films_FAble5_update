@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gallery — Chromata Films | Luxury Wedding Cinematography Worldwide</title>
+<meta name="description" content="A gallery of frames from Chromata Films weddings across the French Riviera, Lake Como, St Moritz, Santorini, Morocco and beyond." />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body data-page="gallery">
+
+<div class="preloader" id="preloader">
+  <svg class="preloader__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+    <circle cx="16" cy="16" r="13.5"/>
+    <path d="M16 2.5 L16 12 M27.7 9.25 L19.5 14 M27.7 22.75 L19.5 18 M16 29.5 L16 20 M4.3 22.75 L12.5 18 M4.3 9.25 L12.5 14"/>
+    <circle cx="16" cy="16" r="4.5"/>
+  </svg>
+  <div class="preloader__word">CHROMATA</div>
+  <div class="preloader__sub">Films — Wedding Cinematography</div>
+  <div class="preloader__bar"><div class="preloader__fill"></div></div>
+  <div class="preloader__pct">0%</div>
+</div>
+
+<header class="nav nav--night" id="nav">
+  <a class="nav__brand" href="index.html" aria-label="Chromata Films — home">
+    <svg class="nav__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <circle cx="16" cy="16" r="13.5"/>
+      <path d="M16 2.5 L16 12 M27.7 9.25 L19.5 14 M27.7 22.75 L19.5 18 M16 29.5 L16 20 M4.3 22.75 L12.5 18 M4.3 9.25 L12.5 14"/>
+      <circle cx="16" cy="16" r="4.5"/>
+    </svg>
+    <span class="nav__wordmark">Chromata Films</span>
+  </a>
+  <nav class="nav__links" aria-label="Primary">
+    <a class="nav__link" href="index.html">Home</a>
+    <div class="nav__drop" id="navDrop">
+      <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
+        Projects
+        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
+      </button>
+      <div class="nav__drop-menu" role="menu">
+        <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
+        <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
+        <a class="nav__drop-item" role="menuitem" href="anna-andres.html"><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
+      </div>
+    </div>
+    <a class="nav__link" href="the-studio.html">The Studio</a>
+    <a class="nav__link" href="journal.html">Journal</a>
+    <a class="nav__link" href="gallery.html" aria-current="page">Gallery</a>
+    <a class="nav__cta" href="contact.html">Contact Us</a>
+  </nav>
+  <button class="nav__burger" id="navBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a class="big" href="index.html">Home</a>
+  <a class="big" href="#" id="mmProjects">Projects <em>↓</em></a>
+  <div class="sub">
+    <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
+    <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
+    <a href="anna-andres.html">Anna Andres — Miss Universe</a>
+  </div>
+  <a class="big" href="the-studio.html">The <em>Studio</em></a>
+  <a class="big" href="journal.html">Journal</a>
+  <a class="big" href="gallery.html">Gallery</a>
+  <a class="big" href="contact.html">Contact <em>Us</em></a>
+  <div class="mm-footer">Chromata Films — Where the French Touch meets Modern Elegance</div>
+</div>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"><span class="cursor-label"></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+
+<main>
+  <section class="page-hero" data-theme="dark" style="min-height:62svh">
+    <div class="page-hero__bg">
+      <img src="assets/img/carousel/c-32.jpg" alt="Chromata Films — gallery of wedding frames" fetchpriority="high" />
+    </div>
+    <div class="page-hero__content">
+      <p class="kicker line-mask"><span class="line-inner">Portfolio</span></p>
+      <h1 class="page-hero__title"><span class="line-mask"><span class="line-inner">The <em>Gallery</em></span></span></h1>
+      <div class="page-hero__sub"><span>French Riviera</span><span>Lake Como</span><span>St Moritz</span><span>Santorini</span><span>Worldwide</span></div>
+    </div>
+  </section>
+
+  <section class="pad-section" data-section>
+    <div class="container">
+      <p class="kicker">— The Films</p>
+      <div class="gallery-grid" style="margin-top:5vh">
+        <div class="gitem w12 wide mat img-reveal trailer" data-yt="-bi7F1sVXKE" data-cursor="play" style="aspect-ratio:21/9">
+          <img class="thumb" src="https://img.youtube.com/vi/-bi7F1sVXKE/maxresdefault.jpg" alt="Chromata Films — showreel" loading="lazy">
+          <div class="trailer__play"><div class="disc"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></div></div>
+          <span class="trailer__label">Showreel — play</span>
+        </div>
+        <div class="gitem mat img-reveal trailer" data-yt="XWz84l6DWeM" data-cursor="play" style="aspect-ratio:16/9">
+          <img class="thumb" src="https://img.youtube.com/vi/XWz84l6DWeM/maxresdefault.jpg" alt="Lauren and Jonathan — Dominican Republic wedding film teaser" loading="lazy">
+          <div class="trailer__play"><div class="disc"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></div></div>
+          <span class="trailer__label">Lauren &amp; Jonathan — Dominican Republic</span>
+        </div>
+        <div class="gitem mat img-reveal trailer" data-yt="brZ8vlqwOVY" data-cursor="play" style="aspect-ratio:16/9">
+          <img class="thumb" src="https://img.youtube.com/vi/brZ8vlqwOVY/maxresdefault.jpg" alt="Mozzafiato — Chromata Films" loading="lazy">
+          <div class="trailer__play"><div class="disc"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></div></div>
+          <span class="trailer__label">Mozzafiato — play</span>
+        </div>
+      </div>
+
+      <p class="kicker" style="margin-top:14vh">— The Frames</p>
+      <div class="gallery-grid" style="margin-top:5vh">
+        <figure class="gitem w12 wide mat img-reveal"><img src="assets/img/carousel/c-01.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-03.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-05.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-06.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-08.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-09.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w8 mat img-reveal"><img src="assets/img/carousel/c-11.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-12.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-14.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-15.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w12 wide mat img-reveal"><img src="assets/img/carousel/c-17.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-18.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-20.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-22.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-23.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-25.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-27.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-29.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-30.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w12 wide mat img-reveal"><img src="assets/img/carousel/c-32.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-34.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-35.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-38.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-39.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-40.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w8 mat img-reveal"><img src="assets/img/carousel/c-42.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w4 mat img-reveal"><img src="assets/img/carousel/c-44.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-46.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem  mat img-reveal"><img src="assets/img/carousel/c-49.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+        <figure class="gitem w12 wide mat img-reveal"><img src="assets/img/carousel/c-51.jpg" alt="Chromata Films wedding frame" loading="lazy"></figure>
+      </div>
+    </div>
+  </section>
+
+<footer class="footer">
+  <div class="footer__cta">
+    <div>
+      <p class="kicker">— Begin Your Journey</p>
+      <h2 class="display-lg footer__cta-title" style="margin-top:2.5vh">
+        <span class="line-mask"><span class="line-inner">Come see your</span></span>
+        <span class="line-mask"><span class="line-inner">story <em>bloom</em></span></span>
+      </h2>
+    </div>
+    <a class="footer__begin" href="contact.html" data-magnetic>Begin →</a>
+  </div>
+  <div class="footer__cols">
+    <div>
+      <h4>Projects</h4>
+      <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
+      <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
+      <a href="anna-andres.html">Anna Andres</a>
+      <a href="gallery.html">Gallery</a>
+    </div>
+    <div>
+      <h4>Studio</h4>
+      <a href="the-studio.html">The Studio</a>
+      <a href="journal.html">Journal</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+    <div>
+      <h4>Follow</h4>
+      <a href="https://www.instagram.com/chromata_films_weddings/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://vimeo.com/chromatafilms" target="_blank" rel="noopener">Vimeo</a>
+      <a href="https://www.youtube.com/@chromatafilms" target="_blank" rel="noopener">YouTube</a>
+      <a href="mailto:contact@chromatafilms.com">contact@chromatafilms.com</a>
+    </div>
+  </div>
+  <span class="footer__wordmark" id="footerWordmark" aria-hidden="true">CHROMATA</span>
+  <div class="footer__legal">
+    <span>© 2026 Chromata Films — Wedding Film Cinematography</span>
+    <span>27 Rue de Montchoisy, 1207 Geneva, Switzerland · <a href="mailto:contact@chromatafilms.com">contact@chromatafilms.com</a></span>
+  </div>
+</footer>
+</main>
+
+<button class="totop" id="toTop" aria-label="Back to top">
+  <svg viewBox="0 0 16 16" fill="none" stroke-width="1.5"><path d="M8 13V3M3.5 7.5L8 3l4.5 4.5"/></svg>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script src="js/webgl.js" defer></script>
+<script src="js/main.js" defer></script>
+</body>
+</html>

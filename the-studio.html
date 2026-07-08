@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Studio — Chromata Films | Award-Winning Wedding Cinematography Team</title>
+<meta name="description" content="Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stéphane Maurin and Michael Bod — Hollywood VFX pedigree in service of your wedding film." />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body data-page="studio">
+
+<div class="preloader" id="preloader">
+  <svg class="preloader__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+    <circle cx="16" cy="16" r="13.5"/>
+    <path d="M16 2.5 L16 12 M27.7 9.25 L19.5 14 M27.7 22.75 L19.5 18 M16 29.5 L16 20 M4.3 22.75 L12.5 18 M4.3 9.25 L12.5 14"/>
+    <circle cx="16" cy="16" r="4.5"/>
+  </svg>
+  <div class="preloader__word">CHROMATA</div>
+  <div class="preloader__sub">Films — Wedding Cinematography</div>
+  <div class="preloader__bar"><div class="preloader__fill"></div></div>
+  <div class="preloader__pct">0%</div>
+</div>
+
+<header class="nav nav--night" id="nav">
+  <a class="nav__brand" href="index.html" aria-label="Chromata Films — home">
+    <svg class="nav__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <circle cx="16" cy="16" r="13.5"/>
+      <path d="M16 2.5 L16 12 M27.7 9.25 L19.5 14 M27.7 22.75 L19.5 18 M16 29.5 L16 20 M4.3 22.75 L12.5 18 M4.3 9.25 L12.5 14"/>
+      <circle cx="16" cy="16" r="4.5"/>
+    </svg>
+    <span class="nav__wordmark">Chromata Films</span>
+  </a>
+  <nav class="nav__links" aria-label="Primary">
+    <a class="nav__link" href="index.html">Home</a>
+    <div class="nav__drop" id="navDrop">
+      <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
+        Projects
+        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
+      </button>
+      <div class="nav__drop-menu" role="menu">
+        <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
+        <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
+        <a class="nav__drop-item" role="menuitem" href="anna-andres.html"><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
+      </div>
+    </div>
+    <a class="nav__link" href="the-studio.html" aria-current="page">The Studio</a>
+    <a class="nav__link" href="journal.html">Journal</a>
+    <a class="nav__link" href="gallery.html">Gallery</a>
+    <a class="nav__cta" href="contact.html">Contact Us</a>
+  </nav>
+  <button class="nav__burger" id="navBurger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a class="big" href="index.html">Home</a>
+  <a class="big" href="#" id="mmProjects">Projects <em>↓</em></a>
+  <div class="sub">
+    <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
+    <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
+    <a href="anna-andres.html">Anna Andres — Miss Universe</a>
+  </div>
+  <a class="big" href="the-studio.html">The <em>Studio</em></a>
+  <a class="big" href="journal.html">Journal</a>
+  <a class="big" href="gallery.html">Gallery</a>
+  <a class="big" href="contact.html">Contact <em>Us</em></a>
+  <div class="mm-footer">Chromata Films — Where the French Touch meets Modern Elegance</div>
+</div>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"><span class="cursor-label"></span></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+
+<main>
+  <section class="page-hero" data-theme="dark">
+    <div class="page-hero__bg">
+      <img src="assets/img/studio/studio-01.jpg" alt="Kevin Lopez in black tie, camera rig in hand, at a Dior event" fetchpriority="high" style="object-position: 50% 25%" />
+    </div>
+    <div class="page-hero__content">
+      <p class="kicker line-mask"><span class="line-inner">The Studio</span></p>
+      <h1 class="page-hero__title">
+        <span class="line-mask"><span class="line-inner">Where the French Touch</span></span>
+        <span class="line-mask"><span class="line-inner">meets <em>Modern Elegance</em></span></span>
+      </h1>
+      <div class="page-hero__sub">
+        <span>Cinematography</span><span>VFX</span><span>16mm film</span><span>Aerial</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" data-section>
+    <div class="container">
+      <p class="kicker">— The Philosophy</p>
+      <h2 class="display-lg" style="margin-top:3vh; max-width:14em">
+        <span class="line-mask"><span class="line-inner">Visual narratives,</span></span>
+        <span class="line-mask"><span class="line-inner">not <em>documentation</em></span></span>
+      </h2>
+      <div class="manifesto__row">
+        <div class="manifesto__row-inner">
+          <p class="body-copy">Chromata Films collaborates with premium vendors to create unforgettable wedding experiences. We produce films that transcend ordinary wedding videography through meticulous craftsmanship and French-inspired sophistication — authentic storytelling that captures raw emotion and genuine interaction, in a relaxed environment where you can simply be yourselves.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— The Team</p>
+      <div class="team" style="margin-top:6vh">
+        <article class="team__card">
+          <figure class="portrait mat img-reveal"><img src="assets/img/studio/studio-01.jpg" alt="Kevin Lopez — Co-founder and Film Director" loading="lazy" style="object-position:50% 20%"></figure>
+          <span class="role">Co-Founder · Film Director</span>
+          <h3>Kevin Lopez</h3>
+          <p>Director, cinematographer and VFX artist. Vancouver Film School graduate with a decade of visual-effects expertise from major studios, and nine years documenting some of the world's most extraordinary weddings across five continents. Kevin leads complex, multi-day productions and guides the team through every frame. Father of two.</p>
+        </article>
+        <article class="team__card">
+          <figure class="portrait mat img-reveal"><img src="assets/img/studio/studio-02.jpg" alt="Laura Lopez — Co-founder and Marketing Manager" loading="lazy" style="object-position:50% 15%"></figure>
+          <span class="role">Co-Founder · Operations &amp; Marketing</span>
+          <h3>Laura Lopez</h3>
+          <p>Master in Communication and Finance, formerly at Publicis and Mediacom — planning promotional campaigns and driving client decisions. Wife, mother, children's book author, and the person who keeps every Chromata production (and vendor relationship) running with elegance and warmth, from first inquiry to final delivery.</p>
+        </article>
+        <article class="team__card">
+          <figure class="portrait mat img-reveal"><img src="assets/img/studio/stephane.jpg" alt="Stéphane Maurin — licensed drone pilot" loading="lazy"></figure>
+          <span class="role">Aerial Cinematography · FPV Pilot</span>
+          <h3>Stéphane Maurin</h3>
+          <p>Licensed aerial cinematographer with permits to fly across international locations including France, Italy, Croatia and the French Riviera. Stéphane's FPV work threads through villas, over coastlines and into ballrooms — the shots that make audiences ask "how?"</p>
+        </article>
+        <article class="team__card">
+          <figure class="portrait mat img-reveal"><img src="assets/img/studio/michael.jpg" alt="Michael Bod — 16mm film and portrait expert" loading="lazy"></figure>
+          <span class="role">16mm Film · Portraiture</span>
+          <h3>Michael Bod</h3>
+          <p>Our 16mm film and portrait expert. Michael shoots true analog motion picture film — grain, halation and all — giving Chromata couples the option of a wedding film that looks and feels like it was pulled from a cinema archive, alongside portrait work with a painter's patience.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-night pad-section" data-theme="dark" data-section>
+    <div class="container">
+      <p class="kicker">— The VFX Pedigree</p>
+      <h2 class="display-lg" style="margin-top:3vh; max-width:14em">
+        <span class="line-mask"><span class="line-inner">From blockbusters</span></span>
+        <span class="line-mask"><span class="line-inner">to your <em>first dance</em></span></span>
+      </h2>
+      <div class="feature__grid" style="margin-top:7vh">
+        <div class="prose">
+          <p>Before weddings, our team helped craft images for some of the biggest films ever made. That training — in light, composition, and invisible perfectionism — is exactly what we bring to your wedding day. The same standards. The same tools. A far better leading couple.</p>
+        </div>
+        <div class="feature__meta">
+          <div class="row"><span>01</span><span class="val">Star Wars</span></div>
+          <div class="row"><span>02</span><span class="val">Beauty and the Beast</span></div>
+          <div class="row"><span>03</span><span class="val">The Great Gatsby</span></div>
+          <div class="row"><span>04</span><span class="val">Solo: A Star Wars Story</span></div>
+        </div>
+      </div>
+      <div style="display:flex; gap:clamp(30px,8vw,120px); flex-wrap:wrap; margin-top:10vh">
+        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="10">0</span>+</div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.55)">Years of VFX expertise</div></div>
+        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="9">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.55)">Years of weddings</div></div>
+        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="5">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.55)">Continents</div></div>
+        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="22">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.55)">Years together, Kevin &amp; Laura</div></div>
+      </div>
+    </div>
+  </section>
+
+  <a class="nextproject" href="contact.html" data-theme="dark">
+    <p class="kicker">— Next wedding</p>
+    <div class="np-title">Begin your journey <em>→</em></div>
+  </a>
+
+<footer class="footer">
+  <div class="footer__cta">
+    <div>
+      <p class="kicker">— Begin Your Journey</p>
+      <h2 class="display-lg footer__cta-title" style="margin-top:2.5vh">
+        <span class="line-mask"><span class="line-inner">Come see your</span></span>
+        <span class="line-mask"><span class="line-inner">story <em>bloom</em></span></span>
+      </h2>
+    </div>
+    <a class="footer__begin" href="contact.html" data-magnetic>Begin →</a>
+  </div>
+  <div class="footer__cols">
+    <div>
+      <h4>Projects</h4>
+      <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
+      <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
+      <a href="anna-andres.html">Anna Andres</a>
+      <a href="gallery.html">Gallery</a>
+    </div>
+    <div>
+      <h4>Studio</h4>
+      <a href="the-studio.html">The Studio</a>
+      <a href="journal.html">Journal</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+    <div>
+      <h4>Follow</h4>
+      <a href="https://www.instagram.com/chromata_films_weddings/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://vimeo.com/chromatafilms" target="_blank" rel="noopener">Vimeo</a>
+      <a href="https://www.youtube.com/@chromatafilms" target="_blank" rel="noopener">YouTube</a>
+      <a href="mailto:contact@chromatafilms.com">contact@chromatafilms.com</a>
+    </div>
+  </div>
+  <span class="footer__wordmark" id="footerWordmark" aria-hidden="true">CHROMATA</span>
+  <div class="footer__legal">
+    <span>© 2026 Chromata Films — Wedding Film Cinematography</span>
+    <span>27 Rue de Montchoisy, 1207 Geneva, Switzerland · <a href="mailto:contact@chromatafilms.com">contact@chromatafilms.com</a></span>
+  </div>
+</footer>
+</main>
+
+<button class="totop" id="toTop" aria-label="Back to top">
+  <svg viewBox="0 0 16 16" fill="none" stroke-width="1.5"><path d="M8 13V3M3.5 7.5L8 3l4.5 4.5"/></svg>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script src="js/webgl.js" defer></script>
+<script src="js/main.js" defer></script>
+</body>
+</html>
