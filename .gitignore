@@ -4,3 +4,6 @@ public/
 node_modules/
 .DS_Store
 Thumbs.db
+.agents/
+.claude/
+.vscode/
