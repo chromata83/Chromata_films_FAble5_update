@@ -8,10 +8,10 @@
 <meta property="og:title" content="Chromata Films — Luxury Destination Wedding Cinematography" />
 <meta property="og:description" content="Where the French Touch meets modern elegance. Award-winning wedding films across five continents." />
 <meta property="og:image" content="assets/img/landing/domantas-cover.png" />
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="icon" type="image/png" href="assets/img/logo-mark.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="stylesheet" href="css/main.css" />
 </head>
@@ -19,11 +19,7 @@
 
 <!-- ==================== PRELOADER ==================== -->
 <div class="preloader" id="preloader">
-  <svg class="preloader__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-    <circle cx="16" cy="16" r="13.5"/>
-    <path d="M16 2.5 L16 12 M27.7 9.25 L19.5 14 M27.7 22.75 L19.5 18 M16 29.5 L16 20 M4.3 22.75 L12.5 18 M4.3 9.25 L12.5 14"/>
-    <circle cx="16" cy="16" r="4.5"/>
-  </svg>
+  <img class="preloader__mark" src="assets/img/logo-mark.png" alt="Chromata Films — golden peacock" />
   <div class="preloader__word" id="preloaderWord">CHROMATA</div>
   <div class="preloader__sub">Films — Wedding Cinematography</div>
   <div class="preloader__bar"><div class="preloader__fill"></div></div>
@@ -33,11 +29,7 @@
 <!-- ==================== NAV ==================== -->
 <header class="nav nav--night" id="nav">
   <a class="nav__brand" href="index.html" aria-label="Chromata Films — home">
-    <svg class="nav__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-      <circle cx="16" cy="16" r="13.5"/>
-      <path d="M16 2.5 L16 12 M27.7 9.25 L19.5 14 M27.7 22.75 L19.5 18 M16 29.5 L16 20 M4.3 22.75 L12.5 18 M4.3 9.25 L12.5 14"/>
-      <circle cx="16" cy="16" r="4.5"/>
-    </svg>
+    <img class="nav__logo" src="assets/img/logo-mark.png" alt="" />
     <span class="nav__wordmark">Chromata Films</span>
   </a>
   <nav class="nav__links" aria-label="Primary">
@@ -51,6 +43,7 @@
         <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
         <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
         <a class="nav__drop-item" role="menuitem" href="anna-andres.html"><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
+        <a class="nav__drop-item" role="menuitem" href="russell-westbrook.html"><span class="t">Russell &amp; Nina Westbrook</span><span class="tag">Positano</span></a>
       </div>
     </div>
     <a class="nav__link" href="the-studio.html">The Studio</a>
@@ -68,6 +61,7 @@
     <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
     <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
     <a href="anna-andres.html">Anna Andres — Miss Universe</a>
+    <a href="russell-westbrook.html">Russell &amp; Nina Westbrook — Positano</a>
   </div>
   <a class="big" href="the-studio.html">The <em>Studio</em></a>
   <a class="big" href="journal.html">Journal</a>
@@ -86,9 +80,6 @@
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"><span class="cursor-label"></span></div>
 
-<!-- ambient particles -->
-<canvas id="particles" aria-hidden="true"></canvas>
-
 <main>
 
 <!-- ==================== 01 · HERO — scroll-scrubbed film ==================== -->
@@ -98,17 +89,16 @@
   <div class="film__shade"></div>
 
   <div class="hero__head">
-    <p class="kicker intro-fade" style="color:var(--gold-light)">— Chromata Films</p>
-    <h1 class="hero__title">
-      <span class="line-mask intro-rise"><span class="line-inner">Your wedding will happen once.</span></span>
-      <span class="line-mask intro-rise"><span class="line-inner">We make sure you <em>feel it forever</em>.</span></span>
+    <h1 class="hero__title" style="color:var(--coral); text-transform:uppercase; font-size:clamp(3rem,9vw,9.5rem); text-shadow:0 2px 50px rgba(22,19,15,0.4)">
+      <span class="line-mask intro-rise"><span class="line-inner">Chromata</span></span>
+      <span class="line-mask intro-rise"><span class="line-inner">Films</span></span>
     </h1>
-    <p class="intro-fade" style="font-size:12px; letter-spacing:0.32em; text-transform:uppercase; color:rgba(255,249,240,0.75)">Where the French Touch meets Modern Elegance</p>
+    <p class="intro-fade" style="font-size:12px; letter-spacing:0.32em; text-transform:uppercase; color:rgba(255,249,240,0.85)">Where the French Touch meets Modern Elegance</p>
   </div>
 
   <div class="film__chapters" aria-hidden="true">
-    <div class="film__chapter"><p class="kicker">The French Touch</p><h3>A wedding film that <em>transcends</em> the ordinary</h3></div>
-    <div class="film__chapter"><p class="kicker">Modern Elegance</p><h3>A visual masterpiece, crafted <em>frame by frame</em></h3></div>
+    <div class="film__chapter"><p class="kicker">The French Touch</p><h3>Your wedding will happen once</h3></div>
+    <div class="film__chapter"><p class="kicker">Modern Elegance</p><h3>We make sure you <em>feel it forever</em></h3></div>
     <div class="film__chapter"><p class="kicker">Five Continents</p><h3>We journey across the globe for our <em>beloved clients</em></h3></div>
   </div>
 
@@ -121,50 +111,51 @@
   <div class="hero__scroll intro-fade"><span class="lbl">Scroll</span><span class="line"><i></i></span></div>
 </section>
 
-<!-- statement band -->
-<section class="statement" data-theme="dark" data-section>
+<!-- statement band — mediterranean sky -->
+<section class="statement" data-section>
   <p>For brides and grooms, their wedding day is a fleeting masterpiece. As cinematographers, we capture and elevate — not replace — its magic. <strong>Chromata Films</strong> isn't just a wedding and event filmmaking company; we're storytellers crafting cinematic memories that transcend borders and time. We journey across the globe for our beloved clients.</p>
 </section>
 
-<!-- ==================== 02 · MAIN PROJECT — Domantas Sabonis ==================== -->
-<a class="feature-hero" href="domantas-sabonis.html" data-theme="dark" data-section aria-label="View the Domantas Sabonis wedding project">
-  <div class="feature-hero__bg"><img src="assets/img/landing/domantas-cover.png" alt="Domantas Sabonis and Shashana — wedding portrait by Chromata Films" fetchpriority="high" /></div>
-  <div class="feature-hero__content">
-    <h2 class="feature-hero__title">
-      <span class="sub line-mask"><span class="line-inner">NBA All-Star · Main Project</span></span>
+<!-- ==================== 02 · DOMANTAS SABONIS — offset duet ==================== -->
+<section class="duet" data-section>
+  <div class="duet__head">
+    <p class="kicker">— NBA All-Star Wedding</p>
+    <h2 class="duet__title">
       <span class="line-mask"><span class="line-inner">Domantas Sabonis</span></span>
       <span class="line-mask"><span class="line-inner"><em style="text-transform:none">&amp;</em> Shashana</span></span>
     </h2>
-    <div class="feature-hero__side">
-      <p class="body-copy" style="color:rgba(255,249,240,0.8)">A celebration written for the history books — an NBA All-Star, a bride in couture, and a film that hits like a buzzer-beater.</p>
-      <span class="btn btn--coral">View the wedding →</span>
-    </div>
   </div>
-</a>
+  <div class="duet__stage">
+    <div class="duet__video mat">
+      <iframe data-lazy-src="https://player.vimeo.com/video/591667704?background=1&autoplay=1&loop=1&muted=1" title="Shashana &amp; Domantas — wedding film teaser" loading="lazy" allow="autoplay; fullscreen"></iframe>
+    </div>
+    <figure class="duet__cover" data-speed="1.08">
+      <img src="assets/img/landing/domantas-cover.png" alt="Domantas Sabonis and Shashana — wedding portrait" loading="lazy" />
+    </figure>
+  </div>
+  <div class="duet__side">
+    <p class="body-copy">A celebration written for the history books — an NBA All-Star, a bride in couture, and a film that hits like a buzzer-beater.</p>
+    <a class="btn btn--coral" href="domantas-sabonis.html">View the wedding →</a>
+  </div>
+</section>
 
-<!-- ==================== 03 · HIT DIFFERENTLY — reel collage ==================== -->
+<!-- ==================== 03 · WHY WE HIT DIFFERENTLY ==================== -->
 <section class="hit" data-theme="dark" data-section>
-  <div class="hit__grid">
-    <div class="hit__copy">
-      <p class="kicker">— Second Feature · The Reels</p>
-      <h2 class="hit__title">
-        <span class="line-mask"><span class="line-inner">The reason</span></span>
-        <span class="line-mask"><span class="line-inner">why we</span></span>
-        <span class="line-mask"><span class="line-inner"><em>hit</em></span></span>
-        <span class="line-mask"><span class="line-inner">differently</span></span>
-      </h2>
-      <p class="body-copy" style="color:rgba(255,249,240,0.75)">Two reels. Ninety seconds. Every frame directed like a fashion film, graded like a feature, and cut to make your heart skip. This is what a decade of VFX and nine years of weddings looks like.</p>
-      <a class="btn btn--ghost" href="gallery.html">See more of our work</a>
-    </div>
-    <div class="hit__videos">
-      <div class="vwrap mat"><iframe data-lazy-src="https://player.vimeo.com/video/1186872848?background=1&autoplay=1&loop=1&muted=1" title="Chromata Films — Reel 01, 2025" loading="lazy" allow="autoplay; fullscreen"></iframe></div>
-      <div class="vwrap mat"><iframe data-lazy-src="https://player.vimeo.com/video/1184918085?background=1&autoplay=1&loop=1&muted=1" title="Chromata Films — Reel 02, 2025" loading="lazy" allow="autoplay; fullscreen"></iframe></div>
-    </div>
+  <div class="hit__videos--left mat">
+    <iframe data-lazy-src="https://player.vimeo.com/video/1186872848?background=1&autoplay=1&loop=1&muted=1" title="Chromata Films — Reel 01, 2025" loading="lazy" allow="autoplay; fullscreen"></iframe>
+  </div>
+  <h2 class="hit__title">
+    <span class="line-mask"><span class="line-inner">Why we</span></span>
+    <span class="line-mask"><span class="line-inner">HIT</span></span>
+    <span class="line-mask"><span class="line-inner">differently</span></span>
+  </h2>
+  <div class="hit__videos--right mat">
+    <iframe data-lazy-src="https://player.vimeo.com/video/1184918085?background=1&autoplay=1&loop=1&muted=1" title="Chromata Films — Reel 02, 2025" loading="lazy" allow="autoplay; fullscreen"></iframe>
   </div>
   <img class="wow-head" src="assets/img/landing/wow-head.png" alt="" aria-hidden="true" data-speed="1.12" />
 </section>
 
-<!-- ==================== 04 · MANIFESTO ==================== -->
+<!-- ==================== 04 · MANIFESTO (lemon) ==================== -->
 <section class="manifesto pad-section" data-section>
   <div class="container">
     <p class="kicker">— 01 · Award-Winning Wedding Film Company</p>
@@ -197,21 +188,17 @@
   </div>
 </section>
 
-<!-- ==================== 05 · SHOWREEL — scroll-scrubbed film ==================== -->
-<section class="film vignette" data-scrub data-pin="+=400%" data-theme="dark" data-section aria-label="Showreel">
-  <video data-src="assets/video/reel.mp4" data-src-mobile="assets/video/reel-mobile.mp4"
-         poster="assets/video/reel-poster.jpg" muted playsinline preload="metadata"></video>
-  <div class="film__shade"></div>
-  <div class="film__chapters" aria-hidden="true">
-    <div class="film__chapter"><p class="kicker">French Riviera</p><h3>Where the sea rehearses its <em>golden hour</em></h3></div>
-    <div class="film__chapter"><p class="kicker">St Moritz · Lake Como</p><h3>Old-world palaces, <em>new love</em></h3></div>
-    <div class="film__chapter"><p class="kicker">Santorini · Morocco · Indonesia</p><h3>One current, a <em>thousand cultures</em></h3></div>
+<!-- ==================== 05 · SHOWREEL — full-bleed film ==================== -->
+<section class="ytfull vignette" data-pinned data-theme="dark" data-section aria-label="Showreel — Katya and Joey wedding film">
+  <div class="ytfull__media">
+    <iframe data-lazy-src="https://www.youtube-nocookie.com/embed/VGt3ITmdULk?autoplay=1&mute=1&loop=1&playlist=VGt3ITmdULk&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1"
+            title="Chromata Films — showreel, Katya &amp; Joey" loading="lazy" allow="autoplay; encrypted-media"></iframe>
   </div>
-  <div class="film__numerals" aria-hidden="true"><span>Ⅰ</span><span>Ⅱ</span><span>Ⅲ</span></div>
-  <div class="film__timeline" aria-hidden="true">
-    <div class="track"><div class="fill"></div></div>
-    <div class="tc">00:00 / 00:06</div>
+  <div class="ytfull__label">
+    <p class="kicker" style="color:var(--gold-light)">— The Showreel</p>
+    <h2>Katya <em>&amp;</em> Joey</h2>
   </div>
+  <a class="btn btn--coral ytfull__cta" href="https://youtu.be/VGt3ITmdULk" target="_blank" rel="noopener">▶&nbsp; Watch with sound</a>
 </section>
 
 <!-- acclaim, framed by the Schiaparelli lobster -->
@@ -232,12 +219,12 @@
 </section>
 
 <!-- ==================== 06 · METAMORPHOSIS — day dissolves into night ==================== -->
-<section class="meta-pivot" data-theme="dark" data-section
-         data-img-a="assets/img/landing/shoes.jpg" data-img-b="assets/video/film-night-poster.jpg"
+<section class="meta-pivot" data-section
+         data-img-a="assets/img/landing/shoes.jpg" data-img-b="assets/img/carousel/c-50.jpg"
          aria-label="Day turns to night">
   <div class="meta-pivot__frame">
     <img class="layer-a" src="assets/img/landing/shoes.jpg" alt="Couture bridal shoes at golden hour" />
-    <img class="layer-b" src="assets/video/film-night-poster.jpg" alt="" aria-hidden="true" />
+    <img class="layer-b" src="assets/img/carousel/c-50.jpg" alt="" aria-hidden="true" />
     <canvas class="dissolve" aria-hidden="true"></canvas>
   </div>
   <div class="meta-pivot__copy">
@@ -246,50 +233,41 @@
   </div>
 </section>
 
-<!-- ==================== 07 · THREE STORIES — horizontal gallery ==================== -->
-<section class="hgal" data-theme="dark" data-section>
-  <div class="hgal__head">
+<!-- ==================== 07 · REAL WEDDINGS — grabbable carousel ==================== -->
+<section class="carousel" data-theme="dark" data-section>
+  <div class="carousel__head">
     <div>
-      <p class="kicker">— 04 · Real Weddings</p>
+      <p class="kicker">— 04 · The Portfolio</p>
       <h2 class="display-lg" style="margin-top:2.5vh">
-        <span class="line-mask"><span class="line-inner">Three <em>stories</em>,</span></span>
-        <span class="line-mask"><span class="line-inner">one signature</span></span>
+        <span class="line-mask"><span class="line-inner"><strong>Real Weddings</strong></span></span>
       </h2>
     </div>
-    <span class="hgal__hint">( scroll )</span>
+    <span class="carousel__hint">( grab &amp; drag )</span>
   </div>
-  <div class="hgal__viewport" data-cursor="drag">
-    <div class="hgal__track">
-      <article class="hcard">
-        <span class="hcard__num">01</span>
-        <div class="hcard__imgwrap"><img src="assets/img/domantas/ds-16.jpg" alt="Domantas Sabonis and Shashana — first dance" loading="lazy" /></div>
-        <h3 class="hcard__title">Domantas &amp; Shashana</h3>
-        <p class="hcard__cap">An NBA All-Star, a couture bride, a celebration for the record books.</p>
-        <a class="text-link" href="domantas-sabonis.html">Visit the wedding →</a>
-      </article>
-      <article class="hcard">
-        <span class="hcard__num">02</span>
-        <div class="hcard__imgwrap"><img src="assets/img/jacky/jg-08.jpg" alt="Jacqueline and Gordon — wedding day in St-Tropez" loading="lazy" /></div>
-        <h3 class="hcard__title">Jacqueline &amp; Gordon</h3>
-        <p class="hcard__cap">Five days in St-Tropez. Fireworks, drone shows, and one word: WOW.</p>
-        <a class="text-link" href="jacqueline-gordon.html">Visit the wedding →</a>
-      </article>
-      <article class="hcard">
-        <span class="hcard__num">03</span>
-        <div class="hcard__imgwrap"><img src="assets/img/carousel/c-10.jpg" alt="Anna Andres wedding — editorial bridal portrait" loading="lazy" /></div>
-        <h3 class="hcard__title">Anna Andres</h3>
-        <p class="hcard__cap">Miss Universe Ukraine — a wedding shot like a Vogue editorial.</p>
-        <a class="text-link" href="anna-andres.html">Visit the wedding →</a>
-      </article>
+  <div class="carousel__viewport" data-cursor="drag">
+    <div class="carousel__track">
+      <figure class="mat"><img src="assets/img/carousel/c-01.jpg" alt="Real wedding — villa entrance" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-04.jpg" alt="Real wedding — bridal preparations" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-08.jpg" alt="Real wedding — the ceremony" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-10.jpg" alt="Real wedding — editorial bridal portrait" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-13.jpg" alt="Real wedding — the couple" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-17.jpg" alt="Real wedding — celebration" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-21.jpg" alt="Real wedding — tablescape" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-26.jpg" alt="Real wedding — golden hour portraits" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-32.jpg" alt="Real wedding — the reception" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-36.jpg" alt="Real wedding — the party" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-41.jpg" alt="Real wedding — evening celebration" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-45.jpg" alt="Real wedding — the first kiss" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-50.jpg" alt="Real wedding — fireworks over the château" loading="lazy" /></figure>
+      <figure class="mat"><img src="assets/img/carousel/c-52.jpg" alt="Real wedding — into the night" loading="lazy" /></figure>
     </div>
   </div>
-  <div class="hgal__progress" aria-hidden="true">
+  <div class="carousel__progress" aria-hidden="true">
     <div class="track"><div class="fill"></div></div>
-    <span class="count">01 — 03</span>
   </div>
 </section>
 
-<!-- ==================== 08 · WHERE WE SHINE ==================== -->
+<!-- ==================== 08 · WHERE WE SHINE (riviera sky) ==================== -->
 <section class="shine pad-section" data-section>
   <img class="shine__cutout" src="assets/img/landing/cutout-shine.png" alt="" aria-hidden="true" data-speed="1.1" />
   <div class="container">
@@ -322,8 +300,8 @@
   </div>
 </section>
 
-<!-- ==================== 09 · SCROLL FILM II — night ==================== -->
-<section class="film vignette" data-scrub data-pin="+=350%" data-theme="dark" data-section aria-label="Night film">
+<!-- ==================== 09 · SCROLL FILM II — night, end-quote ==================== -->
+<section class="film vignette" data-scrub data-pin="+=300%" data-endquote data-theme="dark" data-section aria-label="Night film">
   <video data-src="assets/video/film-night.mp4" data-src-mobile="assets/video/film-night-mobile.mp4"
          poster="assets/video/film-night-poster.jpg" muted playsinline preload="metadata"></video>
   <div class="film__shade"></div>
@@ -339,29 +317,27 @@
   </div>
 </section>
 
-<!-- latest film -->
-<section class="on-night pad-section" data-theme="dark" data-section>
-  <div class="container">
-    <p class="kicker">— 06 · The Latest Film</p>
-    <h2 class="display-lg" style="margin:3vh 0 6vh; max-width:12em">
-      <span class="line-mask"><span class="line-inner">Katya <em>&amp;</em> Joey</span></span>
-    </h2>
-    <div class="mat img-reveal trailer" data-yt="VGt3ITmdULk" data-cursor="play">
-      <img class="thumb" src="https://img.youtube.com/vi/VGt3ITmdULk/maxresdefault.jpg" alt="Katya and Joey — wedding highlight film by Chromata Films" loading="lazy" />
-      <div class="trailer__play"><div class="disc"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></div></div>
-      <span class="trailer__label">Latest wedding film — play</span>
-    </div>
+<!-- ==================== 10 · WEBSITE INTRO — full-bleed autoplay ==================== -->
+<section class="ytfull vignette" data-theme="dark" data-section aria-label="Chromata Films — website intro film">
+  <div class="ytfull__media">
+    <iframe data-lazy-src="https://www.youtube-nocookie.com/embed/-bi7F1sVXKE?autoplay=1&mute=1&loop=1&playlist=-bi7F1sVXKE&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1"
+            title="Chromata Films — the studio reel" loading="lazy" allow="autoplay; encrypted-media"></iframe>
   </div>
+  <div class="ytfull__label">
+    <p class="kicker" style="color:var(--gold-light)">— 06 · The Studio Reel</p>
+    <h2>Cinema, <em>not coverage</em></h2>
+  </div>
+  <a class="btn btn--ghost ytfull__cta" href="gallery.html" style="color:var(--cream); border-color:var(--cream)">See the gallery</a>
 </section>
 
-<!-- ==================== 10 · ABOUT — Kevin & Laura ==================== -->
+<!-- ==================== 11 · ABOUT — Kevin & Laura (gold) ==================== -->
 <section class="about pad-section" data-section>
   <img class="about__legs" src="assets/img/landing/legs.png" alt="" aria-hidden="true" data-speed="1.14" />
   <div class="container">
     <p class="about__tagline" style="margin-bottom:6vh">Top destination wedding cinematographers in the world — blending Hollywood excellence with a French touch</p>
     <div class="about__grid">
       <figure class="about__portrait mat img-reveal">
-        <img src="assets/img/landing/founders.jpg" alt="Kevin and Laura Lopez — founders of Chromata Films" loading="lazy" data-parallax-img />
+        <img src="assets/img/landing/founders.jpg" alt="Kevin and Laura Lopez — founders of Chromata Films" loading="lazy" />
       </figure>
       <div class="about__copy">
         <p class="kicker">— We're Kevin and Laura</p>
@@ -381,7 +357,7 @@
   </div>
 </section>
 
-<!-- ==================== 11 · BEHIND THE SCENES ==================== -->
+<!-- ==================== 12 · BEHIND THE SCENES ==================== -->
 <section class="bts pad-section" data-theme="dark" data-section>
   <img class="bts__cutout" src="assets/img/landing/cutout-bts.png" alt="" aria-hidden="true" data-speed="1.12" />
   <div class="container">
@@ -404,7 +380,7 @@
   </div>
 </section>
 
-<!-- planners strip -->
+<!-- planners strip — coral -->
 <section class="planners pad-section" data-section>
   <div class="container">
     <div class="inner">
@@ -437,6 +413,7 @@
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>
+      <a href="russell-westbrook.html">Russell &amp; Nina Westbrook</a>
       <a href="gallery.html">Gallery</a>
     </div>
     <div>
@@ -472,7 +449,7 @@
     </div>
   </div>
 
-  <span class="footer__wordmark" id="footerWordmark" aria-hidden="true">CHROMATA</span>
+  <span class="footer__wordmark" id="footerWordmark" aria-hidden="true">CHROMATA FILMS</span>
 
   <div class="footer__legal">
     <span>© 2026 Chromata Films — Wedding Film Cinematography</span>

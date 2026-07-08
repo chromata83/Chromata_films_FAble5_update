@@ -5,15 +5,9 @@ import { writeFileSync } from "node:fs";
 const EMAIL = "contact@chromatafilms.com";
 const ADDRESS = "27 Rue de Montchoisy, 1207 Geneva, Switzerland";
 
-const MARK = `<svg class="nav__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-      <circle cx="16" cy="16" r="13.5"/>
-      <path d="M16 2.5 L16 12 M27.7 9.25 L19.5 14 M27.7 22.75 L19.5 18 M16 29.5 L16 20 M4.3 22.75 L12.5 18 M4.3 9.25 L12.5 14"/>
-      <circle cx="16" cy="16" r="4.5"/>
-    </svg>`;
-
 const nav = (current) => `<header class="nav nav--night" id="nav">
   <a class="nav__brand" href="index.html" aria-label="Chromata Films — home">
-    ${MARK}
+    <img class="nav__logo" src="assets/img/logo-mark.png" alt="" />
     <span class="nav__wordmark">Chromata Films</span>
   </a>
   <nav class="nav__links" aria-label="Primary">
@@ -27,6 +21,7 @@ const nav = (current) => `<header class="nav nav--night" id="nav">
         <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"${current === "domantas" ? ' aria-current="page"' : ""}><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
         <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"${current === "jacky" ? ' aria-current="page"' : ""}><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
         <a class="nav__drop-item" role="menuitem" href="anna-andres.html"${current === "anna" ? ' aria-current="page"' : ""}><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
+        <a class="nav__drop-item" role="menuitem" href="russell-westbrook.html"${current === "westbrook" ? ' aria-current="page"' : ""}><span class="t">Russell &amp; Nina Westbrook</span><span class="tag">Positano</span></a>
       </div>
     </div>
     <a class="nav__link" href="the-studio.html"${current === "studio" ? ' aria-current="page"' : ""}>The Studio</a>
@@ -44,6 +39,7 @@ const nav = (current) => `<header class="nav nav--night" id="nav">
     <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
     <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
     <a href="anna-andres.html">Anna Andres — Miss Universe</a>
+    <a href="russell-westbrook.html">Russell &amp; Nina Westbrook — Positano</a>
   </div>
   <a class="big" href="the-studio.html">The <em>Studio</em></a>
   <a class="big" href="journal.html">Journal</a>
@@ -53,11 +49,7 @@ const nav = (current) => `<header class="nav nav--night" id="nav">
 </div>`;
 
 const PRELOADER = `<div class="preloader" id="preloader">
-  <svg class="preloader__mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-    <circle cx="16" cy="16" r="13.5"/>
-    <path d="M16 2.5 L16 12 M27.7 9.25 L19.5 14 M27.7 22.75 L19.5 18 M16 29.5 L16 20 M4.3 22.75 L12.5 18 M4.3 9.25 L12.5 14"/>
-    <circle cx="16" cy="16" r="4.5"/>
-  </svg>
+  <img class="preloader__mark" src="assets/img/logo-mark.png" alt="Chromata Films — golden peacock" />
   <div class="preloader__word">CHROMATA</div>
   <div class="preloader__sub">Films — Wedding Cinematography</div>
   <div class="preloader__bar"><div class="preloader__fill"></div></div>
@@ -81,6 +73,7 @@ const FOOTER = `<footer class="footer">
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>
+      <a href="russell-westbrook.html">Russell &amp; Nina Westbrook</a>
       <a href="gallery.html">Gallery</a>
     </div>
     <div>
@@ -97,7 +90,7 @@ const FOOTER = `<footer class="footer">
       <a href="mailto:${EMAIL}">${EMAIL}</a>
     </div>
   </div>
-  <span class="footer__wordmark" id="footerWordmark" aria-hidden="true">CHROMATA</span>
+  <span class="footer__wordmark" id="footerWordmark" aria-hidden="true">CHROMATA FILMS</span>
   <div class="footer__legal">
     <span>© 2026 Chromata Films — Wedding Film Cinematography</span>
     <span>${ADDRESS} · <a href="mailto:${EMAIL}">${EMAIL}</a></span>
@@ -111,7 +104,7 @@ const shell = ({ page, title, description, main }) => `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${title}</title>
 <meta name="description" content="${description}" />
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="icon" type="image/png" href="assets/img/logo-mark.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
@@ -126,7 +119,6 @@ ${nav(page)}
 
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"><span class="cursor-label"></span></div>
-<canvas id="particles" aria-hidden="true"></canvas>
 
 <main>
 ${main}
@@ -353,14 +345,14 @@ pages["anna-andres.html"] = shell({
     </div>
   </section>
 
-${next("domantas-sabonis.html", "Domantas &amp; Shashana")}`,
+${next("russell-westbrook.html", "Russell &amp; Nina Westbrook")}`,
 });
 
 /* ============================== THE STUDIO ============================== */
 pages["the-studio.html"] = shell({
   page: "studio",
   title: "The Studio — Chromata Films | Award-Winning Wedding Cinematography Team",
-  description: "Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stéphane Maurin and Michael Bod — Hollywood VFX pedigree in service of your wedding film.",
+  description: "Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stephane Maurin and Michael Bod — Hollywood VFX pedigree in service of your wedding film.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
       <img src="assets/img/studio/studio-01.jpg" alt="Kevin Lopez in black tie, camera rig in hand, at a Dior event" fetchpriority="high" style="object-position: 50% 25%" />
@@ -409,10 +401,10 @@ pages["the-studio.html"] = shell({
           <p>Master in Communication and Finance, formerly at Publicis and Mediacom — planning promotional campaigns and driving client decisions. Wife, mother, children's book author, and the person who keeps every Chromata production (and vendor relationship) running with elegance and warmth, from first inquiry to final delivery.</p>
         </article>
         <article class="team__card">
-          <figure class="portrait mat img-reveal"><img src="assets/img/studio/stephane.jpg" alt="Stéphane Maurin — licensed drone pilot" loading="lazy"></figure>
+          <figure class="portrait mat img-reveal"><img src="assets/img/studio/stephane.jpg" alt="Stephane Maurin — licensed drone pilot" loading="lazy"></figure>
           <span class="role">Aerial Cinematography · FPV Pilot</span>
-          <h3>Stéphane Maurin</h3>
-          <p>Licensed aerial cinematographer with permits to fly across international locations including France, Italy, Croatia and the French Riviera. Stéphane's FPV work threads through villas, over coastlines and into ballrooms — the shots that make audiences ask "how?"</p>
+          <h3>Stephane Maurin</h3>
+          <p>Licensed aerial cinematographer with permits to fly across international locations including France, Italy, Croatia and the French Riviera. Stephane's FPV work threads through villas, over coastlines and into ballrooms — the shots that make audiences ask "how?"</p>
         </article>
         <article class="team__card">
           <figure class="portrait mat img-reveal"><img src="assets/img/studio/michael.jpg" alt="Michael Bod — 16mm film and portrait expert" loading="lazy"></figure>
@@ -424,7 +416,7 @@ pages["the-studio.html"] = shell({
     </div>
   </section>
 
-  <section class="on-night pad-section" data-theme="dark" data-section>
+  <section class="on-sunset pad-section" data-theme="dark" data-section>
     <div class="container">
       <p class="kicker">— The VFX Pedigree</p>
       <h2 class="display-lg" style="margin-top:3vh; max-width:14em">
@@ -433,20 +425,30 @@ pages["the-studio.html"] = shell({
       </h2>
       <div class="feature__grid" style="margin-top:7vh">
         <div class="prose">
-          <p>Before weddings, our team helped craft images for some of the biggest films ever made. That training — in light, composition, and invisible perfectionism — is exactly what we bring to your wedding day. The same standards. The same tools. A far better leading couple.</p>
+          <p>Before weddings, our team helped craft images for some of the biggest films ever made — Star Wars, Beauty and the Beast, The Great Gatsby, Avengers. That training — in light, composition, and invisible perfectionism — is exactly what we bring to your wedding day. The same standards. The same tools. A far better leading couple.</p>
         </div>
         <div class="feature__meta">
-          <div class="row"><span>01</span><span class="val">Star Wars</span></div>
+          <div class="row"><span>01</span><span class="val">Star Wars — The Last Jedi</span></div>
           <div class="row"><span>02</span><span class="val">Beauty and the Beast</span></div>
           <div class="row"><span>03</span><span class="val">The Great Gatsby</span></div>
-          <div class="row"><span>04</span><span class="val">Solo: A Star Wars Story</span></div>
+          <div class="row"><span>04</span><span class="val">Avengers — Infinity War</span></div>
+          <div class="row"><span>05</span><span class="val">Fantastic Four</span></div>
+          <div class="row"><span>06</span><span class="val">Solo: A Star Wars Story</span></div>
         </div>
       </div>
+      <div class="posters" style="margin-top:9vh">
+        <figure class="mat img-reveal"><img src="assets/img/blockbusters/star-wars.jpg" alt="Star Wars: The Last Jedi — poster" loading="lazy"></figure>
+        <figure class="mat img-reveal"><img src="assets/img/blockbusters/beauty-beast.jpg" alt="Beauty and the Beast — poster" loading="lazy"></figure>
+        <figure class="mat img-reveal"><img src="assets/img/blockbusters/gatsby.jpg" alt="The Great Gatsby — poster" loading="lazy"></figure>
+        <figure class="mat img-reveal"><img src="assets/img/blockbusters/avengers.jpg" alt="Avengers: Infinity War — poster" loading="lazy"></figure>
+        <figure class="mat img-reveal"><img src="assets/img/blockbusters/fantastic-four.jpg" alt="Fantastic Four — poster" loading="lazy"></figure>
+        <figure class="mat img-reveal"><img src="assets/img/blockbusters/still.jpg" alt="Solo: A Star Wars Story — poster" loading="lazy"></figure>
+      </div>
       <div style="display:flex; gap:clamp(30px,8vw,120px); flex-wrap:wrap; margin-top:10vh">
-        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="10">0</span>+</div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.55)">Years of VFX expertise</div></div>
-        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="9">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.55)">Years of weddings</div></div>
-        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="5">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.55)">Continents</div></div>
-        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="22">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.55)">Years together, Kevin &amp; Laura</div></div>
+        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="10">0</span>+</div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.75)">Years of VFX expertise</div></div>
+        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="9">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.75)">Years of weddings</div></div>
+        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="5">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.75)">Continents</div></div>
+        <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="22">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.75)">Years together, Kevin &amp; Laura</div></div>
       </div>
     </div>
   </section>
@@ -599,10 +601,11 @@ const galleryImgs = [
 pages["gallery.html"] = shell({
   page: "gallery",
   title: "Gallery — Chromata Films | Luxury Wedding Cinematography Worldwide",
-  description: "A gallery of frames from Chromata Films weddings across the French Riviera, Lake Como, St Moritz, Santorini, Morocco and beyond.",
-  main: `  <section class="page-hero" data-theme="dark" style="min-height:62svh">
+  description: "A gallery of films and frames from Chromata Films weddings across the French Riviera, Lake Como, St Moritz, Santorini and beyond.",
+  main: `  <section class="page-hero" data-theme="dark" style="min-height:86svh">
     <div class="page-hero__bg">
-      <img src="assets/img/carousel/c-32.jpg" alt="Chromata Films — gallery of wedding frames" fetchpriority="high" />
+      <video src="assets/video/gallery-header.mp4" poster="assets/video/gallery-header-poster.jpg"
+             muted loop playsinline autoplay data-ambient data-preload-track></video>
     </div>
     <div class="page-hero__content">
       <p class="kicker line-mask"><span class="line-inner">Portfolio</span></p>
@@ -614,30 +617,123 @@ pages["gallery.html"] = shell({
   <section class="pad-section" data-section>
     <div class="container">
       <p class="kicker">— The Films</p>
-      <div class="gallery-grid" style="margin-top:5vh">
-        <div class="gitem w12 wide mat img-reveal trailer" data-yt="-bi7F1sVXKE" data-cursor="play" style="aspect-ratio:21/9">
-          <img class="thumb" src="https://img.youtube.com/vi/-bi7F1sVXKE/maxresdefault.jpg" alt="Chromata Films — showreel" loading="lazy">
-          <div class="trailer__play"><div class="disc"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></div></div>
-          <span class="trailer__label">Showreel — play</span>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:clamp(14px,2vw,28px); margin-top:5vh" class="films-duo">
+        <div>
+          <div class="mat" style="position:relative; aspect-ratio:16/9; background:#000">
+            <iframe data-lazy-src="https://player.vimeo.com/video/1039575157" title="Alex &amp; Wilton — Wedding Film Highlight" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
+          </div>
+          <p class="kicker" style="margin-top:2vh">— Alex &amp; Wilton · St-Tropez</p>
         </div>
-        <div class="gitem mat img-reveal trailer" data-yt="XWz84l6DWeM" data-cursor="play" style="aspect-ratio:16/9">
-          <img class="thumb" src="https://img.youtube.com/vi/XWz84l6DWeM/maxresdefault.jpg" alt="Lauren and Jonathan — Dominican Republic wedding film teaser" loading="lazy">
-          <div class="trailer__play"><div class="disc"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></div></div>
-          <span class="trailer__label">Lauren &amp; Jonathan — Dominican Republic</span>
-        </div>
-        <div class="gitem mat img-reveal trailer" data-yt="brZ8vlqwOVY" data-cursor="play" style="aspect-ratio:16/9">
-          <img class="thumb" src="https://img.youtube.com/vi/brZ8vlqwOVY/maxresdefault.jpg" alt="Mozzafiato — Chromata Films" loading="lazy">
-          <div class="trailer__play"><div class="disc"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></div></div>
-          <span class="trailer__label">Mozzafiato — play</span>
+        <div>
+          <div class="mat" style="position:relative; aspect-ratio:16/9; background:#000">
+            <iframe data-lazy-src="https://player.vimeo.com/video/1117935629" title="Jacqueline &amp; Gordon — Wedding Film Highlight" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
+          </div>
+          <p class="kicker" style="margin-top:2vh">— Jacqueline &amp; Gordon · Le Beauvallon</p>
         </div>
       </div>
+      <style>@media (max-width:900px){ .films-duo { grid-template-columns:1fr !important; } }</style>
+    </div>
+  </section>
 
-      <p class="kicker" style="margin-top:14vh">— The Frames</p>
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— The Weddings</p>
+      <div class="journal-list" style="margin-top:4vh">
+        <a class="jitem" href="domantas-sabonis.html">
+          <span class="jdate">France · 2021</span>
+          <h2>Domantas Sabonis &amp; Shashana — the NBA All-Star wedding</h2>
+          <span class="jarrow">→</span>
+          <span class="jtag">Real Wedding</span>
+        </a>
+        <a class="jitem" href="jacqueline-gordon.html">
+          <span class="jdate">St-Tropez · 2025</span>
+          <h2>Jacqueline &amp; Gordon — five days at Le Beauvallon</h2>
+          <span class="jarrow">→</span>
+          <span class="jtag">Real Wedding</span>
+        </a>
+        <a class="jitem" href="anna-andres.html">
+          <span class="jdate">Editorial</span>
+          <h2>Anna Andres — a wedding shot like a Vogue cover</h2>
+          <span class="jarrow">→</span>
+          <span class="jtag">Real Wedding</span>
+        </a>
+        <a class="jitem" href="russell-westbrook.html">
+          <span class="jdate">Positano · 2025</span>
+          <h2>Russell Westbrook — a wedding anniversary on the Amalfi Coast</h2>
+          <span class="jarrow">→</span>
+          <span class="jtag">Celebration</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— The Frames</p>
       <div class="gallery-grid" style="margin-top:5vh">
 ${galleryImgs.map(([f, cls]) => `        ${g("carousel", f, cls, "Chromata Films wedding frame")}`).join("\n")}
       </div>
     </div>
   </section>`,
+});
+
+/* ============================== RUSSELL WESTBROOK ============================== */
+pages["russell-westbrook.html"] = shell({
+  page: "westbrook",
+  title: "Russell & Nina Westbrook — Wedding Anniversary in Positano | Chromata Films",
+  description: "Russell and Nina Westbrook celebrated their wedding anniversary on the Amalfi Coast — filmed by Chromata Films in Positano, photographed by Greg Finck.",
+  main: `  <section class="page-hero" data-theme="dark">
+    <div class="page-hero__bg">
+      <img src="assets/img/westbrook/rw-01.jpg" alt="Russell and Nina Westbrook — anniversary celebration in Positano" fetchpriority="high" />
+    </div>
+    <div class="page-hero__content">
+      <p class="kicker line-mask"><span class="line-inner">Celebration · Amalfi Coast</span></p>
+      <h1 class="page-hero__title">
+        <span class="line-mask"><span class="line-inner">Russell <em>&amp;</em> Nina</span></span>
+        <span class="line-mask"><span class="line-inner">Westbrook</span></span>
+      </h1>
+      <div class="page-hero__sub">
+        <span>Positano, Italy · September 2025</span>
+        <span>Photography — Greg Finck</span>
+        <span>Film — Chromata Films</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" data-section>
+    <div class="container">
+      <p class="kicker">— The Story</p>
+      <div class="feature__grid" style="margin-top:5vh">
+        <div class="prose">
+          <p class="lead">Some love stories deserve a sequel — and Positano wrote this one in gold and sea-blue.</p>
+          <p>When Russell and Nina Westbrook chose the Amalfi Coast to celebrate their wedding anniversary, the brief was simple: all the emotion of a wedding day, none of the script. A family, their closest people, and a cliffside village that photographs like a film set from every angle.</p>
+          <p>Anniversary films are a different craft. There is no ceremony structure to lean on — just an atmosphere that has to be caught rather than staged. Pure documentary cinematography, elevated with the fashion-film language we bring to our weddings, alongside the beautiful stills of Greg Finck.</p>
+          <p>To Russell and Nina: thank you for letting our cameras into a celebration that belonged entirely to you.</p>
+        </div>
+        <div class="feature__meta">
+          <div class="row"><span>Couple</span><span class="val">Russell &amp; Nina Westbrook</span></div>
+          <div class="row"><span>Setting</span><span class="val">Positano, Amalfi Coast</span></div>
+          <div class="row"><span>Date</span><span class="val">September 2025</span></div>
+          <div class="row"><span>Photography</span><span class="val">Greg Finck</span></div>
+          <div class="row"><span>Film</span><span class="val">Chromata Films</span></div>
+        </div>
+      </div>
+      <div class="feature__actions" style="margin-top:6vh">
+        <a class="text-link" href="journal-westbrook-anniversary.html">Read the story in the Journal →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— Positano</p>
+      <div class="gallery-grid" style="margin-top:5vh">
+        ${["rw-02.jpg","rw-03.jpg","rw-04.jpg","rw-05.jpg","rw-06.jpg","rw-07.jpg","rw-08.jpg","rw-09.jpg","rw-10.jpg","rw-11.jpg","rw-12.jpg","rw-13.jpg","rw-14.jpg"].map((f) => g("westbrook", f, "", "Russell and Nina Westbrook anniversary — Positano")).join("\n        ")}
+      </div>
+    </div>
+  </section>
+
+${next("domantas-sabonis.html", "Domantas &amp; Shashana")}`,
 });
 
 /* ============================== CONTACT ============================== */
@@ -648,9 +744,9 @@ pages["contact.html"] = shell({
   page: "contact",
   title: "Contact Us — Chromata Films | Global Luxury Destination Wedding Cinematographers",
   description: "Check your date with Chromata Films — global luxury destination wedding cinematographers. Tell us about your wedding and let's begin your journey.",
-  main: `  <section class="film vignette" data-scrub data-pin="+=250%" data-theme="dark" aria-label="Contact — cinematic header">
-    <video data-src="assets/video/contact.mp4" data-src-mobile="assets/video/contact-mobile.mp4"
-           poster="assets/video/contact-poster.jpg" muted playsinline preload="auto" data-preload-track></video>
+  main: `  <section class="film vignette" data-theme="dark" aria-label="Contact — cinematic header" style="height:100svh">
+    <video src="assets/video/contact-header.mp4" poster="assets/video/contact-header-poster.jpg"
+           muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>
     <div class="hero__head">
       <p class="kicker" style="color:var(--gold-light)">— Contact Us</p>
@@ -658,15 +754,6 @@ pages["contact.html"] = shell({
         <span class="line-mask intro-rise"><span class="line-inner">Global luxury</span></span>
         <span class="line-mask intro-rise"><span class="line-inner">destination wedding <em>cinematographers</em></span></span>
       </h1>
-    </div>
-    <div class="film__chapters" aria-hidden="true">
-      <div class="film__chapter"></div>
-      <div class="film__chapter"><h3>Your story starts with a <em>hello</em></h3></div>
-      <div class="film__chapter"></div>
-    </div>
-    <div class="film__timeline" aria-hidden="true">
-      <div class="track"><div class="fill"></div></div>
-      <div class="tc">00:00 / 00:06</div>
     </div>
     <div class="hero__scroll intro-fade"><span class="lbl">Scroll</span><span class="line"><i></i></span></div>
   </section>

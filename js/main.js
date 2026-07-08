@@ -259,14 +259,20 @@
     const numerals = section.querySelectorAll(".film__numerals span");
     const fill = section.querySelector(".film__timeline .fill");
     const tc = section.querySelector(".film__timeline .tc");
+    const heroHead = section.querySelector(".hero__head");
+    const endQuote = section.hasAttribute("data-endquote");
     const fmt = (s) => "00:" + String(Math.floor(s)).padStart(2, "0");
 
-    const windows = [ [0.05, 0.3], [0.38, 0.63], [0.7, 0.95] ];
+    // Soft, readable chapter windows; the last one holds through the end of
+    // the pin so it can be read once the film has finished scrubbing.
+    const windows = endQuote
+      ? [ [0.14, 0.42], [0.48, 0.76], [0.85, 1.02] ]
+      : [ [0.14, 0.38], [0.44, 0.68], [0.76, 1.02] ];
     const chapterAlpha = (p, [a, b]) => {
-      const fade = 0.06;
+      const fade = 0.1;
       if (p < a || p > b) return 0;
       if (p < a + fade) return (p - a) / fade;
-      if (p > b - fade) return (b - p) / fade;
+      if (b <= 1 && p > b - fade) return (b - p) / fade;
       return 1;
     };
     const paintChapters = (p) => {
@@ -276,6 +282,12 @@
         ch.style.opacity = alpha;
         ch.style.transform = `translateY(${(1 - alpha) * (p > (windows[i][0] + windows[i][1]) / 2 ? -40 : 24)}px)`;
       });
+      if (heroHead) {
+        const a = Math.max(0, 1 - p / 0.1);
+        heroHead.style.opacity = a;
+        heroHead.style.transform = `translateY(${(1 - a) * -50}px)`;
+        heroHead.style.pointerEvents = a < 0.2 ? "none" : "";
+      }
       let active = -1;
       windows.forEach((w, i) => { if (p >= w[0] && p <= w[1]) active = i; });
       numerals.forEach((n, i) => n.classList.toggle("active", i === active));
@@ -292,20 +304,11 @@
       return;
     }
 
-    if (isTouch) {
-      // Mobile: real-time playback — buttery, battery-friendly, no seek jank.
-      video.muted = true; video.loop = true; video.playsInline = true; video.autoplay = true;
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((en) => { en.isIntersecting ? video.play().catch(() => {}) : video.pause(); });
-      }, { rootMargin: "25%" });
-      io.observe(section);
-      video.addEventListener("timeupdate", () => { if (video.duration) paintChapters(video.currentTime / video.duration); });
-      return;
-    }
-
-    // Desktop scrub
+    // Scrub on every device — mobile included (encodes are keyframe-dense,
+    // so seeking is smooth); pins shorten on small screens.
     video.preload = "auto";
-    const pinLength = section.dataset.pin || "+=400%";
+    const pinLength = (isMobile && section.dataset.pinMobile) ? section.dataset.pinMobile
+      : (isMobile ? "+=250%" : (section.dataset.pin || "+=400%"));
     const state = { current: 0, target: 0 };
     let raf = null;
     const loop = () => {
@@ -329,6 +332,19 @@
     paintChapters(0);
   });
 
+  /* ---------------- Full-bleed YouTube film sections ---------------- */
+  document.querySelectorAll(".ytfull").forEach((sec) => {
+    const media = sec.querySelector(".ytfull__media");
+    if (reducedMotion || !media) return;
+    if (sec.hasAttribute("data-pinned")) {
+      ScrollTrigger.create({ trigger: sec, start: "top top", end: "+=100%", pin: true, anticipatePin: 1 });
+    }
+    gsap.fromTo(media, { yPercent: -4, scale: 1.1 }, {
+      yPercent: 4, scale: 1.02, ease: "none",
+      scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: 1 },
+    });
+  });
+
   /* ---------------- Hero scroll dot loop ---------------- */
   const scrollDot = document.querySelector(".hero__scroll .line i");
   if (scrollDot && !reducedMotion) {
@@ -343,57 +359,39 @@
     gsap.to(track, { x: -half, duration: half / 60, ease: "none", repeat: -1 });
   });
 
-  /* ---------------- Horizontal gallery ---------------- */
-  const hgal = document.querySelector(".hgal");
-  if (hgal) {
-    const track = hgal.querySelector(".hgal__track");
-    const cards = hgal.querySelectorAll(".hcard");
-    const fill = hgal.querySelector(".hgal__progress .fill");
-    const count = hgal.querySelector(".hgal__progress .count");
-    const updateCentered = () => {
-      const mid = innerWidth / 2;
-      let best = null, bestDist = Infinity, bestIdx = 0;
-      cards.forEach((c, i) => {
-        const r = c.getBoundingClientRect();
-        const d = Math.abs(r.left + r.width / 2 - mid);
-        if (d < bestDist) { bestDist = d; best = c; bestIdx = i; }
+  /* ---------------- Draggable carousel (Real Weddings) ---------------- */
+  document.querySelectorAll(".carousel").forEach((car) => {
+    const vp = car.querySelector(".carousel__viewport");
+    const fill = car.querySelector(".carousel__progress .fill");
+    if (!vp) return;
+    vp.addEventListener("scroll", () => {
+      const max = vp.scrollWidth - vp.clientWidth;
+      if (fill && max > 0) fill.style.width = ((vp.scrollLeft / max) * 100).toFixed(2) + "%";
+    }, { passive: true });
+    // grab-to-drag with momentum (touch devices scroll natively)
+    if (!isTouch) {
+      let down = false, startX = 0, startLeft = 0, vel = 0, lastX = 0, raf = null;
+      vp.addEventListener("pointerdown", (e) => {
+        down = true; startX = lastX = e.clientX; startLeft = vp.scrollLeft;
+        vp.classList.add("dragging"); if (raf) { cancelAnimationFrame(raf); raf = null; }
       });
-      cards.forEach((c) => c.classList.toggle("centered", c === best));
-      if (count) count.textContent = String(bestIdx + 1).padStart(2, "0") + " — " + String(cards.length).padStart(2, "0");
-    };
-    if (!isTouch && !reducedMotion) {
-      const getDist = () => track.scrollWidth - innerWidth;
-      const tween = gsap.to(track, {
-        x: () => -getDist(), ease: "none",
-        scrollTrigger: {
-          trigger: hgal, start: "top top", end: "+=250%", pin: true, scrub: 1,
-          invalidateOnRefresh: true, anticipatePin: 1,
-          onUpdate: (self) => {
-            if (fill) fill.style.width = (self.progress * 100).toFixed(2) + "%";
-            updateCentered();
-          },
-        },
+      addEventListener("pointermove", (e) => {
+        if (!down) return;
+        vel = e.clientX - lastX; lastX = e.clientX;
+        vp.scrollLeft = startLeft - (e.clientX - startX);
       });
-      // inner counter-parallax
-      cards.forEach((card) => {
-        const img = card.querySelector("img");
-        if (img) gsap.fromTo(img, { x: 0 }, { x: "-10%", ease: "none",
-          scrollTrigger: { containerAnimation: tween, trigger: card, start: "left right", end: "right left", scrub: true } });
+      addEventListener("pointerup", () => {
+        if (!down) return;
+        down = false; vp.classList.remove("dragging");
+        const glide = () => {
+          vp.scrollLeft -= vel; vel *= 0.94;
+          if (Math.abs(vel) > 0.4) raf = requestAnimationFrame(glide); else raf = null;
+        };
+        glide();
       });
-    } else {
-      // native swipe on touch
-      const vp = hgal.querySelector(".hgal__viewport") || track.parentElement;
-      vp.style.overflowX = "auto";
-      vp.style.webkitOverflowScrolling = "touch";
-      track.style.width = "max-content";
-      vp.addEventListener("scroll", () => {
-        const max = track.scrollWidth - vp.clientWidth;
-        if (fill && max > 0) fill.style.width = ((vp.scrollLeft / max) * 100).toFixed(2) + "%";
-        updateCentered();
-      }, { passive: true });
-      updateCentered();
+      vp.addEventListener("dragstart", (e) => e.preventDefault());
     }
-  }
+  });
 
   /* ---------------- Day → night metamorphosis ---------------- */
   const pivot = document.querySelector(".meta-pivot");
@@ -408,69 +406,30 @@
         pivot.dataset.imgA, pivot.dataset.imgB);
     }
     if (!reducedMotion) {
+      // Gentle pivot: porcelain → mediterranean sky, frame blooms to full
+      // bleed, and the copy only appears once the dissolve has finished so
+      // it can be read in full.
+      const PIN = "+=140%";
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: pivot, start: "top top", end: "+=200%", pin: true, scrub: 1, anticipatePin: 1 },
+        scrollTrigger: { trigger: pivot, start: "top top", end: PIN, pin: true, scrub: 1.5, anticipatePin: 1 },
       });
-      tl.fromTo(pivot, { backgroundColor: "#F8F4EE" }, { backgroundColor: "#201C18", duration: 1, ease: "none" }, 0)
-        .to(frame, { clipPath: "inset(0vh 0vw round 0px)", duration: 1, ease: "none" }, 0)
-        .to(copy, { opacity: 1, duration: 0.25 }, 0.45)
-        .to({}, { duration: 0.2 }); // hold
+      tl.fromTo(pivot, { backgroundColor: "#F8F4EE" }, { backgroundColor: "#BFD8F6", duration: 0.85, ease: "none" }, 0)
+        .to(frame, { clipPath: "inset(0vh 0vw round 0px)", duration: 0.85, ease: "power1.inOut" }, 0)
+        .to(copy, { opacity: 1, duration: 0.18, ease: "power2.out" }, 0.8);
       if (setDissolve) {
-        tl.eventCallback("onUpdate", null);
         ScrollTrigger.create({
-          trigger: pivot, start: "top top", end: "+=200%", scrub: true,
-          onUpdate: (self) => setDissolve(self.progress),
+          trigger: pivot, start: "top top", end: PIN, scrub: true,
+          onUpdate: (self) => setDissolve(Math.min(self.progress / 0.8, 1)),
         });
       } else if (layerB) {
-        tl.to(layerB, { opacity: 1, duration: 0.7, ease: "none" }, 0.2);
+        tl.to(layerB, { opacity: 1, duration: 0.55, ease: "none" }, 0.2);
       }
-      ScrollTrigger.create({
-        trigger: pivot, start: "top center", end: "bottom center",
-        onToggle: (self) => document.body.classList.toggle("embers", self.isActive),
-      });
     } else {
-      pivot.style.backgroundColor = "#201C18";
+      pivot.style.backgroundColor = "#BFD8F6";
       if (copy) copy.style.opacity = 1;
       if (layerB) layerB.style.opacity = 1;
       frame.style.clipPath = "none";
     }
-  }
-
-  /* ---------------- Particles (petals ↔ gold embers) ---------------- */
-  const pcanvas = document.getElementById("particles");
-  if (pcanvas && !reducedMotion) {
-    const ctx = pcanvas.getContext("2d");
-    const COUNT = isMobile ? 40 : 90;
-    let W, H;
-    const resize = () => { W = pcanvas.width = innerWidth; H = pcanvas.height = innerHeight; };
-    resize(); addEventListener("resize", resize);
-    const mouse = { x: -9999, y: -9999 };
-    addEventListener("mousemove", (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-    const parts = Array.from({ length: COUNT }, () => ({
-      x: Math.random() * innerWidth, y: Math.random() * innerHeight,
-      r: 1 + Math.random() * 2.4, s: 0.25 + Math.random() * 0.7,
-      drift: Math.random() * Math.PI * 2, o: 0.15 + Math.random() * 0.4,
-    }));
-    gsap.ticker.add(() => {
-      const night = document.body.classList.contains("embers") || document.body.classList.contains("rail-night");
-      ctx.clearRect(0, 0, W, H);
-      const dir = night ? -1 : 1;
-      ctx.fillStyle = night ? "rgba(229,201,120," : "rgba(233,68,55,";
-      for (const p of parts) {
-        p.drift += 0.008;
-        p.y += p.s * dir;
-        p.x += Math.sin(p.drift) * 0.4;
-        const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
-        if (d2 < 14400) { const f = (1 - d2 / 14400) * 1.6; p.x += (dx / Math.sqrt(d2 + 0.01)) * f; p.y += (dy / Math.sqrt(d2 + 0.01)) * f; }
-        if (p.y > H + 10) p.y = -10; if (p.y < -10) p.y = H + 10;
-        if (p.x > W + 10) p.x = -10; if (p.x < -10) p.x = W + 10;
-        ctx.beginPath();
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = night ? `rgba(229,201,120,${p.o})` : `rgba(201,154,46,${p.o * 0.7})`;
-        ctx.ellipse(p.x, p.y, p.r, p.r * 0.7, p.drift, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    });
   }
 
   /* ---------------- Magnetic buttons ---------------- */

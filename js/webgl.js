@@ -50,11 +50,11 @@ void main() {
   vec4 colA = texture2D(uTexA, coverUv(vUv, uPlane, uSizeA));
   vec4 colB = texture2D(uTexB, coverUv(vUv, uPlane, uSizeB));
   float n = fbm(vUv * 4.0);
-  float t = smoothstep(uProgress - 0.08, uProgress + 0.08, n);
+  float t = smoothstep(uProgress - 0.18, uProgress + 0.18, n);
   /* gold ink bleed at the dissolve edge */
-  float edge = smoothstep(uProgress - 0.10, uProgress, n) - smoothstep(uProgress, uProgress + 0.10, n);
+  float edge = smoothstep(uProgress - 0.2, uProgress, n) - smoothstep(uProgress, uProgress + 0.2, n);
   vec3 col = mix(colB.rgb, colA.rgb, t);
-  col += vec3(0.90, 0.72, 0.28) * edge * 0.35;
+  col += vec3(0.90, 0.72, 0.28) * edge * 0.22;
   gl_FragColor = vec4(col, 1.0);
 }`;
 
