@@ -14,7 +14,7 @@ const nav = (current) => `<header class="nav nav--night" id="nav">
     <a class="nav__link" href="index.html">Home</a>
     <div class="nav__drop" id="navDrop">
       <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
-        Projects
+        Real Weddings
         <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
       </button>
       <div class="nav__drop-menu" role="menu">
@@ -34,7 +34,7 @@ const nav = (current) => `<header class="nav nav--night" id="nav">
 
 <div class="mobile-menu" id="mobileMenu">
   <a class="big" href="index.html">Home</a>
-  <a class="big" href="#" id="mmProjects">Projects <em>↓</em></a>
+  <a class="big" href="#" id="mmProjects">Real Weddings <em>↓</em></a>
   <div class="sub">
     <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
     <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
@@ -56,8 +56,8 @@ const PRELOADER = `<div class="preloader" id="preloader">
   <div class="preloader__pct">0%</div>
 </div>`;
 
-const FOOTER = `<footer class="footer">
-  <div class="footer__cta">
+const FOOTER = (withCta = true) => `<footer class="footer" data-theme="dark">
+  ${withCta ? `<div class="footer__cta">
     <div>
       <p class="kicker">— Begin Your Journey</p>
       <h2 class="display-lg footer__cta-title" style="margin-top:2.5vh">
@@ -66,10 +66,10 @@ const FOOTER = `<footer class="footer">
       </h2>
     </div>
     <a class="footer__begin" href="contact.html" data-magnetic>Begin →</a>
-  </div>
-  <div class="footer__cols">
+  </div>` : ""}
+  <div class="footer__cols" ${withCta ? "" : 'style="border-top:none"'}>
     <div>
-      <h4>Projects</h4>
+      <h4>Real Weddings</h4>
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>
@@ -97,7 +97,7 @@ const FOOTER = `<footer class="footer">
   </div>
 </footer>`;
 
-const shell = ({ page, title, description, main }) => `<!DOCTYPE html>
+const shell = ({ page, title, description, main, footerCta = true }) => `<!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8" />
@@ -123,7 +123,7 @@ ${nav(page)}
 <main>
 ${main}
 
-${FOOTER}
+${FOOTER(footerCta)}
 </main>
 
 <button class="totop" id="toTop" aria-label="Back to top">
@@ -353,23 +353,22 @@ pages["the-studio.html"] = shell({
   page: "studio",
   title: "The Studio — Chromata Films | Award-Winning Wedding Cinematography Team",
   description: "Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stephane Maurin and Michael Bod — Hollywood VFX pedigree in service of your wedding film.",
-  main: `  <section class="page-hero" data-theme="dark">
-    <div class="page-hero__bg">
-      <img src="assets/img/studio/studio-01.jpg" alt="Kevin Lopez in black tie, camera rig in hand, at a Dior event" fetchpriority="high" style="object-position: 50% 25%" />
-    </div>
-    <div class="page-hero__content">
-      <p class="kicker line-mask"><span class="line-inner">The Studio</span></p>
-      <h1 class="page-hero__title">
-        <span class="line-mask"><span class="line-inner">Where the French Touch</span></span>
-        <span class="line-mask"><span class="line-inner">meets <em>Modern Elegance</em></span></span>
+  main: `  <section class="film vignette" data-theme="dark" aria-label="The Studio — cinematic header" style="height:100svh">
+    <video src="assets/video/studio-header.mp4" poster="assets/video/studio-header-poster.jpg"
+           muted loop playsinline autoplay data-ambient data-preload-track></video>
+    <div class="film__shade"></div>
+    <div class="hero__head">
+      <p class="kicker" style="color:var(--gold-light)">— The Studio</p>
+      <h1 class="hero__title" style="font-size:clamp(2.2rem,5.5vw,5.6rem)">
+        <span class="line-mask intro-rise"><span class="line-inner">Where the French Touch</span></span>
+        <span class="line-mask intro-rise"><span class="line-inner">meets <em>Modern Elegance</em></span></span>
       </h1>
-      <div class="page-hero__sub">
-        <span>Cinematography</span><span>VFX</span><span>16mm film</span><span>Aerial</span>
-      </div>
+      <p class="intro-fade" style="font-size:12px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(255,249,240,0.8)">Cinematography · VFX · 16mm film · Aerial</p>
     </div>
+    <div class="hero__scroll intro-fade"><span class="lbl">Scroll</span><span class="line"><i></i></span></div>
   </section>
 
-  <section class="pad-section" data-section>
+  <section class="on-sky pad-section" data-section>
     <div class="container">
       <p class="kicker">— The Philosophy</p>
       <h2 class="display-lg" style="margin-top:3vh; max-width:14em">
@@ -384,7 +383,7 @@ pages["the-studio.html"] = shell({
     </div>
   </section>
 
-  <section class="pad-section" style="padding-top:0" data-section>
+  <section class="pad-section" data-section>
     <div class="container">
       <p class="kicker">— The Team</p>
       <div class="team" style="margin-top:6vh">
@@ -416,7 +415,7 @@ pages["the-studio.html"] = shell({
     </div>
   </section>
 
-  <section class="on-sunset pad-section" data-theme="dark" data-section>
+  <section class="on-citrus pad-section" data-theme="dark" data-section>
     <div class="container">
       <p class="kicker">— The VFX Pedigree</p>
       <h2 class="display-lg" style="margin-top:3vh; max-width:14em">
@@ -602,7 +601,7 @@ pages["gallery.html"] = shell({
   page: "gallery",
   title: "Gallery — Chromata Films | Luxury Wedding Cinematography Worldwide",
   description: "A gallery of films and frames from Chromata Films weddings across the French Riviera, Lake Como, St Moritz, Santorini and beyond.",
-  main: `  <section class="page-hero" data-theme="dark" style="min-height:86svh">
+  main: `  <section class="page-hero" data-theme="dark" style="min-height:100svh">
     <div class="page-hero__bg">
       <video src="assets/video/gallery-header.mp4" poster="assets/video/gallery-header-poster.jpg"
              muted loop playsinline autoplay data-ambient data-preload-track></video>
@@ -617,53 +616,26 @@ pages["gallery.html"] = shell({
   <section class="pad-section" data-section>
     <div class="container">
       <p class="kicker">— The Films</p>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:clamp(14px,2vw,28px); margin-top:5vh" class="films-duo">
-        <div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,2.4vw,34px) clamp(14px,2vw,28px); margin-top:5vh" class="films-grid">
+${[
+  ["1039575157", "Alex &amp; Wilton — Wedding Film Highlight"],
+  ["1117935629", "Jacqueline &amp; Gordon — Wedding Film Highlight"],
+  ["1078314523", "Marcella &amp; Dan — Engagement Party Teaser"],
+  ["764060129", "Alexandra &amp; Raphael — Wedding Film Highlight"],
+  ["788687357", "Jasmiina &amp; Tuukka — Wedding Film Highlights"],
+  ["453536410", "Mozzafiato — Grand-Hôtel du Cap-Ferrat, A Four Seasons Hotel Story"],
+  ["645329394", "Nida &amp; Sunny — Wedding Film Highlight"],
+  ["948291710", "Joseph &amp; Ally — Teaser"],
+  ["1159256501", "Henna &amp; Ben — Highlight Film"],
+  ["1129422393", "Narumi &amp; Alonso — Wedding Film Highlight"],
+].map(([id, title]) => `        <div>
           <div class="mat" style="position:relative; aspect-ratio:16/9; background:#000">
-            <iframe data-lazy-src="https://player.vimeo.com/video/1039575157" title="Alex &amp; Wilton — Wedding Film Highlight" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
+            <iframe data-lazy-src="https://player.vimeo.com/video/${id}" title="${title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
           </div>
-          <p class="kicker" style="margin-top:2vh">— Alex &amp; Wilton · St-Tropez</p>
-        </div>
-        <div>
-          <div class="mat" style="position:relative; aspect-ratio:16/9; background:#000">
-            <iframe data-lazy-src="https://player.vimeo.com/video/1117935629" title="Jacqueline &amp; Gordon — Wedding Film Highlight" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
-          </div>
-          <p class="kicker" style="margin-top:2vh">— Jacqueline &amp; Gordon · Le Beauvallon</p>
-        </div>
+          <p class="kicker" style="margin-top:2vh">— ${title}</p>
+        </div>`).join("\n")}
       </div>
-      <style>@media (max-width:900px){ .films-duo { grid-template-columns:1fr !important; } }</style>
-    </div>
-  </section>
-
-  <section class="pad-section" style="padding-top:0" data-section>
-    <div class="container">
-      <p class="kicker">— The Weddings</p>
-      <div class="journal-list" style="margin-top:4vh">
-        <a class="jitem" href="domantas-sabonis.html">
-          <span class="jdate">France · 2021</span>
-          <h2>Domantas Sabonis &amp; Shashana — the NBA All-Star wedding</h2>
-          <span class="jarrow">→</span>
-          <span class="jtag">Real Wedding</span>
-        </a>
-        <a class="jitem" href="jacqueline-gordon.html">
-          <span class="jdate">St-Tropez · 2025</span>
-          <h2>Jacqueline &amp; Gordon — five days at Le Beauvallon</h2>
-          <span class="jarrow">→</span>
-          <span class="jtag">Real Wedding</span>
-        </a>
-        <a class="jitem" href="anna-andres.html">
-          <span class="jdate">Editorial</span>
-          <h2>Anna Andres — a wedding shot like a Vogue cover</h2>
-          <span class="jarrow">→</span>
-          <span class="jtag">Real Wedding</span>
-        </a>
-        <a class="jitem" href="russell-westbrook.html">
-          <span class="jdate">Positano · 2025</span>
-          <h2>Russell Westbrook — a wedding anniversary on the Amalfi Coast</h2>
-          <span class="jarrow">→</span>
-          <span class="jtag">Celebration</span>
-        </a>
-      </div>
+      <style>@media (max-width:900px){ .films-grid { grid-template-columns:1fr !important; } }</style>
     </div>
   </section>
 
@@ -742,6 +714,7 @@ const budgetOptions = ["15,000 – 25,000", "25,000 – 35,000", "35,000 – 45,
 
 pages["contact.html"] = shell({
   page: "contact",
+  footerCta: false,
   title: "Contact Us — Chromata Films | Global Luxury Destination Wedding Cinematographers",
   description: "Check your date with Chromata Films — global luxury destination wedding cinematographers. Tell us about your wedding and let's begin your journey.",
   main: `  <section class="film vignette" data-theme="dark" aria-label="Contact — cinematic header" style="height:100svh">

@@ -260,6 +260,7 @@
     const fill = section.querySelector(".film__timeline .fill");
     const tc = section.querySelector(".film__timeline .tc");
     const heroHead = section.querySelector(".hero__head");
+    const fadeIn = section.querySelector(".film__fadein");
     const endQuote = section.hasAttribute("data-endquote");
     const fmt = (s) => "00:" + String(Math.floor(s)).padStart(2, "0");
 
@@ -288,6 +289,7 @@
         heroHead.style.transform = `translateY(${(1 - a) * -50}px)`;
         heroHead.style.pointerEvents = a < 0.2 ? "none" : "";
       }
+      if (fadeIn) fadeIn.style.opacity = Math.max(0, 1 - p / 0.18);
       let active = -1;
       windows.forEach((w, i) => { if (p >= w[0] && p <= w[1]) active = i; });
       numerals.forEach((n, i) => n.classList.toggle("active", i === active));

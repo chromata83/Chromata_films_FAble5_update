@@ -36,7 +36,7 @@
     <a class="nav__link" href="index.html" aria-current="page">Home</a>
     <div class="nav__drop" id="navDrop">
       <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
-        Projects
+        Real Weddings
         <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
       </button>
       <div class="nav__drop-menu" role="menu">
@@ -56,7 +56,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a class="big" href="index.html">Home</a>
-  <a class="big" href="#" id="mmProjects">Projects <em>↓</em></a>
+  <a class="big" href="#" id="mmProjects">Real Weddings <em>↓</em></a>
   <div class="sub">
     <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
     <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
@@ -89,7 +89,7 @@
   <div class="film__shade"></div>
 
   <div class="hero__head">
-    <h1 class="hero__title" style="color:var(--coral); text-transform:uppercase; font-size:clamp(3rem,9vw,9.5rem); text-shadow:0 2px 50px rgba(22,19,15,0.4)">
+    <h1 class="hero__title" style="color:var(--coral); font-weight:700; text-transform:uppercase; font-size:clamp(3rem,9vw,9.5rem); text-shadow:0 2px 50px rgba(22,19,15,0.4)">
       <span class="line-mask intro-rise"><span class="line-inner">Chromata</span></span>
       <span class="line-mask intro-rise"><span class="line-inner">Films</span></span>
     </h1>
@@ -174,7 +174,7 @@
 </section>
 
 <!-- press marquee -->
-<section class="marquee" data-theme="dark" aria-label="As seen in">
+<section class="marquee" aria-label="As seen in">
   <div class="marquee__track">
     <img src="assets/img/logos/vogue.png" alt="Vogue" />
     <img src="assets/img/logos/harpers-bazaar.png" alt="Harper's Bazaar" />
@@ -195,7 +195,7 @@
             title="Chromata Films — showreel, Katya &amp; Joey" loading="lazy" allow="autoplay; encrypted-media"></iframe>
   </div>
   <div class="ytfull__label">
-    <p class="kicker" style="color:var(--gold-light)">— The Showreel</p>
+    <p class="kicker" style="color:var(--gold-light)">— Latest Wedding</p>
     <h2>Katya <em>&amp;</em> Joey</h2>
   </div>
   <a class="btn btn--coral ytfull__cta" href="https://youtu.be/VGt3ITmdULk" target="_blank" rel="noopener">▶&nbsp; Watch with sound</a>
@@ -218,22 +218,7 @@
   </div>
 </section>
 
-<!-- ==================== 06 · METAMORPHOSIS — day dissolves into night ==================== -->
-<section class="meta-pivot" data-section
-         data-img-a="assets/img/landing/shoes.jpg" data-img-b="assets/img/carousel/c-50.jpg"
-         aria-label="Day turns to night">
-  <div class="meta-pivot__frame">
-    <img class="layer-a" src="assets/img/landing/shoes.jpg" alt="Couture bridal shoes at golden hour" />
-    <img class="layer-b" src="assets/img/carousel/c-50.jpg" alt="" aria-hidden="true" />
-    <canvas class="dissolve" aria-hidden="true"></canvas>
-  </div>
-  <div class="meta-pivot__copy">
-    <p class="kicker" style="color:var(--gold-light)">— 03 · Nightfall</p>
-    <h3>The party doesn't sleep — it <em>dreams</em></h3>
-  </div>
-</section>
-
-<!-- ==================== 07 · REAL WEDDINGS — grabbable carousel ==================== -->
+<!-- ==================== 06 · REAL WEDDINGS — grabbable carousel ==================== -->
 <section class="carousel" data-theme="dark" data-section>
   <div class="carousel__head">
     <div>
@@ -267,9 +252,25 @@
   </div>
 </section>
 
-<!-- ==================== 08 · WHERE WE SHINE (riviera sky) ==================== -->
-<section class="shine pad-section" data-section>
-  <img class="shine__cutout" src="assets/img/landing/cutout-shine.png" alt="" aria-hidden="true" data-speed="1.1" />
+<!-- ==================== 07 · SCROLL FILM II — gradient reveal ==================== -->
+<section class="film vignette" data-scrub data-pin="+=300%" data-theme="dark" data-section aria-label="Night film">
+  <video data-src="assets/video/film-night.mp4" data-src-mobile="assets/video/film-night-mobile.mp4"
+         poster="assets/video/film-night-poster.jpg" muted playsinline preload="metadata"></video>
+  <div class="film__fadein" aria-hidden="true"></div>
+  <div class="film__shade"></div>
+  <div class="film__chapters" aria-hidden="true">
+    <div class="film__chapter"><p class="kicker">The Vows</p><h3>Time flies, <em>memories stay</em></h3></div>
+    <div class="film__chapter"><p class="kicker">The Party</p><h3>Dance until the night <em>surrenders</em></h3></div>
+  </div>
+  <div class="film__numerals" aria-hidden="true"><span>Ⅰ</span><span>Ⅱ</span></div>
+  <div class="film__timeline" aria-hidden="true">
+    <div class="track"><div class="fill"></div></div>
+    <div class="tc">00:00 / 00:06</div>
+  </div>
+</section>
+
+<!-- ==================== 08 · TRUSTED — fade from night into white ==================== -->
+<section class="trusted shine pad-section" data-section style="padding-top:26vh">
   <div class="container">
     <div class="shine__grid">
       <div class="shine__copy">
@@ -297,23 +298,6 @@
         <li><span class="idx">08</span>Four Seasons</li>
       </ul>
     </div>
-  </div>
-</section>
-
-<!-- ==================== 09 · SCROLL FILM II — night, end-quote ==================== -->
-<section class="film vignette" data-scrub data-pin="+=300%" data-endquote data-theme="dark" data-section aria-label="Night film">
-  <video data-src="assets/video/film-night.mp4" data-src-mobile="assets/video/film-night-mobile.mp4"
-         poster="assets/video/film-night-poster.jpg" muted playsinline preload="metadata"></video>
-  <div class="film__shade"></div>
-  <div class="film__chapters" aria-hidden="true">
-    <div class="film__chapter"><p class="kicker">The Vows</p><h3>Time flies, <em>memories stay</em></h3></div>
-    <div class="film__chapter"><p class="kicker">The Party</p><h3>Dance until the night <em>surrenders</em></h3></div>
-    <div class="film__chapter"><h3 style="font-size:var(--display-lg); letter-spacing:0.1em">FOREVER</h3></div>
-  </div>
-  <div class="film__numerals" aria-hidden="true"><span>Ⅰ</span><span>Ⅱ</span><span>Ⅲ</span></div>
-  <div class="film__timeline" aria-hidden="true">
-    <div class="track"><div class="fill"></div></div>
-    <div class="tc">00:00 / 00:06</div>
   </div>
 </section>
 
@@ -395,7 +379,7 @@
 </section>
 
 <!-- ==================== FOOTER ==================== -->
-<footer class="footer" data-section>
+<footer class="footer" data-theme="dark" data-section>
   <div class="footer__cta">
     <div>
       <p class="kicker">— Begin Your Journey</p>
@@ -409,7 +393,7 @@
 
   <div class="footer__cols">
     <div>
-      <h4>Projects</h4>
+      <h4>Real Weddings</h4>
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>
