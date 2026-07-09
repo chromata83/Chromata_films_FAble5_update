@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/main.css?v=5" />
 </head>
 <body data-page="studio">
 
@@ -69,13 +69,13 @@
 <div class="cursor-ring" id="cursorRing"><span class="cursor-label"></span></div>
 
 <main>
-  <section class="film vignette" data-theme="dark" aria-label="The Studio — cinematic header">
+  <section class="film film--header vignette" data-theme="dark" aria-label="The Studio — cinematic header">
     <video src="assets/video/studio-header.mp4" poster="assets/video/studio-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>
     <div class="hero__head">
-      <p class="kicker" style="color:var(--gold-light)">— The Studio</p>
-      <h1 class="hero__title" style="font-size:clamp(2.2rem,5.5vw,5.6rem)">
+      <p class="kicker" style="color:var(--coral)">— The Studio</p>
+      <h1 class="hero__title hero__title--page">
         <span class="line-mask intro-rise"><span class="line-inner">Where the French Touch</span></span>
         <span class="line-mask intro-rise"><span class="line-inner">meets <em>Modern Elegance</em></span></span>
       </h1>
@@ -168,11 +168,6 @@
     </div>
   </section>
 
-  <a class="nextproject" href="contact.html" data-theme="dark">
-    <p class="kicker">— Next wedding</p>
-    <div class="np-title">Begin your journey <em>→</em></div>
-  </a>
-
 <footer class="footer" data-theme="dark">
   <div class="footer__cta">
     <div>
@@ -222,7 +217,6 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/webgl.js" defer></script>
-<script src="js/main.js" defer></script>
+<script src="js/main.js?v=5" defer></script>
 </body>
 </html>

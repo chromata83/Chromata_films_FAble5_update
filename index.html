@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/main.css?v=5" />
 </head>
 <body data-page="home">
 
@@ -83,13 +83,13 @@
 <main>
 
 <!-- ==================== 01 · HERO — scroll-scrubbed film ==================== -->
-<section class="film hero vignette" data-scrub data-pin="+=400%" data-theme="dark" data-section aria-label="Chromata Films — cinematic hero">
+<section class="film film--header hero vignette" data-scrub data-pin="+=400%" data-theme="dark" data-section aria-label="Chromata Films — cinematic hero">
   <video data-src="assets/video/hero.mp4" data-src-mobile="assets/video/hero-mobile.mp4"
          poster="assets/video/hero-poster.jpg" muted playsinline preload="auto" data-preload-track class="intro-scale"></video>
   <div class="film__shade"></div>
 
   <div class="hero__head">
-    <h1 class="hero__title" style="color:var(--coral); font-weight:700; text-transform:uppercase; font-size:clamp(3rem,9vw,9.5rem); text-shadow:0 2px 50px rgba(22,19,15,0.4)">
+    <h1 class="hero__title hero__title--brand" style="color:var(--coral); font-weight:700; text-transform:uppercase; text-shadow:0 2px 50px rgba(22,19,15,0.4)">
       <span class="line-mask intro-rise"><span class="line-inner">Chromata</span></span>
       <span class="line-mask intro-rise"><span class="line-inner">Films</span></span>
     </h1>
@@ -195,7 +195,7 @@
             title="Chromata Films — showreel, Katya &amp; Joey" loading="lazy" allow="autoplay; encrypted-media"></iframe>
   </div>
   <div class="ytfull__label">
-    <p class="kicker" style="color:var(--gold-light)">— Latest Wedding</p>
+    <p class="kicker" style="color:var(--coral)">— Latest Wedding</p>
     <h2>Katya <em>&amp;</em> Joey</h2>
   </div>
   <a class="btn btn--coral ytfull__cta" href="https://youtu.be/VGt3ITmdULk" target="_blank" rel="noopener">▶&nbsp; Watch with sound</a>
@@ -252,25 +252,23 @@
   </div>
 </section>
 
+<!-- white easing band between the portfolio and the film -->
+<div class="ease-band" aria-hidden="true"></div>
+
 <!-- ==================== 07 · SCROLL FILM II — gradient reveal ==================== -->
 <section class="film vignette" data-scrub data-pin="+=300%" data-theme="dark" data-section aria-label="Night film">
   <video data-src="assets/video/film-night.mp4" data-src-mobile="assets/video/film-night-mobile.mp4"
-         poster="assets/video/film-night-poster.jpg" muted playsinline preload="metadata"></video>
+         muted playsinline preload="metadata"></video>
   <div class="film__fadein" aria-hidden="true"></div>
   <div class="film__shade"></div>
   <div class="film__chapters" aria-hidden="true">
     <div class="film__chapter"><p class="kicker">The Vows</p><h3>Time flies, <em>memories stay</em></h3></div>
     <div class="film__chapter"><p class="kicker">The Party</p><h3>Dance until the night <em>surrenders</em></h3></div>
   </div>
-  <div class="film__numerals" aria-hidden="true"><span>Ⅰ</span><span>Ⅱ</span></div>
-  <div class="film__timeline" aria-hidden="true">
-    <div class="track"><div class="fill"></div></div>
-    <div class="tc">00:00 / 00:06</div>
-  </div>
 </section>
 
 <!-- ==================== 08 · TRUSTED — fade from night into white ==================== -->
-<section class="trusted shine pad-section" data-section style="padding-top:26vh">
+<section class="trusted shine pad-section" data-section>
   <div class="container">
     <div class="shine__grid">
       <div class="shine__copy">
@@ -308,7 +306,7 @@
             title="Chromata Films — the studio reel" loading="lazy" allow="autoplay; encrypted-media"></iframe>
   </div>
   <div class="ytfull__label">
-    <p class="kicker" style="color:var(--gold-light)">— 06 · The Studio Reel</p>
+    <p class="kicker" style="color:var(--coral)">— 06 · The Studio Reel</p>
     <h2>Cinema, <em>not coverage</em></h2>
   </div>
   <a class="btn btn--ghost ytfull__cta" href="gallery.html" style="color:var(--cream); border-color:var(--cream)">See the gallery</a>
@@ -450,7 +448,6 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/webgl.js" defer></script>
-<script src="js/main.js" defer></script>
+<script src="js/main.js?v=5" defer></script>
 </body>
 </html>

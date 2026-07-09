@@ -109,7 +109,7 @@ const shell = ({ page, title, description, main, footerCta = true }) => `<!DOCTY
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/main.css?v=5" />
 </head>
 <body data-page="${page}">
 
@@ -133,8 +133,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/webgl.js" defer></script>
-<script src="js/main.js" defer></script>
+<script src="js/main.js?v=5" defer></script>
 </body>
 </html>
 `;
@@ -353,13 +352,13 @@ pages["the-studio.html"] = shell({
   page: "studio",
   title: "The Studio — Chromata Films | Award-Winning Wedding Cinematography Team",
   description: "Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stephane Maurin and Michael Bod — Hollywood VFX pedigree in service of your wedding film.",
-  main: `  <section class="film vignette" data-theme="dark" aria-label="The Studio — cinematic header">
+  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="The Studio — cinematic header">
     <video src="assets/video/studio-header.mp4" poster="assets/video/studio-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>
     <div class="hero__head">
-      <p class="kicker" style="color:var(--gold-light)">— The Studio</p>
-      <h1 class="hero__title" style="font-size:clamp(2.2rem,5.5vw,5.6rem)">
+      <p class="kicker" style="color:var(--coral)">— The Studio</p>
+      <h1 class="hero__title hero__title--page">
         <span class="line-mask intro-rise"><span class="line-inner">Where the French Touch</span></span>
         <span class="line-mask intro-rise"><span class="line-inner">meets <em>Modern Elegance</em></span></span>
       </h1>
@@ -450,9 +449,7 @@ pages["the-studio.html"] = shell({
         <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="22">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.75)">Years together, Kevin &amp; Laura</div></div>
       </div>
     </div>
-  </section>
-
-${next("contact.html", "Begin your journey")}`,
+  </section>`,
 });
 
 /* ============================== JOURNAL ============================== */
@@ -717,13 +714,13 @@ pages["contact.html"] = shell({
   footerCta: false,
   title: "Contact Us — Chromata Films | Global Luxury Destination Wedding Cinematographers",
   description: "Check your date with Chromata Films — global luxury destination wedding cinematographers. Tell us about your wedding and let's begin your journey.",
-  main: `  <section class="film vignette" data-theme="dark" aria-label="Contact — cinematic header">
+  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Contact — cinematic header">
     <video src="assets/video/contact-header.mp4" poster="assets/video/contact-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>
     <div class="hero__head">
-      <p class="kicker" style="color:var(--gold-light)">— Contact Us</p>
-      <h1 class="hero__title" style="font-size:clamp(2.2rem,5.5vw,5.6rem)">
+      <p class="kicker" style="color:var(--coral)">— Contact Us</p>
+      <h1 class="hero__title hero__title--page">
         <span class="line-mask intro-rise"><span class="line-inner">Global luxury</span></span>
         <span class="line-mask intro-rise"><span class="line-inner">destination wedding <em>cinematographers</em></span></span>
       </h1>

@@ -369,6 +369,16 @@
     const vp = car.querySelector(".carousel__viewport");
     const fill = car.querySelector(".carousel__progress .fill");
     if (!vp) return;
+    // Force-load every slide once the section approaches so no empty cards
+    // ever show (lazy loading skips images far to the right of the track).
+    const warm = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        car.querySelectorAll("img").forEach((img) => { img.loading = "eager"; });
+        warm.disconnect();
+      });
+    }, { rootMargin: "150%" });
+    warm.observe(car);
     vp.addEventListener("scroll", () => {
       const max = vp.scrollWidth - vp.clientWidth;
       if (fill && max > 0) fill.style.width = ((vp.scrollLeft / max) * 100).toFixed(2) + "%";
