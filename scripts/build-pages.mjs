@@ -353,7 +353,7 @@ pages["the-studio.html"] = shell({
   page: "studio",
   title: "The Studio — Chromata Films | Award-Winning Wedding Cinematography Team",
   description: "Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stephane Maurin and Michael Bod — Hollywood VFX pedigree in service of your wedding film.",
-  main: `  <section class="film vignette" data-theme="dark" aria-label="The Studio — cinematic header" style="height:100svh">
+  main: `  <section class="film vignette" data-theme="dark" aria-label="The Studio — cinematic header">
     <video src="assets/video/studio-header.mp4" poster="assets/video/studio-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>
@@ -601,7 +601,7 @@ pages["gallery.html"] = shell({
   page: "gallery",
   title: "Gallery — Chromata Films | Luxury Wedding Cinematography Worldwide",
   description: "A gallery of films and frames from Chromata Films weddings across the French Riviera, Lake Como, St Moritz, Santorini and beyond.",
-  main: `  <section class="page-hero" data-theme="dark" style="min-height:100svh">
+  main: `  <section class="page-hero page-hero--full" data-theme="dark">
     <div class="page-hero__bg">
       <video src="assets/video/gallery-header.mp4" poster="assets/video/gallery-header-poster.jpg"
              muted loop playsinline autoplay data-ambient data-preload-track></video>
@@ -717,7 +717,7 @@ pages["contact.html"] = shell({
   footerCta: false,
   title: "Contact Us — Chromata Films | Global Luxury Destination Wedding Cinematographers",
   description: "Check your date with Chromata Films — global luxury destination wedding cinematographers. Tell us about your wedding and let's begin your journey.",
-  main: `  <section class="film vignette" data-theme="dark" aria-label="Contact — cinematic header" style="height:100svh">
+  main: `  <section class="film vignette" data-theme="dark" aria-label="Contact — cinematic header">
     <video src="assets/video/contact-header.mp4" poster="assets/video/contact-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>

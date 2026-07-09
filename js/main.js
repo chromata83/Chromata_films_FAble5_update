@@ -16,6 +16,9 @@
   if (reducedMotion) doc.classList.add("reduced-motion");
 
   gsap.registerPlugin(ScrollTrigger);
+  // dvh-sized headers resize as the mobile URL bar collapses; don't let that
+  // thrash pinned scrub sections.
+  ScrollTrigger.config({ ignoreMobileResize: true });
 
   /* ---------------- Lenis smooth scroll ---------------- */
   let lenis = null;
