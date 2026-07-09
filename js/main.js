@@ -264,6 +264,7 @@
     const tc = section.querySelector(".film__timeline .tc");
     const heroHead = section.querySelector(".hero__head");
     const fadeIn = section.querySelector(".film__fadein");
+    const cardsEl = section.querySelector(".film__cards");
     const endQuote = section.hasAttribute("data-endquote");
     const fmt = (s) => "00:" + String(Math.floor(s)).padStart(2, "0");
 
@@ -293,6 +294,7 @@
         heroHead.style.pointerEvents = a < 0.2 ? "none" : "";
       }
       if (fadeIn) fadeIn.style.opacity = Math.max(0, 1 - p / 0.18);
+      if (cardsEl) cardsEl.style.transform = `translateX(${(-p * Math.max(0, cardsEl.scrollWidth - innerWidth)).toFixed(1)}px)`;
       let active = -1;
       windows.forEach((w, i) => { if (p >= w[0] && p <= w[1]) active = i; });
       numerals.forEach((n, i) => n.classList.toggle("active", i === active));
