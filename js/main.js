@@ -264,6 +264,7 @@
     const tc = section.querySelector(".film__timeline .tc");
     const heroHead = section.querySelector(".hero__head");
     const fadeIn = section.querySelector(".film__fadein");
+    const fadeOut = section.querySelector(".film__fadeout");
     const cardsEl = section.querySelector(".film__cards");
     const endQuote = section.hasAttribute("data-endquote");
     const fmt = (s) => "00:" + String(Math.floor(s)).padStart(2, "0");
@@ -294,6 +295,7 @@
         heroHead.style.pointerEvents = a < 0.2 ? "none" : "";
       }
       if (fadeIn) fadeIn.style.opacity = Math.max(0, 1 - p / 0.18);
+      if (fadeOut) fadeOut.style.opacity = Math.min(1, Math.max(0, (p - 0.85) / 0.13));
       if (cardsEl) cardsEl.style.transform = `translateX(${(-p * Math.max(0, cardsEl.scrollWidth - innerWidth)).toFixed(1)}px)`;
       let active = -1;
       windows.forEach((w, i) => { if (p >= w[0] && p <= w[1]) active = i; });
@@ -346,10 +348,14 @@
     if (sec.hasAttribute("data-pinned")) {
       ScrollTrigger.create({ trigger: sec, start: "top top", end: "+=100%", pin: true, anticipatePin: 1 });
     }
-    gsap.fromTo(media, { yPercent: -4, scale: 1.1 }, {
-      yPercent: 4, scale: 1.02, ease: "none",
-      scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: 1 },
-    });
+    if (!isMobile) {
+      // desktop-only parallax; on mobile the film shows uncropped 16:9,
+      // so any scale/drift would cut into the frame
+      gsap.fromTo(media, { yPercent: -4, scale: 1.1 }, {
+        yPercent: 4, scale: 1.02, ease: "none",
+        scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: 1 },
+      });
+    }
   });
 
   /* ---------------- Hero scroll dot loop ---------------- */
@@ -514,7 +520,16 @@
   /* ---------------- To top ---------------- */
   const toTop = document.getElementById("toTop");
   if (toTop) {
-    ScrollTrigger.create({ start: innerHeight * 1.2, end: "max", onToggle: (self) => toTop.classList.toggle("show", self.isActive) });
+    // visible from one viewport down until the footer scrolls into view
+    const footerEl = document.querySelector(".footer");
+    const updateToTop = () => {
+      let show = (window.scrollY || document.documentElement.scrollTop) > innerHeight * 1.1;
+      if (show && footerEl && footerEl.getBoundingClientRect().top < innerHeight * 0.8) show = false;
+      toTop.classList.toggle("show", show);
+    };
+    ScrollTrigger.create({ start: 0, end: "max", onUpdate: updateToTop });
+    addEventListener("scroll", updateToTop, { passive: true });
+    updateToTop();
     toTop.addEventListener("click", () => scrollToTarget(0));
   }
 
