@@ -271,9 +271,11 @@
 
     // Soft, readable chapter windows; the last one holds through the end of
     // the pin so it can be read once the film has finished scrubbing.
-    const windows = endQuote
-      ? [ [0.14, 0.42], [0.48, 0.76], [0.85, 1.02] ]
-      : [ [0.14, 0.38], [0.44, 0.68], [0.76, 1.02] ];
+    const windows = chapters.length === 2
+      ? [ [0.16, 0.5], [0.58, 1.02] ]
+      : endQuote
+        ? [ [0.14, 0.42], [0.48, 0.76], [0.85, 1.02] ]
+        : [ [0.14, 0.38], [0.44, 0.68], [0.76, 1.02] ];
     const chapterAlpha = (p, [a, b]) => {
       const fade = 0.1;
       if (p < a || p > b) return 0;
@@ -295,7 +297,9 @@
         heroHead.style.pointerEvents = a < 0.2 ? "none" : "";
       }
       if (fadeIn) fadeIn.style.opacity = Math.max(0, 1 - p / 0.18);
-      if (fadeOut) fadeOut.style.opacity = Math.min(1, Math.max(0, (p - 0.85) / 0.13));
+      // Complete the fade well before the pin releases (fully opaque by p≈0.94)
+      // and hold it, so fast scroll / momentum can never reveal the last frame.
+      if (fadeOut) fadeOut.style.opacity = Math.min(1, Math.max(0, (p - 0.8) / 0.14));
       if (cardsEl) cardsEl.style.transform = `translateX(${(-p * Math.max(0, cardsEl.scrollWidth - innerWidth)).toFixed(1)}px)`;
       let active = -1;
       windows.forEach((w, i) => { if (p >= w[0] && p <= w[1]) active = i; });
@@ -387,10 +391,25 @@
       });
     }, { rootMargin: "150%" });
     warm.observe(car);
+    // Page scroll drives the strip; grabbing / momentum / native touch scroll
+    // add an offset on top of the drift, so both inputs compose.
+    let drift = 0, dragOffset = 0;
     vp.addEventListener("scroll", () => {
       const max = vp.scrollWidth - vp.clientWidth;
+      dragOffset = vp.scrollLeft - drift;
       if (fill && max > 0) fill.style.width = ((vp.scrollLeft / max) * 100).toFixed(2) + "%";
     }, { passive: true });
+    if (!reducedMotion) {
+      ScrollTrigger.create({
+        trigger: car, start: "top bottom", end: "bottom top", scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const max = vp.scrollWidth - vp.clientWidth;
+          drift = self.progress * max;
+          vp.scrollLeft = Math.max(0, Math.min(max, drift + dragOffset));
+        },
+      });
+    }
     // grab-to-drag with momentum (touch devices scroll natively)
     if (!isTouch) {
       let down = false, startX = 0, startLeft = 0, vel = 0, lastX = 0, raf = null;

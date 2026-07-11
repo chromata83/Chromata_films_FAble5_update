@@ -117,9 +117,11 @@ body::after {
 .container { max-width: 1440px; margin-inline: auto; padding-inline: var(--pad-x); }
 .pad-section { padding-block: 16vh; position: relative; }
 
-/* masked line reveals */
-.line-mask { display: block; overflow: hidden; }
-.line-mask .line-inner { display: block; transform: translateY(112%) rotate(2deg); transform-origin: 0 100%; }
+/* masked line reveals — bottom/right padding keeps descenders (g j p q y)
+   and italic overhangs inside the overflow mask; the negative margin
+   cancels the padding so line spacing is unchanged */
+.line-mask { display: block; overflow: hidden; padding: 0 0.12em 0.18em 0; margin-bottom: -0.18em; }
+.line-mask .line-inner { display: block; transform: translateY(134%) rotate(2deg); transform-origin: 0 100%; }
 .no-js .line-mask .line-inner, .reduced-motion .line-mask .line-inner { transform: none; }
 
 /* image reveal + mat border */
@@ -280,6 +282,16 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .film__chapter .kicker::before { background: var(--coral); }
 .film__chapter h3 { font-size: var(--display-md); font-family: var(--font-display); font-weight: 500; color: var(--cream); text-shadow: 0 2px 40px rgba(22,19,15,0.5); max-width: 18em; }
 .film__chapter h3 em { font-family: var(--font-accent); font-style: italic; color: var(--coral); }
+/* persistent centered title over a scroll-scrubbed film (L'Amour feature) */
+.film__headline { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; pointer-events: none; padding-inline: 8vw; z-index: 4; }
+.film__headline .kicker { color: var(--coral); }
+.film__headline .kicker::before { background: var(--coral); }
+.film__headline h2 { margin-top: 2.6vh; font-weight: 600; color: var(--cream); text-shadow: 0 2px 44px rgba(22,19,15,0.55); }
+.film__headline h2 em { color: var(--coral); }
+/* L'Amour transitions: fade in from the gold About section (top), fade out to
+   night (bottom) so the final frame never lingers before the dark BTS block */
+.film--amour .film__fadein { background: linear-gradient(180deg, #E5B92E 0%, rgba(229,185,46,0.55) 44%, rgba(229,185,46,0) 100%); }
+.film--amour .film__fadeout { background: var(--night-deep); }
 /* gradient reveal into a scrub film (placed right after the white ease band) */
 .film__fadein { position: absolute; inset: 0; z-index: 3; pointer-events: none;
   background: linear-gradient(180deg, #FFF8F0 0%, rgba(255,248,240,0.5) 45%, rgba(255,248,240,0) 100%); }
@@ -416,10 +428,6 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .trusted { background: #FFF8F0; position: relative; overflow: hidden; }
 .shine { position: relative; overflow: hidden; }
 
-/* 100px white easing band between the portfolio carousel and the film */
-.ease-band { height: 100px; background: #FFF8F0; }
-.carousel::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 110px;
-  background: linear-gradient(180deg, rgba(255,248,240,0) 0%, #FFF8F0 100%); pointer-events: none; }
 .shine__grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(30px, 5vw, 80px); align-items: center; position: relative; z-index: 2; }
 .shine__copy { display: flex; flex-direction: column; gap: 3.4vh; align-items: flex-start; }
 .shine__img { border-radius: 4px; overflow: hidden; position: relative; }
@@ -642,11 +650,8 @@ form .form-note { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.04
   .ytfull__media iframe { width: 100vw; height: 100%; min-width: 0; min-height: 0; top: 0; left: 0; transform: none; }
   .ytfull__label { bottom: 3vh; }
   .ytfull__cta { right: auto; left: clamp(20px, 4vw, 60px); bottom: auto; top: calc(var(--nav-h) + 2vh); }
-  /* display titles: room for descenders and italic overhangs (no clipping) */
+  /* display titles: extra breathing room on small screens */
   .display-xl, .display-lg, .display-md { line-height: 1.06; }
-  .line-mask { padding: 0 0.1em 0.12em 0; margin-bottom: -0.12em; }
-  .line-mask .line-inner { transform: translateY(124%) rotate(2deg); }
-  .no-js .line-mask .line-inner, .reduced-motion .line-mask .line-inner { transform: none; }
 }
 @media (max-width: 540px) {
   .field.split { grid-template-columns: 1fr; }

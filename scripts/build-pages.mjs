@@ -112,7 +112,7 @@ const shell = ({ page, title, description, main, footerCta = true }) => `<!DOCTY
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=6" />
+<link rel="stylesheet" href="css/main.css?v=10" />
 </head>
 <body data-page="${page}">
 
@@ -136,7 +136,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=6" defer></script>
+<script src="js/main.js?v=10" defer></script>
 </body>
 </html>
 `;
@@ -158,7 +158,7 @@ pages["domantas-sabonis.html"] = shell({
   description: "The wedding of NBA All-Star Domantas Sabonis and Shashana at Villa Ephrussi, St-Jean-Cap-Ferrat ... three days on the French Riviera, planned by Mindy Weiss, filmed by Chromata Films.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
-      <img src="assets/img/landing/domantas-cover.png" alt="Domantas Sabonis and Shashana on their wedding day" fetchpriority="high" />
+      <img src="assets/img/landing/domantas-cover.jpg" alt="Domantas Sabonis and Shashana on their wedding day" fetchpriority="high" />
     </div>
     <div class="page-hero__content">
       <p class="kicker line-mask"><span class="line-inner">Real Wedding · NBA All-Star</span></p>
@@ -401,7 +401,7 @@ pages["the-studio.html"] = shell({
   <section class="on-sky pad-section" data-section>
     <div class="container">
       <p class="kicker">— The Philosophy</p>
-      <h2 class="display-lg" style="margin-top:3vh; max-width:14em; color:var(--lemon)">
+      <h2 class="display-lg" style="margin-top:3vh; max-width:14em; color:var(--citrus)">
         <span class="line-mask"><span class="line-inner">Visual narratives,</span></span>
         <span class="line-mask"><span class="line-inner">not <em>documentation</em></span></span>
       </h2>
