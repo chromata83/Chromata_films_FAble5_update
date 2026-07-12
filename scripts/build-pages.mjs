@@ -58,18 +58,19 @@ const PRELOADER = `<div class="preloader" id="preloader">
   <div class="preloader__pct">0%</div>
 </div>`;
 
-const FOOTER = (withCta = true) => `<footer class="footer">
-  ${withCta ? `<div class="footer__cta">
-    <div>
-      <p class="kicker">— Begin Your Journey</p>
-      <h2 class="display-lg footer__cta-title" style="margin-top:2.5vh">
-        <span class="line-mask"><span class="line-inner">Come see your</span></span>
-        <span class="line-mask"><span class="line-inner">story <em>bloom</em></span></span>
-      </h2>
-    </div>
-    <a class="footer__begin" href="contact.html" data-magnetic>Begin →</a>
-  </div>` : ""}
-  <div class="footer__cols" ${withCta ? "" : 'style="border-top:none"'}>
+const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-theme="dark" data-section>
+  <div>
+    <p class="kicker">— Begin Your Journey</p>
+    <h2 class="display-lg footer__cta-title" style="margin-top:2.5vh">
+      <span class="line-mask"><span class="line-inner">Come see your</span></span>
+      <span class="line-mask"><span class="line-inner">story <em>bloom</em></span></span>
+    </h2>
+  </div>
+  <a class="footer__begin" href="contact.html" data-magnetic>Begin →</a>
+</section>
+
+` : ""}<footer class="footer">
+  <div class="footer__cols">
     <div>
       <h4>Real Weddings</h4>
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
@@ -112,7 +113,7 @@ const shell = ({ page, title, description, main, footerCta = true }) => `<!DOCTY
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=10" />
+<link rel="stylesheet" href="css/main.css?v=21" />
 </head>
 <body data-page="${page}">
 
@@ -445,6 +446,12 @@ pages["the-studio.html"] = shell({
     </div>
   </section>
 
+  <!-- full-bleed ambient film band (3:1) between the team and the blockbusters -->
+  <section class="videoband" data-theme="dark" data-section aria-label="Chromata Films — studio banner film">
+    <iframe data-lazy-src="https://www.youtube-nocookie.com/embed/TvG8udATApo?autoplay=1&mute=1&loop=1&playlist=TvG8udATApo&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1"
+            title="Chromata Films — studio banner film" loading="lazy" allow="autoplay; encrypted-media"></iframe>
+  </section>
+
   <section class="on-citrus pad-section" data-theme="dark" data-section>
     <div class="container">
       <p class="kicker">— The VFX Pedigree</p>
@@ -667,7 +674,14 @@ ${[
     </div>
   </section>
 
-  <section class="pad-section" style="padding-top:0" data-section>
+  <!-- scroll-scrubbed film band (3:1) between the films and the frames -->
+  <section class="film film--band vignette" data-scrub data-film-nopin data-theme="dark" data-section aria-label="Chromata Films — gallery film">
+    <video data-src="assets/video/gallery-film.mp4" data-src-mobile="assets/video/gallery-film-mobile.mp4"
+           poster="assets/video/gallery-film-poster.jpg" muted playsinline preload="metadata"></video>
+    <div class="film__shade"></div>
+  </section>
+
+  <section class="pad-section" data-section>
     <div class="container">
       <p class="kicker">— The Frames</p>
       <div class="gallery-grid" style="margin-top:5vh">

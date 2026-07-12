@@ -24,6 +24,7 @@ jpg () { # src dst maxw
 # ---------- landing images ----------
 jpg "$PUB/landingpage_images/Under the Veil - Agnes Black - Rosewood Gbhala -124.jpg" "$OUT/img/landing/founders.jpg" 1600
 jpg "$PUB/landingpage_images/shoes cover.jpg" "$OUT/img/landing/shoes.jpg" 1600
+cp "$PUB/landingpage_images/domantas cover.png" "$OUT/img/landing/domantas-cover.png"
 jpg "$PUB/domantas_sabonis/DSC00034-1-low.jpg" "$OUT/img/landing/domantas-cover.jpg" 1800
 cp "$PUB/landingpage_images/top 15.png"              "$OUT/img/landing/top15.png"
 cp "$PUB/landingpage_images/wow head.png"            "$OUT/img/landing/wow-head.png"
@@ -82,11 +83,16 @@ vid "$PUB/BG_GASP.mp4"     "reel"
 vid "$PUB/BG_GASP (2).mp4" "film-night"
 vid "$PUB/BG_GASP (3).mp4" "contact"
 vid "$PUB/BG_GASP (2)_3_thm2_prob4.mp4" "amour"
+vid "$PUB/magnific_create-a-video_2973139937.mp4" "gallery-film"
 
 # poster frames for reduced-motion / first paint
-for s in hero reel film-night contact amour; do
+for s in hero reel film-night contact gallery-film; do
   $FF -i "$OUT/video/$s.mp4" -vf "select=eq(n\,0)" -frames:v 1 -q:v 4 "$OUT/video/$s-poster.jpg"
 done
+# amour uses hand-picked intro (poster) + outro stills instead of video frames
+# (user-provided stills committed under assets/img/landing/)
+jpg "$OUT/img/landing/shashana.00_14_44_08.Still004-WEB.jpg"     "$OUT/video/amour-poster.jpg" 1920
+jpg "$OUT/img/landing/Derush_WedDay3.01_15_34_04.Still013.jpg"   "$OUT/video/amour-outro.jpg"  1920
 
 echo "ASSET PIPELINE DONE"
 du -sm "$OUT"/*

@@ -262,6 +262,7 @@
     const numerals = section.querySelectorAll(".film__numerals span");
     const fill = section.querySelector(".film__timeline .fill");
     const tc = section.querySelector(".film__timeline .tc");
+    const tcNow = section.querySelector(".film__timeline .tc-now");
     const heroHead = section.querySelector(".hero__head");
     const fadeIn = section.querySelector(".film__fadein");
     const fadeOut = section.querySelector(".film__fadeout");
@@ -305,7 +306,12 @@
       windows.forEach((w, i) => { if (p >= w[0] && p <= w[1]) active = i; });
       numerals.forEach((n, i) => n.classList.toggle("active", i === active));
       if (fill) fill.style.width = (p * 100).toFixed(2) + "%";
-      if (tc && video.duration) tc.textContent = fmt(p * video.duration) + " / " + fmt(video.duration);
+      if (video.duration) {
+        // split timecode (tc-now on the left, static end on the right) or the
+        // combined "now / end" readout — whichever the section provides
+        if (tcNow) tcNow.textContent = fmt(p * video.duration);
+        else if (tc) tc.textContent = fmt(p * video.duration) + " / " + fmt(video.duration);
+      }
     };
 
     if (reducedMotion) {
@@ -333,15 +339,26 @@
       paintChapters(state.current);
       raf = requestAnimationFrame(loop);
     };
-    ScrollTrigger.create({
-      trigger: section, start: "top top", end: pinLength, pin: true, scrub: true,
-      anticipatePin: 1,
-      onUpdate: (self) => { state.target = self.progress; },
-      onToggle: (self) => {
-        if (self.isActive && raf === null) raf = requestAnimationFrame(loop);
-        else if (!self.isActive && raf !== null) { cancelAnimationFrame(raf); raf = null; }
-      },
-    });
+    const onToggle = (self) => {
+      if (self.isActive && raf === null) raf = requestAnimationFrame(loop);
+      else if (!self.isActive && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    };
+    if (section.hasAttribute("data-film-nopin")) {
+      // short band (e.g. 3:1): scrub as the section travels through the
+      // viewport — no pin, so the page background never shows around it
+      ScrollTrigger.create({
+        trigger: section, start: "top bottom", end: "bottom top", scrub: true,
+        onUpdate: (self) => { state.target = self.progress; },
+        onToggle,
+      });
+    } else {
+      ScrollTrigger.create({
+        trigger: section, start: "top top", end: pinLength, pin: true, scrub: true,
+        anticipatePin: 1,
+        onUpdate: (self) => { state.target = self.progress; },
+        onToggle,
+      });
+    }
     paintChapters(0);
   });
 
