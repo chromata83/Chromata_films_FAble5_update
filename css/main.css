@@ -405,16 +405,25 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 /* testimonials — colourful grabbable quote cards (reuse .carousel mechanics) */
 .carousel--quotes { padding-bottom: 12vh; }
 .carousel--quotes .carousel__track { align-items: stretch; }
-.quote-card { flex: none; width: min(84vw, 440px); min-height: clamp(300px, 42vh, 460px); border-radius: 8px; padding: clamp(28px, 3vw, 46px); display: flex; flex-direction: column; justify-content: space-between; gap: 5vh; }
-.quote-card blockquote { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.15rem, 1.7vw, 1.6rem); line-height: 1.42; }
-.quote-card figcaption { display: flex; flex-direction: column; gap: 5px; }
+/* review-style cards: white, avatar + 5 stars, with a <pixel-canvas>
+   layer that shimmers in the card's accent colour on hover/focus */
+.quote-card { position: relative; overflow: hidden; flex: none; width: min(84vw, 420px); min-height: clamp(280px, 38vh, 420px); border-radius: 18px; background: #FFFFFF; color: var(--ink); border: 1px solid rgba(37,35,33,0.14); padding: clamp(24px, 2.6vw, 40px); transition: border-color 0.25s; cursor: default; }
+.quote-card:hover, .quote-card:focus-visible { border-color: var(--active-color, var(--gold)); outline: none; }
+.quote-card pixel-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.quote-card__inner { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 2.4vh; height: 100%; }
+.quote-card__head { display: flex; align-items: center; gap: 14px; }
+.quote-card__avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--active-color, var(--gold)); color: #fff; display: grid; place-items: center; font-family: var(--font-ui); font-weight: 600; font-size: 18px; flex: none; }
+.quote-card--lemon .quote-card__avatar, .quote-card--sky .quote-card__avatar { color: var(--ink); }
+.quote-card__who { display: flex; flex-direction: column; gap: 3px; }
 .quote-card__name { font-family: var(--font-ui); font-weight: 600; font-size: 15px; letter-spacing: 0.04em; }
-.quote-card__role { font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.72; }
-.quote-card--coral { background: var(--coral); color: #fff; }
-.quote-card--lemon { background: var(--lemon); color: var(--ink); }
-.quote-card--sky { background: var(--sky); color: var(--ink); }
-.quote-card--gold { background: var(--gold); color: #fff; }
-.quote-card--citrus { background: var(--citrus); color: var(--ink); }
+.quote-card__role { font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.6; }
+.quote-card__stars { color: #F2B50C; font-size: 19px; letter-spacing: 4px; line-height: 1; }
+.quote-card blockquote { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.05rem, 1.5vw, 1.4rem); line-height: 1.48; color: rgba(37,35,33,0.88); }
+.quote-card--coral { --active-color: var(--coral); }
+.quote-card--lemon { --active-color: var(--lemon); }
+.quote-card--sky { --active-color: var(--sky); }
+.quote-card--gold { --active-color: var(--gold); }
+.quote-card--citrus { --active-color: var(--citrus); }
 
 /* ============================================================
    ACCLAIM (post-showreel + lobster)
