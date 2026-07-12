@@ -113,7 +113,7 @@ const shell = ({ page, title, description, main, footerCta = true }) => `<!DOCTY
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=24" />
+<link rel="stylesheet" href="css/main.css?v=25" />
 </head>
 <body data-page="${page}">
 
@@ -137,7 +137,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=24" defer></script>
+<script src="js/main.js?v=25" defer></script>
 </body>
 </html>
 `;
@@ -581,14 +581,15 @@ pages["journal.html"] = shell({
   page: "journal",
   title: "Journal — Chromata Films | Latest News & Real Weddings",
   description: "Latest news from Chromata Films: real weddings in St-Tropez and Paris, AI masterclasses for planners, and stories from the world of luxury wedding cinematography.",
-  main: `  <section class="page-hero" data-theme="dark" style="min-height:100svh">
-    <div class="page-hero__bg">
-      <video src="assets/video/journal-header.mp4" poster="assets/video/journal-header-poster.jpg"
-             muted loop playsinline autoplay data-ambient data-preload-track></video>
-    </div>
-    <div class="page-hero__content">
-      <p class="kicker line-mask"><span class="line-inner">Latest News</span></p>
-      <h1 class="page-hero__title"><span class="line-mask"><span class="line-inner">The <em>Journal</em></span></span></h1>
+  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Journal — cinematic header">
+    <video src="assets/video/journal-header.mp4" poster="assets/video/journal-header-poster.jpg"
+           muted loop playsinline autoplay data-ambient data-preload-track></video>
+    <div class="film__shade"></div>
+    <div class="hero__head">
+      <p class="kicker" style="color:var(--coral)">— Latest News</p>
+      <h1 class="hero__title hero__title--page">
+        <span class="line-mask intro-rise"><span class="line-inner">The <em>Journal</em></span></span>
+      </h1>
     </div>
   </section>
 
@@ -841,7 +842,7 @@ pages["contact.html"] = shell({
   footerCta: false,
   title: "Contact Us — Chromata Films | Global Luxury Destination Wedding Cinematographers",
   description: "Check your date with Chromata Films — global luxury destination wedding cinematographers. Tell us about your wedding and let's begin your journey.",
-  main: `  <section class="film film--header film--fill vignette" data-theme="dark" aria-label="Contact — cinematic header">
+  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Contact — cinematic header">
     <video src="assets/video/contact-header.mp4" poster="assets/video/contact-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>

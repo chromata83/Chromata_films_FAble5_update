@@ -165,7 +165,7 @@ body::after {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
 }
 .preloader__mark { height: 140px; width: auto; object-fit: contain; }
-.preloader__word { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 3rem); letter-spacing: 0.5em; text-indent: 0.5em; color: var(--ink); white-space: nowrap; }
+.preloader__word { font-family: var(--font-display); font-size: clamp(1.3rem, 4.6vw, 2.7rem); letter-spacing: 0.16em; text-indent: 0.16em; color: var(--ink); white-space: nowrap; }
 .preloader__sub { font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.42em; text-transform: uppercase; color: var(--gold-deep); }
 .preloader__bar { width: min(320px, 60vw); height: 1px; background: rgba(37,35,33,0.15); position: relative; }
 .preloader__fill { position: absolute; inset: 0; width: 0%; background: var(--ink); }
@@ -261,8 +261,6 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 /* header films: responsive 21:9 cinema band — the full frame is always
    visible, never cropped (masters are 1920×824 scope) */
 .film--header { height: calc(100vw * 9 / 21); }
-/* full-viewport header variant (contact) — video covers, desktop + mobile */
-.film--fill { height: 100vh; height: 100dvh; }
 /* 3:1 scrub band — non-pinned, sits in normal flow between sections */
 .film--band { height: calc(100vw / 3); }
 .film--header .hero__title--brand { font-size: clamp(3rem, 15vw, 11rem); line-height: 0.92; }
@@ -384,10 +382,11 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .manifesto .kicker::before { background: var(--coral); }
 .manifesto .text-link::after { background: var(--coral); }
 /* upside-down cutout bleeding off the top-right corner */
-.manifesto__cutout { position: absolute; top: -6%; right: -4%; width: clamp(180px, 26vw, 420px); transform: rotate(180deg); pointer-events: none; z-index: 1; filter: drop-shadow(0 20px 40px rgba(37,35,33,0.18)); }
+.manifesto__cutout { position: absolute; top: -8%; right: -5%; width: clamp(240px, 36vw, 600px); transform: rotate(180deg); pointer-events: none; z-index: 1; filter: drop-shadow(0 20px 40px rgba(37,35,33,0.18)); }
 .manifesto .container { position: relative; z-index: 2; }
-/* rotated "top 15" badge straddling the portfolio → trusted junction */
-.trusted__badge { position: absolute; top: clamp(-140px, -9vw, -60px); right: clamp(20px, 5vw, 90px); width: clamp(120px, 15vw, 230px); transform: rotate(45deg); pointer-events: none; z-index: 5; filter: drop-shadow(0 18px 36px rgba(37,35,33,0.28)); }
+/* rotated "top 15" badge filling the empty top-right of the trusted section,
+   straddling up into the portfolio above it */
+.trusted__badge { position: absolute; top: clamp(-140px, -9vw, -70px); right: clamp(10px, 4vw, 90px); width: clamp(260px, 32vw, 500px); transform: rotate(30deg); pointer-events: none; z-index: 5; filter: drop-shadow(0 18px 36px rgba(37,35,33,0.28)); }
 .manifesto__statement { max-width: 15em; }
 .manifesto__row { display: flex; justify-content: flex-end; margin-top: 7vh; }
 .manifesto__row-inner { max-width: 34em; display: flex; flex-direction: column; gap: 3.5vh; align-items: flex-start; }
@@ -705,7 +704,8 @@ form .form-note { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.04
 @media (max-width: 540px) {
   .field.split { grid-template-columns: 1fr; }
   .footer__begin { width: 104px; height: 104px; }
-  .shine__clients ul { grid-template-columns: 1fr; }
+  .shine__clients ul { grid-template-columns: repeat(2, 1fr); column-gap: 14px; }
+  .shine__clients li { font-size: 0.92rem; padding: 14px 4px; gap: 8px; }
   .gallery-grid { columns: 1; }
   .gallery-grid--even { grid-template-columns: 1fr; }
   .nav__logo { height: 52px; }

@@ -54,7 +54,7 @@
     const fill = preloader.querySelector(".preloader__fill");
     const pct = preloader.querySelector(".preloader__pct");
     const word = preloader.querySelector(".preloader__word");
-    if (word && !reducedMotion) gsap.fromTo(word, { letterSpacing: "0.5em", opacity: 0 }, { letterSpacing: "0.06em", opacity: 1, duration: 1.2, ease: "power3.out" });
+    if (word && !reducedMotion) gsap.fromTo(word, { letterSpacing: "0.34em", opacity: 0 }, { letterSpacing: "0.08em", opacity: 1, duration: 1.2, ease: "power3.out" });
 
     // track real loading of eager images + video metadata (lazy images load on
     // scroll and must not hold the preloader hostage)
