@@ -94,7 +94,7 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
       <a href="mailto:${EMAIL}">${EMAIL}</a>
     </div>
   </div>
-  <span class="footer__wordmark" id="footerWordmark" aria-hidden="true">CHROMATA FILMS</span>
+  <a class="footer__wordmark" id="footerWordmark" href="index.html" aria-label="Chromata Films — home">CHROMATA FILMS</a>
   <div class="footer__legal">
     <span>© 2026 Chromata Films — Wedding Film Cinematography</span>
     <span>${ADDRESS} · <a href="mailto:${EMAIL}">${EMAIL}</a></span>
@@ -113,7 +113,7 @@ const shell = ({ page, title, description, main, footerCta = true }) => `<!DOCTY
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=21" />
+<link rel="stylesheet" href="css/main.css?v=24" />
 </head>
 <body data-page="${page}">
 
@@ -137,7 +137,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=10" defer></script>
+<script src="js/main.js?v=24" defer></script>
 </body>
 </html>
 `;
@@ -242,7 +242,7 @@ pages["jacqueline-gordon.html"] = shell({
   description: "Five days on the French Riviera: fashion shows, drone spectacles, fireworks and a sunrise after-party. Jacqueline and Gordon's St-Tropez wedding, filmed by Chromata Films.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
-      <img src="assets/img/jacky/jg-04.jpg" alt="Jacqueline and Gordon — wedding celebration in St-Tropez" fetchpriority="high" />
+      <img src="assets/img/jacky/jacky-header.jpg" alt="Jacqueline and Gordon — wedding celebration in St-Tropez" fetchpriority="high" />
     </div>
     <div class="page-hero__content">
       <p class="kicker line-mask"><span class="line-inner">Real Wedding · French Riviera</span></p>
@@ -324,7 +324,7 @@ pages["anna-andres.html"] = shell({
   description: "The wedding of Anna Andres, Miss Universe Ukraine 2014 — filmed by Chromata Films with the pace of a fashion editorial and the heart of a love story.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
-      <img src="assets/img/carousel/c-10.jpg" alt="Anna Andres wedding — editorial bridal portrait" fetchpriority="high" />
+      <img src="assets/img/anna/anna-header.jpg" alt="Anna Andres wedding — editorial bridal portrait" fetchpriority="high" />
     </div>
     <div class="page-hero__content">
       <p class="kicker line-mask"><span class="line-inner">Real Wedding · Miss Universe Ukraine</span></p>
@@ -363,15 +363,7 @@ pages["anna-andres.html"] = shell({
     <div class="container">
       <p class="kicker">— Frames</p>
       <div class="gallery-grid" style="margin-top:5vh">
-        ${g("carousel", "c-10.jpg", "w12 wide", "Editorial bridal portrait")}
-        ${g("carousel", "c-04.jpg", "", "Bridal preparations")}
-        ${g("carousel", "c-16.jpg", "", "The gown")}
-        ${g("carousel", "c-19.jpg", "w4", "Portrait of the bride")}
-        ${g("carousel", "c-26.jpg", "w4", "The ceremony")}
-        ${g("carousel", "c-31.jpg", "w4", "Details")}
-        ${g("carousel", "c-36.jpg", "w8", "The celebration")}
-        ${g("carousel", "c-43.jpg", "w4", "Golden hour")}
-        ${g("carousel", "c-47.jpg", "w12 wide", "Into the evening")}
+${Array.from({ length: 12 }, (_, i) => `        ${g("anna", "an-" + String(i + 1).padStart(2, "0") + ".jpg", "", "Anna Andres wedding — Hôtel du Cap-Eden-Roc")}`).join("\n")}
       </div>
     </div>
   </section>
@@ -487,6 +479,23 @@ pages["the-studio.html"] = shell({
         <div><div style="font-family:var(--font-display); font-size:var(--display-md)"><span data-count="22">0</span></div><div style="font-size:11px; letter-spacing:0.26em; text-transform:uppercase; color:rgba(255,249,240,0.75)">Years together, Kevin &amp; Laura</div></div>
       </div>
     </div>
+  </section>
+
+  <section class="pad-section" data-section>
+    <div class="container">
+      <p class="kicker">— Beyond the Frame</p>
+      <h2 class="display-lg" style="margin-top:3vh; max-width:13em">
+        <span class="line-mask"><span class="line-inner">We don't just film.</span></span>
+        <span class="line-mask"><span class="line-inner">We <em>tell your story</em>.</span></span>
+      </h2>
+      <div class="prose" style="max-width:44em; margin-top:5vh">
+        <p>Our French touch goes beyond aesthetics. We believe in fostering genuine connections with our couples, ensuring you feel relaxed and comfortable throughout the filming process. This connection is what allows us to capture the raw emotions and authentic interactions that make your wedding day so special.</p>
+        <p>Chromata Films goes beyond capturing moments ... we tell stories. We meticulously craft a narrative that reflects your unique journey, leaving you with a lasting visual memory you'll cherish for years to come.</p>
+      </div>
+      <div class="gallery-grid" style="margin-top:8vh">
+${Array.from({ length: 6 }, (_, i) => `        ${g("studio", "illus-" + String(i + 1).padStart(2, "0") + ".jpg", "", "Chromata Films — behind the craft")}`).join("\n")}
+      </div>
+    </div>
   </section>`,
 });
 
@@ -572,9 +581,10 @@ pages["journal.html"] = shell({
   page: "journal",
   title: "Journal — Chromata Films | Latest News & Real Weddings",
   description: "Latest news from Chromata Films: real weddings in St-Tropez and Paris, AI masterclasses for planners, and stories from the world of luxury wedding cinematography.",
-  main: `  <section class="page-hero" data-theme="dark" style="min-height:62svh">
+  main: `  <section class="page-hero" data-theme="dark" style="min-height:100svh">
     <div class="page-hero__bg">
-      <img src="assets/img/carousel/c-01.jpg" alt="Chromata Films — journal" fetchpriority="high" />
+      <video src="assets/video/journal-header.mp4" poster="assets/video/journal-header-poster.jpg"
+             muted loop playsinline autoplay data-ambient data-preload-track></video>
     </div>
     <div class="page-hero__content">
       <p class="kicker line-mask"><span class="line-inner">Latest News</span></p>
@@ -594,6 +604,12 @@ ${posts.map((p) => `        <a class="jitem" href="${p.file}">
         </a>`).join("\n")}
       </div>
     </div>
+  </section>
+
+  <!-- full-bleed ambient film band (3:1) at the foot of the journal -->
+  <section class="videoband" data-theme="dark" data-section aria-label="Chromata Films — Mozzafiato banner film">
+    <iframe data-lazy-src="https://www.youtube-nocookie.com/embed/brZ8vlqwOVY?autoplay=1&mute=1&loop=1&playlist=brZ8vlqwOVY&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1"
+            title="Chromata Films — banner film" loading="lazy" allow="autoplay; encrypted-media"></iframe>
   </section>`,
 });
 
@@ -742,7 +758,7 @@ pages["russell-westbrook.html"] = shell({
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
       <p class="kicker">— Positano</p>
-      <div class="gallery-grid" style="margin-top:5vh">
+      <div class="gallery-grid gallery-grid--even" style="margin-top:5vh">
         ${["rw-02.jpg","rw-03.jpg","rw-04.jpg","rw-05.jpg","rw-06.jpg","rw-07.jpg","rw-08.jpg","rw-09.jpg","rw-10.jpg","rw-11.jpg","rw-12.jpg","rw-13.jpg","rw-14.jpg"].map((f) => g("westbrook", f, "", "Russell and Nina Westbrook anniversary — Positano")).join("\n        ")}
       </div>
     </div>
@@ -825,7 +841,7 @@ pages["contact.html"] = shell({
   footerCta: false,
   title: "Contact Us — Chromata Films | Global Luxury Destination Wedding Cinematographers",
   description: "Check your date with Chromata Films — global luxury destination wedding cinematographers. Tell us about your wedding and let's begin your journey.",
-  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Contact — cinematic header">
+  main: `  <section class="film film--header film--fill vignette" data-theme="dark" aria-label="Contact — cinematic header">
     <video src="assets/video/contact-header.mp4" poster="assets/video/contact-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>
@@ -846,6 +862,7 @@ pages["contact.html"] = shell({
           <figure class="mat img-reveal">
             <img src="assets/img/contact/contact-side.jpg" alt="Bridal portrait — Chromata Films" loading="lazy">
           </figure>
+          <p class="photo-credit">Photography by German Larkin</p>
           <div class="feature__meta">
             <div class="row"><span>Email</span><span class="val"><a class="text-link" href="mailto:${EMAIL}">${EMAIL}</a></span></div>
             <div class="row"><span>Studio</span><span class="val">${ADDRESS}</span></div>

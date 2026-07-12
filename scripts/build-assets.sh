@@ -69,21 +69,73 @@ jpg "$PUB/the_studio_images/L1063485-1.jpg"                                    "
 jpg "$PUB/the_studio_images/RSVP-London-Rosewood Awards Gbvnala-560.jpg"       "$OUT/img/studio/studio-02.jpg" 1600
 jpg "$PUB/the_studio_images/d7552b40-037d-48a7-b5df-38ee18311113.jpg"          "$OUT/img/studio/michael.jpg" 1600
 jpg "$PUB/the_studio_images/stephane FPV pilot.jpg"                            "$OUT/img/studio/stephane.jpg" 1600
+# studio closing-section illustrations
+i=0
+for f in "A9_00995.jpg" "358396225_291305283266365_6392017329932999453_n.jpg" "372835832_18384628741021401_739032674496621848_n.jpg" "387685587_1838694466638717_6640025345285390009_n.jpg" "397504558_920807432803164_128011837635376924_n.jpg" "429680543_17976621647664230_8262253484510476541_n.jpg"; do
+  i=$((i+1)); jpg "$PUB/the studio_illustrations/$f" "$OUT/img/studio/illus-$(printf '%02d' $i).jpg" 1400
+done
 
 # ---------- contact ----------
 jpg "C:/Users/kev1l/Pictures/daria/done/369294494_758511202714505_8070243041937941151_n.jpg" "$OUT/img/contact/contact-side.jpg" 1600
+
+# ---------- anna andres (new header + gallery) ----------
+mkdir -p "$OUT/img/anna"
+jpg "$PUB/Anna Andres/anna andres header.png" "$OUT/img/anna/anna-header.jpg" 1920
+i=0
+for f in \
+  "259a3533(1).jpg" \
+  "hotel+du+cap+eden+roc+wedding+photographer+Анна+Андрес+свадебный+фотограф+02.webp" \
+  "image00001_5f0dc6628c112.webp" \
+  "252454998_328738855679353_4636211931660097973_n.jpg" \
+  "image00005_5f0dc62b7a4ca.webp" \
+  "Анна+Андрес+свадебный+фотограф+hotel+du+cap+eden+roc+wedding+photographer+Анна+Андрес+свадебный+фотограф+04 (1).webp" \
+  "253075228_639296430571300_4164084866042770414_n.jpg" \
+  "image00014_5f0dc57ff1ee2.webp" \
+  "Untitled-83_5f0dc52020090.webp" \
+  "hotel+du+cap+eden+roc+wedding+photographer+Анна+Андрес+свадебный+фотограф.webp" \
+  "Untitled-84_5f0dc5678ba25 (1).webp" \
+  "Анна+Андрес+свадебный+фотограф+wedding+photographer+anna+andres+eden+roc+05.webp" ; do
+  i=$((i+1)); jpg "$PUB/Anna Andres/$f" "$OUT/img/anna/an-$(printf '%02d' $i).jpg" 1400
+done
+
+# ---------- jacky & gordon header ----------
+jpg "$PUB/Jacky_Gordon/J&G _ DAY 4 _ Wedding day _ 15.6.25 (501 sur 1547).jpg" "$OUT/img/jacky/jacky-header.jpg" 1800
+
+# ---------- wedding planner logos (keep original format, aspect + colours) ----------
+mkdir -p "$OUT/img/planner-logos"
+cp "$PUB/planner_logos/logotype_black_palazzoeventi-1-01-scaled.png"        "$OUT/img/planner-logos/palazzo-eventi.png"
+cp "$PUB/planner_logos/the_wedding_planners___monaco_logo-1695093997.jpg"   "$OUT/img/planner-logos/wedding-planners-monaco.jpg"
+cp "$PUB/planner_logos/houseofkirschner_official_logo.jpg"                  "$OUT/img/planner-logos/house-of-kirschner.jpg"
+cp "$PUB/planner_logos/logo_anthracite_png-02.png"                          "$OUT/img/planner-logos/anthracite.png"
+cp "$PUB/planner_logos/website-assetts-v3-06-3957510473.png"                "$OUT/img/planner-logos/planner-06.png"
+cp "$PUB/planner_logos/Logo.png"                                            "$OUT/img/planner-logos/planner-logo.png"
+cp "$PUB/planner_logos/photo.png"                                           "$OUT/img/planner-logos/planner-photo.png"
+cp "$PUB/planner_logos/images.png"                                          "$OUT/img/planner-logos/planner-images.png"
+cp "$PUB/planner_logos/images (4).jpg"                                      "$OUT/img/planner-logos/planner-04.jpg"
+cp "$PUB/planner_logos/images (5).jpg"                                      "$OUT/img/planner-logos/planner-05.jpg"
+cp "$PUB/planner_logos/1631307868847.jpg"                                   "$OUT/img/planner-logos/planner-lg.jpg"
+cp "$PUB/planner_logos/partner_lgpelite.webp"                               "$OUT/img/planner-logos/lgp-elite.webp"
 
 # ---------- videos: keyframe-dense scrub encodes ----------
 vid () { # src slug
   $FF -i "$1" -an -vf "scale='min(1920,iw)':-2" -c:v libx264 -profile:v high -pix_fmt yuv420p -g 8 -keyint_min 8 -sc_threshold 0 -crf 23 -preset slow -movflags +faststart "$OUT/video/$2.mp4"
   $FF -i "$1" -an -vf "scale='min(960,iw)':-2"  -c:v libx264 -profile:v main -pix_fmt yuv420p -g 8 -keyint_min 8 -sc_threshold 0 -crf 26 -preset slow -movflags +faststart "$OUT/video/$2-mobile.mp4"
 }
-vid "$PUB/BG_GASP (1).mp4" "hero"
+vid "$PUB/BG_GASP_HEADER.mp4" "hero"
 vid "$PUB/BG_GASP.mp4"     "reel"
 vid "$PUB/BG_GASP (2).mp4" "film-night"
 vid "$PUB/BG_GASP (3).mp4" "contact"
 vid "$PUB/BG_GASP (2)_3_thm2_prob4.mp4" "amour"
 vid "$PUB/magnific_create-a-video_2973139937.mp4" "gallery-film"
+
+# ambient header videos (autoplay loop, not scrubbed → single file + poster)
+ambient () { # src slug
+  $FF -i "$1" -an -vf "scale='min(1920,iw)':-2" -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 23 -preset slow -movflags +faststart "$OUT/video/$2.mp4"
+  $FF -i "$OUT/video/$2.mp4" -vf "select=eq(n\,0)" -frames:v 1 -q:v 4 "$OUT/video/$2-poster.jpg"
+}
+ambient "$PUB/the journal header.mp4"     "journal-header"
+ambient "$PUB/the studio_header_new.mp4"  "studio-header"
+ambient "$PUB/header_contact_us_NEW.mp4"  "contact-header"
 
 # poster frames for reduced-motion / first paint
 for s in hero reel film-night contact gallery-film; do

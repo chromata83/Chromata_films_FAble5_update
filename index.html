@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=21" />
+<link rel="stylesheet" href="css/main.css?v=24" />
 </head>
 <body data-page="home">
 
@@ -161,6 +161,7 @@
 
 <!-- ==================== 04 · MANIFESTO (lemon) ==================== -->
 <section class="manifesto pad-section" data-section>
+  <img class="manifesto__cutout" src="assets/img/landing/cutout-shine.png" alt="" aria-hidden="true" data-speed="1.08" />
   <div class="container">
     <p class="kicker">— 01 · Award-Winning Wedding Film Company</p>
     <h2 class="display-lg manifesto__statement" style="margin-top:4vh">
@@ -258,6 +259,7 @@
 
 <!-- ==================== 08 · TRUSTED — fade from night into white ==================== -->
 <section class="trusted shine pad-section" data-section>
+  <img class="trusted__badge" src="assets/img/landing/top15.png" alt="Top 15 wedding cinematographers" data-speed="1.1" />
   <div class="container">
     <div class="shine__copy" style="max-width:52em">
       <p class="kicker">— 05 · Where We Shine</p>
@@ -341,6 +343,50 @@
   </div>
 </section>
 
+<!-- ==================== 11C · TESTIMONIALS — grabbable carousel ==================== -->
+<section class="carousel carousel--quotes" data-section aria-label="Testimonials from couples and planners">
+  <div class="carousel__head">
+    <div>
+      <p class="kicker">— Kind Words</p>
+      <h2 class="display-lg" style="margin-top:2.5vh">
+        <span class="line-mask"><span class="line-inner"><strong>Loved by couples &amp; planners</strong></span></span>
+      </h2>
+    </div>
+    <span class="carousel__hint">( grab &amp; drag )</span>
+  </div>
+  <div class="carousel__viewport" data-cursor="drag">
+    <div class="carousel__track">
+      <article class="quote-card quote-card--coral">
+        <blockquote>“Kevin and Laura turned our wedding into a film we watch again and again. Every glance, every tear ... it's all there, and it plays like cinema.”</blockquote>
+        <figcaption><span class="quote-card__name">Sofia &amp; Marc</span><span class="quote-card__role">Bride &amp; Groom · [placeholder]</span></figcaption>
+      </article>
+      <article class="quote-card quote-card--lemon">
+        <blockquote>“The most professional film team I have ever placed on a wedding. Invisible on the day, extraordinary in the edit.”</blockquote>
+        <figcaption><span class="quote-card__name">[Planner Name]</span><span class="quote-card__role">Wedding Planner · [placeholder]</span></figcaption>
+      </article>
+      <article class="quote-card quote-card--sky">
+        <blockquote>“We cried the moment the teaser dropped. Chromata gave us our day back ... more beautiful than we even remembered it.”</blockquote>
+        <figcaption><span class="quote-card__name">Anna &amp; James</span><span class="quote-card__role">Newlyweds · [placeholder]</span></figcaption>
+      </article>
+      <article class="quote-card quote-card--citrus">
+        <blockquote>“My couples ask for them by name now. That is the highest compliment I can pay a cinematography studio.”</blockquote>
+        <figcaption><span class="quote-card__name">[Planner Name]</span><span class="quote-card__role">Event Designer · [placeholder]</span></figcaption>
+      </article>
+      <article class="quote-card quote-card--gold">
+        <blockquote>“French elegance with Hollywood polish. Our families across three countries all felt like they were right there in the room with us.”</blockquote>
+        <figcaption><span class="quote-card__name">Lucia &amp; Tom</span><span class="quote-card__role">Bride &amp; Groom · [placeholder]</span></figcaption>
+      </article>
+      <article class="quote-card quote-card--coral">
+        <blockquote>“Reliable, discreet and endlessly creative. Chromata Films is on every proposal I send to my clients now.”</blockquote>
+        <figcaption><span class="quote-card__name">[Planner Name]</span><span class="quote-card__role">Luxury Wedding Planner · [placeholder]</span></figcaption>
+      </article>
+    </div>
+  </div>
+  <div class="carousel__progress" aria-hidden="true">
+    <div class="track"><div class="fill"></div></div>
+  </div>
+</section>
+
 <!-- ==================== 12 · BEHIND THE SCENES ==================== -->
 <section class="bts pad-section" data-theme="dark" data-section>
   <div class="container">
@@ -373,6 +419,27 @@
       </h2>
       <p class="body-copy" style="margin-inline:auto">We work hand-in-hand with the world's finest planners and designers ... quiet on the day, precise on the timeline, and obsessive about making your production look as extraordinary on film as it did in the room. One call before the wedding, and your transitions, reveals and light are already in our shot list.</p>
       <a class="btn btn--gold" href="contact.html">Partner with us</a>
+    </div>
+  </div>
+</section>
+
+<!-- wedding planners we work with — autoplay logo marquee (original colours) -->
+<section class="planner-wall" data-section aria-label="Wedding planners we work with">
+  <p class="kicker planner-wall__title">— We Work With Them</p>
+  <div class="marquee marquee--planners">
+    <div class="marquee__track">
+      <img src="assets/img/planner-logos/palazzo-eventi.png" alt="Palazzo Eventi" />
+      <img src="assets/img/planner-logos/wedding-planners-monaco.jpg" alt="The Wedding Planners Monaco" />
+      <img src="assets/img/planner-logos/house-of-kirschner.jpg" alt="House of Kirschner" />
+      <img src="assets/img/planner-logos/anthracite.png" alt="Anthracite" />
+      <img src="assets/img/planner-logos/planner-logo.png" alt="Wedding planner" />
+      <img src="assets/img/planner-logos/planner-photo.png" alt="Wedding planner" />
+      <img src="assets/img/planner-logos/planner-06.png" alt="Wedding planner" />
+      <img src="assets/img/planner-logos/planner-images.png" alt="Wedding planner" />
+      <img src="assets/img/planner-logos/planner-04.jpg" alt="Wedding planner" />
+      <img src="assets/img/planner-logos/planner-05.jpg" alt="Wedding planner" />
+      <img src="assets/img/planner-logos/planner-lg.jpg" alt="Wedding planner" />
+      <img src="assets/img/planner-logos/lgp-elite.webp" alt="LGP Elite" />
     </div>
   </div>
 </section>
@@ -434,7 +501,7 @@
     </div>
   </div>
 
-  <span class="footer__wordmark" id="footerWordmark" aria-hidden="true">CHROMATA FILMS</span>
+  <a class="footer__wordmark" id="footerWordmark" href="index.html" aria-label="Chromata Films — home">CHROMATA FILMS</a>
 
   <div class="footer__legal">
     <span>© 2026 Chromata Films — Wedding Film Cinematography</span>
@@ -451,6 +518,6 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=10" defer></script>
+<script src="js/main.js?v=24" defer></script>
 </body>
 </html>
