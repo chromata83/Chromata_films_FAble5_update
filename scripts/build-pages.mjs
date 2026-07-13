@@ -52,8 +52,8 @@ const nav = (current) => `<header class="nav nav--night" id="nav">
 
 const PRELOADER = `<div class="preloader" id="preloader">
   <img class="preloader__mark" src="assets/img/logo-mark.png" alt="Chromata Films — golden peacock" />
-  <div class="preloader__word">CHROMATA</div>
-  <div class="preloader__sub">Films — Wedding Cinematography</div>
+  <div class="preloader__word">CHROMATA FILMS</div>
+  <div class="preloader__sub">Wedding Cinematography</div>
   <div class="preloader__bar"><div class="preloader__fill"></div></div>
   <div class="preloader__pct">0%</div>
 </div>`;
@@ -101,19 +101,19 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
   </div>
 </footer>`;
 
-const shell = ({ page, title, description, main, footerCta = true }) => `<!DOCTYPE html>
+const shell = ({ page, title, description, main, footerCta = true, noindex = false }) => `<!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${title}</title>
 <meta name="description" content="${description}" />
-<link rel="icon" type="image/png" href="assets/img/logo-mark.png" />
+${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link rel="icon" type="image/png" href="assets/img/logo-mark.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=26" />
+<link rel="stylesheet" href="css/main.css?v=32" />
 </head>
 <body data-page="${page}">
 
@@ -137,7 +137,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=26" defer></script>
+<script src="js/main.js?v=29" defer></script>
 </body>
 </html>
 `;
@@ -489,7 +489,7 @@ pages["the-studio.html"] = shell({
         <span class="line-mask"><span class="line-inner">We <em>tell your story</em>.</span></span>
       </h2>
       <div class="prose" style="max-width:44em; margin-top:5vh">
-        <p>Our French touch goes beyond aesthetics. We believe in fostering genuine connections with our couples, ensuring you feel relaxed and comfortable throughout the filming process. This connection is what allows us to capture the raw emotions and authentic interactions that make your wedding day so special.</p>
+        <p>Our vision goes beyond aesthetics. We believe in fostering genuine connections with our couples, ensuring you feel relaxed and comfortable throughout the filming process. This connection is what allows us to capture the raw emotions and authentic interactions that make your wedding day so special.</p>
         <p>Chromata Films goes beyond capturing moments ... we tell stories. We meticulously craft a narrative that reflects your unique journey, leaving you with a lasting visual memory you'll cherish for years to come.</p>
       </div>
       <div class="gallery-grid" style="margin-top:8vh">
@@ -935,6 +935,150 @@ pages["contact.html"] = shell({
           </form>
         </div>
       </div>
+    </div>
+  </section>`,
+});
+
+/* ============================== GET TO KNOW US MORE (unlisted — not in nav, not linked from any page, noindex) ============================== */
+pages["gettoknowusmore.html"] = shell({
+  page: "gtkum",
+  noindex: true,
+  footerCta: false,
+  title: "Get to Know Us More — Chromata Films",
+  description: "Chromata Films — collections, options and the Red Carpet Slow-Mo experience.",
+  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Get to know us more — cinematic header">
+    <video src="assets/video/gtkum-header.mp4" poster="assets/video/gtkum-header-poster.jpg"
+           muted loop playsinline autoplay data-ambient data-preload-track></video>
+    <div class="film__shade"></div>
+    <div class="hero__head">
+      <p class="kicker" style="color:var(--coral)">— Get to Know Us More</p>
+      <h1 class="hero__title hero__title--page">
+        <span class="line-mask intro-rise"><span class="line-inner">The <em>time has come</em></span></span>
+        <span class="line-mask intro-rise"><span class="line-inner">to stand out</span></span>
+      </h1>
+    </div>
+  </section>
+
+  <section class="pad-section" data-section>
+    <div class="container">
+      <p class="kicker">— Where We Shine</p>
+      <h2 class="display-lg" style="margin-top:3vh; max-width:16em">
+        <span class="line-mask"><span class="line-inner">Featured <em>everywhere</em>,</span></span>
+        <span class="line-mask"><span class="line-inner">trusted by icons</span></span>
+      </h2>
+      <p class="body-copy" style="max-width:46em; margin-top:4vh">Our dedication to artistic excellence shines through in publications like People, Vogue, Over The Moon, Brides and The Wed. Under Kevin's visionary leadership, our team has earned the trust of prestigious event planners and garnered recognition from the industry's most respected publications.</p>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— What We Offer</p>
+      <p class="body-copy" style="max-width:46em; margin-top:3vh">We understand every wedding is unique, just like your client's story. That's why we customize every quote, considering their specific venue, dreams and celebration length, to capture their once-in-a-lifetime moment perfectly.</p>
+    </div>
+  </section>
+
+  <!-- GASP scrub film — dissolves straight into the offers section's blue -->
+  <section class="film film--offers vignette" data-scrub data-pin="+=300%" data-theme="dark" data-section aria-label="Chromata Films — cinematic film">
+    <video data-src="assets/video/contact.mp4" data-src-mobile="assets/video/contact-mobile.mp4"
+           poster="assets/video/contact-poster.jpg" muted playsinline preload="metadata"></video>
+    <div class="film__shade"></div>
+    <div class="film__fadeout" aria-hidden="true"></div>
+  </section>
+
+  <section class="offers pad-section" data-section>
+    <div class="container">
+      <p class="kicker">— The Collection Example</p>
+      <h2 class="display-lg" style="margin-top:3vh; max-width:16em">
+        <span class="line-mask"><span class="line-inner">A collection built</span></span>
+        <span class="line-mask"><span class="line-inner">around <em>your day</em></span></span>
+      </h2>
+      <div class="offers__grid">
+        <div class="offers__col">
+          <h3>Collection Example — Includes</h3>
+          <ul class="offers__list">
+            <li>Event coverage (up to 10 hours)</li>
+            <li>Pre- and post-wedding days (3 hours coverage each)</li>
+            <li>Drone coverage with a dedicated drone pilot</li>
+            <li>Edited films in various formats — a 4-minute film + a 20/25-minute film</li>
+            <li>Audio recorded on external high-resolution audio recorders</li>
+            <li>Three cinematographers</li>
+          </ul>
+          <p class="offers__price">Pricing — on demand</p>
+        </div>
+        <div class="offers__col">
+          <h3>Available Options</h3>
+          <ul class="offers__list">
+            <li>Instagram special cuts ×3</li>
+            <li>Cinema drone camera</li>
+            <li>Extra-long film (45 min – 1 hour)</li>
+            <li>Shorter editing time (~4 weeks)</li>
+            <li>Editorial session</li>
+            <li>Live streaming</li>
+            <li>Complete films for ceremony and speeches</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== EXTRAS — split screen: DOP (white) | Red Carpet (coral) ==================== -->
+  <section class="extras" data-section>
+    <div class="extras__col extras__col--dop">
+      <div class="extras__copy">
+        <p class="kicker">— The Extras You Won't Get Anywhere Else</p>
+        <h2 class="display-md" style="margin-top:2.5vh">
+          <span class="line-mask"><span class="line-inner">Working with a</span></span>
+          <span class="line-mask"><span class="line-inner">DOP <em>/ Film Director</em></span></span>
+        </h2>
+        <p class="body-copy" style="margin-top:3vh">Enter cinematic mastery. Adding a dedicated Director of Photography and film director to our team elevates your wedding film beyond the ordinary ... composition, lighting and camera movement considered with the same rigor as a feature production. It's an industry first for destination weddings, bringing genuine Hollywood expertise to your love story: a second creative eye devoted entirely to the visual language of your day, so every frame feels directed, not simply documented.</p>
+      </div>
+      <div class="extras__media">
+        <figure class="mat img-reveal"><img src="assets/img/gtkum/dop-01.jpg" alt="Director of Photography — cinematic lighting" loading="lazy"></figure>
+        <figure class="mat img-reveal"><img src="assets/img/gtkum/dop-02.jpg" alt="Chromata Films — wedding film award" loading="lazy"></figure>
+      </div>
+    </div>
+    <div class="extras__col extras__col--redcarpet">
+      <div class="extras__copy">
+        <p class="kicker">— The Red Carpet Slow-Mo Experience</p>
+        <h2 class="display-md" style="margin-top:2.5vh">
+          <span class="line-mask"><span class="line-inner">Step onto the</span></span>
+          <span class="line-mask"><span class="line-inner"><em>red carpet</em></span></span>
+        </h2>
+        <p class="body-copy" style="margin-top:3vh">Forget the photo booth, step onto a real red carpet! Our slow-motion video booth brings Hollywood glam to your wedding. Imagine: dazzling lighting, playful poses, infectious laughter, all captured in stunning slow-mo. This isn't just a booth, it's a portal to unforgettable fun, adding luxury and spectacle to your extraordinary day.</p>
+        <p class="body-copy" style="margin-top:2vh">Embrace the magic ... give your wedding the ultimate slow-mo robot extravaganza!</p>
+      </div>
+      <div class="extras__media">
+        <figure class="mat img-reveal"><img src="assets/img/gtkum/red-01.jpg" alt="The Red Carpet Slow-Mo Experience" loading="lazy"></figure>
+        <figure class="mat img-reveal"><img src="assets/img/gtkum/red-02.jpg" alt="The Red Carpet Slow-Mo Experience" loading="lazy"></figure>
+        <figure class="mat img-reveal extras__media--sm"><img src="assets/img/gtkum/red-03.jpg" alt="The Red Carpet Slow-Mo Experience — slow-mo robot camera" loading="lazy"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" data-theme="dark" data-section style="background:var(--night-deep); color:var(--cream)">
+    <div class="container">
+      <div class="feature__grid">
+        <div>
+          <p class="kicker" style="color:var(--gold-light)">— From Kevin &amp; Laura</p>
+          <div class="prose" style="max-width:46em; margin-top:3vh">
+            <p>As it is important to know your suppliers and understand why we love what we do, we have decided to write a short article about ourselves. Having been together for 19 years, we know each other well and work as an excellent team. We have surrounded ourselves with exceptional cinematographers to provide the highest quality to our clients. We direct them and work closely with them based on our experiences in the film and commercial industry.</p>
+            <p>We love what we do for several reasons, and sharing our experience in the cinema industry and project management with the wedding industry is important to us. We had difficulty finding someone with similar visions when we got married, so bringing our vision to our clients has been the best decision we have made in years. It is a unique feeling to know that our couples will proudly show their films to their families, children, and maybe even grandchildren for decades to come.</p>
+            <p>We always strive for the best possible results, continuously improve our skillset, and push boundaries by going further, making you and your guests feel unique. The films we produce will always make you feel that way, forever.</p>
+          </div>
+        </div>
+        <figure class="mat img-reveal"><img src="assets/img/gtkum/founders.jpg" alt="Kevin and Laura Lopez — founders of Chromata Films" loading="lazy"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" data-section style="text-align:center">
+    <div class="container">
+      <p class="kicker" style="justify-content:center">— Begin</p>
+      <h2 class="display-md" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Want to hear <em>more</em>?</span></span>
+      </h2>
+      <p class="body-copy" style="max-width:40em; margin:3vh auto 0">Our curated collection serves as a muse to spark your imagination. To craft a truly personalized selection that reflects your unique vision, don't hesitate to reach out to us at <a class="text-link" href="mailto:${EMAIL}">${EMAIL}</a>. Your dream experience awaits!</p>
+      <a class="btn btn--coral" href="mailto:${EMAIL}" style="margin-top:4vh">${EMAIL}</a>
     </div>
   </section>`,
 });
