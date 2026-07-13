@@ -326,13 +326,33 @@
     // Scrub on every device — mobile included (encodes are keyframe-dense,
     // so seeking is smooth); pins shorten on small screens.
     video.preload = "auto";
+    // iOS Safari ignores preload and won't buffer (or even expose duration)
+    // until play() is called, and currentTime seeks don't paint frames until
+    // the element has been activated by a play. Prime it: a muted inline
+    // play() is allowed without a gesture — pause immediately once it starts.
+    // Low Power Mode rejects even muted play(), so retry on the first touch.
+    video.muted = true;
+    video.playsInline = true;
+    let primed = false;
+    const prime = () => {
+      const p = video.play();
+      if (p && p.then) p.then(() => {
+        primed = true;
+        video.pause();
+        try { video.currentTime = 0; } catch (_) {}
+      }).catch(() => {});
+    };
+    prime();
+    window.addEventListener("touchstart", () => { if (!primed) prime(); }, { once: true, passive: true });
     const pinLength = (isMobile && section.dataset.pinMobile) ? section.dataset.pinMobile
       : (isMobile ? "+=250%" : (section.dataset.pin || "+=400%"));
     const state = { current: 0, target: 0 };
     let raf = null;
     const loop = () => {
       state.current += (state.target - state.current) * 0.1;
-      if (video.duration && video.readyState >= 2) {
+      if (video.duration && video.readyState >= 2 && !video.seeking) {
+        // Safari queues seeks much slower than Chromium — issuing a new one
+        // while the last is still in flight piles them up and stalls painting.
         const t = state.current * video.duration;
         if (Math.abs(video.currentTime - t) > 0.001) video.currentTime = t;
       }
