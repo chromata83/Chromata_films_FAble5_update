@@ -268,11 +268,10 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .film--band { height: calc(100vw / 3); }
 .film--header .hero__title--brand { font-size: clamp(3rem, 15vw, 11rem); line-height: 0.92; }
 .film--header .hero__title--page { font-size: clamp(1.1rem, 4.5vw, 5.6rem); }
-/* landing hero: square on mobile/portrait-tablet instead of full-bleed
-   100vh — filling the whole vertical viewport with a ~21:9 video zooms in
-   and crops far too much; a 1:1 frame keeps most of the shot visible */
+/* landing hero rolls back to full-bleed on mobile (phones AND portrait
+   tablets); other headers keep the 21:9 band */
 @media (max-width: 760px), (max-width: 1024px) and (orientation: portrait) {
-  .film--header.hero { height: 100vw; aspect-ratio: 1 / 1; }
+  .film--header.hero { height: 100vh; height: 100dvh; }
 }
 @media (max-width: 760px) {
   .film--header:not(.hero) .hero__scroll, .film--header:not(.hero) .film__timeline, .film--header:not(.hero) .film__numerals { display: none; }
