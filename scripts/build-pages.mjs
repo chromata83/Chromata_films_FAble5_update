@@ -113,7 +113,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=34" />
+<link rel="stylesheet" href="css/main.css?v=36" />
 </head>
 <body data-page="${page}">
 
@@ -518,12 +518,16 @@ const posts = [
     file: "journal-jacqueline-gordon.html", slug: "jacqueline-gordon",
     title: "Jacqueline and Gordon — A St-Tropez Experience Unlike Any Other",
     date: "September 17, 2025", tag: "Real Wedding",
+    video: "1117935629",
+    galleryDir: "jg-blog",
+    gallery: Array.from({ length: 20 }, (_, i) => `jgb-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Jacqueline and Gordon's wedding in St-Tropez could be summarized in one simple word: WOW.",
     body: [
       "Jacqueline and Gordon's wedding in St-Tropez could be summarized in one simple word: WOW. Five days of celebration at Le Beauvallon, each one designed to top the last.",
       "Day one began with a seaside dinner at the hotel, followed by a fashion show of designer collections and a drone light spectacle over the bay ... a welcome party that would have served most couples as a finale.",
       "Day two honored Gordon's Asian heritage with a traditional tea ceremony, before the evening flipped the register entirely: a party blending Bridgerton aesthetics with 1980s energy ... neon color, vintage styling, and dancing that did not pause for breath.",
-      "Day three slowed the pace with tastings of rare wines and spirits from around the world, enjoyed poolside, before late-night celebrations took over a St-Tropez restaurant. Day four was the main event: the ceremony on the Beauvallon terrace overlooking the sea, then fireworks, a private concert performance, and an after-party that extended until sunrise. Day five closed the week the only way it could ... a foam party at the pool.",
+      "Day three slowed the pace with tastings of rare wines and spirits from around the world, enjoyed poolside, before late-night celebrations took over a St-Tropez restaurant. Day four was the main event: the ceremony on the Beauvallon terrace overlooking the sea, then fireworks, a private concert, and an after-party that extended until sunrise. Day five closed the week the only way it could ... a foam party at the pool.",
+      "That private concert was the best-kept secret of the whole week. Gordon surprised Jacqueline with a live performance by Bobby Brown and his group ... her favourite group of all time ... turning the special night into a moment neither of them, nor their guests, will ever forget.",
       "Enormous thanks to the creative team: planning and coordination by Heather, floral and décor design by Reverie d'Azur, entertainment by Black Rabbit Project, and our friends at Maddy Christina on the welcome event. Filming five days of this magnitude is a production in the fullest sense ... and exactly what this studio was built for.",
     ],
   },
@@ -543,6 +547,9 @@ const posts = [
     file: "journal-alexa-wilton.html", slug: "alexa-wilton",
     title: "A Riviera Fairytale: Alexa and Wilton's Extravagant St-Tropez Wedding",
     date: "July 20, 2024", tag: "Real Wedding",
+    video: "1039575157",
+    galleryDir: "aw-blog",
+    gallery: Array.from({ length: 45 }, (_, i) => `aw-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Dreaming of a destination wedding bathed in sunshine and luxury? Look no further than Alexa and Wilton's magical St-Tropez celebration by House of Kirschner.",
     body: [
       "Dreaming of a destination wedding bathed in sunshine and luxury? Look no further than Alexa and Wilton's magical St-Tropez celebration, designed by House of Kirschner ... a wedding that treated the Riviera itself as a set piece.",
@@ -577,16 +584,423 @@ const posts = [
   },
 ];
 
-pages["journal.html"] = shell({
-  page: "journal",
-  title: "Journal — Chromata Films | Latest News & Real Weddings",
-  description: "Latest news from Chromata Films: real weddings in St-Tropez and Paris, AI masterclasses for planners, and stories from the world of luxury wedding cinematography.",
-  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Journal — cinematic header">
+/* ---- Historical journal archive (migrated from the original blog) ---- */
+const archive = [
+  /* ===================== Page 2 ===================== */
+  {
+    file: "journal-france-venues.html", page: 2, tag: "Guide",
+    title: "Our Favourite Venues in the South of France", date: "April 22, 2024",
+    excerpt: "Dreaming of a fairytale wedding bathed in the golden light of the French Riviera, or nestled amidst the lavender fields of Provence? A tour of our most enchanting venues to celebrate your love story.",
+    body: [
+      "Dreaming of a fairytale wedding bathed in the golden light of the French Riviera, or nestled amidst the lavender fields of Provence? This breathtaking region offers a symphony of romance, from sun-drenched coastlines to charming, rustic estates. Choosing the perfect venue can be overwhelming, so here are some of the most enchanting locations to celebrate your love story.",
+      "Villa Ephrussi de Rothschild is a fairytale on the Côte d'Azur ... nine thematic gardens, each a masterpiece of colour and design, provide a magical backdrop for your ceremony. The Grand-Hôtel du Cap-Ferrat, a Four Seasons Hotel, answers with timeless elegance: a ceremony held in the central aisle with the sea beyond, and a party at the Club Dauphin around the pool that is very hard to top.",
+      "Perched atop a hilltop village, the Bastide de Gordes offers panoramic views of the Luberon valley and the rustic elegance of a restored 17th-century farmhouse. Château Saint-Martin & Spa sits amid the rolling vineyards of Provence, its 12th-century courtyard opening onto a marquee built for the occasion. And for a truly grand affair, Château d'Estoublon, surrounded by olive groves and vineyards, offers a chapel, a garden reception, fireworks and a live band.",
+      "Villa La Vigie brings Art Deco charm and panoramic views over the Baie des Anges, once home to Winston Churchill and Karl Lagerfeld ... the chic French Riviera style at its purest. And at the Hôtel du Cap-Eden-Roc, the famous aisle runs from the hotel down to the ceremony spot, the same setting Dior chose for its campaign with Natalie Portman.",
+      "With its stunning scenery, exquisite venues and rich culture, Provence and the French Riviera offer the perfect setting for a wedding you and your guests will cherish forever. And if you need help planning your destination wedding, we know a few wedding planners who would be delighted to help.",
+    ],
+  },
+  {
+    file: "journal-sandra-pedro.html", page: 2, tag: "Real Wedding",
+    title: "Sandra and Pedro — A Mixed-Religion Ceremony at Château d'Estoublon", date: "February 21, 2024",
+    excerpt: "Sandra and Pedro's wedding at Château d'Estoublon, Provence ... vineyards, olive groves and a ceremony of exquisite taste.",
+    body: [
+      "Imagine exchanging vows amidst the sun-drenched vineyards of Provence, with olive tree fields stretching towards a horizon painted in vibrant hues. This captivating setting played host to Sandra and Pedro's unforgettable wedding celebration, a testament to exquisite taste and timeless elegance.",
+      "Their journey began with a whimsical prelude at the breathtaking Les Carrières de Lumières in the Vaucluse, a former quarry turned immersive art exhibit, where guests were dazzled by projection shows and the magic of their story. The main celebration then unfolded at the majestic Château d'Estoublon, a renowned winery steeped in history and nestled amidst rolling hills.",
+      "The team at Lavender and Rose, led by Kerry and Jennifer, orchestrated every aspect of the day with flawless precision. Bottega 53 photographed alongside our cameras, Floresie dressed the ceremony arches and reception tables in soft blooms, and Inspiration Live Music kept the bride and groom dancing among their closest friends all night.",
+      "Sandra and Pedro's celebration at Château d'Estoublon was not just a luxurious event ... it was a symphony of love, laughter and breathtaking beauty, every detail chosen to create a day that will forever be etched in the memories of everyone present.",
+    ],
+  },
+  {
+    file: "journal-four-seasons-buyout.html", page: 2, tag: "Real Wedding",
+    title: "A Four Seasons Buyout Wedding for the Most Amazing Celebrations", date: "November 4, 2023",
+    excerpt: "S & A took over the entire Grand-Hôtel du Cap-Ferrat for a private celebration ... including a drone flight straight through the fireworks.",
+    body: [
+      "Last September, love took centre stage on the French Riviera as S & A exchanged vows at the Grand-Hôtel du Cap-Ferrat. This wasn't just any wedding ... the entire venue was exclusively theirs, transforming the luxurious gardens into a private haven for the couple and their guests.",
+      "Planned by the talented team at Lavender and Rose, the buyout meant every moment was shared only with their closest ones. Our dear friends at Roni Floral and Deco Flamme transformed the venue into a fairytale dreamscape, every detail speaking to the couple's wish to create something truly unique.",
+      "Capturing the day alongside us was the dynamic duo of Danilo and Sharon Studio, whose collaboration made everything easy to handle despite the weather. Drone06 added an aerial perspective with the Inspire 3 ... and yes, we flew a machine worth some 25k straight inside the fireworks.",
+      "Out of respect for the couple's privacy, the visuals shared with the world are limited to the mesmerising decor and animations. That deliberate choice leaves an air of mystery ... a glimpse into a world of opulence, elegance and once-in-a-lifetime celebration.",
+    ],
+  },
+  {
+    file: "journal-daria-levin.html", page: 2, tag: "Real Wedding",
+    title: "Daria Levin — A Crazy Circus Wedding in Èze, French Riviera", date: "October 17, 2023",
+    excerpt: "Daria Levin turned an Èze villa into an incredible Jewish circus celebration ... acrobats, carnival games and non-stop music, by Cocoon Events.",
+    body: [
+      "Last summer, the French Riviera hosted an extraordinary celebration. Daria Levin chose an Èze villa for her special day and transformed it into an incredible Jewish circus celebration, filled with magic and memorable moments.",
+      "Photographer German Larkin captured the event's vibrant atmosphere, documenting the bride's joy and her guests' celebrations throughout the evening. Cocoon Events, led by creative director Fabrice Orlando, managed every aspect of the planning and execution, with Deco Flamme handling the venue decor and Roni Floral Design creating elaborate installations throughout the space.",
+      "Entertainment turned the night into an immersive experience ... Nuarts brought acrobatic and juggling performances, carnival games added a whimsical touch, and Inspiration Live Music energised the guests all evening. The result merged creative vision with floral design, entertainment and music into a distinctive celebration. A highlight film will follow.",
+    ],
+  },
+  {
+    file: "journal-natalia-montenegro.html", page: 2, tag: "Celebration",
+    title: "Natalia's 50th Birthday Celebration in Montenegro", date: "September 27, 2023",
+    excerpt: "A three-day 50th birthday celebration in Tivat, Montenegro ... luxury, Montenegrin hospitality and the Adriatic Sea as a backdrop.",
+    body: [
+      "Celebrating a milestone as significant as turning 50 deserves nothing less than an extravagant celebration, and that is exactly what Natalia experienced in Tivat, Montenegro. This picturesque coastal town, along the stunning Adriatic Sea, set the stage for an unforgettable three-day celebration that blended luxury, Montenegrin hospitality and a breathtaking backdrop.",
+      "Under the expert guidance of Fabrice Orlando from Cocoon Events, no detail was spared. Guests indulged in a culinary journey showcasing Montenegro's finest cuisine and wines, all served in a spectacular setting. Roni Floral, who need no introduction, transformed the venue into a floral wonderland that harmonised perfectly with the Adriatic backdrop.",
+      "Inspiration Live Music brought the party to life, and photographer Ettore Franceschi captured the joy, laughter and love that filled the air throughout. For those seeking the pinnacle of luxury celebrations and memories that last a lifetime, Tivat is an unparalleled destination. Not convinced? Have a look at the teaser ... and tell us that this was not the party of the year.",
+    ],
+  },
+  {
+    file: "journal-film-award.html", page: 2, tag: "Award",
+    title: "Wedding Film Award Winner", date: "September 12, 2023",
+    excerpt: "Chromata Films won Best Destination Wedding Film at the Love StoryTV Wedding Film Awards ... for a film shot at Lake Como.",
+    body: [
+      "Chromata Films won the prestigious Wedding Film Award for Best Destination Wedding Film on the Love StoryTV website. The recognition reflects our commitment to capturing couples' love stories around the world and creating lasting memories. The award-winning film was shot at Lake Como, Italy, featuring a couple celebrating their love with real elegance.",
+      "The film's success came from the collaboration of an incredible team of vendors who helped realise the couple's vision. Winning this award speaks to excellence in cinematography, editing, storytelling, lighting, music and emotion ... every discipline that makes a wedding film resonate.",
+      "For international couples, the award is a signal: that Chromata Films is a trusted partner for capturing the moments that matter. By investing time, creativity and genuine care into each project, we make films that authentically reflect a couple's love ... and set new standards in the destination wedding film industry.",
+    ],
+  },
+
+  /* ===================== Page 3 ===================== */
+  {
+    file: "journal-puglia-princess.html", page: 3, tag: "Real Wedding",
+    title: "A True Princess Wedding in Puglia", date: "September 9, 2023",
+    excerpt: "Nadine and Albert's fairytale wedding in Puglia ... the Cathedral of Monopoli, the Rocco Forte Hotel, and a gown set with 500 Swarovski crystals.",
+    body: [
+      "The picturesque region of Puglia, Italy, has always been known for its captivating landscapes, charming villages and warm hospitality. On one beautiful summer's day it became the backdrop for something even more enchanting: the wedding of Nadine and Albert, from the luxurious Rocco Forte Hotel to the breathtaking Cathedral of Monopoli, planned by Event Boutique.",
+      "The festivities began with a welcome event that transported guests straight to the Amalfi Coast. Sabine Koenigsberger turned the evening into a coastal paradise, with lemon trees and white flowers by Chiara Sperti setting a mood of romance and serenity as the sun dipped below the horizon.",
+      "Then the wedding day arrived. Nadine was a vision of elegance in a gown adorned with 500 Swarovski crystals, the same shimmer gracing her 6-metre-long veil. The couple exchanged vows in the Cathedral of Monopoli, a historic gem, and the whole town seemed to come alive to celebrate their union.",
+      "An opulent reception followed at the Rocco Forte Hotel, where Chiara Sperti's florals turned the space into a blooming garden. The live band Festival Mibely filled the air with energy, blending contemporary hits with timeless classics and keeping guests of all ages on their feet. In the heart of Puglia, love found its perfect stage.",
+    ],
+  },
+  {
+    file: "journal-katya-joey.html", page: 3, tag: "Real Wedding",
+    title: "Katya and Joey — An Incredible Wedding at Villa Erba, Lake Como", date: "September 8, 2023",
+    excerpt: "Katya and Joey's wedding at Villa Erba, Lake Como ... planned by Sacks Productions and Alejandra Poupel, filmed in anamorphic.",
+    body: [
+      "When it comes to capturing unforgettable moments of love and luxury, we have witnessed some of the most breathtaking weddings around the world. Katya and Joey's celebration at Villa Erba on Lake Como stands out as particularly special, a visual masterpiece made possible by an extraordinary team of vendors.",
+      "It began with a welcome day at Lido di Lenno, where guests arrived by boat across the lake for an afternoon orchestrated by Alejandra Poupel and Sacks Productions. The welcome dinner at Villa Gastel followed, where floral designer Vincenzo Dascanio created lush arrangements beneath fairy lights, complemented by Italian cuisine and the villa's historic charm.",
+      "Throughout the weekend our cameras captured the emotional moments while photographers from Bottega53 worked alongside us, and Gabriele Rizzi Lab provided captivating entertainment. To achieve a cinematic, anamorphic look we shot on the Kinefinity LF2 with Aivascope adapters and Mamiya lenses, while a DJI Inspire 3 drone captured Villa Erba from above.",
+    ],
+  },
+  {
+    file: "journal-angela-allister-brides.html", page: 3, tag: "Real Wedding · Press",
+    title: "Angela and Allister — Featured in Brides", date: "May 10, 2023",
+    excerpt: "Angela and Allister travelled from Vancouver to marry at the Ritz in Paris ... a luxurious affair featured in Brides.",
+    body: [
+      "Imagine a warm summer day in Paris, the city of love, where two souls from Vancouver, Angela and Allister, decided to celebrate their love in the most romantic way possible. Their wedding, featured in Brides, was a luxurious affair that left everyone in awe.",
+      "The couple began their weekend with a trip on the Seine, followed by an editorial photo session near the Louvre, where Angela wore a stunning Berta dress, and a welcome dinner at Trocadéro with a view of the Eiffel Tower. The main event was their dream wedding at the Ritz, where Angela's exquisite Rime Arodaky gown perfectly complemented the elegant setting.",
+      "Oliver Fly captured every magical moment. Loli Events planned the day flawlessly, Floraison Paris created breathtaking florals, Sublimes Paris brought lively can-can performances, and Bouchra Paris delivered a cake that looked as stunning as it tasted. As the sun set on their magical day, Angela and Allister's love story continued to unfold in the city of lights ... a true fairytale come to life.",
+    ],
+  },
+  {
+    file: "journal-anastasia-denis.html", page: 3, tag: "Real Wedding",
+    title: "Anastasia and Denis — An Intimate Wedding on the French Riviera", date: "May 1, 2023",
+    excerpt: "An intimate wedding on the sun-kissed shores of Cap-Ferrat ... the Four Seasons, a fireworks display, and a season opener to remember.",
+    body: [
+      "The sun-kissed shores of Cap-Ferrat provided the backdrop for an enchanting wedding celebration. Anastasia and Denis's intimate event took place at the luxurious Four Seasons Cap-Ferrat, with portions filmed in Monaco, and their love story was beautifully documented in collaboration with photographer Roman Ivanov. The hotel's Carolina and Margot delivered exceptional support throughout.",
+      "As evening arrived, a fireworks display illuminated the night sky, adding a touch of glamour to the celebration. Anastasia and Denis showed gracious hospitality toward their guests, and their joy and devotion to one another created an infectious atmosphere throughout the event.",
+      "The wedding marked a memorable beginning to the season, highlighting the French Riviera's scenic appeal and the Four Seasons' service standards ... proof of the power of love and the beauty of intimate celebrations, where two people united in commitment can create lasting memories against such a picturesque setting.",
+    ],
+  },
+  {
+    file: "journal-planning-europe.html", page: 3, tag: "Guide",
+    title: "Planning Your Destination Wedding in Europe", date: "January 27, 2023",
+    excerpt: "A short guide to planning your European destination wedding ... Italy, France and Spain, and why the film is the one souvenir that remains.",
+    body: [
+      "Are you and your partner searching for the perfect European destination to exchange your vows? Look no further than the charming, romantic countries of Italy, France and Spain. Each offers luxurious venues ... grand palaces, picturesque castles, beachfront villas ... alongside breathtaking landscapes, rich culture and ideal weather for a destination wedding.",
+      "Italy offers the perfect blend of romance and grandeur, from the canals of Venice to a Tuscan villa overlooking the vineyards. France brings glamour and sophistication, whether in Paris or the coastal town of Nice. And Spain is ideal for a beach wedding, from the Costa del Sol to the Balearic Islands.",
+      "While we specialise in high-end cinematography, we know that finding the right planner is crucial, which is why we work closely with a network of experienced and reputable wedding planners who can turn your dream into reality. The only thing that remains as a souvenir of your special day is the film and photography that capture those precious moments ... so surround yourself with true professionals.",
+      "So what are the next steps? Start by researching the destinations and venues that fit your style, then reach out to us. We can help with the documentation of your big day and connect you with the right planner to bring your dream wedding to life.",
+    ],
+  },
+  {
+    file: "journal-ai-wedding-industry.html", page: 3, tag: "AI · Editorial",
+    title: "Artificial Intelligence and Why It Will Change the Wedding Industry", date: "January 19, 2023",
+    excerpt: "Why artificial intelligence will change the wedding industry ... an early look, written back in 2023, at the tools now reshaping planning and design.",
+    body: [
+      "If you are a wedding planner or designer (or both), it is essential to stay ahead of the curve and informed about the latest trends and technologies. One technology quickly gaining traction, and set to revolutionise the field, is artificial intelligence.",
+      "One of the primary ways AI can help luxury planners and designers is by streamlining the planning and design process. AI-powered tools can automate many of the tedious, time-consuming tasks ... data entry, scheduling, budget management ... freeing up more time for creative work like designing custom themes and decor.",
+      "AI can also help create truly personalised experiences. With virtual and augmented reality, planners can build immersive, interactive mock-ups of venues and designs, letting clients envision their day in a way that was previously impossible. And with the ability to analyse large amounts of data, AI can surface patterns and insights that are difficult to spot manually, from pricing to marketing.",
+      "From virtual dress try-ons to AI-generated decor, customised lighting and virtual venues for remote celebrations, the applications keep growing. But the conclusion is simple: AI will only ever be a tool to propose something new in a more efficient way ... it still takes human professionals to execute a creative vision authentically.",
+    ],
+  },
+
+  /* ===================== Page 4 ===================== */
+  {
+    file: "journal-jasmiina-tuukka.html", page: 4, tag: "Real Wedding",
+    title: "Jasmiina and Tuukka Rask — The Most Elegant Wedding at Villa Balbiano, Lake Como", date: "December 9, 2022",
+    excerpt: "Jasmiina and Tuukka Rask's most elegant wedding at Villa Balbiano, Lake Como ... fashion, glamour and a storybook garden ceremony.",
+    body: [
+      "We had the privilege of capturing an exceptionally luxurious wedding at Villa Balbiano on Lake Como. From the moment we arrived it was clear that meticulous attention had been devoted to creating an elegant event, one that reflected the couple's shared love of fashion and glamour.",
+      "The ceremony took place in the villa's gardens, redesigned by Roni Floral Design into a storybook setting of flower-adorned archways. Guests then moved to the reception for an upscale dinner coordinated by Eventoile under planner Leandra's direction, with Inspiration Live Music keeping the dance floor alive all evening.",
+      "Photographer Audrey from Les Secrets d'Audrey documented the day's most significant moments. Villa Balbiano and its vendor team are a wholehearted recommendation for any couple planning a grand celebration ... the kind of event guests will remember for a very long time. The full highlight film is in production, but a teaser is already out.",
+    ],
+  },
+  {
+    file: "journal-angela-allister-paris.html", page: 4, tag: "Real Wedding",
+    title: "Angela and Allister — A Modern Wedding in Paris", date: "December 8, 2022",
+    excerpt: "The same Vancouver couple, seen up close ... a modern Paris wedding at the Ritz, from a Seine cruise to a French cancan finale.",
+    body: [
+      "Have you ever imagined what Paris looks like in the summer, bathed in warmth and surrounded by the people you love, celebrating your love in the most romantic city in the world? That was exactly what Angela and Allister had in mind for their big day at the Ritz.",
+      "Surrounded by their loved ones, they had the best time of their lives. They began the weekend with a trip on the Seine, an editorial photo session near the Louvre where Angela wore a stunning Berta dress, and a welcome dinner at Trocadéro with a view of the Eiffel Tower.",
+      "They finished with the wedding of their dreams at the Ritz. With outstanding vendors such as Loli Events, Floraison Paris and Bouchra Sugar Design, plus makeup by Reina Kim, the day went off without a hitch. Jazz Around Midnight and a French cancan performance by Sublime Paris left everyone amazed, as did the breathtaking Ines Di Santo gown. But enough talking ... it's time to see it for yourself.",
+    ],
+  },
+  {
+    file: "journal-vaux-le-vicomte-royal.html", page: 4, tag: "Real Wedding",
+    title: "A Royal Wedding at Vaux-le-Vicomte, Paris", date: "November 9, 2022",
+    excerpt: "A royal wedding at Vaux-le-Vicomte, the little Versailles ... video-mapped walls, a secret VIP singer and a cake by Bastien Blanc Tailleur.",
+    body: [
+      "France is renowned for its culture and gastronomy, and for a wide range of spectacular venues ... museums, castles, palaces and more ... where some of the finest chefs will cook for you and your guests. We had the privilege of covering one such event.",
+      "Working with Alejandra Poupel and Alexandra Juan from Artego Luxury Events sets a high standard from the start, and teaming up with our dear friend Maddy Christina for photography was the icing on the cake. Speaking of cake, the one by Bastien Blanc Tailleur was incredible on so many levels.",
+      "The entertainment, decor, flowers by Roni Florals Design, VIP singers whose names we cannot disclose, an orchestra and video-mapping projected onto the walls all made the event exceptional. Everyone, from the bride to the oldest uncle, was impressed by what was accomplished in such an extraordinary venue.",
+      "Vaux-le-Vicomte, known as the little Versailles, is one of the few places with so much history that can be privatised. If you are looking for the wow factor for your wedding, this is the place to go.",
+    ],
+  },
+  {
+    file: "journal-alexandra-raphael-marrakech.html", page: 4, tag: "Real Wedding",
+    title: "Alexandra and Raphael — A Luxury Jewish Wedding in Marrakech", date: "October 31, 2022",
+    excerpt: "Alexandra and Raphael's luxury Jewish wedding in Marrakech ... the Agafay desert, the Selman hotel, royal stallions and a pool party to remember.",
+    body: [
+      "Party would capture the essence of Alexandra and Raphael's wedding, held last summer in Morocco. The couple chose Marrakech, using both the Agafay desert and the luxurious Selman hotel for their events.",
+      "A standout was the hotel's poolside gathering, where guests relaxed to panoramic views ... the venue lending a distinctive elegance through its collection of royal stallions, owned by Morocco's king.",
+      "Fabrice Orlando from Cocoon Events directed the overall planning, while Roni Flora Design and Deco Flamme created elaborate floral and decorative installations, and Belathee Photography documented the occasion. Inspiration Live Music kept guests dancing throughout the reception.",
+      "The production tested the whole team, but the effort was more than validated by the couple's enthusiasm and the value they placed on preserving these memories through the film we created for them.",
+    ],
+  },
+  {
+    file: "journal-jessica-benjamin.html", page: 4, tag: "Real Wedding",
+    title: "Jessica and Benjamin — A Stylish Jewish Wedding at Hôtel Beauvallon", date: "October 15, 2022",
+    excerpt: "Jessica and Benjamin's stylish Jewish wedding at Hôtel Beauvallon, near St-Tropez ... a two-day celebration and a Brazilian pool party.",
+    body: [
+      "This was the type of event everyone would have loved to be part of, whether as a guest or a vendor. Jessica and Benjamin were an absolute pleasure to work with, and their kindness did not go unnoticed. As bride and groom they knew they were in great hands with such an incredible team covering their day.",
+      "More than anything, being surrounded by vendors you can count on is a must for your big day, and this team delivered. Imene from The Wedding Planners Monaco planned it like no one else: a two-day celebration in one of the seven palaces, with a gorgeous Jewish ceremony under a floral huppah beside the pool.",
+      "From artistic performances by Artistes Kurioza Events to live music from the Vogue Live Band, stunning photography by Claire Morris and flowers and decor by Roni Florals Design and Deco Flamme, the bar was set very high. The first-day pool party, complete with Brazilian vibes, was the perfect way to welcome everyone.",
+      "If you are considering St-Tropez for your wedding, take a look at the Beauvallon Hotel, with its luxurious accommodations and beautiful Belle Époque architecture.",
+    ],
+  },
+  {
+    file: "journal-ali-bakhtiar.html", page: 4, tag: "Celebration",
+    title: "A Persian Wedding Anniversary at the Four Seasons, French Riviera", date: "October 9, 2022",
+    excerpt: "A private Persian wedding anniversary at the Grand-Hôtel du Cap-Ferrat ... ultra-luxury on the French Riviera, closing at the Monaco Yacht Club.",
+    body: [
+      "We were immensely proud to document this event. Collaborating with Ali Bakhtiar's team to capture a wedding anniversary celebration was an honour that not many people can relate to. It was ultra-luxury at its finest, set at one of the most prestigious venues on the French Riviera ... the Grand-Hôtel du Cap-Ferrat, with its perfect location and breathtaking views over the Mediterranean.",
+      "The celebration maintained strict privacy, with only limited behind-the-scenes content shared publicly. Photographer David Bastianoni and event organiser Nuart Events assembled a professional team for the production.",
+      "The festivities extended across two days, with the second day's farewell lunch taking place at the Monaco Yacht Club. We invite you to watch the film to see the design execution and the work accomplished for this anniversary celebration.",
+    ],
+  },
+
+  /* ===================== Page 5 ===================== */
+  {
+    file: "journal-elisa-thomas.html", page: 5, tag: "Real Wedding",
+    title: "Elisa and Thomas — A Château Wedding on the French Riviera", date: "October 1, 2022",
+    excerpt: "Three days at Château St Georges in Grasse ... Elisa and Thomas's French Riviera wedding, filmed with a team we know by heart.",
+    body: [
+      "Three days of celebration at Château St Georges in Grasse, near Cannes, where Elisa Meliani and Thomas exchanged vows. We captured the event ... and according to the bride, the resulting film exceeded her expectations.",
+      "The production succeeded through collaboration with a seasoned team of vendors. Roni Florals handled the floral design, Deco Flamme managed the decor, and Aava Weddings coordinated the planning. When you work with teams you know by heart, things get even easier right away.",
+      "The couple's willingness to participate authentically in the filming process contributed enormously to the quality of the footage, and Lost in Love Photography travelled from Australia to add their coverage of the celebration. We invite you to watch the wedding film.",
+    ],
+  },
+  {
+    file: "journal-hannah-lucas.html", page: 5, tag: "Real Wedding",
+    title: "Hannah and Lucas — A British Wedding on the French Riviera", date: "October 1, 2022",
+    excerpt: "The first wedding of the season ... Hannah and Lucas's British celebration at Villa Ephrussi, from a Monaco yacht to a farewell brunch.",
+    body: [
+      "When these two married on the French Riviera, it was our first wedding of the season. The opening event set such a high standard that keeping that level all summer would prove a challenge.",
+      "Hannah and Lucas proved to be wonderful clients, and their generosity, along with that of their friends and families, made the whole experience delightful. Wedding planner Aava Weddings did exceptional work, and their partnerships with Roni Florals Design and Deco Flamme elevated the event considerably. Villa Ephrussi, combined with such sophisticated design, created an unforgettable setting.",
+      "Over three days, our team, alongside photographer Cedric Klein, documented the celebration ... beginning at a private family yacht moored in Monaco and extending through a brunch at an exclusive Monaco location. We can't wait to share the final film.",
+    ],
+  },
+  {
+    file: "journal-alexandra-raphael-teaser.html", page: 5, tag: "Teaser",
+    title: "Alexandra and Raphael — Wedding Teaser, Marrakech", date: "July 13, 2022",
+    excerpt: "A first look at Alexandra and Raphael's Marrakech wedding ... a crazy adventure from France to Morocco, condensed into one teaser.",
+    body: [
+      "We guess the title says it all. Follow us on one crazy adventure from France to Morocco, from the desert of Agafay to the luxurious Selman Hotel, with amazing design by Fabrice Orlando from Cocoon Events, flowers by Roni Florals and technical production by Deco Flamme.",
+      "What a three-day experience this was. We can't wait to show you more ... but for now, you will have to stick with this little teaser.",
+    ],
+  },
+  {
+    file: "journal-lauren-jonathan.html", page: 5, tag: "Real Wedding",
+    title: "Lauren and Jonathan — A Wedding in the Dominican Republic, Altos de Chavón", date: "May 3, 2022",
+    excerpt: "A transatlantic wedding at Altos de Chavón in the Dominican Republic ... Lauren and Jonathan's unforgettable start to the 2022 season.",
+    body: [
+      "Boom. If you had one word to remember from this wedding, that would be it. The couple invited us across the Atlantic to document their Dominican Republic celebration ... an exceptional start to the 2022 season.",
+      "Beyond the visual beauty, we were struck by the genuine warmth of their loved ones and the affection that filled the event. The planning team at LS Planning, along with decorator Sarah from SMTroncoso, transformed the Altos de Chavón amphitheatre into an elegant setting for dining and dancing.",
+      "We're grateful to photographer Tali for her collaborative spirit throughout the weekend, and to the newlyweds for their confidence, their friendship and the memorable celebration they created. All the best to you two ... enjoy the full wedding film.",
+    ],
+  },
+  {
+    file: "journal-giulietta-villa-cortine.html", page: 5, tag: "Editorial",
+    title: "Giulietta Dreams — A Villa Cortine Story", date: "February 4, 2022",
+    excerpt: "Four seasons in one day ... a dramatic styled shoot at Villa Cortine Palace Hotel, pulled off through sheer teamwork.",
+    body: [
+      "This was a wedding film shoot at the Villa Cortine Palace Hotel, where we faced four seasons happening in one day ... from cold and rainy to sunny and hot, and finally sunny with a storm rolling towards us.",
+      "We're grateful to the venue for their hospitality and to their staff for the support throughout the production, and to the director and the whole team who made the day work despite the unpredictable weather.",
+      "Photographer Maddy Christina, wedding planner Eleonora from Palazzo Eventi, our makeup artist, florist and entertainment by Visionairevents all contributed. Between us we managed to pull some incredible images out of that day ... and this film is the result of everyone's combined effort.",
+    ],
+  },
+  {
+    file: "journal-nida-sunny-highlight.html", page: 5, tag: "Real Wedding",
+    title: "Nida and Sunny — Villa Erba, Lake Como, Highlight Film", date: "January 28, 2022",
+    excerpt: "A wedding you could never forget ... Nida and Sunny at Villa Bonomi and Villa Erba, Lake Como, from Sangeet to a wild party night.",
+    body: [
+      "There are some weddings you could never forget, and Nida and Sunny's is clearly one of them. Their love, their families and friends, their kindness ... it was all perfect, as if it were meant to be.",
+      "From the start of the weekend at Villa Bonomi, to a Bollywood-style Sangeet overlooking Lake Como, to a crazy party night at Villa Erba the day after, it was the wedding to be. Andrea from Italian Weddings and Events did fantastic work planning everything, while Thierry Joubert photographed the whole event beautifully. We didn't just enjoy working together ... we became friends, as if we'd known each other for years. That doesn't happen often.",
+      "As always, Blunotte Eventi did a lovely job on the technical side, and Rattiflora delivered gorgeous flowers. So yes, it was incredible ... and the ride you'll get watching the highlight film only accentuates the story. Be prepared, because you are not ready for it.",
+    ],
+  },
+
+  /* ===================== Page 6 ===================== */
+  {
+    file: "journal-sabonis-wedding.html", page: 6, tag: "Real Wedding",
+    title: "Shashana and Domantas Sabonis — A Sensational Wedding in St-Jean-Cap-Ferrat", date: "January 28, 2022",
+    excerpt: "Three days of magic in St-Jean-Cap-Ferrat ... the wedding of Shashana and NBA All-Star Domantas Sabonis, planned by Mindy Weiss.",
+    body: [
+      "The headline says it all ... the enchanting wedding of Shashana and Domantas Sabonis, the NBA All-Star, left us all in awe. Over three days the couple filled the air with love, beauty and unparalleled taste, looking remarkably fresh and elegant despite the scorching heat.",
+      "Their guests, families and friends were pivotal in making it unforgettable, always ready to dance, sing and even jet ski. The wedding was meticulously planned and executed by the incredibly talented Mindy Weiss and her team, with special mentions to Meg and Melissa, and a huge shout-out to the Four Seasons Cap-Ferrat for their warm hospitality.",
+      "Villa Ephrussi, a venue that needs no introduction, was the perfect setting. The colour palette by Roni Floral Design matched the stunning decor they built with Deco Flamme, and Maddy Christina saved the day on photography. The grand finale was a wild party by the Vogue Live band, with entertainment by Artiste Kurioza Events.",
+      "If you are looking for the perfect destination wedding in France, and especially on the French Riviera, this might be your best source of inspiration yet. Grab your TV, set the sound to max, and let the magic unfold.",
+    ],
+  },
+  {
+    file: "journal-michal-steve.html", page: 6, tag: "Real Wedding",
+    title: "Michal and Steve — A St-Tropez Love Story", date: "November 29, 2021",
+    excerpt: "A full weekend in St-Tropez ... Michal and Steve's love story at Le Beauvallon, and a party that had to be seen to be believed.",
+    body: [
+      "What could be more enjoyable than celebrating a wedding over a full weekend in St-Tropez? We struggle to find anything comparable. This was an exceptional wedding with an outstanding venue.",
+      "Moments like this are exactly why we do what we do ... spending quality time with incredible people at meaningful events. We stayed in St-Tropez, that iconic French Riviera destination, collaborating with KBY Designs and planner Muriel Saldalamacchia, alongside photographer David Bastianoni, and we loved the architecture of Le Beauvallon.",
+      "Jewish weddings are known for great parties, but this one ... well, you'll just have to see for yourselves. It was mindblowing, with remarkable energy, mood and colour, enhanced by a performance from Festival Band Paris. An absolute blast. Better be prepared, because this is going to be quite a ride.",
+    ],
+  },
+  {
+    file: "journal-nida-sunny-teaser.html", page: 6, tag: "Teaser",
+    title: "Nida and Sunny — Villa Erba, Lake Como, Teaser", date: "November 2, 2021",
+    excerpt: "Party. A first taste of Nida and Sunny's Lake Como wedding ... dance competitions, vibrant decor and non-stop celebration.",
+    body: [
+      "Party. That would be the headline of the amazing celebration we witnessed and captured in Como last September. Guests of all ages threw themselves into the dancing, from dance competitions to group performances, amid vibrant decorations throughout.",
+      "Our thanks go to Andrea from Italian Weddings and Events for the organisation, to Villa Bonomi and Villa Erba for their hospitality, to the couple for their cooperation during filming, and to photographer Thierry Joubert for his expertise and friendship.",
+      "Enjoy the teaser while we finish the full highlight film ... it's coming soon.",
+    ],
+  },
+  {
+    file: "journal-sabonis-teaser.html", page: 6, tag: "Teaser",
+    title: "Shashana and Domantas Sabonis — Wedding Teaser, Cap-Ferrat", date: "October 21, 2021",
+    excerpt: "If you're an NBA fan, you don't need to read further ... a first clip from Shashana and Domantas Sabonis's Cap-Ferrat wedding.",
+    body: [
+      "If you are an NBA fan, you probably don't need to read any further ... just go straight to the video.",
+      "But if you want to know a bit more about Shashana and Domantas's wedding in the south of France, you are in the right place. This wedding is clearly one of the highlights of our season, and with Mindy Weiss responsible for the planning and design, we could not have been in better hands.",
+      "That three-day weekend will be remembered for a long time, not only because it was absolutely beautiful, but because of everything that happened: the couple's kindness, the craziness of their guests, the different venues, the behind-the-scenes moments. It's a complete package ... and you'll understand why just by watching this clip.",
+    ],
+  },
+  {
+    file: "journal-d-a-villa-bonomi.html", page: 6, tag: "Real Wedding",
+    title: "D and A — A Wedding at Villa Bonomi, Lake Como", date: "July 13, 2021",
+    excerpt: "One of the best ways to start a season ... D and A's intimate wedding at the newly renovated Villa Bonomi, Lake Como.",
+    body: [
+      "This was certainly one of the best ways to start the wedding season. Going to Como to celebrate D and A's love, surrounded by their families and friends, was nothing short of a blessing after such a long period of Covid.",
+      "The organisation and design by Das Hochzeitswerk was on point, with beautiful greenery for both the ceremonies and the reception under the tent, and Weds4U did great work putting that design in place. The result was a very intimate cocoon in which to celebrate love across a beautiful weekend, all despite the weather.",
+      "The newly renovated Villa Bonomi is a gem hidden on the lake, and shooting the first wedding held there was a great opportunity. Inspiration Live Music killed the game once again with fantastic performers and lighting, and Nuart Events brought a show that is always a feast for the eyes. We can't wait to see what Bottega53 came up with on photography. So sit back, relax, and enjoy this destination wedding film.",
+    ],
+  },
+
+  /* ===================== Page 7 ===================== */
+  {
+    file: "journal-anna-andres-eden-roc.html", page: 7, tag: "Real Wedding",
+    title: "Anna Andres and David — A French Riviera Escapade at Hôtel du Cap-Eden-Roc", date: "October 9, 2020",
+    excerpt: "Anna Andres and David's intimate August wedding at Hôtel du Cap-Eden-Roc ... a Riviera escapade that made international headlines.",
+    body: [
+      "Anna Andres and David had originally planned to marry at Château St Martin in May, but the pandemic restrictions forced a change. Instead, they celebrated with an intimate August ceremony at the Hôtel du Cap-Eden-Roc on the French Riviera.",
+      "The venue offered distinctive scenery and ambiance, enhanced by beautiful floral design. Event planner Viktoria coordinated the celebration, while our cameras and the photographers documented the day.",
+      "The wedding went on to attract significant media attention, appearing in several prestigious international publications. And the bigger wedding coming the following year promised to be just as fantastic ... with a lot of fun to be had along the way.",
+    ],
+  },
+  {
+    file: "journal-samantha-edoardo.html", page: 7, tag: "Real Wedding",
+    title: "Samantha and Edoardo — From Switzerland to Provence", date: "October 7, 2020",
+    excerpt: "A bit of light in a difficult year ... Samantha and Edoardo's wedding at Château de Berne, from Switzerland to Provence.",
+    body: [
+      "Let's be honest: 2020 was one of the toughest years in memory. And yet, even then, there was still a bit of light somewhere ... something to make you smile and bring back some hope. Samantha and Edoardo's wedding was clearly one of those moments.",
+      "They had been through so much, from a delayed wedding to sanitary restrictions and the possibility of not having everyone they love attend. But it finally happened, and it was absolutely worth it. So much fun, so much love. For several days, nobody thought about the situation outside ... it was only them and their guests, celebrating love.",
+      "Under the planning of White Label Events, everything happened just as it should, with Liz rising above every difficulty. Sandra Aberg documented the day with fantastic imagery, Benjamin from Selecktive created a ceiling full of stars for the dinner reception and DJed the party, and Vogue Live Band brought everyone onto the dance floor. That wedding at Château de Berne stands as a highlight of the year, reminding us exactly why we film weddings.",
+    ],
+  },
+  {
+    file: "journal-private-shooting-cap-ferrat.html", page: 7, tag: "Experience",
+    title: "Private Shooting Exclusivity in St-Jean-Cap-Ferrat", date: "September 3, 2020",
+    excerpt: "A new kind of shoot ... documenting a couple's private stay at the Grand-Hôtel du Cap-Ferrat, with photography and cinematography together.",
+    body: [
+      "As you may know, we've become quite used to going to the Grand-Hôtel in Cap-Ferrat. From that experience we realised there was a real demand to document people's stays in this incredible palace on the French Riviera.",
+      "While most people reach for their phone to capture these moments, the quality will never match a real photography and cinematography team. That's why we partnered with Maddy Christina to propose something unique in the region: documenting your stay at the hotel while you enjoy its finest moments.",
+      "From a massage to waking up in front of the gardens, from visiting the small villages nearby to a proposal over dinner facing the sea, you can have it all. With exclusive packages built around the hotel's activities, you not only enjoy it to the fullest ... you keep the perfect images to remember it. This is the result of our first shoots with real couples during their stay.",
+    ],
+  },
+  {
+    file: "journal-mozzafiato.html", page: 7, tag: "Campaign",
+    title: "Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story with Dolce &amp; Gabbana", date: "August 13, 2020",
+    excerpt: "Mozzafiato ... a Grand-Hôtel du Cap-Ferrat campaign with Dolce & Gabbana, six weeks in the making for a story of palace, yacht and couture.",
+    body: [
+      "This is the story of a couple deciding to formalise their long-term relationship with marriage, celebrating in Cap-Ferrat. The location offers everything ... palatial accommodation, quaint villages, yacht excursions and private pool moments.",
+      "The production was a collaborative campaign with the Grand-Hôtel du Cap-Ferrat, a Four Seasons Hotel, and Dolce & Gabbana. The France director visited during filming, underscoring how significant the project was. What began as a two-day shoot grew into six weeks of planning, from art direction and location scouting to yacht coordination and early editing.",
+      "This was a small-crew production where meticulous planning preceded execution. Collaborating with photographer Emmanuelle Marty was seamless, and support from the Four Seasons team, especially Aurélien Guery, kept everything running smoothly. We shot on the Sony FX9. Our thanks to all who contributed ... models, stylists, florists, decorators, hair and makeup artists and crew. Enjoy the film and the photography gallery.",
+    ],
+  },
+  {
+    file: "journal-dolce-gabbana-teaser.html", page: 7, tag: "Teaser",
+    title: "Grand-Hôtel du Cap-Ferrat × Dolce &amp; Gabbana — Teaser", date: "August 7, 2020",
+    excerpt: "Think French Riviera, palace, yacht, Dolce & Gabbana ... a short teaser before the full Mozzafiato film.",
+    body: [
+      "It's always a good time to get teased a little, to think about what's coming next. Think French Riviera, palace, yacht, Dolce & Gabbana. Starting to see the bigger picture?",
+      "Well, to make sure you do, enjoy this little teaser ... before we show you the final film, coming soon.",
+    ],
+  },
+  {
+    file: "journal-o-my-gaude.html", page: 7, tag: "Editorial",
+    title: "Ô My Gaude — A Couture Shooting in Provence", date: "August 7, 2020",
+    excerpt: "Ô My Gaude ... a distinctive couture shooting at Château de la Gaude in Provence, with two gorgeous Ziad Nakad gowns.",
+    body: [
+      "Ô My Gaude is something truly distinctive. This project brought real joy after the challenging pandemic period, and it proved intriguing, revealing all sorts of happenings orchestrated at the venue.",
+      "Stephanie from WEP coordinated the shoot masterfully, while Les Secrets d'Audrey and our team captured the moments. Our thanks go to Château de la Gaude for their hospitality and for transforming the space into an enchanting setting, and to Benjamin from Selecktive, who made the celebration in the wine cellar possible.",
+      "We're also grateful to designer Ziad Nakad for two of the most gorgeous couture gowns, showcased throughout the shoot. There's an intriguing surprise waiting in the final film ... and a long list of collaborators, from organisation and photography to floristry, makeup, catering and technical production, who made this couture editorial in Provence come to life.",
+    ],
+  },
+];
+
+/* Page 1 = the six current posts; pages 2–7 = the migrated archive. */
+const allPosts = [...posts.map((p) => ({ ...p, page: 1 })), ...archive];
+
+const JOURNAL_PAGES = 7;
+const journalHref = (n) => (n === 1 ? "journal.html" : `journal-${n}.html`);
+
+const pagination = (cur) => {
+  const nums = [];
+  for (let i = 1; i <= JOURNAL_PAGES; i++) {
+    nums.push(i === cur
+      ? `<span class="jpage jpage--current" aria-current="page">${i}</span>`
+      : `<a class="jpage" href="${journalHref(i)}">${i}</a>`);
+  }
+  const prev = cur > 1
+    ? `<a class="jpage jpage--edge" href="${journalHref(cur - 1)}" rel="prev">← Newer</a>`
+    : `<span class="jpage jpage--edge is-disabled">← Newer</span>`;
+  const nextL = cur < JOURNAL_PAGES
+    ? `<a class="jpage jpage--edge" href="${journalHref(cur + 1)}" rel="next">Older →</a>`
+    : `<span class="jpage jpage--edge is-disabled">Older →</span>`;
+  return `      <nav class="pagination" aria-label="Journal pages">
+        ${prev}
+        <div class="pagination__nums">${nums.join("")}</div>
+        ${nextL}
+      </nav>`;
+};
+
+for (let pg = 1; pg <= JOURNAL_PAGES; pg++) {
+  const pagePosts = allPosts.filter((p) => p.page === pg);
+  const first = pg === 1;
+  pages[journalHref(pg)] = shell({
+    page: "journal",
+    title: first
+      ? "Journal — Chromata Films | Latest News & Real Weddings"
+      : `Journal (Page ${pg}) — Chromata Films | Real Weddings & Stories`,
+    description: first
+      ? "Latest news from Chromata Films: real weddings in St-Tropez and Paris, AI masterclasses for planners, and stories from the world of luxury wedding cinematography."
+      : "From the archives of Chromata Films: real weddings, celebrations and stories across the French Riviera, Paris, Lake Como and beyond.",
+    main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Journal — cinematic header">
     <video src="assets/video/journal-header.mp4" poster="assets/video/journal-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
     <div class="film__shade"></div>
     <div class="hero__head">
-      <p class="kicker" style="color:var(--coral)">— Latest News</p>
+      <p class="kicker" style="color:var(--coral)">${first ? "— Latest News" : "— The Archives"}</p>
       <h1 class="hero__title hero__title--page">
         <span class="line-mask intro-rise"><span class="line-inner">The <em>Journal</em></span></span>
       </h1>
@@ -596,7 +1010,7 @@ pages["journal.html"] = shell({
   <section class="pad-section" data-section>
     <div class="container">
       <div class="journal-list">
-${posts.map((p) => `        <a class="jitem" href="${p.file}">
+${pagePosts.map((p) => `        <a class="jitem" href="${p.file}">
           <span class="jdate">${p.date}</span>
           <h2>${p.title}</h2>
           <span class="jarrow">→</span>
@@ -604,22 +1018,24 @@ ${posts.map((p) => `        <a class="jitem" href="${p.file}">
           <span class="jtag">${p.tag}</span>
         </a>`).join("\n")}
       </div>
+${pagination(pg)}
     </div>
-  </section>
+  </section>${first ? `
 
   <!-- full-bleed ambient film band (3:1) at the foot of the journal -->
   <section class="videoband" data-theme="dark" data-section aria-label="Chromata Films — Mozzafiato banner film">
     <iframe data-lazy-src="https://www.youtube-nocookie.com/embed/brZ8vlqwOVY?autoplay=1&mute=1&loop=1&playlist=brZ8vlqwOVY&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1"
             title="Chromata Films — banner film" loading="lazy" allow="autoplay; encrypted-media"></iframe>
-  </section>`,
-});
+  </section>` : ""}`,
+  });
+}
 
-for (const p of posts) {
+for (const p of allPosts) {
   pages[p.file] = shell({
     page: "journal",
     title: `${p.title} — Journal | Chromata Films`,
     description: p.excerpt,
-    main: `  <section class="pad-section" style="padding-top:calc(var(--nav-h) + 10vh)" data-section>
+    main: `  <section class="pad-section" style="padding-top:calc(var(--nav-h) + 8vh)" data-section>
     <div class="container">
       <article class="article">
         <p class="kicker">— Journal · ${p.tag}</p>
@@ -627,15 +1043,25 @@ for (const p of posts) {
           <span class="line-mask"><span class="line-inner">${p.title}</span></span>
         </h1>
         <div class="article__meta"><span>${p.date}</span><span>By Kevin Lopez</span></div>
+      </article>
+${p.video ? `      <figure class="article__film mat">
+        <div class="article__film-frame">
+          <iframe data-lazy-src="https://player.vimeo.com/video/${p.video}" title="${p.title} — wedding film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </figure>
+` : ""}      <article class="article">
         <div class="prose">
 ${p.body.map((par) => `          <p>${par}</p>`).join("\n")}
         </div>
         <div style="margin-top:8vh; display:flex; gap:30px; flex-wrap:wrap">
-          <a class="text-link" href="journal.html">← Back to the Journal</a>
+          <a class="text-link" href="${journalHref(p.page)}">← Back to the Journal</a>
           <a class="text-link" href="contact.html">Begin your journey →</a>
         </div>
       </article>
-    </div>
+${p.gallery ? `      <div class="gallery-grid article__gallery">
+${p.gallery.map((f) => "        " + g(p.galleryDir, f, "", p.title + " — Chromata Films")).join("\n")}
+      </div>
+` : ""}    </div>
   </section>`,
   });
 }

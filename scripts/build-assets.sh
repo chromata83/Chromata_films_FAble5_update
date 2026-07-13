@@ -10,7 +10,7 @@ OUT="$ROOT/assets"
 FF="ffmpeg -hide_banner -loglevel error -y"
 
 mkdir -p "$OUT/fonts" "$OUT/video" \
-  "$OUT/img/landing" "$OUT/img/domantas" "$OUT/img/jacky" \
+  "$OUT/img/landing" "$OUT/img/domantas" "$OUT/img/jacky" "$OUT/img/jg-blog" "$OUT/img/aw-blog" \
   "$OUT/img/carousel" "$OUT/img/logos" "$OUT/img/studio" "$OUT/img/contact"
 
 # ---------- fonts ----------
@@ -100,6 +100,87 @@ done
 
 # ---------- jacky & gordon header ----------
 jpg "$PUB/Jacky_Gordon/J&G _ DAY 4 _ Wedding day _ 15.6.25 (501 sur 1547).jpg" "$OUT/img/jacky/jacky-header.jpg" 1800
+
+# ---------- jacky & gordon journal-article gallery (deduped, wedding-day frames first) ----------
+jgb_src=(
+  "J&G _ DAY 4 _ Wedding day _ 15.6.25 (839 sur 1547).jpg"
+  "J&G _ DAY 4 _ Wedding day _ 15.6.25 (840 sur 1547).jpg"
+  "J&G _ DAY 4 _ Wedding day _ 15.6.25 (857 sur 1547).jpg"
+  "J&G _ DAY 4 _ Wedding day _ 15.6.25 (861 sur 1547).jpg"
+  "J&G _ DAY 4 _ Wedding day _ 15.6.25 (893 sur 1547).jpg"
+  "J&G _ DAY 4 _ Wedding day _ 15.6.25 (897 sur 1547).jpg"
+  "maddy.christina.photo-3706386851893911076_50112328229-20250824_191605.jpg"
+  "maddy.christina.photo-20250827_074409-69952137.jpg"
+  "maddy.christina.photo-20250913_114019-1174179990.jpg"
+  "maddy.christina.photo-20250913_114019-3319762215.jpg"
+  "maddy.christina.photo-20250913_114019-4181562028.jpg"
+  "maddy.christina.photo-20250913_114019-4234461129.jpg"
+  "maddy.christina.photo-3738675366639237727_50112328229-20251008_082736.jpg"
+  "maddy.christina.photo-3741546465219602452_50112328229-20251012_073157.jpg"
+  "maddy.christina.photo-3745947350343391246_50112328229-20251018_091544.jpg"
+  "maddy.christina.photo-3757894877053478569_50112328229-20251103_195320.jpg"
+  "maddy.christina.photo-3757894877053478569_50112328229-20251103_1953420.jpg"
+  "maddy.christina.photo-3757894877053478569_50112328229-20251103_k195320.jpg"
+  "maddy.christina.photo-3771880647400960037_50112328229-20251123_210000.jpg"
+  "maddy.christina.photo-3771880647400960037_50112328229-20251123_2100000.jpg"
+)
+i=0
+for f in "${jgb_src[@]}"; do
+  i=$((i+1)); jpg "$PUB/Jacky_gordon_blog/$f" "$OUT/img/jg-blog/jgb-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- alexa & wilton journal-article gallery (chronological: welcome, beach, wedding, film) ----------
+aw_src=(
+  "Alexia & Wilton _ DAY 1 _ Welcome Party _ 28.6.24 _ By Maddy Christina (1 sur 606).jpg"
+  "Alexia & Wilton _ DAY 1 _ Welcome Party _ 28.6.24 _ By Maddy Christina (28 sur 606).jpg"
+  "Alexia & Wilton _ DAY 1 _ Welcome Party _ 28.6.24 _ By Maddy Christina (32 sur 606).jpg"
+  "Alexia & Wilton _ DAY 1 _ Welcome Party _ 28.6.24 _ By Maddy Christina (43 sur 606).jpg"
+  "Alexia & Wilton _ DAY 1 _ Welcome Party _ 28.6.24 _ By Maddy Christina (300 sur 606).jpg"
+  "Alexia & Wilton _ DAY 1 _ Welcome Party _ 28.6.24 _ By Maddy Christina (320 sur 606).jpg"
+  "Alexia & Wilton _ DAY 1 _ Welcome Party _ 28.6.24 _ By Maddy Christina (407 sur 606).jpg"
+  "Alexia & Wilton _ DAY 2 _ Beach Party _ 29.6.24 _ By Maddy Christina (5 sur 423).jpg"
+  "Alexia & Wilton _ DAY 2 _ Beach Party _ 29.6.24 _ By Maddy Christina (139 sur 423).jpg"
+  "Alexia & Wilton _ DAY 2 _ Beach Party _ 29.6.24 _ By Maddy Christina (196 sur 423).jpg"
+  "Alexia & Wilton _ DAY 2 _ Beach Party _ 29.6.24 _ By Maddy Christina (199 sur 423).jpg"
+  "Alexia & Wilton _ DAY 2 _ Beach Party _ 29.6.24 _ By Maddy Christina (408 sur 423).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (215 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (233 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (303 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (385 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (525 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (537 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (592 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (795 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (814 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (977 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1048 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1069 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1070 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1072 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1073 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1086 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1106 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1114 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1118 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1163 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1164 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1166 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1488 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1659 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1708 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1727 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1740 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1805 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1851 sur 1864).jpg"
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1854 sur 1864).jpg"
+  "Alexa & Wilton _ Film Photography _ 30.6.24 (30 sur 118).jpg"
+  "Alexa & Wilton _ Film Photography _ 30.6.24 (50 sur 118).jpg"
+  "Alexa & Wilton _ Film Photography _ 30.6.24 (117 sur 118).jpg"
+)
+i=0
+for f in "${aw_src[@]}"; do
+  i=$((i+1)); jpg "$PUB/Alex and Wilton/$f" "$OUT/img/aw-blog/aw-$(printf '%02d' $i).jpg" 1800
+done
 
 # ---------- wedding planner logos (keep original format, aspect + colours) ----------
 mkdir -p "$OUT/img/planner-logos"
