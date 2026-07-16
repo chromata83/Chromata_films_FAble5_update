@@ -10,11 +10,15 @@ OUT="$ROOT/assets"
 FF="ffmpeg -hide_banner -loglevel error -y"
 
 mkdir -p "$OUT/fonts" "$OUT/video" \
-  "$OUT/img/landing" "$OUT/img/domantas" "$OUT/img/jacky" "$OUT/img/jg-blog" "$OUT/img/aw-blog" \
-  "$OUT/img/carousel" "$OUT/img/logos" "$OUT/img/studio" "$OUT/img/contact"
+  "$OUT/img/landing" "$OUT/img/domantas" "$OUT/img/jacky" "$OUT/img/jg-blog" "$OUT/img/aw-blog" "$OUT/img/france-venues" "$OUT/img/olympics" "$OUT/img/aimc" \
+  "$OUT/img/carousel" "$OUT/img/logos" "$OUT/img/studio" "$OUT/img/contact" \
+  "$OUT/img/parisian-dream" "$OUT/img/four-seasons" "$OUT/img/daria" "$OUT/img/sandra-pedro" "$OUT/img/katya-joey"
 
 # ---------- fonts ----------
-cp "C:/Users/kev1l/AppData/Local/Temp/claude/e--Chromata-FILMS-WEBSITE/272d8688-8eec-4b54-8070-0eefe57c9896/scratchpad/germany-sans/Germany Sans DEMO.ttf" "$OUT/fonts/GermanySans.ttf"
+# session-scratchpad source only exists on the session that first fetched it;
+# skip re-copy if it's gone but the font is already in place (already built).
+FONT_SRC="C:/Users/kev1l/AppData/Local/Temp/claude/e--Chromata-FILMS-WEBSITE/272d8688-8eec-4b54-8070-0eefe57c9896/scratchpad/germany-sans/Germany Sans DEMO.ttf"
+[ -f "$FONT_SRC" ] && cp "$FONT_SRC" "$OUT/fonts/GermanySans.ttf" || [ -f "$OUT/fonts/GermanySans.ttf" ]
 
 # ---------- helpers ----------
 jpg () { # src dst maxw
@@ -180,6 +184,146 @@ aw_src=(
 i=0
 for f in "${aw_src[@]}"; do
   i=$((i+1)); jpg "$PUB/Alex and Wilton/$f" "$OUT/img/aw-blog/aw-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- france-venues journal-article images (venue-guide post) ----------
+# order matches inlineMedia in build-pages.mjs: Ephrussi, Cap-Ferrat, Gordes,
+# St-Martin, Estoublon, La Vigie, Eden-Roc. The Estoublon source file has an
+# apostrophe in its name that trips ffmpeg on this box, so it's copied to a
+# throwaway safe filename first rather than passed to ffmpeg directly.
+jpg "$PUB/blog/fav venues/villa+ephrussi+luxury+wedding.webp"          "$OUT/img/france-venues/fv-01.jpg" 1800
+jpg "$PUB/blog/fav venues/FS_X_DG_LARGER_444_02-LOW.webp"              "$OUT/img/france-venues/fv-02.jpg" 1800
+jpg "$PUB/blog/fav venues/bastide+de+gordes+luxury+wedding.webp"       "$OUT/img/france-venues/fv-03.jpg" 1800
+jpg "$PUB/blog/fav venues/chateau-saint-martin-UNE.webp"               "$OUT/img/france-venues/fv-04.jpg" 1800
+cp "$PUB/blog/fav venues/"chateau*estoublon*.webp "$OUT/img/france-venues/_estoublon-tmp.webp"
+jpg "$OUT/img/france-venues/_estoublon-tmp.webp"                       "$OUT/img/france-venues/fv-05.jpg" 1800
+rm -f "$OUT/img/france-venues/_estoublon-tmp.webp"
+jpg "$PUB/blog/fav venues/villa+la+vigie+wedding.webp"                 "$OUT/img/france-venues/fv-06.jpg" 1800
+jpg "$PUB/blog/fav venues/wadding-day-anna-andres-opublikovala-pervye-svadebnye-foto-8-962x1024.webp" "$OUT/img/france-venues/fv-07.jpg" 1800
+
+# ---------- olympics-ai journal-article gallery (AI-generated editorial, sorted filename order) ----------
+i=0
+find "$PUB/blog/olympics" -maxdepth 1 -name '*.png' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/olympics/oly-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- ai-masterclass journal-article gallery (curated 18, sketch→photoreal story order) ----------
+aimc_src=(
+  "WhatsApp Image 2023-12-07 at 09.44.40_9b50023e.jpg"
+  "WhatsApp Image 2023-12-05 at 11.17.54_bae47060.jpg"
+  "WhatsApp Image 2024-02-14 at 21.29.39_69707fe5.jpg"
+  "WhatsApp Image 2024-02-14 at 21.29.35_6415b7a5.jpg"
+  "freepik__transform-the-drawing-into-a-real-picture-of-this-__74628.png"
+  "freepik__spectacular-wedding-decor-in-a-venue-villa-ephruss__74981.png"
+  "freepik__spectacular-wedding-decor-in-a-venue-hotel-du-cap-__24036.png"
+  "magnific_add-flowers-on-both-sides_omAxHag829.png"
+  "y-opulent-reception-img1-at-villa-balb__15301.jpeg"
+  "freepik__symmetrical-shot-photography-an-open-sky-church-in__28924.png"
+  "freepik__place-a-dozen-of-the-wedding-table-from-img1-in-th__74631.png"
+  "freepik__img1-show-me-a-long-rectangular-version-of-that-ta__74629.png"
+  "freepik__place-a-diner-setup-arrangement-in-img1-using-grea__97683.png"
+  "freepik__place-the-img1-table-dressed-with-ostrich-feathers__74626.png"
+  "magnific_replace-tables-in-img1-by_CFS7QtFEEy.png"
+  "freepik__make-isometric-view-of-that-table-and-vases-setup__39425.jpeg"
+  "WhatsApp Image 2024-04-08 at 16.33.10_09d9b4fd.jpg"
+  "_talk__2359.png"
+)
+i=0
+for f in "${aimc_src[@]}"; do
+  i=$((i+1)); jpg "$PUB/blog/AI_masterclass/$f" "$OUT/img/aimc/aimc-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- parisian-dream journal-article gallery (Sumptuous Events, J & A Paris wedding) ----------
+pd_src=(
+  "0030-Christophe Serrano -Z6A_0545-0030.jpg"
+  "0032-Christophe Serrano -Z62_8001-0032.jpg"
+  "0051-Christophe Serrano -Z62_8229-0051.jpg"
+  "0054-Christophe Serrano -Z62_8335-0054.jpg"
+  "0075-Christophe Serrano -Z62_9513-0075.jpg"
+  "0084-Christophe Serrano -Z62_9952-0084.jpg"
+  "0097-Christophe Serrano -KOB_1679-0097.jpg"
+  "0116-Christophe Serrano -Z62_0864-0116.jpg"
+  "0129-Christophe Serrano -IMG_1909-0129.jpg"
+  "0143-Christophe Serrano -Z62_1254-0143.jpg"
+  "0154-Christophe Serrano -Z62_1371-0154.jpg"
+  "0187-Christophe Serrano -Z62_2348-0187.jpg"
+  "0194-Christophe Serrano -IMG_2428-0194.jpg"
+  "sumptuous_events_-323355770-20240505_214027.jpg"
+  "sumptuous_events_-highlight_18122328349715332-20260513_135144.jpg"
+  "sumptuous_events_-highlight_18122328349715332-20260513_135219.jpg"
+  "sumptuous_events_-highlight_18122328349715332-20260513_135238.jpg"
+  "sumptuous_events_-highlight_18122328349715332-20260513_135253.jpg"
+)
+i=0
+for f in "${pd_src[@]}"; do
+  i=$((i+1)); jpg "$PUB/Joseph_ally_Sumptuoues_events_weddings_paris/$f" "$OUT/img/parisian-dream/pd-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- four-seasons-buyout journal-article gallery (S & A, Grand-Hôtel du Cap-Ferrat) ----------
+i=0
+find "$PUB/S-A wedding - four seasons buyout" -maxdepth 1 -name '*.jpg' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/four-seasons/fsb-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- daria-levin journal-article gallery (Èze circus wedding) ----------
+i=0
+{ find "$PUB/Daria" -maxdepth 1 -name 'Daria Levin (*).jpg' | sed 's/.*(\([0-9]*\)).*/\1 &/' | sort -n | cut -d' ' -f2-;
+  find "$PUB/Daria" -maxdepth 1 -name 'Daria_levin (*).jpg' | sed 's/.*(\([0-9]*\)).*/\1 &/' | sort -n | cut -d' ' -f2-; } | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/daria/dl-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- sandra-pedro journal-article gallery (Château d'Estoublon) — curated frame grabs ----------
+sp_src=(
+  "Sandra & Pedro - Highlight Film.mov_snapshot_00.03.843.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_00.17.224.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_00.26.255.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_00.30.425.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_00.39.795.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_00.45.047.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_01.02.065.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_01.10.557.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_01.15.213.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_01.58.435.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_02.28.023.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_02.44.561.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_03.12.058.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_03.54.167.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_04.14.636.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_04.39.334.jpg"
+  "Sandra & Pedro - Highlight Film.mov_snapshot_04.41.256.jpg"
+  "Sandra & Pedro Feature Film.mp4_snapshot_09.34.038.jpg"
+  "Sandra & Pedro Feature Film.mp4_snapshot_15.42.065.jpg"
+  "Sandra & Pedro Feature Film.mp4_snapshot_23.38.400.jpg"
+)
+i=0
+for f in "${sp_src[@]}"; do
+  i=$((i+1)); jpg "$PUB/Sandra_Pedro_Estoublon_wedding/$f" "$OUT/img/sandra-pedro/sp-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- katya-joey journal-article gallery (Villa Erba, Lake Como) — curated by shot number ----------
+kj_src=(
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1.a.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-256.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-403.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-490.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-519.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-608.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-678.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-696.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-894.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-957.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1084.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1138.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1173.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1277-Migliorato-NR.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1673-Migliorato-NR.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1727.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1790.jpg"
+  "©BOTTEGA53-KATYA & JOEY-WEDDING-1869-Migliorato-NR.jpg"
+)
+i=0
+for f in "${kj_src[@]}"; do
+  i=$((i+1)); jpg "$PUB/Katya_joey_wedding_Lake_como_Sacks_production/$f" "$OUT/img/katya-joey/kj-$(printf '%02d' $i).jpg" 1800
 done
 
 # ---------- wedding planner logos (keep original format, aspect + colours) ----------

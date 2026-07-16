@@ -4,8 +4,12 @@ import { writeFileSync } from "node:fs";
 
 const EMAIL = "contact@chromatafilms.com";
 const ADDRESS = "27 Rue de Montchoisy, 1207 Geneva, Switzerland";
+// production domain — used to build absolute URLs for canonical / Open Graph / JSON-LD
+const SITE_URL = "https://www.chromatafilms.com";
 
-const nav = (current) => `<header class="nav nav--night" id="nav">
+// light=true → dark-text nav for pages whose top section is light (e.g. journal
+// articles); default is the cream nav--night used over dark video heroes.
+const nav = (current, light = false) => `<header class="nav${light ? "" : " nav--night"}" id="nav">
   <a class="nav__brand" href="index.html" aria-label="Chromata Films — home">
     <img class="nav__logo" src="assets/img/logo-mark.png" alt="" />
     <span class="nav__wordmark">Chromata Films</span>
@@ -101,7 +105,7 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
   </div>
 </footer>`;
 
-const shell = ({ page, title, description, main, footerCta = true, noindex = false }) => `<!DOCTYPE html>
+const shell = ({ page, title, description, main, footerCta = true, noindex = false, headExtra = "", navLight = false }) => `<!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8" />
@@ -113,13 +117,13 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=36" />
+<link rel="stylesheet" href="css/main.css?v=40" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
 ${PRELOADER}
 
-${nav(page)}
+${nav(page, navLight)}
 
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"><span class="cursor-label"></span></div>
@@ -149,6 +153,108 @@ const next = (href, label) => `  <a class="nextproject" href="${href}" data-them
 
 const g = (folder, n, cls = "", alt = "") =>
   `<figure class="gitem ${cls} mat img-reveal"><img src="assets/img/${folder}/${n}" alt="${alt}" loading="lazy"></figure>`;
+
+const venueFigure = (folder, file, caption) =>
+  `<figure class="mat img-reveal venue-figure"><img src="assets/img/${folder}/${file}" alt="${caption} — Chromata Films" loading="lazy"><figcaption>${caption}</figcaption></figure>`;
+
+/* ---- Journal vendor/venue outbound links ----
+   Every real business name credited in a journal post's prose gets linked to
+   its verified official site (or best verified fallback — see notes). Each
+   entry lists every spelling variant seen across the archive so one dictionary
+   covers all posts; linkVendors() matches the longest applicable variant at
+   each position so e.g. "Villa Ephrussi de Rothschild" wins over "Villa
+   Ephrussi" where both would apply. Names NOT here (Event Boutique, Loli
+   Events, LS Planning, Weds4U, Villa Gastel) could not be verified with
+   confidence and were deliberately left as plain text rather than guessed. */
+const VENDOR_LINKS = [
+  { url: "https://www.villa-ephrussi.com/en", variants: ["Villa Ephrussi de Rothschild", "Villa Ephrussi"] },
+  { url: "https://www.fourseasons.com/capferrat/", variants: ["Grand-Hôtel du Cap-Ferrat, a Four Seasons Hotel", "Grand-Hôtel du Cap-Ferrat", "Four Seasons Cap-Ferrat", "Grand-Hôtel in Cap-Ferrat"] },
+  { url: "https://www.oetkerhotels.com/hotels/chateau-saint-martin/", variants: ["Château Saint-Martin & Spa"] },
+  { url: "https://www.estoublon.com/en/", variants: ["Château d'Estoublon"] },
+  { url: "https://www.montecarlosbm.com/en/hotel-monaco/residences/villa-la-vigie", variants: ["Villa La Vigie"] },
+  { url: "https://www.oetkerhotels.com/hotels/hotel-du-cap-eden-roc/", variants: ["Hôtel du Cap-Eden-Roc"] },
+  { url: "https://airelles.com/en/destination/gordes-hotel", variants: ["Bastide de Gordes"] },
+  { url: "https://chateausaintgeorges-grasse.com/", variants: ["Château St Georges"] },
+  { url: "https://www.lebeauvallon.com/", variants: ["Le Beauvallon", "Beauvallon Hotel", "Hôtel Beauvallon"] },
+  { url: "https://www.chateauberne.com/en/", variants: ["Château de Berne"] },
+  { url: "https://chateaudelagaude.com/en", variants: ["Château de la Gaude"] },
+  { url: "https://vaux-le-vicomte.com/en/", variants: ["Vaux-le-Vicomte"] },
+  { url: "https://www.carrieres-lumieres.com/en", variants: ["Les Carrières de Lumières"] },
+  { url: "https://yacht-club-monaco.mc/en/home/", variants: ["Monaco Yacht Club"] },
+  { url: "https://www.selman-marrakech.com/", variants: ["Selman hotel", "Selman Hotel"] },
+  { url: "https://www.villaerba.it/en/", variants: ["Villa Erba"] },
+  { url: "https://theheritage-collection.com/villa-balbiano/", variants: ["Villa Balbiano"] },
+  { url: "https://www.villabonomi.com/", variants: ["Villa Bonomi"] },
+  { url: "https://www.hotelvillacortine.com/", variants: ["Villa Cortine Palace Hotel"] },
+  { url: "https://www.roccofortehotels.com/hotels-and-resorts/masseria-torre-maizza/", variants: ["Rocco Forte Hotel"] },
+  { url: "https://www.cattedralemonopoli.net/cattedralemonopoli/", variants: ["Cathedral of Monopoli"] },
+  { url: "https://www.altosdechavon.com", variants: ["Altos de Chavón"] },
+  { url: "https://www.ritzparis.com", variants: ["the Ritz"] },
+  { url: "https://en.chateauversailles.fr", variants: ["gardens of Versailles"] },
+  { url: "https://www.musee-rodin.fr", variants: ["Musée Rodin"] },
+  { url: "https://sumptuous-events.com/", variants: ["Sumptuous Events"] },
+  { url: "https://houseofkirschner.com/", variants: ["House of Kirschner"] },
+  { url: "https://lavenderandrose.com/", variants: ["Lavender and Rose"] },
+  { url: "https://cocoon-events.com/", variants: ["Cocoon Events"] },
+  { url: "https://sacksproductions.com/", variants: ["Sacks Productions"] },
+  { url: "https://www.eventoile.com", variants: ["Eventoile"] },
+  { url: "https://www.artego-events.com", variants: ["Artego Luxury Events"] },
+  { url: "https://www.theweddingplannersmonaco.com/", variants: ["The Wedding Planners Monaco"] },
+  { url: "https://www.aavawedding.com/en/", variants: ["Aava Weddings"] },
+  { url: "https://www.palazzoeventi.com", variants: ["Palazzo Eventi"] },
+  { url: "https://italianweddingsandevents.com/", variants: ["Italian Weddings and Events"] },
+  { url: "https://dashochzeitswerk.de/", variants: ["Das Hochzeitswerk"] },
+  { url: "https://whitelabel-events.com/", variants: ["White Label Events"] },
+  { url: "https://weddingplannerprovence.com/", variants: ["WEP"] },
+  { url: "https://www.mindyweiss.com", variants: ["Mindy Weiss"] },
+  { url: "https://www.kbydesigns.com/", variants: ["KBY Designs"] },
+  { url: "https://roni-floral-design.com/en/", variants: ["Roni Florals Design", "Roni Floral Design", "Roni Flora Design", "Roni Florals", "Roni Floral"] },
+  { url: "https://deco-flamme.com/en/", variants: ["Deco Flamme"] },
+  { url: "https://www.floresie.com/", variants: ["Floresie"] },
+  { url: "http://www.floral-events.com/", variants: ["Chiara Sperti"] },
+  { url: "https://www.vincenzodascanio.it/", variants: ["Vincenzo Dascanio"] },
+  { url: "https://www.bastien-blanc-tailleur.com/en", variants: ["Bastien Blanc Tailleur"] },
+  { url: "https://bouchra-paris.com/", variants: ["Bouchra Sugar Design", "Bouchra Paris"] },
+  { url: "https://floraison-paris.com/", variants: ["Floraison Paris"] },
+  { url: "https://www.rattiflora.com/", variants: ["Rattiflora"] },
+  { url: "https://www.inspiration-music.com/", variants: ["Inspiration Live Music"] },
+  { url: "https://nuart.it/", variants: ["Nuart Events", "Nuarts"] },
+  { url: "https://vogueliveband.com/en/", variants: ["Vogue Live Band", "Vogue Live band"] },
+  { url: "https://www.facebook.com/kuriozia/", variants: ["Artistes Kurioza Events", "Artiste Kurioza Events"] },
+  { url: "https://www.festivalmibely.com/en/", variants: ["Festival Mibely"] },
+  { url: "https://en.festivalbandparis.com/", variants: ["Festival Band Paris"] },
+  { url: "https://www.sublimesparis.com/en", variants: ["Sublimes Paris", "Sublime Paris"] },
+  { url: "https://www.jazzaroundmidnight.com/", variants: ["Jazz Around Midnight"] },
+  { url: "https://visionairevents.com/", variants: ["Visionairevents"] },
+  { url: "https://www.blunotteventi.com/", variants: ["Blunotte Eventi"] },
+  { url: "https://selecktive.com/", variants: ["Selecktive"] },
+  { url: "https://www.maddychristina.com", variants: ["Maddy Christina"] },
+  { url: "https://www.bottega53.com/", variants: ["Bottega53", "Bottega 53"] },
+  { url: "https://germanlarkin.com/", variants: ["German Larkin"] },
+  { url: "https://www.ettorefranceschi.com/", variants: ["Ettore Franceschi"] },
+  { url: "https://oliverfly.com/", variants: ["Oliver Fly"] },
+  { url: "https://roman-ivanov.com/", variants: ["Roman Ivanov"] },
+  { url: "https://www.lesecretdaudrey.com/", variants: ["Les Secrets d'Audrey"] },
+  { url: "https://cedricklein.com/", variants: ["Cedric Klein"] },
+  { url: "https://www.belathee.com/", variants: ["Belathee Photography"] },
+  { url: "https://clairemorrisphotography.com/", variants: ["Claire Morris"] },
+  { url: "https://www.davidbastianoni.com/", variants: ["David Bastianoni"] },
+  { url: "https://www.lostinlovephotography.com/", variants: ["Lost in Love Photography"] },
+  { url: "https://www.thierryjoubert.com/", variants: ["Thierry Joubert"] },
+  { url: "https://sandraaberg.com/", variants: ["Sandra Aberg"] },
+  { url: "https://emmanuellemarty.com/", variants: ["Emmanuelle Marty"] },
+  { url: "https://www.daniloandsharon.com/", variants: ["Danilo and Sharon Studio"] },
+  { url: "https://www.reina-kim.com/", variants: ["Reina Kim"] },
+  { url: "https://ziadnakad.com/", variants: ["Ziad Nakad"] },
+  { url: "https://lovestoriestv.com/wedding-film-awards", variants: ["Love StoryTV"] },
+];
+const VENDOR_FLAT = VENDOR_LINKS
+  .flatMap((e) => e.variants.map((v) => ({ v, url: e.url })))
+  .sort((a, b) => b.v.length - a.v.length);
+const VENDOR_URL_BY_TEXT = new Map(VENDOR_FLAT.map((e) => [e.v, e.url]));
+const VENDOR_RE = new RegExp(VENDOR_FLAT.map((e) => e.v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
+const linkVendors = (text) =>
+  text.replace(VENDOR_RE, (m) => `<a class="vendor-link" href="${VENDOR_URL_BY_TEXT.get(m)}" target="_blank" rel="noopener noreferrer">${m}</a>`);
 
 const pages = {};
 
@@ -341,6 +447,14 @@ pages["anna-andres.html"] = shell({
 
   <section class="pad-section" data-section>
     <div class="container">
+      <div class="vidpair" aria-label="Anna Andres — vertical wedding films">
+        <div class="vidpair__item">
+          <iframe data-lazy-src="https://player.vimeo.com/video/466573692?h=39a3243ffd" title="Anna Andres wedding — vertical film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="vidpair__item">
+          <iframe data-lazy-src="https://player.vimeo.com/video/466573597?h=6b59c916d3" title="Anna Andres wedding — vertical film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
       <p class="kicker">— The Story</p>
       <div class="feature__grid" style="margin-top:5vh">
         <div class="prose">
@@ -505,13 +619,48 @@ const posts = [
     file: "journal-ai-masterclass.html", slug: "ai-masterclass",
     title: "AI Wedding Masterclass for Planners and Designers",
     date: "September 29, 2025", tag: "Masterclass",
-    excerpt: "The wedding industry is experiencing a creative revolution through artificial intelligence ... and the professionals who embrace these tools are gaining a serious competitive advantage.",
+    video: "1122868433",
+    galleryDir: "aimc",
+    seo: {
+      title: "AI Wedding Masterclass for Planners & Designers | Chromata Films",
+      description: "Turn sketches into photoreal wedding concepts with Midjourney and AI. A hands-on masterclass for planners and designers by Chromata Films founder Kevin Lopez.",
+      keywords: "AI wedding masterclass, Midjourney for wedding planners, AI wedding design, wedding visualization, AI for event designers, sketch to photoreal, Kevin Lopez, Chromata Films, Wed Design AI",
+      ogImage: "aimc-06.jpg",
+    },
+    cta: {
+      label: "Get the Masterclass →",
+      href: "https://www.weddesignsai.com/weddesignmasterclass",
+      sub: "Hosted on Wed Design AI ... hands-on Midjourney training for wedding planners and designers.",
+    },
+    excerpt: "Learn how to turn sketches into photoreal wedding concepts with Midjourney and AI. A hands-on masterclass for planners and designers, led by Chromata Films founder Kevin Lopez.",
     body: [
-      "The wedding industry is experiencing a creative revolution through artificial intelligence, and the professionals who embrace these powerful tools are gaining a significant competitive advantage. After a decade in visual effects and nine years filming luxury weddings, we've watched AI move from novelty to genuine production tool ... and we believe planners and designers deserve to be in front of that curve, not behind it.",
-      "In our masterclass, we show wedding professionals how to use AI imagery to sell a vision before a single flower is ordered: photoreal mood boards of a specific ballroom dressed three different ways, tablescape variations rendered in your client's actual venue, and lighting studies that let a couple see their reception at golden hour versus candlelight.",
-      "The point is not to replace craft ... it is to communicate it. A planner who can show a client a believable image of the design in the actual space closes faster, aligns vendors sooner, and avoids the expensive misunderstandings that turn production weeks into fire drills.",
-      "We also cover the boundaries: what AI is genuinely good at (concept, mood, iteration speed) and where it must never be used in our industry (representing another vendor's real work, or replacing real coverage of a real day). The couples hire us for truth, beautifully told ... AI helps us plan the telling.",
-      "If you are a planner or designer curious about adding these tools to your studio, reach out ... we run sessions for teams and share the exact workflows we use at Chromata Films.",
+      "The wedding industry is in the middle of a creative revolution, and the planners and designers who embrace artificial intelligence are gaining a real competitive edge. After a decade in visual effects and nine years filming luxury weddings, we have watched AI move from novelty to genuine production tool ... so we built a masterclass to help designers get in front of that curve, not behind it.",
+      "It is led by Kevin Lopez, our founder and a former VFX artist. His work brings together years of film and visual-effects craft with a lifelong love of painting, animation and visual storytelling ... and one simple belief: these tools should help you express your vision faster, never replace the craft behind it.",
+      "The Wed Design AI Masterclass is entirely hands-on. You will learn Midjourney and a set of complementary visualization tools from the ground up: how to turn a simple line drawing into a photorealistic image, and how to place a design inside a client's actual venue so they can see it before a single flower is ordered.",
+      "The payoff is speed and clarity. You will transform abstract client ideas into stunning visual concepts in minutes, generate multiple design options at a pace that was impossible before, and build professional proposals that win more bookings ... photoreal mood boards, tablescape variations and lighting studies at golden hour versus candlelight, all rendered in the real space.",
+      "We also cover the boundaries. Through real case studies, ethical frameworks and guided exercises, you will learn what AI is genuinely good at ... concept, mood and iteration speed ... and where it should never be used, such as representing another vendor's real work or replacing real coverage of a real day. Couples hire us for truth, beautifully told; AI simply helps us plan the telling.",
+      "Whatever your technical background, you will leave with a workflow you can put to use the very next morning. The masterclass is available now at <a class='text-link' href='https://www.weddesignsai.com/weddesignmasterclass' target='_blank' rel='noopener noreferrer'>Wed Design AI</a>.",
+    ],
+    galleryHeading: "From sketch to photoreal — made with AI",
+    gallery: [
+      { file: "aimc-01.jpg", alt: "A hand sketch of an ornate palace facade dressed for a wedding, the starting point for an AI visualization" },
+      { file: "aimc-02.jpg", alt: "A line drawing of a floral wedding archway, ready to be turned into a photoreal image with AI" },
+      { file: "aimc-03.jpg", alt: "Sketch to reality: a drawn statue and pedestal beside its AI-rendered floral version" },
+      { file: "aimc-04.jpg", alt: "Sketch to reality: a drawn urn beside its AI-rendered white-flower arrangement" },
+      { file: "aimc-05.jpg", alt: "A pencil concept transformed by AI into a photoreal ostrich-feather table centerpiece" },
+      { file: "aimc-06.jpg", alt: "AI-rendered wedding decor concept set in the gardens of Villa Ephrussi de Rothschild" },
+      { file: "aimc-07.jpg", alt: "AI-rendered wedding decor concept at the Hotel du Cap-Eden-Roc, palms and pool at golden hour" },
+      { file: "aimc-08.jpg", alt: "AI-rendered floral aisle in the courtyard of the Grand-Hotel du Cap-Ferrat" },
+      { file: "aimc-09.jpg", alt: "AI-rendered reception concept on the terrace of Villa Balbiano, Lake Como, framed by wisteria" },
+      { file: "aimc-10.jpg", alt: "AI-rendered open-sky church ceremony draped in wisteria and white flowers" },
+      { file: "aimc-11.jpg", alt: "An AI mood board of a dozen round wedding tables laid out across a garden reception" },
+      { file: "aimc-12.jpg", alt: "An AI variation showing a long rectangular banquet table with green velvet chairs and white florals" },
+      { file: "aimc-13.jpg", alt: "AI-rendered dinner setup with towering white ostrich-feather centerpieces in an opulent interior" },
+      { file: "aimc-14.jpg", alt: "AI-rendered tablescape dressed with ostrich feathers and pampas in an arched venue" },
+      { file: "aimc-15.jpg", alt: "An AI variation replacing the reception tables with new white floral centerpieces" },
+      { file: "aimc-16.jpg", alt: "An isometric AI view of a wedding table and floral pedestal setup for planning layouts" },
+      { file: "aimc-17.jpg", alt: "A dramatic AI concept: a neon-lit floral stage with a projected face for a modern reception" },
+      { file: "aimc-18.jpg", alt: "An AI concept of a garden ceremony framed by lavender and purple floral installations" },
     ],
   },
   {
@@ -535,6 +684,8 @@ const posts = [
     file: "journal-westbrook-anniversary.html", slug: "westbrook",
     title: "Russell Westbrook and Nina Westbrook — Wedding Anniversary",
     date: "September 17, 2025", tag: "Celebration",
+    galleryDir: "westbrook",
+    gallery: Array.from({ length: 14 }, (_, i) => `rw-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Filming an anniversary celebration for Russell and Nina Westbrook ... proof that the best love stories deserve a sequel.",
     body: [
       "Some love stories deserve a sequel. When Russell and Nina Westbrook celebrated their wedding anniversary, we had the privilege of filming a party that carried all the emotion of a wedding day with the ease of a couple who have already proven everything to each other.",
@@ -562,6 +713,9 @@ const posts = [
     file: "journal-parisian-dream.html", slug: "parisian-dream",
     title: "A Parisian Dream Tour: The Luxurious Wedding of J & A",
     date: "May 21, 2024", tag: "Real Wedding",
+    video: "948291710",
+    galleryDir: "parisian-dream",
+    gallery: Array.from({ length: 18 }, (_, i) => `pd-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Dreaming of a Parisian wedding overflowing with elegance, romance, and a touch of cinematic magic? Versailles and the Musée Rodin, in one unforgettable celebration.",
     body: [
       "Dreaming of a Parisian wedding overflowing with elegance, romance, and a touch of cinematic magic? J & A's celebration, orchestrated by Sumptuous Events, delivered exactly that ... a dream tour through the most storied venues in France.",
@@ -574,12 +728,38 @@ const posts = [
     file: "journal-olympics-ai.html", slug: "olympics-ai",
     title: "Paris 2024 Olympics: A Wedding-Themed Extravaganza Brought to Life by AI",
     date: "April 29, 2024", tag: "AI · Editorial",
-    excerpt: "The 2024 Olympics in Paris gearing up to be an extraordinary affair ... reimagined by Chromata Films as a wedding-themed visual extravaganza, entirely through AI.",
+    galleryDir: "olympics",
+    seo: {
+      title: "Paris 2024 Olympics Reimagined as a Wedding (AI) | Chromata Films",
+      description: "AI reimagines the Paris 2024 Olympics as a luxury wedding: brides carrying the torch, fencing in couture and rowing the Seine. See the full Chromata Films editorial.",
+      keywords: "Paris 2024 Olympics, AI wedding editorial, AI wedding photography, luxury wedding cinematography, wedding art direction, Chromata Films, Paris wedding, Olympic Games wedding concept",
+      ogImage: "oly-02.jpg",
+    },
+    excerpt: "What would the Paris 2024 Olympics look like as a wedding? Chromata Films reimagined the Games as a luxury wedding editorial, built entirely with AI image generation.",
     body: [
-      "The 2024 Olympics in Paris were gearing up to be an extraordinary affair, blending athleticism with a whimsical twist. As a studio obsessed with both Paris and spectacle, we asked ourselves a ridiculous question: what would the Games look like if they were a wedding?",
-      "Using AI image generation, we built a full visual editorial: brides carrying the Olympic torch down the Champs-Élysées, grooms fencing in black tie, synchronized swimmers in tulle, and a stadium dressed like the world's largest ballroom. Absurd? Completely. Gorgeous? We think so too.",
-      "Beyond the fun, this project was a serious technical exercise. Art-directing AI at editorial quality demands the same disciplines as a real shoot: consistent lighting logic, a coherent color story, wardrobe continuity, and ruthless curation. Of the thousands of frames generated, only a handful survived our edit ... the same ratio, honestly, as a real wedding day.",
-      "This experiment became the seed of our AI masterclass for planners and designers. The tools are here; the taste is the differentiator. And taste, after a decade of film and VFX, is the one thing we never outsource.",
+      "The Paris 2024 Olympics were gearing up to be an extraordinary affair, blending athleticism with a whimsical, unmistakably French sense of spectacle. As a studio obsessed with both Paris and grand celebrations, we asked ourselves a ridiculous question: what would the Games look like if they were a wedding?",
+      "Using AI image generation, we built a full visual editorial: brides carrying the Olympic torch, grooms fencing in couture, athletes leaping in front of the Eiffel Tower, and stadiums carpeted in rose petals like the world's largest ballroom. Brides row a boat down the Seine, a nod to the opening ceremony; a torchbearer holds the flame in flowing white. Absurd? Completely. Gorgeous? We think so too.",
+      "Beyond the fun, this project was a serious technical exercise. Art-directing AI at editorial quality demands the same disciplines as a real shoot: consistent lighting logic, a coherent colour story, wardrobe continuity and ruthless curation. Of the thousands of frames generated, only a handful survived our edit ... the same ratio, honestly, as a real wedding day.",
+      "This experiment became the seed of our AI masterclass for wedding planners and designers. The tools are here; the taste is the differentiator. And taste, after a decade of film and VFX, is the one thing we never outsource.",
+    ],
+    galleryHeading: "The editorial — Paris 2024, reimagined as a wedding",
+    gallery: [
+      { file: "oly-01.jpg", alt: "Aerial view of grooms in black tuxedos lined up on an athletics track like sprinters at the start — AI wedding editorial" },
+      { file: "oly-02.jpg", alt: "Two brides in Olympic sportswear celebrating in front of the Olympic rings in Paris — AI-generated wedding editorial" },
+      { file: "oly-03.jpg", alt: "Vogue-style cover portrait of a bride crowned with a golden Olympic headpiece" },
+      { file: "oly-04.jpg", alt: "A bride and groom fencing in white couture among white roses" },
+      { file: "oly-05.jpg", alt: "A couple fencing in a candlelit ballroom, the bride in an ornate white gown" },
+      { file: "oly-06.jpg", alt: "Bride in a cream ruffled gown reclining on a bed of rose petals in an Olympic stadium" },
+      { file: "oly-07.jpg", alt: "Bride in a flowing gown sprinting across a stadium field carpeted in rose petals" },
+      { file: "oly-08.jpg", alt: "A bride and groom among towering floral installations in a petal-filled Olympic stadium" },
+      { file: "oly-09.jpg", alt: "Bride with a sweeping train stretched across a flower-covered stadium field" },
+      { file: "oly-10.jpg", alt: "A bride and a partner in black racing across a rose-petal stadium track" },
+      { file: "oly-11.jpg", alt: "Bride as an Olympic torchbearer in a white jumpsuit, the cauldron flame burning behind her" },
+      { file: "oly-12.jpg", alt: "Bride pole-vaulting with a billowing veil under the floodlights of an Olympic stadium" },
+      { file: "oly-13.jpg", alt: "An athlete in black clearing a hurdle past a row of brides in a packed Olympic stadium" },
+      { file: "oly-14.jpg", alt: "Bride mid long-jump in front of the Eiffel Tower as grooms lie below and the Olympic flame burns" },
+      { file: "oly-15.jpg", alt: "A team of brides rowing a boat down the Seine beneath a historic Paris bridge" },
+      { file: "oly-16.jpg", alt: "Brides rowing a white boat past a stone bridge on the Seine, echoing the Paris 2024 opening ceremony" },
     ],
   },
 ];
@@ -590,18 +770,35 @@ const archive = [
   {
     file: "journal-france-venues.html", page: 2, tag: "Guide",
     title: "Our Favourite Venues in the South of France", date: "April 22, 2024",
+    galleryDir: "france-venues",
+    inlineMedia: [
+      { after: 1, items: [{ file: "fv-01.jpg", caption: "Villa Ephrussi de Rothschild" }] },
+      { after: 2, items: [{ file: "fv-02.jpg", caption: "Grand-Hôtel du Cap-Ferrat" }] },
+      { after: 3, items: [{ file: "fv-03.jpg", caption: "Bastide de Gordes" }] },
+      { after: 4, items: [{ file: "fv-04.jpg", caption: "Château Saint-Martin & Spa" }] },
+      { after: 5, items: [{ file: "fv-05.jpg", caption: "Château d'Estoublon" }] },
+      { after: 6, items: [{ file: "fv-06.jpg", caption: "Villa La Vigie" }] },
+      { after: 7, items: [{ file: "fv-07.jpg", caption: "Hôtel du Cap-Eden-Roc" }] },
+    ],
     excerpt: "Dreaming of a fairytale wedding bathed in the golden light of the French Riviera, or nestled amidst the lavender fields of Provence? A tour of our most enchanting venues to celebrate your love story.",
     body: [
       "Dreaming of a fairytale wedding bathed in the golden light of the French Riviera, or nestled amidst the lavender fields of Provence? This breathtaking region offers a symphony of romance, from sun-drenched coastlines to charming, rustic estates. Choosing the perfect venue can be overwhelming, so here are some of the most enchanting locations to celebrate your love story.",
-      "Villa Ephrussi de Rothschild is a fairytale on the Côte d'Azur ... nine thematic gardens, each a masterpiece of colour and design, provide a magical backdrop for your ceremony. The Grand-Hôtel du Cap-Ferrat, a Four Seasons Hotel, answers with timeless elegance: a ceremony held in the central aisle with the sea beyond, and a party at the Club Dauphin around the pool that is very hard to top.",
-      "Perched atop a hilltop village, the Bastide de Gordes offers panoramic views of the Luberon valley and the rustic elegance of a restored 17th-century farmhouse. Château Saint-Martin & Spa sits amid the rolling vineyards of Provence, its 12th-century courtyard opening onto a marquee built for the occasion. And for a truly grand affair, Château d'Estoublon, surrounded by olive groves and vineyards, offers a chapel, a garden reception, fireworks and a live band.",
-      "Villa La Vigie brings Art Deco charm and panoramic views over the Baie des Anges, once home to Winston Churchill and Karl Lagerfeld ... the chic French Riviera style at its purest. And at the Hôtel du Cap-Eden-Roc, the famous aisle runs from the hotel down to the ceremony spot, the same setting Dior chose for its campaign with Natalie Portman.",
+      "Villa Ephrussi de Rothschild is a fairytale on the Côte d'Azur. This rose-pink palace, dreamed up by Béatrice de Rothschild, is wrapped in nine thematic gardens ... French, Florentine, Spanish, a stone garden, a Japanese garden and more ... each one a masterpiece of colour and design, and each a magical backdrop for your ceremony and portraits. It remains one of the most requested venues on the Riviera, and for good reason: nowhere else gives you this much romance in a single frame.",
+      "The Grand-Hôtel du Cap-Ferrat, a Four Seasons Hotel, answers with timeless elegance. Picture your ceremony held in the central aisle of the gardens, the hotel rising behind you and the Mediterranean stretching to the horizon ... a setting that is genuinely hard to top. Once dinner is over, the celebration drifts down to the Club Dauphin, where the party carries on around the pool at the water's edge.",
+      "Perched atop one of the most beautiful hilltop villages in France, the Bastide de Gordes offers sweeping panoramic views over the Luberon valley. Housed in a restored 17th-century farmhouse, it pairs rustic Provençal character with true five-star polish: a ceremony infused with the light of the countryside, then a reception on the terrace as the valley turns gold at sunset.",
+      "Nestled amid the hills above Vence, Château Saint-Martin & Spa blends luxury with rustic charm. Parts of the estate date to the 12th century, and it offers a tranquil spa, gourmet dining and long views down to the sea. Imagine your ceremony in the courtyard, surrounded by cypress and olive trees, followed by a reception under a marquee built especially for the occasion. Magical.",
+      "For a truly grand affair, Château d'Estoublon is the epitome of Provençal opulence. This 18th-century estate, wrapped in olive groves and vineyards, gives you a chapel for the ceremony, a lavish garden reception, fireworks over the grounds and a live band to carry the party deep into the night.",
+      "Perched above the Baie des Anges, Villa La Vigie brings Art Deco charm and breathtaking panoramic views. Once a residence of Winston Churchill and later home to Karl Lagerfeld, the villa is the chic French Riviera style at its purest ... a ceremony on the terrace with the sea as your backdrop, and a reception in the gardens beneath the stars.",
+      "And then there is the Hôtel du Cap-Eden-Roc, a true Riviera paradise. Its famous aisle runs from the hotel down through the pines to the ceremony spot ... the very setting Dior chose for its campaign with Natalie Portman, just to give you a sense of the drama. Spend the day beside the legendary seawater pool at the edge of the Mediterranean, then celebrate under the stars with the gentle sea breeze, and you will never quite see the world the same way again.",
       "With its stunning scenery, exquisite venues and rich culture, Provence and the French Riviera offer the perfect setting for a wedding you and your guests will cherish forever. And if you need help planning your destination wedding, we know a few wedding planners who would be delighted to help.",
     ],
   },
   {
     file: "journal-sandra-pedro.html", page: 2, tag: "Real Wedding",
     title: "Sandra and Pedro — A Mixed-Religion Ceremony at Château d'Estoublon", date: "February 21, 2024",
+    video: "3AZhvvBCFjU", videoProvider: "youtube",
+    galleryDir: "sandra-pedro",
+    gallery: Array.from({ length: 20 }, (_, i) => `sp-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Sandra and Pedro's wedding at Château d'Estoublon, Provence ... vineyards, olive groves and a ceremony of exquisite taste.",
     body: [
       "Imagine exchanging vows amidst the sun-drenched vineyards of Provence, with olive tree fields stretching towards a horizon painted in vibrant hues. This captivating setting played host to Sandra and Pedro's unforgettable wedding celebration, a testament to exquisite taste and timeless elegance.",
@@ -613,6 +810,9 @@ const archive = [
   {
     file: "journal-four-seasons-buyout.html", page: 2, tag: "Real Wedding",
     title: "A Four Seasons Buyout Wedding for the Most Amazing Celebrations", date: "November 4, 2023",
+    video: "879796920",
+    galleryDir: "four-seasons",
+    gallery: Array.from({ length: 25 }, (_, i) => `fsb-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "S & A took over the entire Grand-Hôtel du Cap-Ferrat for a private celebration ... including a drone flight straight through the fireworks.",
     body: [
       "Last September, love took centre stage on the French Riviera as S & A exchanged vows at the Grand-Hôtel du Cap-Ferrat. This wasn't just any wedding ... the entire venue was exclusively theirs, transforming the luxurious gardens into a private haven for the couple and their guests.",
@@ -624,6 +824,9 @@ const archive = [
   {
     file: "journal-daria-levin.html", page: 2, tag: "Real Wedding",
     title: "Daria Levin — A Crazy Circus Wedding in Èze, French Riviera", date: "October 17, 2023",
+    video: "880169269",
+    galleryDir: "daria",
+    gallery: Array.from({ length: 29 }, (_, i) => `dl-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Daria Levin turned an Èze villa into an incredible Jewish circus celebration ... acrobats, carnival games and non-stop music, by Cocoon Events.",
     body: [
       "Last summer, the French Riviera hosted an extraordinary celebration. Daria Levin chose an Èze villa for her special day and transformed it into an incredible Jewish circus celebration, filled with magic and memorable moments.",
@@ -656,6 +859,7 @@ const archive = [
   {
     file: "journal-puglia-princess.html", page: 3, tag: "Real Wedding",
     title: "A True Princess Wedding in Puglia", date: "September 9, 2023",
+    video: "858206093",
     excerpt: "Nadine and Albert's fairytale wedding in Puglia ... the Cathedral of Monopoli, the Rocco Forte Hotel, and a gown set with 500 Swarovski crystals.",
     body: [
       "The picturesque region of Puglia, Italy, has always been known for its captivating landscapes, charming villages and warm hospitality. On one beautiful summer's day it became the backdrop for something even more enchanting: the wedding of Nadine and Albert, from the luxurious Rocco Forte Hotel to the breathtaking Cathedral of Monopoli, planned by Event Boutique.",
@@ -667,6 +871,9 @@ const archive = [
   {
     file: "journal-katya-joey.html", page: 3, tag: "Real Wedding",
     title: "Katya and Joey — An Incredible Wedding at Villa Erba, Lake Como", date: "September 8, 2023",
+    video: "905275321",
+    galleryDir: "katya-joey",
+    gallery: Array.from({ length: 18 }, (_, i) => `kj-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Katya and Joey's wedding at Villa Erba, Lake Como ... planned by Sacks Productions and Alejandra Poupel, filmed in anamorphic.",
     body: [
       "When it comes to capturing unforgettable moments of love and luxury, we have witnessed some of the most breathtaking weddings around the world. Katya and Joey's celebration at Villa Erba on Lake Como stands out as particularly special, a visual masterpiece made possible by an extraordinary team of vendors.",
@@ -1031,10 +1238,57 @@ ${pagination(pg)}
 }
 
 for (const p of allPosts) {
+  // ---- SEO: per-post overrides + Open Graph / Twitter / canonical / JSON-LD ----
+  const metaTitle = (p.seo && p.seo.title) || `${p.title} — Journal | Chromata Films`;
+  const metaDesc = (p.seo && p.seo.description) || p.excerpt;
+  const pageUrl = `${SITE_URL}/${p.file}`;
+  const iso = new Date(`${p.date} 12:00:00`).toISOString();
+  const galleryAlt = (it) => (typeof it === "string" ? `${p.title} — Chromata Films` : it.alt);
+  const galleryFile = (it) => (typeof it === "string" ? it : it.file);
+  const ogImage = p.seo && p.seo.ogImage
+    ? `${SITE_URL}/assets/img/${p.galleryDir}/${p.seo.ogImage}`
+    : `${SITE_URL}/assets/img/logo-mark.png`;
+  let headExtra = "";
+  if (p.seo) {
+    const imageList = (p.gallery || []).slice(0, 6).map((it) => `${SITE_URL}/assets/img/${p.galleryDir}/${galleryFile(it)}`);
+    if (!imageList.length) imageList.push(ogImage);
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: p.title,
+      description: metaDesc,
+      image: imageList,
+      datePublished: iso,
+      dateModified: iso,
+      author: { "@type": "Organization", name: "Chromata Films", url: SITE_URL },
+      publisher: { "@type": "Organization", name: "Chromata Films", logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo-mark.png` } },
+      mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+      ...(p.seo.keywords ? { keywords: p.seo.keywords } : {}),
+    };
+    headExtra = [
+      `<link rel="canonical" href="${pageUrl}" />`,
+      `<meta property="og:type" content="article" />`,
+      `<meta property="og:site_name" content="Chromata Films" />`,
+      `<meta property="og:title" content="${metaTitle}" />`,
+      `<meta property="og:description" content="${metaDesc}" />`,
+      `<meta property="og:url" content="${pageUrl}" />`,
+      `<meta property="og:image" content="${ogImage}" />`,
+      `<meta property="article:published_time" content="${iso}" />`,
+      `<meta property="article:author" content="Chromata Films" />`,
+      `<meta name="twitter:card" content="summary_large_image" />`,
+      `<meta name="twitter:title" content="${metaTitle}" />`,
+      `<meta name="twitter:description" content="${metaDesc}" />`,
+      `<meta name="twitter:image" content="${ogImage}" />`,
+      ...(p.seo.keywords ? [`<meta name="keywords" content="${p.seo.keywords}" />`] : []),
+      `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`,
+    ].join("\n");
+  }
   pages[p.file] = shell({
     page: "journal",
-    title: `${p.title} — Journal | Chromata Films`,
-    description: p.excerpt,
+    title: metaTitle,
+    description: metaDesc,
+    headExtra,
+    navLight: true,
     main: `  <section class="pad-section" style="padding-top:calc(var(--nav-h) + 8vh)" data-section>
     <div class="container">
       <article class="article">
@@ -1046,22 +1300,49 @@ for (const p of allPosts) {
       </article>
 ${p.video ? `      <figure class="article__film mat">
         <div class="article__film-frame">
-          <iframe data-lazy-src="https://player.vimeo.com/video/${p.video}" title="${p.title} — wedding film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+          <iframe data-lazy-src="${p.videoProvider === "youtube" ? `https://www.youtube-nocookie.com/embed/${p.video}` : `https://player.vimeo.com/video/${p.video}`}" title="${p.title} — wedding film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
         </div>
       </figure>
 ` : ""}      <article class="article">
         <div class="prose">
-${p.body.map((par) => `          <p>${par}</p>`).join("\n")}
+${p.body.map((par, i) => {
+  const paraHtml = `          <p>${linkVendors(par)}</p>`;
+  const row = p.inlineMedia && p.inlineMedia.find((m) => m.after === i);
+  if (!row) return paraHtml;
+  // A single image sits below its paragraph, sized to the paragraph's length
+  // (a longer write-up earns a bigger image); multiple images form a grid row.
+  if (row.items.length === 1) {
+    const words = par.split(/\s+/).filter(Boolean).length;
+    const t = Math.max(0, Math.min(1, (words - 40) / 42)); // 40 words → 0, 82 → 1
+    const pct = Math.round(58 + t * 42); // 58% … 100% of the text column
+    const it = row.items[0];
+    return `${paraHtml}
+          <figure class="mat img-reveal venue-figure venue-figure--solo" style="max-width:${pct}%">
+            <img src="assets/img/${p.galleryDir}/${it.file}" alt="${it.caption} wedding venue, South of France — Chromata Films" loading="lazy">
+            <figcaption>${it.caption}</figcaption>
+          </figure>`;
+  }
+  return `${paraHtml}
+          <div class="venue-row venue-row--${row.items.length}">
+${row.items.map((it) => "            " + venueFigure(p.galleryDir, it.file, it.caption)).join("\n")}
+          </div>`;
+}).join("\n")}
         </div>
+${p.cta ? `        <div class="article-cta">
+          <a class="btn btn--coral" href="${p.cta.href}" target="_blank" rel="noopener noreferrer">${p.cta.label}</a>
+${p.cta.sub ? `          <p class="article-cta__note">${p.cta.sub}</p>\n` : ""}        </div>
+` : ""}      </article>
+${p.gallery ? `${p.galleryHeading ? `      <h2 class="article__gallery-title">${p.galleryHeading}</h2>
+` : ""}      <div class="gallery-grid article__gallery">
+${p.gallery.map((it) => "        " + g(p.galleryDir, galleryFile(it), "", galleryAlt(it))).join("\n")}
+      </div>
+` : ""}      <div class="article">
         <div style="margin-top:8vh; display:flex; gap:30px; flex-wrap:wrap">
           <a class="text-link" href="${journalHref(p.page)}">← Back to the Journal</a>
           <a class="text-link" href="contact.html">Begin your journey →</a>
         </div>
-      </article>
-${p.gallery ? `      <div class="gallery-grid article__gallery">
-${p.gallery.map((f) => "        " + g(p.galleryDir, f, "", p.title + " — Chromata Films")).join("\n")}
       </div>
-` : ""}    </div>
+    </div>
   </section>`,
   });
 }
