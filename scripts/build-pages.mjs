@@ -117,7 +117,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=40" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=44" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -141,7 +141,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=30" defer></script>
+<script src="js/main.js?v=31" defer></script>
 </body>
 </html>
 `;
@@ -156,6 +156,16 @@ const g = (folder, n, cls = "", alt = "") =>
 
 const venueFigure = (folder, file, caption) =>
   `<figure class="mat img-reveal venue-figure"><img src="assets/img/${folder}/${file}" alt="${caption} — Chromata Films" loading="lazy"><figcaption>${caption}</figcaption></figure>`;
+
+// Vimeo player URL for a video field that's either a plain ID string or an
+// { id, hash } object (unlisted videos require ?h=<hash> or the embed 404s).
+const vimeoSrc = (v) => {
+  const id = typeof v === "string" ? v : v.id;
+  const hash = typeof v === "string" ? null : v.hash;
+  return `https://player.vimeo.com/video/${id}${hash ? `?h=${hash}` : ""}`;
+};
+const videoEmbedUrl = (video, provider) =>
+  provider === "youtube" ? `https://www.youtube-nocookie.com/embed/${video}` : vimeoSrc(video);
 
 /* ---- Journal vendor/venue outbound links ----
    Every real business name credited in a journal post's prose gets linked to
@@ -247,16 +257,58 @@ const VENDOR_LINKS = [
   { url: "https://www.reina-kim.com/", variants: ["Reina Kim"] },
   { url: "https://ziadnakad.com/", variants: ["Ziad Nakad"] },
   { url: "https://lovestoriestv.com/wedding-film-awards", variants: ["Love StoryTV"] },
+  { url: "https://www.ritzcarlton.com/en/hotels/dalrz-the-ritz-carlton-dallas/overview/", variants: ["Ritz-Carlton Dallas"] },
+  { url: "https://www.gabrielerizzilab.com/", variants: ["Gabriele Rizzi Lab"] },
+  { url: "https://www.jordankahnmusiccompany.com/", variants: ["Jordan Kahn Music Company"] },
+  { url: "https://thechainsmokers.com/", variants: ["The Chainsmokers"] },
+  { url: "https://lgpelite.co.uk/", variants: ["LGP Elite Experiences"] },
+  { url: "https://www.bayerbros.com/", variants: ["Bayer Brothers Sets"] },
+  { url: "https://www.grodesigns.com/", variants: ["GRŌ designs", "GRŌ Designs"] },
+  { url: "https://www.partydallas.com/", variants: ["Party! Dallas"] },
+  { url: "https://stage2lighting.com/", variants: ["Stage 2 Lighting"] },
+  { url: "https://www.instagram.com/alexbramall/", variants: ["Alex Bramall"] },
 ];
 const VENDOR_FLAT = VENDOR_LINKS
   .flatMap((e) => e.variants.map((v) => ({ v, url: e.url })))
   .sort((a, b) => b.v.length - a.v.length);
 const VENDOR_URL_BY_TEXT = new Map(VENDOR_FLAT.map((e) => [e.v, e.url]));
-const VENDOR_RE = new RegExp(VENDOR_FLAT.map((e) => e.v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
+// "the Ritz" (→ Ritz Paris) needs a guard: length-sort only resolves ties at
+// the SAME start position, but "the Ritz-Carlton Dallas" lets the shorter
+// "the Ritz" match 4 chars earlier than "Ritz-Carlton Dallas" could even
+// start, so it wins by position and mislinks a different hotel chain to
+// ritzparis.com. Excluding "-Carlton" from following it fixes that specific
+// collision without touching the general longest-wins sort for everyone else.
+const VENDOR_RE = new RegExp(VENDOR_FLAT.map((e) => {
+  const escaped = e.v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return e.v === "the Ritz" ? `${escaped}(?!-Carlton)` : escaped;
+}).join("|"), "g");
 const linkVendors = (text) =>
   text.replace(VENDOR_RE, (m) => `<a class="vendor-link" href="${VENDOR_URL_BY_TEXT.get(m)}" target="_blank" rel="noopener noreferrer">${m}</a>`);
 
 const pages = {};
+
+/* AI-generated wedding-design concepts (assets/img/aimc) — shared between the
+   AI masterclass post and the earlier AI-in-the-wedding-industry post. */
+const AIMC_GALLERY = [
+  { file: "aimc-01.jpg", alt: "A hand sketch of an ornate palace facade dressed for a wedding, the starting point for an AI visualization" },
+  { file: "aimc-02.jpg", alt: "A line drawing of a floral wedding archway, ready to be turned into a photoreal image with AI" },
+  { file: "aimc-03.jpg", alt: "Sketch to reality: a drawn statue and pedestal beside its AI-rendered floral version" },
+  { file: "aimc-04.jpg", alt: "Sketch to reality: a drawn urn beside its AI-rendered white-flower arrangement" },
+  { file: "aimc-05.jpg", alt: "A pencil concept transformed by AI into a photoreal ostrich-feather table centerpiece" },
+  { file: "aimc-06.jpg", alt: "AI-rendered wedding decor concept set in the gardens of Villa Ephrussi de Rothschild" },
+  { file: "aimc-07.jpg", alt: "AI-rendered wedding decor concept at the Hotel du Cap-Eden-Roc, palms and pool at golden hour" },
+  { file: "aimc-08.jpg", alt: "AI-rendered floral aisle in the courtyard of the Grand-Hotel du Cap-Ferrat" },
+  { file: "aimc-09.jpg", alt: "AI-rendered reception concept on the terrace of Villa Balbiano, Lake Como, framed by wisteria" },
+  { file: "aimc-10.jpg", alt: "AI-rendered open-sky church ceremony draped in wisteria and white flowers" },
+  { file: "aimc-11.jpg", alt: "An AI mood board of a dozen round wedding tables laid out across a garden reception" },
+  { file: "aimc-12.jpg", alt: "An AI variation showing a long rectangular banquet table with green velvet chairs and white florals" },
+  { file: "aimc-13.jpg", alt: "AI-rendered dinner setup with towering white ostrich-feather centerpieces in an opulent interior" },
+  { file: "aimc-14.jpg", alt: "AI-rendered tablescape dressed with ostrich feathers and pampas in an arched venue" },
+  { file: "aimc-15.jpg", alt: "An AI variation replacing the reception tables with new white floral centerpieces" },
+  { file: "aimc-16.jpg", alt: "An isometric AI view of a wedding table and floral pedestal setup for planning layouts" },
+  { file: "aimc-17.jpg", alt: "A dramatic AI concept: a neon-lit floral stage with a projected face for a modern reception" },
+  { file: "aimc-18.jpg", alt: "An AI concept of a garden ceremony framed by lavender and purple floral installations" },
+];
 
 /* ============================== DOMANTAS ============================== */
 pages["domantas-sabonis.html"] = shell({
@@ -616,6 +668,93 @@ ${Array.from({ length: 6 }, (_, i) => `        ${g("studio", "illus-" + String(i
 /* ============================== JOURNAL ============================== */
 const posts = [
   {
+    file: "journal-analog-film-weddings.html", slug: "analog-film-weddings",
+    title: "Super 8mm and Super 16mm — When Analog Comes Back Into Our Lives",
+    date: "June 12, 2026", tag: "Trend · Editorial",
+    verticalVideos: [
+      { id: "1140692063", hash: "d480349846" },
+      { id: "1140691721", hash: "c56b67af06" },
+      { id: "1140691515", hash: "1b5929c874" },
+    ],
+    seo: {
+      title: "Super 8mm and Super 16mm — Analog Film Is Back at Weddings | Chromata Films",
+      description: "Why couples are choosing real analog film again: the data behind the 2025–2026 Super 8 and 16mm wedding trend, and how Chromata Films shoots true 16mm on real weddings.",
+      keywords: "Super 8mm wedding film, 16mm wedding videographer, analog wedding film, film wedding video trend 2025, Super 8 wedding video, Kodak Super 8, vintage wedding film, best wedding videographers in Europe, Chromata Films",
+    },
+    excerpt: "Real analog film is back on wedding days ... not a digital filter, but true Super 8mm and 16mm motion-picture film. Here's the data behind the trend, and how Chromata Films shoots it for real.",
+    body: [
+      "Something old is new again on wedding days: real analog film. Not a digital filter dressed up to look like film ... actual Super 8mm and 16mm motion-picture film, shot on cameras built decades before anyone owned a phone, processed and scanned by hand. After years of 4K, drones and infinite retakes, more and more couples are asking us for grain again.",
+      "The numbers back up what we're seeing on set. Pinterest's 2025 Wedding Trends Report found searches for \"film wedding photos\" up 2,258 percent year over year, and The Knot's 2025 wedding-video trend coverage named Super 8, blended with digital footage, as one of the year's defining looks. Kodak, meanwhile, reported film stock sales rising roughly 20 percent in 2024 and released a new Super 8 camera that same year ... its first major update to the format in more than three decades.",
+      "Grain and warmth are only part of it. Shooting on film removes the infinite-takes safety net of digital: there is no monitor to check mid-scene, no instant replay, just a fixed number of minutes on a roll and a commitment to the moment as it actually happens. For a generation that has already brought disposable cameras back to the reception table, and that reaches for the soft, imperfect look of 90s and 2000s home movies over anything hyper-polished, that constraint feels less like a limitation and more like the entire point.",
+      "It is also genuinely rare. A standard 400-foot roll of 16mm holds around eleven minutes of footage at 24 frames per second, must be processed and scanned by a specialist lab in the days after the wedding, and captures no audio on its own ... every roll is a decision, not a default. Very few working wedding videographers own the cameras, know how to load them correctly, or have a lab relationship that can turn a wedding weekend around in time for the final edit. It sits closer to cinematography school than modern content creation.",
+      "It's a discipline we've built into the studio rather than treated as a novelty. Michael Bod, part of the Chromata Films team, is our dedicated 16mm film and portrait specialist ... one of the only wedding filmmakers we know of who shoots true analog motion-picture film on real weddings, grain, halation and all, rather than a digital \"film-look\" preset applied after the fact. It sits alongside our standard cinema coverage, not instead of it: Super 8 and 16mm can't replace a full wedding film on their own (no built-in sound, only a handful of minutes per roll), but as a companion reel, it gives a day a texture that no amount of 4K can fake.",
+      "Below are a few frames from recent rolls, shown exactly as they come back from the lab ... unretouched, ungraded, straight off the film.",
+      "If you're planning a wedding and want a reel that will look and feel the same in thirty years as it does today, ask us about shooting on film. It won't be for every couple, or every moment of the day ... but for the right few minutes, nothing digital has matched it yet.",
+    ],
+  },
+  {
+    file: "journal-marcella-daniel.html", slug: "marcella-daniel",
+    title: "Marcella Raneri and Daniel Nutkis — A Floral Engagement Party at the Ritz-Carlton Dallas, with a Surprise Set by The Chainsmokers",
+    date: "April 19, 2025", tag: "Engagement · Press",
+    video: "1078314523",
+    galleryDir: "marcella-daniel",
+    seo: {
+      title: "Marcella Raneri & Daniel Nutkis Engagement Party — Ritz-Carlton Dallas | Chromata Films",
+      description: "Inside Marcella Raneri and Daniel Nutkis's 200,000-stem floral engagement party at the Ritz-Carlton Dallas, featuring a surprise DJ set by The Chainsmokers. Filmed by Chromata Films.",
+      keywords: "Marcella Raneri, Daniel Nutkis, engagement party Dallas, Ritz-Carlton Dallas wedding videographer, The Chainsmokers DJ set, Roni Floral Design, luxury engagement party film, Dallas wedding videographer, Chromata Films",
+      ogImage: "marcella-raneri-daniel-nutkis-engagement-04.jpg",
+    },
+    credits: [
+      { role: "Venue", name: "Ritz-Carlton Dallas", url: "https://www.ritzcarlton.com/en/hotels/dalrz-the-ritz-carlton-dallas/overview/" },
+      { role: "Event Planning & Design", name: "Lucia Garibay · LGP Elite Experiences", url: "https://lgpelite.co.uk/" },
+      { role: "Event & Floral Design", name: "Nicolas Barelier · Roni Floral Design", url: "https://roni-floral-design.com/en/" },
+      { role: "Immersive Entertainment", name: "Gabriele Rizzi Lab", url: "https://www.gabrielerizzilab.com/" },
+      { role: "Band", name: "Jordan Kahn Music Company", url: "https://www.jordankahnmusiccompany.com/" },
+      { role: "Headliner DJs", name: "The Chainsmokers", url: "https://thechainsmokers.com/" },
+      { role: "Set Design", name: "Bayer Brothers Sets", url: "https://www.bayerbros.com/" },
+      { role: "Production Design", name: "GRŌ designs", url: "https://www.grodesigns.com/" },
+      { role: "Furniture & Rentals", name: "Party! Dallas", url: "https://www.partydallas.com/" },
+      { role: "Lighting & Sound", name: "Stage 2 Lighting", url: "https://stage2lighting.com/" },
+      { role: "Photography", name: "Alex Bramall", url: "https://www.instagram.com/alexbramall/" },
+      { role: "Videography", name: "Chromata Films" },
+    ],
+    excerpt: "Marcella Raneri and Daniel Nutkis's 200,000-stem floral engagement party at the Ritz-Carlton Dallas ... a vintage trolley entrance, a Parisian-street ballroom, and a surprise set by The Chainsmokers.",
+    body: [
+      "When Marcella Raneri and Daniel Nutkis celebrated their engagement at the Ritz-Carlton Dallas, the brief was simple in ambition and enormous in scale: a spring-themed party dressed in roughly 200,000 stem flowers, the first chapter in a four-season lead-up to their wedding. Guests arrived by vintage trolley car, driven straight through a cascading floral canopy into a ballroom built to look like a Parisian street in full bloom.",
+      "Every inch of the room carried the theme. Nicolas Barelier led the event and floral design in partnership with Roni Floral Design ... the French Riviera florist's global reputation, built on projects like the Paris Opera, made them, in Marcella's words, \"truly the perfect team to bring our vision to life.\" Bayer Brothers Sets and GRŌ designs built the scenic production around them, Party! Dallas supplied the bespoke furniture, and Stage 2 Lighting shaped the room after dark.",
+      "The night's entertainment carried its own surprise. Gabriele Rizzi Lab staged the immersive elements ... a slow-motion petal-toss booth, a live artist sketching guests into floral portraits ... while Jordan Kahn Music Company anchored the live band. Then, midway through the night, The Chainsmokers stepped out for a full surprise DJ set. Marcella and Daniel had met the duo after watching them perform in Las Vegas earlier that year and booked them on the spot. \"I immediately thought it would be the perfect vibe for our guests,\" Marcella said. By the time Drew Taggart dropped into \"Paris,\" the room was unrecognisable from the dinner that had just ended.",
+      "Around 300 guests, including Alyssa Edwards and Hope Beel, spent the night under a ceiling that seemed to rain petals, with Alex Bramall documenting every detail in photographs and our own cameras capturing the film. \"It absolutely surpassed my expectations,\" Marcella told Local Profile after the party. \"One of my favorite moments was the look on everyone's faces when The Chainsmokers came out.\"",
+      "This is the first of four seasonal celebrations Marcella and Daniel are building toward their wedding ... spring for the engagement, summer for the hen party, autumn for the bridal shower, and winter, finally, for the wedding itself. If the opening chapter is anything to go by, the finale will be extraordinary. We can't wait to be there for it.",
+    ],
+    gallery: [
+      { file: "marcella-raneri-daniel-nutkis-engagement-01.jpg", alt: "A vintage trolley car under a cascading rose and floral canopy entrance at Marcella Raneri and Daniel Nutkis's engagement party, Ritz-Carlton Dallas" },
+      { file: "marcella-raneri-daniel-nutkis-engagement-02.jpg", alt: "Models in couture floral gowns beneath a rose archway at Marcella Raneri and Daniel Nutkis's floral-themed engagement party" },
+      { file: "marcella-raneri-daniel-nutkis-engagement-03.jpg", alt: "Marcella Raneri and Daniel Nutkis pose in front of a floral butterfly-wing backdrop at their Ritz-Carlton Dallas engagement party" },
+      { file: "marcella-raneri-daniel-nutkis-engagement-04.jpg", alt: "Marcella Raneri in a rose-petal ball gown on the dance floor at her Dallas engagement party" },
+      { file: "marcella-raneri-daniel-nutkis-engagement-05.jpg", alt: "The floral-canopied stage and dance floor moments before The Chainsmokers' surprise performance" },
+      { file: "marcella-raneri-daniel-nutkis-engagement-06.jpg", alt: "Guests dancing beneath oversized floral installations at Marcella Raneri and Daniel Nutkis's engagement party" },
+      { file: "marcella-raneri-daniel-nutkis-engagement-07.jpg", alt: "The Chainsmokers DJing a surprise set for Marcella Raneri and Daniel Nutkis's engagement party guests" },
+    ],
+  },
+  {
+    file: "journal-maxence-elise-caqueret.html", slug: "maxence-elise-caqueret",
+    title: "Maxence and Elise Caqueret — A Private Wedding Film",
+    date: "October 10, 2024", tag: "Real Wedding",
+    video: "1018353157",
+    seo: {
+      title: "Maxence and Elise Caqueret — A Private Wedding Film | Chromata Films",
+      description: "An intimate, family-only wedding film for footballer Maxence Caqueret and Elise, captured with discretion by Chromata Films.",
+      keywords: "Maxence Caqueret wedding, private wedding videographer, discreet wedding film, footballer wedding, luxury wedding cinematography, Chromata Films",
+    },
+    excerpt: "An intimate, family-only wedding film for Maxence and Elise Caqueret, captured with the same discretion they asked of everyone in the room.",
+    body: [
+      "Some weddings are built for the world to see; others are kept close, shared only with the people who matter most. When Maxence and Elise Caqueret married, they chose the second path ... an intimate, family-only celebration, captured with the same discretion they asked of everyone in the room.",
+      "Maxence plays professional football at the highest level, currently with Como 1907 in Italy's Serie A after coming through the Olympique Lyonnais academy. That public life made the choice to keep this day private a deliberate one ... and it shaped how we filmed it: fewer wide establishing shots of the venue, more time spent close to the couple, following the day as it was actually lived rather than staged for an audience.",
+      "That is the craft of a private wedding film. There is no red carpet to lean on, no press moment to build toward ... just two families brought together, and a couple who wanted the film to feel like a memory rather than a broadcast. We are grateful Maxence and Elise trusted us with that distinction.",
+      "To Maxence and Elise: congratulations, and thank you for letting our cameras into a day that belonged entirely to you.",
+    ],
+  },
+  {
     file: "journal-ai-masterclass.html", slug: "ai-masterclass",
     title: "AI Wedding Masterclass for Planners and Designers",
     date: "September 29, 2025", tag: "Masterclass",
@@ -642,26 +781,7 @@ const posts = [
       "Whatever your technical background, you will leave with a workflow you can put to use the very next morning. The masterclass is available now at <a class='text-link' href='https://www.weddesignsai.com/weddesignmasterclass' target='_blank' rel='noopener noreferrer'>Wed Design AI</a>.",
     ],
     galleryHeading: "From sketch to photoreal — made with AI",
-    gallery: [
-      { file: "aimc-01.jpg", alt: "A hand sketch of an ornate palace facade dressed for a wedding, the starting point for an AI visualization" },
-      { file: "aimc-02.jpg", alt: "A line drawing of a floral wedding archway, ready to be turned into a photoreal image with AI" },
-      { file: "aimc-03.jpg", alt: "Sketch to reality: a drawn statue and pedestal beside its AI-rendered floral version" },
-      { file: "aimc-04.jpg", alt: "Sketch to reality: a drawn urn beside its AI-rendered white-flower arrangement" },
-      { file: "aimc-05.jpg", alt: "A pencil concept transformed by AI into a photoreal ostrich-feather table centerpiece" },
-      { file: "aimc-06.jpg", alt: "AI-rendered wedding decor concept set in the gardens of Villa Ephrussi de Rothschild" },
-      { file: "aimc-07.jpg", alt: "AI-rendered wedding decor concept at the Hotel du Cap-Eden-Roc, palms and pool at golden hour" },
-      { file: "aimc-08.jpg", alt: "AI-rendered floral aisle in the courtyard of the Grand-Hotel du Cap-Ferrat" },
-      { file: "aimc-09.jpg", alt: "AI-rendered reception concept on the terrace of Villa Balbiano, Lake Como, framed by wisteria" },
-      { file: "aimc-10.jpg", alt: "AI-rendered open-sky church ceremony draped in wisteria and white flowers" },
-      { file: "aimc-11.jpg", alt: "An AI mood board of a dozen round wedding tables laid out across a garden reception" },
-      { file: "aimc-12.jpg", alt: "An AI variation showing a long rectangular banquet table with green velvet chairs and white florals" },
-      { file: "aimc-13.jpg", alt: "AI-rendered dinner setup with towering white ostrich-feather centerpieces in an opulent interior" },
-      { file: "aimc-14.jpg", alt: "AI-rendered tablescape dressed with ostrich feathers and pampas in an arched venue" },
-      { file: "aimc-15.jpg", alt: "An AI variation replacing the reception tables with new white floral centerpieces" },
-      { file: "aimc-16.jpg", alt: "An isometric AI view of a wedding table and floral pedestal setup for planning layouts" },
-      { file: "aimc-17.jpg", alt: "A dramatic AI concept: a neon-lit floral stage with a projected face for a modern reception" },
-      { file: "aimc-18.jpg", alt: "An AI concept of a garden ceremony framed by lavender and purple floral installations" },
-    ],
+    gallery: AIMC_GALLERY,
   },
   {
     file: "journal-jacqueline-gordon.html", slug: "jacqueline-gordon",
@@ -772,13 +892,13 @@ const archive = [
     title: "Our Favourite Venues in the South of France", date: "April 22, 2024",
     galleryDir: "france-venues",
     inlineMedia: [
-      { after: 1, items: [{ file: "fv-01.jpg", caption: "Villa Ephrussi de Rothschild" }] },
-      { after: 2, items: [{ file: "fv-02.jpg", caption: "Grand-Hôtel du Cap-Ferrat" }] },
-      { after: 3, items: [{ file: "fv-03.jpg", caption: "Bastide de Gordes" }] },
-      { after: 4, items: [{ file: "fv-04.jpg", caption: "Château Saint-Martin & Spa" }] },
-      { after: 5, items: [{ file: "fv-05.jpg", caption: "Château d'Estoublon" }] },
-      { after: 6, items: [{ file: "fv-06.jpg", caption: "Villa La Vigie" }] },
-      { after: 7, items: [{ file: "fv-07.jpg", caption: "Hôtel du Cap-Eden-Roc" }] },
+      { after: 1, items: [{ file: "fv-01.jpg", caption: "Villa Ephrussi de Rothschild", alt: "Villa Ephrussi de Rothschild wedding venue, South of France — Chromata Films" }] },
+      { after: 2, items: [{ file: "fv-02.jpg", caption: "Grand-Hôtel du Cap-Ferrat", alt: "Grand-Hôtel du Cap-Ferrat wedding venue, South of France — Chromata Films" }] },
+      { after: 3, items: [{ file: "fv-03.jpg", caption: "Bastide de Gordes", alt: "Bastide de Gordes wedding venue, South of France — Chromata Films" }] },
+      { after: 4, items: [{ file: "fv-04.jpg", caption: "Château Saint-Martin & Spa", alt: "Château Saint-Martin & Spa wedding venue, South of France — Chromata Films" }] },
+      { after: 5, items: [{ file: "fv-05.jpg", caption: "Château d'Estoublon", alt: "Château d'Estoublon wedding venue, South of France — Chromata Films" }] },
+      { after: 6, items: [{ file: "fv-06.jpg", caption: "Villa La Vigie", alt: "Villa La Vigie wedding venue, South of France — Chromata Films" }] },
+      { after: 7, items: [{ file: "fv-07.jpg", caption: "Hôtel du Cap-Eden-Roc", alt: "Hôtel du Cap-Eden-Roc wedding venue, South of France — Chromata Films" }] },
     ],
     excerpt: "Dreaming of a fairytale wedding bathed in the golden light of the French Riviera, or nestled amidst the lavender fields of Provence? A tour of our most enchanting venues to celebrate your love story.",
     body: [
@@ -837,6 +957,9 @@ const archive = [
   {
     file: "journal-natalia-montenegro.html", page: 2, tag: "Celebration",
     title: "Natalia's 50th Birthday Celebration in Montenegro", date: "September 27, 2023",
+    video: "866854185",
+    galleryDir: "natalia",
+    gallery: Array.from({ length: 44 }, (_, i) => `nm-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "A three-day 50th birthday celebration in Tivat, Montenegro ... luxury, Montenegrin hospitality and the Adriatic Sea as a backdrop.",
     body: [
       "Celebrating a milestone as significant as turning 50 deserves nothing less than an extravagant celebration, and that is exactly what Natalia experienced in Tivat, Montenegro. This picturesque coastal town, along the stunning Adriatic Sea, set the stage for an unforgettable three-day celebration that blended luxury, Montenegrin hospitality and a breathtaking backdrop.",
@@ -884,6 +1007,10 @@ const archive = [
   {
     file: "journal-angela-allister-brides.html", page: 3, tag: "Real Wedding · Press",
     title: "Angela and Allister — Featured in Brides", date: "May 10, 2023",
+    galleryDir: "carousel",
+    inlineMedia: [
+      { after: 1, items: [{ file: "c-37.jpg", caption: "Angela & Allister — Paris", alt: "Angela and Allister's luxury wedding in Paris, featured in Brides — Chromata Films" }] },
+    ],
     excerpt: "Angela and Allister travelled from Vancouver to marry at the Ritz in Paris ... a luxurious affair featured in Brides.",
     body: [
       "Imagine a warm summer day in Paris, the city of love, where two souls from Vancouver, Angela and Allister, decided to celebrate their love in the most romantic way possible. Their wedding, featured in Brides, was a luxurious affair that left everyone in awe.",
@@ -904,17 +1031,33 @@ const archive = [
   {
     file: "journal-planning-europe.html", page: 3, tag: "Guide",
     title: "Planning Your Destination Wedding in Europe", date: "January 27, 2023",
-    excerpt: "A short guide to planning your European destination wedding ... Italy, France and Spain, and why the film is the one souvenir that remains.",
+    galleryDir: "wed-europe",
+    galleryHeading: "Scenes from our European weddings",
+    gallery: Array.from({ length: 76 }, (_, i) => `we-${String(i + 1).padStart(2, "0")}.jpg`),
+    seo: {
+      title: "Planning a Destination Wedding in Europe — The Complete Guide | Chromata Films",
+      description: "How to plan a luxury destination wedding in Europe: the most beautiful venues in Italy, France and Spain, timing and logistics, trusted planners, and how to choose the best wedding videographer in Europe for your day.",
+      keywords: "destination wedding Europe, best wedding videographers in Europe, luxury wedding videographer, wedding film Europe, Lake Como wedding, French Riviera wedding, Paris wedding, Provence wedding, Spain destination wedding, European wedding planner, Chromata Films",
+    },
+    excerpt: "The complete guide to planning your European destination wedding ... the finest venues in Italy, France and Spain, timing, planners, and how to choose the best wedding videographer in Europe.",
     body: [
-      "Are you and your partner searching for the perfect European destination to exchange your vows? Look no further than the charming, romantic countries of Italy, France and Spain. Each offers luxurious venues ... grand palaces, picturesque castles, beachfront villas ... alongside breathtaking landscapes, rich culture and ideal weather for a destination wedding.",
-      "Italy offers the perfect blend of romance and grandeur, from the canals of Venice to a Tuscan villa overlooking the vineyards. France brings glamour and sophistication, whether in Paris or the coastal town of Nice. And Spain is ideal for a beach wedding, from the Costa del Sol to the Balearic Islands.",
-      "While we specialise in high-end cinematography, we know that finding the right planner is crucial, which is why we work closely with a network of experienced and reputable wedding planners who can turn your dream into reality. The only thing that remains as a souvenir of your special day is the film and photography that capture those precious moments ... so surround yourself with true professionals.",
-      "So what are the next steps? Start by researching the destinations and venues that fit your style, then reach out to us. We can help with the documentation of your big day and connect you with the right planner to bring your dream wedding to life.",
+      "Are you and your partner searching for the perfect European destination to exchange your vows? Look no further than the charming, romantic countries of Italy, France and Spain. Each offers luxurious venues ... grand palaces, picturesque castles, beachfront villas ... alongside breathtaking landscapes, rich culture and ideal weather for a destination wedding in Europe. After a decade filming celebrations across all three, here is what we have learned, and how to make the right choices for your own day.",
+      "Italy offers the perfect blend of romance and grandeur. Venice gives you gondolas and gilded palazzos; a Tuscan villa gives you golden light over the vineyards. Lake Como remains the crown jewel for luxury weddings ... we have filmed unforgettable celebrations at Villa Erba, Villa Balbiano and Villa Bonomi, where the mountains meet the water and every terrace feels like a film set. And further south, Puglia rewards couples who want warmth, whitewashed villages and cathedral ceremonies followed by masseria receptions under the stars.",
+      "France brings glamour and sophistication in every register. Paris offers the grandest stages in the world ... the Ritz, the Musée Rodin, and châteaux like Vaux-le-Vicomte, the little Versailles, which can be privatised entirely for your celebration. The French Riviera, our home ground, concentrates more legendary venues per kilometre of coastline than anywhere on earth: Villa Ephrussi de Rothschild, the Grand-Hôtel du Cap-Ferrat and the Hôtel du Cap-Eden-Roc among them. Provence answers with lavender, olive groves and estates like Château d'Estoublon for couples who want their wedding to taste of the countryside.",
+      "Spain is ideal for a beach wedding, from the Costa del Sol to the Balearic Islands. Marbella delivers polished glamour, Mallorca and Ibiza offer cliff-top villas above turquoise water, and the Spanish talent pool of planners, florists and entertainers is superb. If your guests dream of sunshine, late dinners and dancing until dawn, Spain will not disappoint.",
+      "A word on timing and logistics. The European wedding season runs from May to late September, and the most requested venues are reserved twelve to eighteen months in advance ... start early, especially if you are considering a full venue buyout. Think in terms of a multi-day celebration: a welcome dinner, a beach or pool party, the wedding day itself and a farewell brunch. It is the format that makes a destination wedding feel like a holiday your guests will talk about for years.",
+      "While we specialise in high-end cinematography, we know that finding the right planner is crucial, which is why we work closely with a network of experienced and reputable wedding planners across France, Italy and Spain who can turn your dream into reality. Tell us the country and the mood, and we will happily point you to the people we trust with our own clients' weddings.",
+      "And then there is the question couples ask us most: how do you choose the best wedding videographer in Europe? Look for a studio that films weddings the way cinema films stories ... true cinema cameras rather than hybrid kits, licensed drone pilots, a fashion-film eye for couture and decor, and the discretion to disappear into the day. Ask to see full films, not just teasers; a beautiful minute is easy, a beautiful hour is craft. The only thing that remains as a souvenir of your special day is the film and the photography ... so surround yourself with true professionals.",
+      "It is the standard we hold ourselves to at Chromata Films. Our studio has been named among the Top 15 wedding videographers in Europe, and our work has won the Wedding Film Award for Best Destination Wedding Film for a celebration at Lake Como. Based between Geneva and the French Riviera, we film luxury weddings across Italy, France, Spain and five continents, bringing a background in feature-film visual effects to every story we tell.",
+      "So what are the next steps? Start by researching the destinations and venues that fit your style, then reach out to us. We can help with the documentation of your big day and connect you with the right planner to bring your dream wedding in Europe to life.",
     ],
   },
   {
     file: "journal-ai-wedding-industry.html", page: 3, tag: "AI · Editorial",
     title: "Artificial Intelligence and Why It Will Change the Wedding Industry", date: "January 19, 2023",
+    galleryDir: "aimc",
+    galleryHeading: "AI wedding-design concepts from our studio",
+    gallery: AIMC_GALLERY,
     excerpt: "Why artificial intelligence will change the wedding industry ... an early look, written back in 2023, at the tools now reshaping planning and design.",
     body: [
       "If you are a wedding planner or designer (or both), it is essential to stay ahead of the curve and informed about the latest trends and technologies. One technology quickly gaining traction, and set to revolutionise the field, is artificial intelligence.",
@@ -928,6 +1071,10 @@ const archive = [
   {
     file: "journal-jasmiina-tuukka.html", page: 4, tag: "Real Wedding",
     title: "Jasmiina and Tuukka Rask — The Most Elegant Wedding at Villa Balbiano, Lake Como", date: "December 9, 2022",
+    video: "788687357",
+    verticalVideos: ["789230402", "789230943", "789231356"],
+    galleryDir: "jasmiina",
+    gallery: Array.from({ length: 45 }, (_, i) => `jt-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Jasmiina and Tuukka Rask's most elegant wedding at Villa Balbiano, Lake Como ... fashion, glamour and a storybook garden ceremony.",
     body: [
       "We had the privilege of capturing an exceptionally luxurious wedding at Villa Balbiano on Lake Como. From the moment we arrived it was clear that meticulous attention had been devoted to creating an elegant event, one that reflected the couple's shared love of fashion and glamour.",
@@ -948,6 +1095,9 @@ const archive = [
   {
     file: "journal-vaux-le-vicomte-royal.html", page: 4, tag: "Real Wedding",
     title: "A Royal Wedding at Vaux-le-Vicomte, Paris", date: "November 9, 2022",
+    video: "t7_JRwa1oDM", videoProvider: "youtube",
+    galleryDir: "vaux",
+    gallery: Array.from({ length: 11 }, (_, i) => `vlv-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "A royal wedding at Vaux-le-Vicomte, the little Versailles ... video-mapped walls, a secret VIP singer and a cake by Bastien Blanc Tailleur.",
     body: [
       "France is renowned for its culture and gastronomy, and for a wide range of spectacular venues ... museums, castles, palaces and more ... where some of the finest chefs will cook for you and your guests. We had the privilege of covering one such event.",
@@ -959,6 +1109,9 @@ const archive = [
   {
     file: "journal-alexandra-raphael-marrakech.html", page: 4, tag: "Real Wedding",
     title: "Alexandra and Raphael — A Luxury Jewish Wedding in Marrakech", date: "October 31, 2022",
+    video: "764060129",
+    galleryDir: "marrakech",
+    gallery: Array.from({ length: 54 }, (_, i) => `ar-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Alexandra and Raphael's luxury Jewish wedding in Marrakech ... the Agafay desert, the Selman hotel, royal stallions and a pool party to remember.",
     body: [
       "Party would capture the essence of Alexandra and Raphael's wedding, held last summer in Morocco. The couple chose Marrakech, using both the Agafay desert and the luxurious Selman hotel for their events.",
@@ -981,6 +1134,7 @@ const archive = [
   {
     file: "journal-ali-bakhtiar.html", page: 4, tag: "Celebration",
     title: "A Persian Wedding Anniversary at the Four Seasons, French Riviera", date: "October 9, 2022",
+    video: { id: "769436553", hash: "a19b51aede" },
     excerpt: "A private Persian wedding anniversary at the Grand-Hôtel du Cap-Ferrat ... ultra-luxury on the French Riviera, closing at the Monaco Yacht Club.",
     body: [
       "We were immensely proud to document this event. Collaborating with Ali Bakhtiar's team to capture a wedding anniversary celebration was an honour that not many people can relate to. It was ultra-luxury at its finest, set at one of the most prestigious venues on the French Riviera ... the Grand-Hôtel du Cap-Ferrat, with its perfect location and breathtaking views over the Mediterranean.",
@@ -1022,6 +1176,9 @@ const archive = [
   {
     file: "journal-lauren-jonathan.html", page: 5, tag: "Real Wedding",
     title: "Lauren and Jonathan — A Wedding in the Dominican Republic, Altos de Chavón", date: "May 3, 2022",
+    video: "704850376",
+    galleryDir: "altos",
+    gallery: Array.from({ length: 35 }, (_, i) => `lj-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "A transatlantic wedding at Altos de Chavón in the Dominican Republic ... Lauren and Jonathan's unforgettable start to the 2022 season.",
     body: [
       "Boom. If you had one word to remember from this wedding, that would be it. The couple invited us across the Atlantic to document their Dominican Republic celebration ... an exceptional start to the 2022 season.",
@@ -1065,6 +1222,9 @@ const archive = [
   {
     file: "journal-michal-steve.html", page: 6, tag: "Real Wedding",
     title: "Michal and Steve — A St-Tropez Love Story", date: "November 29, 2021",
+    video: "642838113",
+    galleryDir: "michal-steve",
+    gallery: Array.from({ length: 14 }, (_, i) => `ms-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "A full weekend in St-Tropez ... Michal and Steve's love story at Le Beauvallon, and a party that had to be seen to be believed.",
     body: [
       "What could be more enjoyable than celebrating a wedding over a full weekend in St-Tropez? We struggle to find anything comparable. This was an exceptional wedding with an outstanding venue.",
@@ -1107,6 +1267,9 @@ const archive = [
   {
     file: "journal-anna-andres-eden-roc.html", page: 7, tag: "Real Wedding",
     title: "Anna Andres and David — A French Riviera Escapade at Hôtel du Cap-Eden-Roc", date: "October 9, 2020",
+    verticalVideos: [{ id: "466573692", hash: "39a3243ffd" }, { id: "466573597", hash: "6b59c916d3" }],
+    galleryDir: "anna",
+    gallery: Array.from({ length: 12 }, (_, i) => `an-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "Anna Andres and David's intimate August wedding at Hôtel du Cap-Eden-Roc ... a Riviera escapade that made international headlines.",
     body: [
       "Anna Andres and David had originally planned to marry at Château St Martin in May, but the pandemic restrictions forced a change. Instead, they celebrated with an intimate August ceremony at the Hôtel du Cap-Eden-Roc on the French Riviera.",
@@ -1137,11 +1300,26 @@ const archive = [
   {
     file: "journal-mozzafiato.html", page: 7, tag: "Campaign",
     title: "Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story with Dolce &amp; Gabbana", date: "August 13, 2020",
+    video: "453536410",
+    galleryDir: "mozzafiato",
+    gallery: Array.from({ length: 28 }, (_, i) => `mz-${String(i + 1).padStart(2, "0")}.jpg`),
+    makingOf: { id: "V01TjzPWLSM", provider: "youtube", by: "Thomas Augier" },
+    credits: [
+      { role: "Couple", name: "Private client" },
+      { role: "Venue", name: "Grand-Hôtel du Cap-Ferrat, a Four Seasons Hotel", url: "https://www.fourseasons.com/capferrat/" },
+      { role: "Campaign Partner", name: "Dolce & Gabbana" },
+      { role: "Photography", name: "Emmanuelle Marty", url: "https://emmanuellemarty.com/" },
+      { role: "Four Seasons Liaison", name: "Aurélien Guery" },
+      { role: "Making Of", name: "Thomas Augier", url: "https://www.youtube.com/@thomasaugier6100" },
+      { role: "Camera", name: "Sony FX9" },
+      { role: "Film", name: "Chromata Films" },
+    ],
     excerpt: "Mozzafiato ... a Grand-Hôtel du Cap-Ferrat campaign with Dolce & Gabbana, six weeks in the making for a story of palace, yacht and couture.",
     body: [
       "This is the story of a couple deciding to formalise their long-term relationship with marriage, celebrating in Cap-Ferrat. The location offers everything ... palatial accommodation, quaint villages, yacht excursions and private pool moments.",
       "The production was a collaborative campaign with the Grand-Hôtel du Cap-Ferrat, a Four Seasons Hotel, and Dolce & Gabbana. The France director visited during filming, underscoring how significant the project was. What began as a two-day shoot grew into six weeks of planning, from art direction and location scouting to yacht coordination and early editing.",
       "This was a small-crew production where meticulous planning preceded execution. Collaborating with photographer Emmanuelle Marty was seamless, and support from the Four Seasons team, especially Aurélien Guery, kept everything running smoothly. We shot on the Sony FX9. Our thanks to all who contributed ... models, stylists, florists, decorators, hair and makeup artists and crew. Enjoy the film and the photography gallery.",
+      "Behind every frame of Mozzafiato was a crew working at full stretch for six weeks, so we invited filmmaker Thomas Augier to document the process itself. His making-of short below goes past the finished campaign into the choreography of a six-week production: the scouting, the yacht logistics, the early-morning light chases and the quiet coordination between two luxury houses that made the final film possible.",
     ],
   },
   {
@@ -1239,50 +1417,71 @@ ${pagination(pg)}
 
 for (const p of allPosts) {
   // ---- SEO: per-post overrides + Open Graph / Twitter / canonical / JSON-LD ----
+  // Applied to EVERY journal post (not just ones with an explicit `seo` field)
+  // so the whole archive is fully indexable and citable by search engines and
+  // AI answer engines (ChatGPT, Perplexity, Claude) alike — canonical URL,
+  // OG/Twitter cards, and a BlogPosting (+ VideoObject when a film exists)
+  // JSON-LD graph naming Chromata Films as author/publisher on every article.
   const metaTitle = (p.seo && p.seo.title) || `${p.title} — Journal | Chromata Films`;
   const metaDesc = (p.seo && p.seo.description) || p.excerpt;
   const pageUrl = `${SITE_URL}/${p.file}`;
   const iso = new Date(`${p.date} 12:00:00`).toISOString();
   const galleryAlt = (it) => (typeof it === "string" ? `${p.title} — Chromata Films` : it.alt);
   const galleryFile = (it) => (typeof it === "string" ? it : it.file);
-  const ogImage = p.seo && p.seo.ogImage
+  const firstGalleryImg = p.gallery && p.gallery.length ? `${SITE_URL}/assets/img/${p.galleryDir}/${galleryFile(p.gallery[0])}` : null;
+  const ogImage = (p.seo && p.seo.ogImage)
     ? `${SITE_URL}/assets/img/${p.galleryDir}/${p.seo.ogImage}`
-    : `${SITE_URL}/assets/img/logo-mark.png`;
-  let headExtra = "";
-  if (p.seo) {
-    const imageList = (p.gallery || []).slice(0, 6).map((it) => `${SITE_URL}/assets/img/${p.galleryDir}/${galleryFile(it)}`);
-    if (!imageList.length) imageList.push(ogImage);
-    const jsonLd = {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      headline: p.title,
+    : firstGalleryImg || `${SITE_URL}/assets/img/logo-mark.png`;
+  // Fallback keyword set for posts without a hand-tuned `seo.keywords`: tag +
+  // title terms + evergreen queries ("best wedding videographer in Europe")
+  // are what a couple or an AI assistant would actually search.
+  const keywords = (p.seo && p.seo.keywords)
+    || `${p.title}, ${p.tag}, wedding videographer Europe, luxury wedding film, best wedding videographers in Europe, destination wedding cinematography, Chromata Films`;
+  const imageList = (p.gallery || []).slice(0, 6).map((it) => `${SITE_URL}/assets/img/${p.galleryDir}/${galleryFile(it)}`);
+  if (!imageList.length) imageList.push(ogImage);
+  const jsonGraph = [{
+    "@type": "BlogPosting",
+    "@id": `${pageUrl}#article`,
+    headline: p.title,
+    description: metaDesc,
+    image: imageList,
+    datePublished: iso,
+    dateModified: iso,
+    inLanguage: "en",
+    author: { "@type": "Organization", name: "Chromata Films", url: SITE_URL },
+    publisher: { "@type": "Organization", name: "Chromata Films", logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo-mark.png` } },
+    mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+    keywords,
+  }];
+  if (p.video) {
+    jsonGraph.push({
+      "@type": "VideoObject",
+      "@id": `${pageUrl}#video`,
+      name: `${p.title} — Wedding Film`,
       description: metaDesc,
-      image: imageList,
-      datePublished: iso,
-      dateModified: iso,
-      author: { "@type": "Organization", name: "Chromata Films", url: SITE_URL },
+      thumbnailUrl: [ogImage],
+      uploadDate: iso,
       publisher: { "@type": "Organization", name: "Chromata Films", logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo-mark.png` } },
-      mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
-      ...(p.seo.keywords ? { keywords: p.seo.keywords } : {}),
-    };
-    headExtra = [
-      `<link rel="canonical" href="${pageUrl}" />`,
-      `<meta property="og:type" content="article" />`,
-      `<meta property="og:site_name" content="Chromata Films" />`,
-      `<meta property="og:title" content="${metaTitle}" />`,
-      `<meta property="og:description" content="${metaDesc}" />`,
-      `<meta property="og:url" content="${pageUrl}" />`,
-      `<meta property="og:image" content="${ogImage}" />`,
-      `<meta property="article:published_time" content="${iso}" />`,
-      `<meta property="article:author" content="Chromata Films" />`,
-      `<meta name="twitter:card" content="summary_large_image" />`,
-      `<meta name="twitter:title" content="${metaTitle}" />`,
-      `<meta name="twitter:description" content="${metaDesc}" />`,
-      `<meta name="twitter:image" content="${ogImage}" />`,
-      ...(p.seo.keywords ? [`<meta name="keywords" content="${p.seo.keywords}" />`] : []),
-      `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`,
-    ].join("\n");
+      embedUrl: videoEmbedUrl(p.video, p.videoProvider),
+    });
   }
+  const headExtra = [
+    `<link rel="canonical" href="${pageUrl}" />`,
+    `<meta name="keywords" content="${keywords}" />`,
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:site_name" content="Chromata Films" />`,
+    `<meta property="og:title" content="${metaTitle}" />`,
+    `<meta property="og:description" content="${metaDesc}" />`,
+    `<meta property="og:url" content="${pageUrl}" />`,
+    `<meta property="og:image" content="${ogImage}" />`,
+    `<meta property="article:published_time" content="${iso}" />`,
+    `<meta property="article:author" content="Chromata Films" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${metaTitle}" />`,
+    `<meta name="twitter:description" content="${metaDesc}" />`,
+    `<meta name="twitter:image" content="${ogImage}" />`,
+    `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": jsonGraph })}</script>`,
+  ].join("\n");
   pages[p.file] = shell({
     page: "journal",
     title: metaTitle,
@@ -1300,9 +1499,14 @@ for (const p of allPosts) {
       </article>
 ${p.video ? `      <figure class="article__film mat">
         <div class="article__film-frame">
-          <iframe data-lazy-src="${p.videoProvider === "youtube" ? `https://www.youtube-nocookie.com/embed/${p.video}` : `https://player.vimeo.com/video/${p.video}`}" title="${p.title} — wedding film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+          <iframe data-lazy-src="${videoEmbedUrl(p.video, p.videoProvider)}" title="${p.title} — wedding film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
         </div>
       </figure>
+` : ""}${p.verticalVideos ? `      <div class="vidpair vidpair--article" aria-label="${p.title} — vertical teasers">
+${p.verticalVideos.map((v) => `        <div class="vidpair__item">
+          <iframe data-lazy-src="${vimeoSrc(v)}" title="${p.title} — vertical teaser" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>`).join("\n")}
+      </div>
 ` : ""}      <article class="article">
         <div class="prose">
 ${p.body.map((par, i) => {
@@ -1318,7 +1522,7 @@ ${p.body.map((par, i) => {
     const it = row.items[0];
     return `${paraHtml}
           <figure class="mat img-reveal venue-figure venue-figure--solo" style="max-width:${pct}%">
-            <img src="assets/img/${p.galleryDir}/${it.file}" alt="${it.caption} wedding venue, South of France — Chromata Films" loading="lazy">
+            <img src="assets/img/${p.galleryDir}/${it.file}" alt="${it.alt || `${it.caption} — Chromata Films`}" loading="lazy">
             <figcaption>${it.caption}</figcaption>
           </figure>`;
   }
@@ -1336,6 +1540,22 @@ ${p.gallery ? `${p.galleryHeading ? `      <h2 class="article__gallery-title">${
 ` : ""}      <div class="gallery-grid article__gallery">
 ${p.gallery.map((it) => "        " + g(p.galleryDir, galleryFile(it), "", galleryAlt(it))).join("\n")}
       </div>
+` : ""}${p.makingOf ? `      <article class="article" style="margin-top:9vh">
+        <h2 class="article__gallery-title">Behind the Scenes — Making Of${p.makingOf.by ? ` by ${p.makingOf.by}` : ""}</h2>
+        <figure class="article__film mat" style="margin-top:4vh">
+          <div class="article__film-frame">
+            <iframe data-lazy-src="${videoEmbedUrl(p.makingOf.id, p.makingOf.provider)}" title="${p.title} — making of${p.makingOf.by ? ` by ${p.makingOf.by}` : ""}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </figure>
+      </article>
+` : ""}${p.credits ? `      <article class="article">
+        <div class="article-credits">
+          <h2 class="article__gallery-title" style="margin-top:0">Full Credits</h2>
+          <div class="feature__meta" style="margin-top:3vh">
+${p.credits.map((c) => `            <div class="row"><span>${c.role}</span><span class="val">${c.url ? `<a class="text-link" href="${c.url}" target="_blank" rel="noopener noreferrer">${c.name}</a>` : c.name}</span></div>`).join("\n")}
+          </div>
+        </div>
+      </article>
 ` : ""}      <div class="article">
         <div style="margin-top:8vh; display:flex; gap:30px; flex-wrap:wrap">
           <a class="text-link" href="${journalHref(p.page)}">← Back to the Journal</a>
@@ -1800,3 +2020,26 @@ for (const [file, html] of Object.entries(pages)) {
   writeFileSync(new URL("../" + file, import.meta.url), html);
   console.log("wrote", file);
 }
+
+/* ---- sitemap.xml + robots.txt ----
+   index.html is handwritten (not in `pages`) so it's added explicitly; every
+   generated page is included except the deliberately-unlisted noindex ones. */
+const NOINDEX_FILES = new Set(["gettoknowusmore.html"]);
+const sitemapFiles = ["index.html", ...Object.keys(pages).filter((f) => !NOINDEX_FILES.has(f))];
+const today = new Date().toISOString().slice(0, 10);
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapFiles.map((f) => `  <url><loc>${SITE_URL}/${f === "index.html" ? "" : f}</loc><lastmod>${today}</lastmod></url>`).join("\n")}
+</urlset>
+`;
+writeFileSync(new URL("../sitemap.xml", import.meta.url), sitemap);
+console.log("wrote sitemap.xml (" + sitemapFiles.length + " urls)");
+
+const robots = `User-agent: *
+Allow: /
+Disallow: /gettoknowusmore.html
+
+Sitemap: ${SITE_URL}/sitemap.xml
+`;
+writeFileSync(new URL("../robots.txt", import.meta.url), robots);
+console.log("wrote robots.txt");

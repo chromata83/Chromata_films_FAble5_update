@@ -12,7 +12,9 @@ FF="ffmpeg -hide_banner -loglevel error -y"
 mkdir -p "$OUT/fonts" "$OUT/video" \
   "$OUT/img/landing" "$OUT/img/domantas" "$OUT/img/jacky" "$OUT/img/jg-blog" "$OUT/img/aw-blog" "$OUT/img/france-venues" "$OUT/img/olympics" "$OUT/img/aimc" \
   "$OUT/img/carousel" "$OUT/img/logos" "$OUT/img/studio" "$OUT/img/contact" \
-  "$OUT/img/parisian-dream" "$OUT/img/four-seasons" "$OUT/img/daria" "$OUT/img/sandra-pedro" "$OUT/img/katya-joey"
+  "$OUT/img/parisian-dream" "$OUT/img/four-seasons" "$OUT/img/daria" "$OUT/img/sandra-pedro" "$OUT/img/katya-joey" \
+  "$OUT/img/jasmiina" "$OUT/img/wed-europe" "$OUT/img/natalia" "$OUT/img/marrakech" "$OUT/img/altos" \
+  "$OUT/img/michal-steve" "$OUT/img/mozzafiato" "$OUT/img/marcella-daniel"
 
 # ---------- fonts ----------
 # session-scratchpad source only exists on the session that first fetched it;
@@ -324,6 +326,59 @@ kj_src=(
 i=0
 for f in "${kj_src[@]}"; do
   i=$((i+1)); jpg "$PUB/Katya_joey_wedding_Lake_como_Sacks_production/$f" "$OUT/img/katya-joey/kj-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- jasmiina-tuukka journal-article gallery (Villa Balbiano, by Les Secrets d'Audrey) ----------
+i=0
+find "$PUB/jaasmina tuukka rask" -maxdepth 1 -name '*.jpg' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/jasmiina/jt-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- planning-europe journal-article gallery (cross-wedding montage curated by the user) ----------
+i=0
+find "$PUB/blog-wed-europe" -maxdepth 1 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/wed-europe/we-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- natalia-montenegro journal-article gallery (Tivat 50th birthday) ----------
+i=0
+find "$PUB/blog/Natali_50th_birthday" -maxdepth 1 -name '*.jpg' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/natalia/nm-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- alexandra-raphael marrakech journal-article gallery (Selman / Agafay) ----------
+i=0
+find "$PUB/blog/Alexandra Raphael wedding in Marrakech" -maxdepth 1 -name '*.jpg' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/marrakech/ar-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- lauren-jonathan altos de chavon journal-article gallery (welcome party → wedding day → film stills) ----------
+i=0
+{ find "$PUB/blog/altos de chavon - dominican republic" -maxdepth 1 -name 'derush_welcome*' | sort;
+  find "$PUB/blog/altos de chavon - dominican republic" -maxdepth 1 -name 'drone_boat*' | sort;
+  find "$PUB/blog/altos de chavon - dominican republic" -maxdepth 1 -name 'Derush_wedding_day*' | sort;
+  find "$PUB/blog/altos de chavon - dominican republic" -maxdepth 1 \( -name 'IG*' -o -name 'Lauren*' \) | sort; } | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/altos/lj-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- michal-steve journal-article gallery (St-Tropez, Le Beauvallon) ----------
+i=0
+find "$PUB/blog/Michal_Steve" -maxdepth 1 \( -iname '*.jpg' -o -iname '*.png' \) | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/michal-steve/ms-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- mozzafiato journal-article gallery (Grand-Hôtel du Cap-Ferrat x Dolce & Gabbana) ----------
+i=0
+find "$PUB/blog/mozzafiato" -maxdepth 1 -iname '*.webp' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/mozzafiato/mz-$(printf '%02d' $i).jpg" 1800
+done
+
+# ---------- marcella & dan engagement-party journal-article gallery ----------
+# Source filenames are generic ("000-stem-flowers-designed-team-*"); renamed with
+# the couple's full names for on-page SEO/alt-text and better web discoverability.
+i=0
+find "$PUB/blog/marcella and Daniel Nutkis" -maxdepth 1 -iname '*.webp' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-$(printf '%02d' $i).jpg" 1800
 done
 
 # ---------- wedding planner logos (keep original format, aspect + colours) ----------

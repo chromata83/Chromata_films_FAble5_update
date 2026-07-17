@@ -327,6 +327,11 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .hero__scroll .line { width: 1px; height: 40px; background: rgba(255,249,240,0.3); position: relative; overflow: hidden; }
 .hero__scroll .line i { position: absolute; top: -6px; left: -2px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold-light); }
 
+/* homepage hero "scroll down" cue — right side, revealed by JS after 2s of stillness */
+.hero__scrollcue { position: absolute; right: clamp(48px, 8vw, 130px); bottom: 34px; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 14px; color: rgba(255,249,240,0.95); opacity: 0; visibility: hidden; pointer-events: none; text-shadow: 0 1px 14px rgba(22,19,15,0.55); }
+.hero__scrollcue .lbl { writing-mode: vertical-rl; font-family: var(--font-ui); font-size: 12px; letter-spacing: 0.42em; text-transform: uppercase; }
+.hero__scrollcue svg { display: block; filter: drop-shadow(0 1px 8px rgba(22,19,15,0.55)); }
+
 /* statement band under hero — mediterranean sky */
 .statement { background: var(--sky); color: var(--ink); padding: 12vh var(--pad-x); text-align: center; }
 .statement p { max-width: 62em; margin-inline: auto; font-size: clamp(0.8rem, 1.4vw, 1.05rem); letter-spacing: 0.22em; line-height: 2.1; text-transform: uppercase; color: rgba(37,35,33,0.78); }
@@ -674,12 +679,14 @@ figure.gitem figcaption { position: absolute; left: 18px; bottom: 14px; z-index:
 .article__meta { display: flex; flex-wrap: wrap; gap: 10px 30px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-muted); margin: 3vh 0 6vh; }
 /* optional lead film + photo gallery on a journal article */
 .article__film { max-width: 64em; margin: 0 auto 7vh; }
+.vidpair--article { max-width: 64em; margin: -3vh auto 7vh; }
 .article__film-frame { position: relative; aspect-ratio: 16/9; background: #000; }
 .article__film-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .article__gallery { margin-top: 4vh; }
 .article__gallery-title { font-family: var(--font-display); font-size: clamp(1.4rem, 2.6vw, 2.4rem); font-weight: 500; margin-top: 9vh; }
 /* external call-to-action inside an article (e.g. masterclass sign-up) */
 .article-cta { margin-top: 6vh; padding: clamp(28px, 4vw, 48px); border: 1px solid rgba(37,35,33,0.14); border-radius: 6px; background: var(--porcelain-alt); text-align: center; }
+.article-credits { max-width: 46em; }
 .article-cta__note { margin-top: 2.4vh; font-size: 0.9rem; color: var(--ink-soft); }
 /* per-paragraph venue image rows (guide-style journal articles) */
 .venue-row { display: grid; gap: clamp(14px, 1.8vw, 26px); margin: 5vh 0; }

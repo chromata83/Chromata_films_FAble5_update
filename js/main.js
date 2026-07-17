@@ -33,6 +33,33 @@
     else (typeof target === "string" ? document.querySelector(target) : target)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  /* ---------------- Hero "scroll down" cue ----------------
+     Revealed 2s after the intro starts, but only if the viewer hasn't
+     scrolled yet; fades away for good the moment they do. */
+  const armScrollCue = () => {
+    const cue = document.querySelector(".hero__scrollcue");
+    if (!cue) return;
+    let shown = false, killed = false;
+    const kill = () => {
+      if (killed) return;
+      killed = true;
+      window.removeEventListener("scroll", onScroll);
+      if (shown) gsap.to(cue, { opacity: 0, y: -8, duration: 0.5, ease: "power2.out", onComplete: () => { cue.style.visibility = "hidden"; } });
+      else cue.style.visibility = "hidden";
+    };
+    const onScroll = () => { if (window.scrollY > 4) kill(); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    setTimeout(() => {
+      if (killed) return;
+      if (window.scrollY > 4) { kill(); return; }
+      shown = true;
+      cue.style.visibility = "visible";
+      gsap.fromTo(cue, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" });
+      const arrow = cue.querySelector("svg");
+      if (arrow && !reducedMotion) gsap.to(arrow, { y: 8, duration: 1.5, ease: "sine.inOut", repeat: -1, yoyo: true });
+    }, 2000);
+  };
+
   /* ---------------- Preloader (real asset progress) ---------------- */
   const preloader = document.getElementById("preloader");
   const runIntro = () => {
@@ -46,6 +73,7 @@
     gsap.to(".intro-fade", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay: reducedMotion ? 0 : 0.45 });
     const heroMedia = document.querySelector(".intro-scale");
     if (heroMedia && !reducedMotion) gsap.fromTo(heroMedia, { scale: 1.12 }, { scale: 1, duration: 2.4, ease: "power2.out" });
+    armScrollCue();
     ScrollTrigger.refresh();
   };
 
