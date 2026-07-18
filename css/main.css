@@ -343,6 +343,9 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .videoband iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: calc(100vw * 9 / 16); transform: translate(-50%, -50%); border: 0; pointer-events: none; }
 .videoband .display-lg { font-size: clamp(1.15rem, 4.6vw, 5.2rem); }
 .videoband .kicker { font-size: clamp(8px, 0.85vw, 12px); }
+/* videoband used as a page header: layer a title + shade over the ambient film */
+.videoband--header .hero__title--page { font-size: clamp(1.1rem, 4.5vw, 5.6rem); }
+.videoband--header .hero__head { z-index: 4; }
 
 /* ============================================================
    DOMANTAS DUET — offset video + cover collage
@@ -647,15 +650,19 @@ figure.gitem figcaption { position: absolute; left: 18px; bottom: 14px; z-index:
 
 /* journal */
 .journal-list { display: flex; flex-direction: column; }
-.jitem { display: grid; grid-template-columns: minmax(110px, 0.22fr) 1fr auto; gap: 20px 4vw; align-items: baseline; padding: 5.5vh 0; border-bottom: 1px solid rgba(37,35,33,0.14); transition: background 0.3s; position: relative; }
+.jitem { display: grid; grid-template-columns: clamp(110px, 14vw, 180px) 1fr auto; gap: 4vw; align-items: center; padding: 4.5vh 0; border-bottom: 1px solid rgba(37,35,33,0.14); transition: background 0.3s; position: relative; }
 .jitem:first-child { border-top: 1px solid rgba(37,35,33,0.14); }
+.jitem__thumb { aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px; background: var(--porcelain-alt); }
+.jitem__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
+.jitem:hover .jitem__thumb img { transform: scale(1.05); }
+.jitem__body { display: flex; flex-direction: column; gap: 1.4vh; max-width: 44em; }
 .jitem .jdate { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-muted); }
-.jitem h2 { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.6rem); line-height: 1.12; transition: color 0.3s; max-width: 20em; font-weight: 500; }
+.jitem h2 { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.6rem); line-height: 1.12; transition: color 0.3s; font-weight: 500; }
 .jitem:hover h2 { color: var(--coral); }
-.jitem .jarrow { font-size: 22px; color: var(--gold); transition: transform 0.35s; }
+.jitem .jexcerpt { color: var(--ink-soft); }
+.jitem .jarrow { font-size: 22px; color: var(--gold); transition: transform 0.35s; align-self: center; }
 .jitem:hover .jarrow { transform: translateX(8px); }
-.jitem .jexcerpt { grid-column: 2; color: var(--ink-soft); max-width: 44em; margin-top: -1.5vh; }
-.jitem .jtag { position: absolute; top: 5.5vh; right: 0; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-deep); }
+.jitem .jtag { position: absolute; top: 4.5vh; right: 0; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-deep); }
 
 /* journal pagination */
 .pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin-top: 7vh; }
@@ -699,6 +706,28 @@ figure.gitem figcaption { position: absolute; left: 18px; bottom: 14px; z-index:
 @media (max-width: 640px) {
   .venue-row--2, .venue-row--3 { grid-template-columns: 1fr; }
   .venue-figure--solo { max-width: 100% !important; }
+}
+
+/* Real Weddings index — one editorial card per wedding: copy on the left,
+   a row of three thumbnails on the right, alternating sides for rhythm. */
+.rw-list { display: flex; flex-direction: column; gap: clamp(48px, 8vh, 110px); margin-top: 6vh; }
+.rw-card { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(28px, 5vw, 72px); align-items: center; }
+.rw-card:nth-child(even) .rw-card__text { order: 2; }
+.rw-card__title { font-family: var(--font-display); font-size: clamp(2rem, 4.6vw, 3.6rem); font-weight: 500; line-height: 0.98; text-transform: uppercase; margin: 1.6vh 0 0; }
+.rw-card__title em { font-family: var(--font-accent); font-style: italic; text-transform: none; color: var(--coral); }
+.rw-card__title a { color: inherit; transition: color 0.3s ease; }
+.rw-card__title a:hover { color: var(--coral); }
+.rw-card__excerpt { margin-top: 2.4vh; max-width: 34em; color: color-mix(in srgb, currentColor 82%, transparent); }
+.rw-card__more { color: var(--coral); font-weight: 500; }
+.rw-card__cta { margin-top: 3.4vh; }
+.rw-card__thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(8px, 1vw, 14px); }
+.rw-thumb { position: relative; overflow: hidden; border-radius: 4px; background: var(--porcelain-alt); aspect-ratio: 3 / 4; }
+.rw-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
+.rw-card__thumbs:hover .rw-thumb img { transform: scale(1.04); }
+@media (max-width: 760px) {
+  .rw-card { grid-template-columns: 1fr; gap: clamp(20px, 4vh, 40px); }
+  .rw-card:nth-child(even) .rw-card__text { order: 0; }
+  .rw-card__excerpt { max-width: none; }
 }
 
 /* offers (gettoknowusmore) — same blue as the GASP film's last frame,
@@ -800,9 +829,10 @@ form .form-note { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.04
   .gallery-grid--even { grid-template-columns: repeat(2, 1fr); }
   .insta__grid { columns: 3; }
   .footer__cols { grid-template-columns: 1fr 1fr; }
-  .jitem { grid-template-columns: 1fr auto; }
-  .jitem .jdate { grid-column: 1 / -1; }
-  .jitem .jexcerpt { grid-column: 1; }
+  .jitem { grid-template-columns: clamp(88px, 26vw, 128px) 1fr; gap: 5vw; align-items: start; }
+  .jitem .jarrow { display: none; }
+  .jitem .jtag { right: 0; }
+  .jitem__body { gap: 1vh; padding-top: 2vh; }
   .film__numerals { display: none; }
   .statement p { letter-spacing: 0.14em; }
   .bts__video { max-width: 100%; }

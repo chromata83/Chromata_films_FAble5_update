@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=44" />
+<link rel="stylesheet" href="css/main.css?v=46" />
 </head>
 <body data-page="journal">
 
@@ -29,19 +29,7 @@
   </a>
   <nav class="nav__links" aria-label="Primary">
     <a class="nav__link" href="index.html">Home</a>
-    <div class="nav__drop" id="navDrop">
-      <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
-        Real Weddings
-        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
-      </button>
-      <div class="nav__drop-menu" role="menu">
-        <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
-        <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
-        <a class="nav__drop-item" role="menuitem" href="anna-andres.html"><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
-        <a class="nav__drop-item" role="menuitem" href="russell-westbrook.html"><span class="t">Russell &amp; Nina Westbrook</span><span class="tag">Positano</span></a>
-        <a class="nav__drop-item" role="menuitem" href="vaux-le-vicomte.html"><span class="t">Vaux-le-Vicomte</span><span class="tag">Private Wedding</span></a>
-      </div>
-    </div>
+    <a class="nav__link" href="real-weddings.html">Real Weddings</a>
     <a class="nav__link" href="the-studio.html">The Studio</a>
     <a class="nav__link" href="journal.html" aria-current="page">Journal</a>
     <a class="nav__link" href="gallery.html">Gallery</a>
@@ -52,14 +40,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a class="big" href="index.html">Home</a>
-  <a class="big" href="#" id="mmProjects">Real Weddings <em>↓</em></a>
-  <div class="sub">
-    <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
-    <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
-    <a href="anna-andres.html">Anna Andres — Miss Universe</a>
-    <a href="russell-westbrook.html">Russell &amp; Nina Westbrook — Positano</a>
-    <a href="vaux-le-vicomte.html">Vaux-le-Vicomte — Private Wedding</a>
-  </div>
+  <a class="big" href="real-weddings.html">Real <em>Weddings</em></a>
   <a class="big" href="the-studio.html">The <em>Studio</em></a>
   <a class="big" href="journal.html">Journal</a>
   <a class="big" href="gallery.html">Gallery</a>
@@ -87,45 +68,63 @@
     <div class="container">
       <div class="journal-list">
         <a class="jitem" href="journal-france-venues.html">
-          <span class="jdate">April 22, 2024</span>
-          <h2>Our Favourite Venues in the South of France</h2>
+          <figure class="jitem__thumb"><img src="assets/img/france-venues/fv-01.jpg" alt="Our Favourite Venues in the South of France — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">April 22, 2024</span>
+            <h2>Our Favourite Venues in the South of France</h2>
+            <p class="jexcerpt">Dreaming of a fairytale wedding bathed in the golden light of the French Riviera, or nestled amidst the lavender fields of Provence? A tour of our most enchanting venues to celebrate your love story.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Dreaming of a fairytale wedding bathed in the golden light of the French Riviera, or nestled amidst the lavender fields of Provence? A tour of our most enchanting venues to celebrate your love story.</p>
           <span class="jtag">Guide</span>
         </a>
         <a class="jitem" href="journal-sandra-pedro.html">
-          <span class="jdate">February 21, 2024</span>
-          <h2>Sandra and Pedro — A Mixed-Religion Ceremony at Château d'Estoublon</h2>
+          <figure class="jitem__thumb"><img src="assets/img/sandra-pedro/sp-01.jpg" alt="Sandra and Pedro — A Mixed-Religion Ceremony at Château d'Estoublon — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">February 21, 2024</span>
+            <h2>Sandra and Pedro — A Mixed-Religion Ceremony at Château d'Estoublon</h2>
+            <p class="jexcerpt">Sandra and Pedro's wedding at Château d'Estoublon, Provence ... vineyards, olive groves and a ceremony of exquisite taste.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Sandra and Pedro's wedding at Château d'Estoublon, Provence ... vineyards, olive groves and a ceremony of exquisite taste.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-four-seasons-buyout.html">
-          <span class="jdate">November 4, 2023</span>
-          <h2>A Four Seasons Buyout Wedding for the Most Amazing Celebrations</h2>
+          <figure class="jitem__thumb"><img src="assets/img/four-seasons/fsb-01.jpg" alt="A Four Seasons Buyout Wedding for the Most Amazing Celebrations — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">November 4, 2023</span>
+            <h2>A Four Seasons Buyout Wedding for the Most Amazing Celebrations</h2>
+            <p class="jexcerpt">S & A took over the entire Grand-Hôtel du Cap-Ferrat for a private celebration ... including a drone flight straight through the fireworks.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">S & A took over the entire Grand-Hôtel du Cap-Ferrat for a private celebration ... including a drone flight straight through the fireworks.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-daria-levin.html">
-          <span class="jdate">October 17, 2023</span>
-          <h2>Daria Levin — A Crazy Circus Wedding in Èze, French Riviera</h2>
+          <figure class="jitem__thumb"><img src="assets/img/daria/dl-01.jpg" alt="Daria Levin — A Crazy Circus Wedding in Èze, French Riviera — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">October 17, 2023</span>
+            <h2>Daria Levin — A Crazy Circus Wedding in Èze, French Riviera</h2>
+            <p class="jexcerpt">Daria Levin turned an Èze villa into an incredible Jewish circus celebration ... acrobats, carnival games and non-stop music, by Cocoon Events.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Daria Levin turned an Èze villa into an incredible Jewish circus celebration ... acrobats, carnival games and non-stop music, by Cocoon Events.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-natalia-montenegro.html">
-          <span class="jdate">September 27, 2023</span>
-          <h2>Natalia's 50th Birthday Celebration in Montenegro</h2>
+          <figure class="jitem__thumb"><img src="assets/img/natalia/nm-01.jpg" alt="Natalia's 50th Birthday Celebration in Montenegro — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">September 27, 2023</span>
+            <h2>Natalia's 50th Birthday Celebration in Montenegro</h2>
+            <p class="jexcerpt">A three-day 50th birthday celebration in Tivat, Montenegro ... luxury, Montenegrin hospitality and the Adriatic Sea as a backdrop.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">A three-day 50th birthday celebration in Tivat, Montenegro ... luxury, Montenegrin hospitality and the Adriatic Sea as a backdrop.</p>
           <span class="jtag">Celebration</span>
         </a>
         <a class="jitem" href="journal-film-award.html">
-          <span class="jdate">September 12, 2023</span>
-          <h2>Wedding Film Award Winner</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Wedding Film Award Winner — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">September 12, 2023</span>
+            <h2>Wedding Film Award Winner</h2>
+            <p class="jexcerpt">Chromata Films won Best Destination Wedding Film at the Love StoryTV Wedding Film Awards ... for a film shot at Lake Como.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Chromata Films won Best Destination Wedding Film at the Love StoryTV Wedding Film Awards ... for a film shot at Lake Como.</p>
           <span class="jtag">Award</span>
         </a>
       </div>
@@ -152,6 +151,7 @@
   <div class="footer__cols">
     <div>
       <h4>Real Weddings</h4>
+      <a href="real-weddings.html">All Real Weddings</a>
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>

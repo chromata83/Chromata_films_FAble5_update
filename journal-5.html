@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=44" />
+<link rel="stylesheet" href="css/main.css?v=46" />
 </head>
 <body data-page="journal">
 
@@ -29,19 +29,7 @@
   </a>
   <nav class="nav__links" aria-label="Primary">
     <a class="nav__link" href="index.html">Home</a>
-    <div class="nav__drop" id="navDrop">
-      <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
-        Real Weddings
-        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
-      </button>
-      <div class="nav__drop-menu" role="menu">
-        <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
-        <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
-        <a class="nav__drop-item" role="menuitem" href="anna-andres.html"><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
-        <a class="nav__drop-item" role="menuitem" href="russell-westbrook.html"><span class="t">Russell &amp; Nina Westbrook</span><span class="tag">Positano</span></a>
-        <a class="nav__drop-item" role="menuitem" href="vaux-le-vicomte.html"><span class="t">Vaux-le-Vicomte</span><span class="tag">Private Wedding</span></a>
-      </div>
-    </div>
+    <a class="nav__link" href="real-weddings.html">Real Weddings</a>
     <a class="nav__link" href="the-studio.html">The Studio</a>
     <a class="nav__link" href="journal.html" aria-current="page">Journal</a>
     <a class="nav__link" href="gallery.html">Gallery</a>
@@ -52,14 +40,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a class="big" href="index.html">Home</a>
-  <a class="big" href="#" id="mmProjects">Real Weddings <em>↓</em></a>
-  <div class="sub">
-    <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
-    <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
-    <a href="anna-andres.html">Anna Andres — Miss Universe</a>
-    <a href="russell-westbrook.html">Russell &amp; Nina Westbrook — Positano</a>
-    <a href="vaux-le-vicomte.html">Vaux-le-Vicomte — Private Wedding</a>
-  </div>
+  <a class="big" href="real-weddings.html">Real <em>Weddings</em></a>
   <a class="big" href="the-studio.html">The <em>Studio</em></a>
   <a class="big" href="journal.html">Journal</a>
   <a class="big" href="gallery.html">Gallery</a>
@@ -87,45 +68,63 @@
     <div class="container">
       <div class="journal-list">
         <a class="jitem" href="journal-elisa-thomas.html">
-          <span class="jdate">October 1, 2022</span>
-          <h2>Elisa and Thomas — A Château Wedding on the French Riviera</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Elisa and Thomas — A Château Wedding on the French Riviera — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">October 1, 2022</span>
+            <h2>Elisa and Thomas — A Château Wedding on the French Riviera</h2>
+            <p class="jexcerpt">Three days at Château St Georges in Grasse ... Elisa and Thomas's French Riviera wedding, filmed with a team we know by heart.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Three days at Château St Georges in Grasse ... Elisa and Thomas's French Riviera wedding, filmed with a team we know by heart.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-hannah-lucas.html">
-          <span class="jdate">October 1, 2022</span>
-          <h2>Hannah and Lucas — A British Wedding on the French Riviera</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Hannah and Lucas — A British Wedding on the French Riviera — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">October 1, 2022</span>
+            <h2>Hannah and Lucas — A British Wedding on the French Riviera</h2>
+            <p class="jexcerpt">The first wedding of the season ... Hannah and Lucas's British celebration at Villa Ephrussi, from a Monaco yacht to a farewell brunch.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">The first wedding of the season ... Hannah and Lucas's British celebration at Villa Ephrussi, from a Monaco yacht to a farewell brunch.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-alexandra-raphael-teaser.html">
-          <span class="jdate">July 13, 2022</span>
-          <h2>Alexandra and Raphael — Wedding Teaser, Marrakech</h2>
+          <figure class="jitem__thumb"><img src="assets/img/marrakech/ar-24.jpg" alt="Alexandra and Raphael — Wedding Teaser, Marrakech — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">July 13, 2022</span>
+            <h2>Alexandra and Raphael — Wedding Teaser, Marrakech</h2>
+            <p class="jexcerpt">A first look at Alexandra and Raphael's Marrakech wedding ... a crazy adventure from France to Morocco, condensed into one teaser.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">A first look at Alexandra and Raphael's Marrakech wedding ... a crazy adventure from France to Morocco, condensed into one teaser.</p>
           <span class="jtag">Teaser</span>
         </a>
         <a class="jitem" href="journal-lauren-jonathan.html">
-          <span class="jdate">May 3, 2022</span>
-          <h2>Lauren and Jonathan — A Wedding in the Dominican Republic, Altos de Chavón</h2>
+          <figure class="jitem__thumb"><img src="assets/img/altos/lj-01.jpg" alt="Lauren and Jonathan — A Wedding in the Dominican Republic, Altos de Chavón — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">May 3, 2022</span>
+            <h2>Lauren and Jonathan — A Wedding in the Dominican Republic, Altos de Chavón</h2>
+            <p class="jexcerpt">A transatlantic wedding at Altos de Chavón in the Dominican Republic ... Lauren and Jonathan's unforgettable start to the 2022 season.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">A transatlantic wedding at Altos de Chavón in the Dominican Republic ... Lauren and Jonathan's unforgettable start to the 2022 season.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-giulietta-villa-cortine.html">
-          <span class="jdate">February 4, 2022</span>
-          <h2>Giulietta Dreams — A Villa Cortine Story</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Giulietta Dreams — A Villa Cortine Story — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">February 4, 2022</span>
+            <h2>Giulietta Dreams — A Villa Cortine Story</h2>
+            <p class="jexcerpt">Four seasons in one day ... a dramatic styled shoot at Villa Cortine Palace Hotel, pulled off through sheer teamwork.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Four seasons in one day ... a dramatic styled shoot at Villa Cortine Palace Hotel, pulled off through sheer teamwork.</p>
           <span class="jtag">Editorial</span>
         </a>
         <a class="jitem" href="journal-nida-sunny-highlight.html">
-          <span class="jdate">January 28, 2022</span>
-          <h2>Nida and Sunny — Villa Erba, Lake Como, Highlight Film</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Nida and Sunny — Villa Erba, Lake Como, Highlight Film — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">January 28, 2022</span>
+            <h2>Nida and Sunny — Villa Erba, Lake Como, Highlight Film</h2>
+            <p class="jexcerpt">A wedding you could never forget ... Nida and Sunny at Villa Bonomi and Villa Erba, Lake Como, from Sangeet to a wild party night.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">A wedding you could never forget ... Nida and Sunny at Villa Bonomi and Villa Erba, Lake Como, from Sangeet to a wild party night.</p>
           <span class="jtag">Real Wedding</span>
         </a>
       </div>
@@ -152,6 +151,7 @@
   <div class="footer__cols">
     <div>
       <h4>Real Weddings</h4>
+      <a href="real-weddings.html">All Real Weddings</a>
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>

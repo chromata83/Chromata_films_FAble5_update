@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=44" />
+<link rel="stylesheet" href="css/main.css?v=46" />
 </head>
 <body data-page="journal">
 
@@ -29,19 +29,7 @@
   </a>
   <nav class="nav__links" aria-label="Primary">
     <a class="nav__link" href="index.html">Home</a>
-    <div class="nav__drop" id="navDrop">
-      <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
-        Real Weddings
-        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
-      </button>
-      <div class="nav__drop-menu" role="menu">
-        <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
-        <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
-        <a class="nav__drop-item" role="menuitem" href="anna-andres.html"><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
-        <a class="nav__drop-item" role="menuitem" href="russell-westbrook.html"><span class="t">Russell &amp; Nina Westbrook</span><span class="tag">Positano</span></a>
-        <a class="nav__drop-item" role="menuitem" href="vaux-le-vicomte.html"><span class="t">Vaux-le-Vicomte</span><span class="tag">Private Wedding</span></a>
-      </div>
-    </div>
+    <a class="nav__link" href="real-weddings.html">Real Weddings</a>
     <a class="nav__link" href="the-studio.html">The Studio</a>
     <a class="nav__link" href="journal.html" aria-current="page">Journal</a>
     <a class="nav__link" href="gallery.html">Gallery</a>
@@ -52,14 +40,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a class="big" href="index.html">Home</a>
-  <a class="big" href="#" id="mmProjects">Real Weddings <em>↓</em></a>
-  <div class="sub">
-    <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
-    <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
-    <a href="anna-andres.html">Anna Andres — Miss Universe</a>
-    <a href="russell-westbrook.html">Russell &amp; Nina Westbrook — Positano</a>
-    <a href="vaux-le-vicomte.html">Vaux-le-Vicomte — Private Wedding</a>
-  </div>
+  <a class="big" href="real-weddings.html">Real <em>Weddings</em></a>
   <a class="big" href="the-studio.html">The <em>Studio</em></a>
   <a class="big" href="journal.html">Journal</a>
   <a class="big" href="gallery.html">Gallery</a>
@@ -87,45 +68,63 @@
     <div class="container">
       <div class="journal-list">
         <a class="jitem" href="journal-anna-andres-eden-roc.html">
-          <span class="jdate">October 9, 2020</span>
-          <h2>Anna Andres and David — A French Riviera Escapade at Hôtel du Cap-Eden-Roc</h2>
+          <figure class="jitem__thumb"><img src="assets/img/anna/an-01.jpg" alt="Anna Andres and David — A French Riviera Escapade at Hôtel du Cap-Eden-Roc — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">October 9, 2020</span>
+            <h2>Anna Andres and David — A French Riviera Escapade at Hôtel du Cap-Eden-Roc</h2>
+            <p class="jexcerpt">Anna Andres and David's intimate August wedding at Hôtel du Cap-Eden-Roc ... a Riviera escapade that made international headlines.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Anna Andres and David's intimate August wedding at Hôtel du Cap-Eden-Roc ... a Riviera escapade that made international headlines.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-samantha-edoardo.html">
-          <span class="jdate">October 7, 2020</span>
-          <h2>Samantha and Edoardo — From Switzerland to Provence</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Samantha and Edoardo — From Switzerland to Provence — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">October 7, 2020</span>
+            <h2>Samantha and Edoardo — From Switzerland to Provence</h2>
+            <p class="jexcerpt">A bit of light in a difficult year ... Samantha and Edoardo's wedding at Château de Berne, from Switzerland to Provence.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">A bit of light in a difficult year ... Samantha and Edoardo's wedding at Château de Berne, from Switzerland to Provence.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-private-shooting-cap-ferrat.html">
-          <span class="jdate">September 3, 2020</span>
-          <h2>Private Shooting Exclusivity in St-Jean-Cap-Ferrat</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Private Shooting Exclusivity in St-Jean-Cap-Ferrat — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">September 3, 2020</span>
+            <h2>Private Shooting Exclusivity in St-Jean-Cap-Ferrat</h2>
+            <p class="jexcerpt">A new kind of shoot ... documenting a couple's private stay at the Grand-Hôtel du Cap-Ferrat, with photography and cinematography together.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">A new kind of shoot ... documenting a couple's private stay at the Grand-Hôtel du Cap-Ferrat, with photography and cinematography together.</p>
           <span class="jtag">Experience</span>
         </a>
         <a class="jitem" href="journal-mozzafiato.html">
-          <span class="jdate">August 13, 2020</span>
-          <h2>Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story with Dolce &amp; Gabbana</h2>
+          <figure class="jitem__thumb"><img src="assets/img/mozzafiato/mz-01.jpg" alt="Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story with Dolce &amp; Gabbana — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">August 13, 2020</span>
+            <h2>Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story with Dolce &amp; Gabbana</h2>
+            <p class="jexcerpt">Mozzafiato ... a Grand-Hôtel du Cap-Ferrat campaign with Dolce & Gabbana, six weeks in the making for a story of palace, yacht and couture.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Mozzafiato ... a Grand-Hôtel du Cap-Ferrat campaign with Dolce & Gabbana, six weeks in the making for a story of palace, yacht and couture.</p>
           <span class="jtag">Campaign</span>
         </a>
         <a class="jitem" href="journal-dolce-gabbana-teaser.html">
-          <span class="jdate">August 7, 2020</span>
-          <h2>Grand-Hôtel du Cap-Ferrat × Dolce &amp; Gabbana — Teaser</h2>
+          <figure class="jitem__thumb"><img src="assets/img/mozzafiato/mz-22.jpg" alt="Grand-Hôtel du Cap-Ferrat × Dolce &amp; Gabbana — Teaser — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">August 7, 2020</span>
+            <h2>Grand-Hôtel du Cap-Ferrat × Dolce &amp; Gabbana — Teaser</h2>
+            <p class="jexcerpt">Think French Riviera, palace, yacht, Dolce & Gabbana ... a short teaser before the full Mozzafiato film.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Think French Riviera, palace, yacht, Dolce & Gabbana ... a short teaser before the full Mozzafiato film.</p>
           <span class="jtag">Teaser</span>
         </a>
         <a class="jitem" href="journal-o-my-gaude.html">
-          <span class="jdate">August 7, 2020</span>
-          <h2>Ô My Gaude — A Couture Shooting in Provence</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Ô My Gaude — A Couture Shooting in Provence — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">August 7, 2020</span>
+            <h2>Ô My Gaude — A Couture Shooting in Provence</h2>
+            <p class="jexcerpt">Ô My Gaude ... a distinctive couture shooting at Château de la Gaude in Provence, with two gorgeous Ziad Nakad gowns.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Ô My Gaude ... a distinctive couture shooting at Château de la Gaude in Provence, with two gorgeous Ziad Nakad gowns.</p>
           <span class="jtag">Editorial</span>
         </a>
       </div>
@@ -152,6 +151,7 @@
   <div class="footer__cols">
     <div>
       <h4>Real Weddings</h4>
+      <a href="real-weddings.html">All Real Weddings</a>
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>

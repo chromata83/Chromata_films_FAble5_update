@@ -16,19 +16,7 @@ const nav = (current, light = false) => `<header class="nav${light ? "" : " nav-
   </a>
   <nav class="nav__links" aria-label="Primary">
     <a class="nav__link" href="index.html">Home</a>
-    <div class="nav__drop" id="navDrop">
-      <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
-        Real Weddings
-        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
-      </button>
-      <div class="nav__drop-menu" role="menu">
-        <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"${current === "domantas" ? ' aria-current="page"' : ""}><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
-        <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"${current === "jacky" ? ' aria-current="page"' : ""}><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
-        <a class="nav__drop-item" role="menuitem" href="anna-andres.html"${current === "anna" ? ' aria-current="page"' : ""}><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
-        <a class="nav__drop-item" role="menuitem" href="russell-westbrook.html"${current === "westbrook" ? ' aria-current="page"' : ""}><span class="t">Russell &amp; Nina Westbrook</span><span class="tag">Positano</span></a>
-        <a class="nav__drop-item" role="menuitem" href="vaux-le-vicomte.html"${current === "vaux" ? ' aria-current="page"' : ""}><span class="t">Vaux-le-Vicomte</span><span class="tag">Private Wedding</span></a>
-      </div>
-    </div>
+    <a class="nav__link" href="real-weddings.html"${["real-weddings", "domantas", "jacky", "anna", "westbrook", "vaux"].includes(current) ? ' aria-current="page"' : ""}>Real Weddings</a>
     <a class="nav__link" href="the-studio.html"${current === "studio" ? ' aria-current="page"' : ""}>The Studio</a>
     <a class="nav__link" href="journal.html"${current === "journal" ? ' aria-current="page"' : ""}>Journal</a>
     <a class="nav__link" href="gallery.html"${current === "gallery" ? ' aria-current="page"' : ""}>Gallery</a>
@@ -39,14 +27,7 @@ const nav = (current, light = false) => `<header class="nav${light ? "" : " nav-
 
 <div class="mobile-menu" id="mobileMenu">
   <a class="big" href="index.html">Home</a>
-  <a class="big" href="#" id="mmProjects">Real Weddings <em>↓</em></a>
-  <div class="sub">
-    <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
-    <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
-    <a href="anna-andres.html">Anna Andres — Miss Universe</a>
-    <a href="russell-westbrook.html">Russell &amp; Nina Westbrook — Positano</a>
-    <a href="vaux-le-vicomte.html">Vaux-le-Vicomte — Private Wedding</a>
-  </div>
+  <a class="big" href="real-weddings.html">Real <em>Weddings</em></a>
   <a class="big" href="the-studio.html">The <em>Studio</em></a>
   <a class="big" href="journal.html">Journal</a>
   <a class="big" href="gallery.html">Gallery</a>
@@ -77,6 +58,7 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
   <div class="footer__cols">
     <div>
       <h4>Real Weddings</h4>
+      <a href="real-weddings.html">All Real Weddings</a>
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>
@@ -117,7 +99,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=44" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=46" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -671,6 +653,7 @@ const posts = [
     file: "journal-analog-film-weddings.html", slug: "analog-film-weddings",
     title: "Super 8mm and Super 16mm — When Analog Comes Back Into Our Lives",
     date: "June 12, 2026", tag: "Trend · Editorial",
+    thumb: "journal-thumbs/analog-film-weddings.jpg",
     verticalVideos: [
       { id: "1140692063", hash: "d480349846" },
       { id: "1140691721", hash: "c56b67af06" },
@@ -741,6 +724,7 @@ const posts = [
     title: "Maxence and Elise Caqueret — A Private Wedding Film",
     date: "October 10, 2024", tag: "Real Wedding",
     video: "1018353157",
+    thumb: "journal-thumbs/maxence-elise-caqueret.jpg",
     seo: {
       title: "Maxence and Elise Caqueret — A Private Wedding Film | Chromata Films",
       description: "An intimate, family-only wedding film for footballer Maxence Caqueret and Elise, captured with discretion by Chromata Films.",
@@ -983,6 +967,7 @@ const archive = [
     file: "journal-puglia-princess.html", page: 3, tag: "Real Wedding",
     title: "A True Princess Wedding in Puglia", date: "September 9, 2023",
     video: "858206093",
+    thumb: "journal-thumbs/puglia-princess.jpg",
     excerpt: "Nadine and Albert's fairytale wedding in Puglia ... the Cathedral of Monopoli, the Rocco Forte Hotel, and a gown set with 500 Swarovski crystals.",
     body: [
       "The picturesque region of Puglia, Italy, has always been known for its captivating landscapes, charming villages and warm hospitality. On one beautiful summer's day it became the backdrop for something even more enchanting: the wedding of Nadine and Albert, from the luxurious Rocco Forte Hotel to the breathtaking Cathedral of Monopoli, planned by Event Boutique.",
@@ -1135,6 +1120,7 @@ const archive = [
     file: "journal-ali-bakhtiar.html", page: 4, tag: "Celebration",
     title: "A Persian Wedding Anniversary at the Four Seasons, French Riviera", date: "October 9, 2022",
     video: { id: "769436553", hash: "a19b51aede" },
+    thumb: "journal-thumbs/ali-bakhtiar.jpg",
     excerpt: "A private Persian wedding anniversary at the Grand-Hôtel du Cap-Ferrat ... ultra-luxury on the French Riviera, closing at the Monaco Yacht Club.",
     body: [
       "We were immensely proud to document this event. Collaborating with Ali Bakhtiar's team to capture a wedding anniversary celebration was an honour that not many people can relate to. It was ultra-luxury at its finest, set at one of the most prestigious venues on the French Riviera ... the Grand-Hôtel du Cap-Ferrat, with its perfect location and breathtaking views over the Mediterranean.",
@@ -1166,6 +1152,7 @@ const archive = [
   },
   {
     file: "journal-alexandra-raphael-teaser.html", page: 5, tag: "Teaser",
+    thumb: "marrakech/ar-24.jpg",
     title: "Alexandra and Raphael — Wedding Teaser, Marrakech", date: "July 13, 2022",
     excerpt: "A first look at Alexandra and Raphael's Marrakech wedding ... a crazy adventure from France to Morocco, condensed into one teaser.",
     body: [
@@ -1210,6 +1197,7 @@ const archive = [
   /* ===================== Page 6 ===================== */
   {
     file: "journal-sabonis-wedding.html", page: 6, tag: "Real Wedding",
+    thumb: "domantas/ds-28.jpg",
     title: "Shashana and Domantas Sabonis — A Sensational Wedding in St-Jean-Cap-Ferrat", date: "January 28, 2022",
     excerpt: "Three days of magic in St-Jean-Cap-Ferrat ... the wedding of Shashana and NBA All-Star Domantas Sabonis, planned by Mindy Weiss.",
     body: [
@@ -1244,6 +1232,7 @@ const archive = [
   },
   {
     file: "journal-sabonis-teaser.html", page: 6, tag: "Teaser",
+    thumb: "domantas/ds-27.jpg",
     title: "Shashana and Domantas Sabonis — Wedding Teaser, Cap-Ferrat", date: "October 21, 2021",
     excerpt: "If you're an NBA fan, you don't need to read further ... a first clip from Shashana and Domantas Sabonis's Cap-Ferrat wedding.",
     body: [
@@ -1324,6 +1313,7 @@ const archive = [
   },
   {
     file: "journal-dolce-gabbana-teaser.html", page: 7, tag: "Teaser",
+    thumb: "mozzafiato/mz-22.jpg",
     title: "Grand-Hôtel du Cap-Ferrat × Dolce &amp; Gabbana — Teaser", date: "August 7, 2020",
     excerpt: "Think French Riviera, palace, yacht, Dolce & Gabbana ... a short teaser before the full Mozzafiato film.",
     body: [
@@ -1348,6 +1338,19 @@ const allPosts = [...posts.map((p) => ({ ...p, page: 1 })), ...archive];
 
 const JOURNAL_PAGES = 7;
 const journalHref = (n) => (n === 1 ? "journal.html" : `journal-${n}.html`);
+
+// Journal-listing thumbnail for a post, as a path under assets/img/. Order of
+// preference: explicit `thumb` override → SEO og image → first gallery image →
+// first inline-media image → the brand placeholder card (for text-only posts
+// with no imagery of their own anywhere in the repo).
+const thumbFileName = (it) => (typeof it === "string" ? it : it.file);
+const postThumb = (p) => {
+  if (p.thumb) return p.thumb;
+  if (p.seo && p.seo.ogImage) return `${p.galleryDir}/${p.seo.ogImage}`;
+  if (p.gallery && p.gallery.length) return `${p.galleryDir}/${thumbFileName(p.gallery[0])}`;
+  if (p.inlineMedia && p.inlineMedia.length && p.inlineMedia[0].items.length) return `${p.galleryDir}/${p.inlineMedia[0].items[0].file}`;
+  return "journal-thumbs/placeholder.jpg";
+};
 
 const pagination = (cur) => {
   const nums = [];
@@ -1396,10 +1399,13 @@ for (let pg = 1; pg <= JOURNAL_PAGES; pg++) {
     <div class="container">
       <div class="journal-list">
 ${pagePosts.map((p) => `        <a class="jitem" href="${p.file}">
-          <span class="jdate">${p.date}</span>
-          <h2>${p.title}</h2>
+          <figure class="jitem__thumb"><img src="assets/img/${postThumb(p)}" alt="${p.title.replace(/<[^>]+>/g, "").replace(/"/g, "&quot;")} — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">${p.date}</span>
+            <h2>${p.title}</h2>
+            <p class="jexcerpt">${p.excerpt}</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">${p.excerpt}</p>
           <span class="jtag">${p.tag}</span>
         </a>`).join("\n")}
       </div>
@@ -1758,6 +1764,87 @@ pages["vaux-le-vicomte.html"] = shell({
   </section>
 
 ${next("domantas-sabonis.html", "Domantas &amp; Shashana")}`,
+});
+
+/* ============================== REAL WEDDINGS (index) ============================== */
+const realWeddings = [
+  {
+    href: "domantas-sabonis.html", title: "Domantas <em>&amp;</em> Shashana",
+    kicker: "NBA All-Star · Villa Ephrussi, Cap-Ferrat", dir: "domantas",
+    thumbs: ["ds-25.jpg", "ds-27.jpg", "ds-28.jpg"],
+    excerpt: "Three days at Villa Ephrussi, St-Jean-Cap-Ferrat ... when an NBA All-Star marries the love of his life, the celebration has to hit different. And it did. Mindy Weiss orchestrated a flawless three-day production, with florals by Roni Floral Design, and a party that ran deep into the Riviera night",
+  },
+  {
+    href: "jacqueline-gordon.html", title: "Jacqueline <em>&amp;</em> Gordon",
+    kicker: "Five Days · Le Beauvallon, St-Tropez", dir: "jacky",
+    thumbs: ["jg-05.jpg", "jg-11.jpg", "jg-20.jpg"],
+    excerpt: "Jacqueline and Gordon's wedding in St-Tropez could be summarized in one simple word: WOW. Five days at Le Beauvallon above the bay ... a seaside fashion show, a drone light spectacle, a Bridgerton-meets-1980s party, fireworks, and an after-party that only surrendered at sunrise",
+  },
+  {
+    href: "anna-andres.html", title: "Anna <em>Andres</em>",
+    kicker: "Miss Universe Ukraine · Editorial Film", dir: "anna",
+    thumbs: ["an-02.jpg", "an-05.jpg", "an-09.jpg"],
+    excerpt: "When a Miss Universe titleholder plans her wedding, the bar is not \"beautiful\". The bar is \"cover story\". Anna Andres trusted us to film her wedding with the same visual intelligence as the editorials she has graced ... couture in golden light, and a ceremony that stopped the room",
+  },
+  {
+    href: "russell-westbrook.html", title: "Russell <em>&amp;</em> Nina Westbrook",
+    kicker: "Anniversary · Positano, Amalfi Coast", dir: "westbrook",
+    thumbs: ["rw-03.jpg", "rw-07.jpg", "rw-11.jpg"],
+    excerpt: "Some love stories deserve a sequel ... and Positano wrote this one in gold and sea-blue. When Russell and Nina Westbrook chose the Amalfi Coast to celebrate their anniversary, the brief was simple: all the emotion of a wedding day, none of the script",
+  },
+  {
+    href: "vaux-le-vicomte.html", title: "Vaux-le-Vicomte",
+    kicker: "Private Wedding · Château, France", dir: "vaux",
+    thumbs: ["vlv-03.jpg", "vlv-06.jpg", "vlv-09.jpg"],
+    excerpt: "The château that inspired Versailles, an evening of grand-siècle splendor, and a couple whose names we'll keep to ourselves. Beneath Le Nôtre's gardens and Le Brun's painted ceilings, our VIP clients gathered their closest circle for one unforgettable night",
+  },
+];
+
+pages["real-weddings.html"] = shell({
+  page: "real-weddings",
+  title: "Real Weddings — Luxury Destination Wedding Films | Chromata Films",
+  description: "A selection of real weddings and celebrations filmed by Chromata Films: Domantas Sabonis at Villa Ephrussi, Jacqueline & Gordon in St-Tropez, Anna Andres, Russell & Nina Westbrook in Positano, and a private wedding at Vaux-le-Vicomte.",
+  headExtra: [
+    `<link rel="canonical" href="${SITE_URL}/real-weddings.html" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:site_name" content="Chromata Films" />`,
+    `<meta property="og:title" content="Real Weddings — Luxury Destination Wedding Films | Chromata Films" />`,
+    `<meta property="og:url" content="${SITE_URL}/real-weddings.html" />`,
+    `<meta property="og:image" content="${SITE_URL}/assets/img/real-weddings/real-weddings-header.jpg" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:image" content="${SITE_URL}/assets/img/real-weddings/real-weddings-header.jpg" />`,
+  ].join("\n"),
+  main: `  <!-- 3:1 ambient video header (YouTube background film + title overlay) -->
+  <section class="videoband videoband--header" data-theme="dark" data-section aria-label="Real Weddings — cinematic video header">
+    <iframe data-lazy-src="https://www.youtube-nocookie.com/embed/-CulEs9XwO8?autoplay=1&mute=1&loop=1&playlist=-CulEs9XwO8&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1"
+            title="Chromata Films — real weddings header film" loading="lazy" allow="autoplay; encrypted-media"></iframe>
+    <div class="film__shade"></div>
+    <div class="hero__head">
+      <p class="kicker" style="color:var(--coral)">— Real Weddings</p>
+      <h1 class="hero__title hero__title--page">
+        <span class="line-mask intro-rise"><span class="line-inner">Real <em>Weddings</em></span></span>
+      </h1>
+    </div>
+  </section>
+
+  <section class="pad-section" data-section>
+    <div class="container">
+      <p class="body-copy" style="max-width:44em">A selection of the celebrations we've had the honour of filming ... from an NBA All-Star's Riviera wedding to a private night at the château that inspired Versailles. Each is its own story; step inside any of them below.</p>
+      <div class="rw-list" style="margin-top:2vh">
+${realWeddings.map((w, i) => `        <article class="rw-card">
+          <div class="rw-card__text">
+            <p class="kicker">— ${w.kicker}</p>
+            <h2 class="rw-card__title"><a href="${w.href}"><span class="line-mask"><span class="line-inner">${w.title}</span></span></a></h2>
+            <p class="rw-card__excerpt">${w.excerpt} <span class="rw-card__more">[...]</span></p>
+            <a class="btn btn--coral rw-card__cta" href="${w.href}">Read more →</a>
+          </div>
+          <a class="rw-card__thumbs" href="${w.href}" aria-label="View the ${w.title.replace(/<[^>]+>/g, "")} wedding">
+${w.thumbs.map((t, j) => `            <figure class="rw-thumb mat img-reveal"><img src="assets/img/${w.dir}/${t}" alt="${w.title.replace(/<[^>]+>/g, "")} wedding — Chromata Films" loading="lazy"></figure>`).join("\n")}
+          </a>
+        </article>`).join("\n")}
+      </div>
+    </div>
+  </section>`,
 });
 
 /* ============================== CONTACT ============================== */

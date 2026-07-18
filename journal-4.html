@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=44" />
+<link rel="stylesheet" href="css/main.css?v=46" />
 </head>
 <body data-page="journal">
 
@@ -29,19 +29,7 @@
   </a>
   <nav class="nav__links" aria-label="Primary">
     <a class="nav__link" href="index.html">Home</a>
-    <div class="nav__drop" id="navDrop">
-      <button class="nav__drop-toggle" aria-haspopup="true" aria-expanded="false">
-        Real Weddings
-        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 3l4 4 4-4"/></svg>
-      </button>
-      <div class="nav__drop-menu" role="menu">
-        <a class="nav__drop-item" role="menuitem" href="domantas-sabonis.html"><span class="t">Domantas &amp; Shashana</span><span class="tag">NBA All-Star</span></a>
-        <a class="nav__drop-item" role="menuitem" href="jacqueline-gordon.html"><span class="t">Jacqueline &amp; Gordon</span><span class="tag">St-Tropez</span></a>
-        <a class="nav__drop-item" role="menuitem" href="anna-andres.html"><span class="t">Anna Andres</span><span class="tag">Miss Universe UA</span></a>
-        <a class="nav__drop-item" role="menuitem" href="russell-westbrook.html"><span class="t">Russell &amp; Nina Westbrook</span><span class="tag">Positano</span></a>
-        <a class="nav__drop-item" role="menuitem" href="vaux-le-vicomte.html"><span class="t">Vaux-le-Vicomte</span><span class="tag">Private Wedding</span></a>
-      </div>
-    </div>
+    <a class="nav__link" href="real-weddings.html">Real Weddings</a>
     <a class="nav__link" href="the-studio.html">The Studio</a>
     <a class="nav__link" href="journal.html" aria-current="page">Journal</a>
     <a class="nav__link" href="gallery.html">Gallery</a>
@@ -52,14 +40,7 @@
 
 <div class="mobile-menu" id="mobileMenu">
   <a class="big" href="index.html">Home</a>
-  <a class="big" href="#" id="mmProjects">Real Weddings <em>↓</em></a>
-  <div class="sub">
-    <a href="domantas-sabonis.html">Domantas &amp; Shashana — NBA All-Star</a>
-    <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon — St-Tropez</a>
-    <a href="anna-andres.html">Anna Andres — Miss Universe</a>
-    <a href="russell-westbrook.html">Russell &amp; Nina Westbrook — Positano</a>
-    <a href="vaux-le-vicomte.html">Vaux-le-Vicomte — Private Wedding</a>
-  </div>
+  <a class="big" href="real-weddings.html">Real <em>Weddings</em></a>
   <a class="big" href="the-studio.html">The <em>Studio</em></a>
   <a class="big" href="journal.html">Journal</a>
   <a class="big" href="gallery.html">Gallery</a>
@@ -87,45 +68,63 @@
     <div class="container">
       <div class="journal-list">
         <a class="jitem" href="journal-jasmiina-tuukka.html">
-          <span class="jdate">December 9, 2022</span>
-          <h2>Jasmiina and Tuukka Rask — The Most Elegant Wedding at Villa Balbiano, Lake Como</h2>
+          <figure class="jitem__thumb"><img src="assets/img/jasmiina/jt-01.jpg" alt="Jasmiina and Tuukka Rask — The Most Elegant Wedding at Villa Balbiano, Lake Como — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">December 9, 2022</span>
+            <h2>Jasmiina and Tuukka Rask — The Most Elegant Wedding at Villa Balbiano, Lake Como</h2>
+            <p class="jexcerpt">Jasmiina and Tuukka Rask's most elegant wedding at Villa Balbiano, Lake Como ... fashion, glamour and a storybook garden ceremony.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Jasmiina and Tuukka Rask's most elegant wedding at Villa Balbiano, Lake Como ... fashion, glamour and a storybook garden ceremony.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-angela-allister-paris.html">
-          <span class="jdate">December 8, 2022</span>
-          <h2>Angela and Allister — A Modern Wedding in Paris</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Angela and Allister — A Modern Wedding in Paris — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">December 8, 2022</span>
+            <h2>Angela and Allister — A Modern Wedding in Paris</h2>
+            <p class="jexcerpt">The same Vancouver couple, seen up close ... a modern Paris wedding at the Ritz, from a Seine cruise to a French cancan finale.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">The same Vancouver couple, seen up close ... a modern Paris wedding at the Ritz, from a Seine cruise to a French cancan finale.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-vaux-le-vicomte-royal.html">
-          <span class="jdate">November 9, 2022</span>
-          <h2>A Royal Wedding at Vaux-le-Vicomte, Paris</h2>
+          <figure class="jitem__thumb"><img src="assets/img/vaux/vlv-01.jpg" alt="A Royal Wedding at Vaux-le-Vicomte, Paris — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">November 9, 2022</span>
+            <h2>A Royal Wedding at Vaux-le-Vicomte, Paris</h2>
+            <p class="jexcerpt">A royal wedding at Vaux-le-Vicomte, the little Versailles ... video-mapped walls, a secret VIP singer and a cake by Bastien Blanc Tailleur.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">A royal wedding at Vaux-le-Vicomte, the little Versailles ... video-mapped walls, a secret VIP singer and a cake by Bastien Blanc Tailleur.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-alexandra-raphael-marrakech.html">
-          <span class="jdate">October 31, 2022</span>
-          <h2>Alexandra and Raphael — A Luxury Jewish Wedding in Marrakech</h2>
+          <figure class="jitem__thumb"><img src="assets/img/marrakech/ar-01.jpg" alt="Alexandra and Raphael — A Luxury Jewish Wedding in Marrakech — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">October 31, 2022</span>
+            <h2>Alexandra and Raphael — A Luxury Jewish Wedding in Marrakech</h2>
+            <p class="jexcerpt">Alexandra and Raphael's luxury Jewish wedding in Marrakech ... the Agafay desert, the Selman hotel, royal stallions and a pool party to remember.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Alexandra and Raphael's luxury Jewish wedding in Marrakech ... the Agafay desert, the Selman hotel, royal stallions and a pool party to remember.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-jessica-benjamin.html">
-          <span class="jdate">October 15, 2022</span>
-          <h2>Jessica and Benjamin — A Stylish Jewish Wedding at Hôtel Beauvallon</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/placeholder.jpg" alt="Jessica and Benjamin — A Stylish Jewish Wedding at Hôtel Beauvallon — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">October 15, 2022</span>
+            <h2>Jessica and Benjamin — A Stylish Jewish Wedding at Hôtel Beauvallon</h2>
+            <p class="jexcerpt">Jessica and Benjamin's stylish Jewish wedding at Hôtel Beauvallon, near St-Tropez ... a two-day celebration and a Brazilian pool party.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">Jessica and Benjamin's stylish Jewish wedding at Hôtel Beauvallon, near St-Tropez ... a two-day celebration and a Brazilian pool party.</p>
           <span class="jtag">Real Wedding</span>
         </a>
         <a class="jitem" href="journal-ali-bakhtiar.html">
-          <span class="jdate">October 9, 2022</span>
-          <h2>A Persian Wedding Anniversary at the Four Seasons, French Riviera</h2>
+          <figure class="jitem__thumb"><img src="assets/img/journal-thumbs/ali-bakhtiar.jpg" alt="A Persian Wedding Anniversary at the Four Seasons, French Riviera — Chromata Films" loading="lazy"></figure>
+          <div class="jitem__body">
+            <span class="jdate">October 9, 2022</span>
+            <h2>A Persian Wedding Anniversary at the Four Seasons, French Riviera</h2>
+            <p class="jexcerpt">A private Persian wedding anniversary at the Grand-Hôtel du Cap-Ferrat ... ultra-luxury on the French Riviera, closing at the Monaco Yacht Club.</p>
+          </div>
           <span class="jarrow">→</span>
-          <p class="jexcerpt">A private Persian wedding anniversary at the Grand-Hôtel du Cap-Ferrat ... ultra-luxury on the French Riviera, closing at the Monaco Yacht Club.</p>
           <span class="jtag">Celebration</span>
         </a>
       </div>
@@ -152,6 +151,7 @@
   <div class="footer__cols">
     <div>
       <h4>Real Weddings</h4>
+      <a href="real-weddings.html">All Real Weddings</a>
       <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
       <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
       <a href="anna-andres.html">Anna Andres</a>

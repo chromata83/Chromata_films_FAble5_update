@@ -328,6 +328,13 @@ for f in "${kj_src[@]}"; do
   i=$((i+1)); jpg "$PUB/Katya_joey_wedding_Lake_como_Sacks_production/$f" "$OUT/img/katya-joey/kj-$(printf '%02d' $i).jpg" 1800
 done
 
+# ---------- real-weddings index header (3:1 placeholder still, from a Downloads source) ----------
+# source lives in the user's Downloads (a Courtney & Ryan highlight-film frame);
+# guarded so the pipeline doesn't die once that ephemeral file is gone.
+mkdir -p "$OUT/img/real-weddings"
+RW_HEADER_SRC="C:/Users/kev1l/Downloads/Courtney_Ryan_Highlight_film.mp4_snapshot_00.15.016cfgh.png"
+[ -f "$RW_HEADER_SRC" ] && jpg "$RW_HEADER_SRC" "$OUT/img/real-weddings/real-weddings-header.jpg" 2400 || [ -f "$OUT/img/real-weddings/real-weddings-header.jpg" ]
+
 # ---------- jasmiina-tuukka journal-article gallery (Villa Balbiano, by Les Secrets d'Audrey) ----------
 i=0
 find "$PUB/jaasmina tuukka rask" -maxdepth 1 -name '*.jpg' | sort | while read -r f; do
