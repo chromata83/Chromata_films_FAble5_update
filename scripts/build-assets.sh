@@ -414,6 +414,7 @@ vid "$PUB/BG_GASP (2).mp4" "film-night"
 vid "$PUB/BG_GASP (3).mp4" "contact"
 vid "$PUB/BG_GASP (2)_3_thm2_prob4.mp4" "amour"
 vid "$PUB/magnific_create-a-video_2973139937.mp4" "gallery-film"
+vid "$PUB/the studio_GASP.mp4" "studio-film"
 
 # ambient header videos (autoplay loop, not scrubbed → single file + poster)
 ambient () { # src slug
@@ -425,7 +426,7 @@ ambient "$PUB/the studio_header_new.mp4"  "studio-header"
 ambient "$PUB/header_contact_us_NEW.mp4"  "contact-header"
 
 # poster frames for reduced-motion / first paint
-for s in hero reel film-night contact gallery-film; do
+for s in hero reel film-night contact gallery-film studio-film; do
   $FF -i "$OUT/video/$s.mp4" -vf "select=eq(n\,0)" -frames:v 1 -q:v 4 "$OUT/video/$s-poster.jpg"
 done
 # amour uses hand-picked intro (poster) + outro stills instead of video frames

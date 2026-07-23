@@ -406,6 +406,20 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 /* rotated "top 15" badge filling the empty top-right of the trusted section,
    straddling up into the portfolio above it */
 .trusted__badge { position: absolute; top: clamp(-140px, -9vw, -70px); right: clamp(10px, 4vw, 90px); width: clamp(260px, 32vw, 500px); transform: rotate(30deg); pointer-events: none; z-index: 5; filter: drop-shadow(0 18px 36px rgba(37,35,33,0.28)); }
+/* mobile: the badge straddling the portfolio/where-we-shine boundary drops
+   BEHIND the "Where We Shine" heading (z-index:-1 within an isolated .trusted so
+   it still sits above the section's own background). The heading itself is left
+   unlayered so its difference blend reads the badge + background as its backdrop:
+   it inverts to light wherever it crosses the dark image and stays dark on the
+   plain background elsewhere. */
+@media (max-width: 760px) {
+  .trusted { isolation: isolate; }
+  .trusted__badge { z-index: -1; }
+  .trusted .shine__copy .kicker,
+  .trusted .shine__copy .display-lg { mix-blend-mode: difference; color: #fff; }
+  .trusted .shine__copy .kicker::before { background: #fff; }
+  .trusted .shine__copy .display-lg em { color: #fff; }
+}
 .manifesto__statement { max-width: 15em; }
 .manifesto__row { display: flex; justify-content: flex-end; margin-top: 7vh; }
 .manifesto__row-inner { max-width: 34em; display: flex; flex-direction: column; gap: 3.5vh; align-items: flex-start; }

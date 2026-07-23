@@ -376,13 +376,32 @@
       : (isMobile ? "+=250%" : (section.dataset.pin || "+=400%"));
     const state = { current: 0, target: 0 };
     let raf = null;
+    // Mobile decoders can't repaint a fresh seek every frame; issuing sub-frame
+    // seeks at 60fps piles them up and reads as the frame "jumping back and
+    // forth". So on touch we follow the (scrub-smoothed) target a little more
+    // eagerly, skip sub-frame micro-seeks, and — crucially — throttle seeks to
+    // the video's own paint rate via requestVideoFrameCallback (falling back to
+    // the "seeked" event) so we never queue a new seek before the last painted.
+    const followLerp = isMobile ? 0.2 : 0.1;
+    const seekEps = isMobile ? 0.03 : 0.001;
+    const gateFrames = isMobile;
+    const hasRVFC = typeof video.requestVideoFrameCallback === "function";
+    let canSeek = true;
+    const reopen = () => { canSeek = true; };
+    if (gateFrames && !hasRVFC) video.addEventListener("seeked", reopen);
     const loop = () => {
-      state.current += (state.target - state.current) * 0.1;
-      if (video.duration && video.readyState >= 2 && !video.seeking) {
+      state.current += (state.target - state.current) * followLerp;
+      if (video.duration && video.readyState >= 2 && !video.seeking && canSeek) {
         // Safari queues seeks much slower than Chromium — issuing a new one
         // while the last is still in flight piles them up and stalls painting.
         const t = state.current * video.duration;
-        if (Math.abs(video.currentTime - t) > 0.001) video.currentTime = t;
+        if (Math.abs(video.currentTime - t) > seekEps) {
+          video.currentTime = t;
+          if (gateFrames) {
+            canSeek = false;
+            if (hasRVFC) video.requestVideoFrameCallback(reopen);
+          }
+        }
       }
       paintChapters(state.current);
       raf = requestAnimationFrame(loop);
@@ -395,13 +414,17 @@
       // short band (e.g. 3:1): scrub as the section travels through the
       // viewport — no pin, so the page background never shows around it
       ScrollTrigger.create({
-        trigger: section, start: "top bottom", end: "bottom top", scrub: true,
+        trigger: section, start: "top bottom", end: "bottom top",
+        // numeric scrub on mobile absorbs native-momentum jitter so the target
+        // moves monotonically (no back-and-forth); desktop stays 1:1 with Lenis
+        scrub: isMobile ? 0.5 : true,
         onUpdate: (self) => { state.target = self.progress; },
         onToggle,
       });
     } else {
       ScrollTrigger.create({
-        trigger: section, start: "top top", end: pinLength, pin: true, scrub: true,
+        trigger: section, start: "top top", end: pinLength, pin: true,
+        scrub: isMobile ? 0.5 : true,
         anticipatePin: 1,
         onUpdate: (self) => { state.target = self.progress; },
         onToggle,
