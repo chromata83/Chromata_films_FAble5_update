@@ -302,6 +302,8 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
       <h4>Studio</h4>
       <a href="the-studio.html">The Studio</a>
       <a href="journal.html">Journal</a>
+      <a href="investment.html">Investment</a>
+      <a href="awards-press.html">Awards &amp; Press</a>
       <a href="contact.html">Contact Us</a>
     </div>
     <div>
@@ -2305,6 +2307,209 @@ pages["contact.html"] = shell({
 });
 
 /* ============================== GET TO KNOW US MORE (unlisted — not in nav, not linked from any page, noindex) ============================== */
+/* ============================== INVESTMENT ==============================
+   "How much does a luxury wedding videographer cost" is one of the highest-
+   intent searches in this market and one answer engines are constantly asked.
+   This page answers it plainly instead of hiding behind "contact us". */
+pages["investment.html"] = shell({
+  page: "investment",
+  file: "investment.html",
+  title: "How Much Does a Luxury Wedding Film Cost? | Investment — Chromata Films",
+  description: "Chromata Films collections start at 15,000 USD. What a luxury wedding film actually costs, what drives the number, and what you receive — explained plainly.",
+  ogImage: "assets/img/contact/contact-side.jpg",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Investment", file: "investment.html" },
+  ],
+  schemaGraph: [{
+    "@type": "FAQPage",
+    "@id": `${SITE_URL}/investment.html#faq`,
+    mainEntity: [
+      ["How much does a luxury wedding videographer cost?",
+       "Chromata Films collections start at 15,000 USD. Across the luxury destination market, wedding films generally run from around 10,000 USD at the entry of the category to well beyond 50,000 USD for multi-day international productions with large crews. What moves the number is the number of days filmed, how many camera operators the schedule requires, travel, and whether aerial or analog film work is included."],
+      ["Why don't you publish a price list?",
+       "Because a price list would be wrong for almost everyone. A single-venue Saturday and a five-day celebration across two countries are entirely different productions, and quoting them from the same table means one couple overpays and the other gets a crew that is too small. Every quote is built from your actual schedule."],
+      ["What is included in a Chromata Films collection?",
+       "A feature-length film of the wedding, a shorter highlight film, and a teaser you can share within days. Multi-day weddings usually receive a film per major event as well. Everything is colour-graded to cinema standards, and you receive the films in a format you can keep and play for decades."],
+      ["Do you charge extra for travel?",
+       "Travel and accommodation are quoted openly as a separate line rather than hidden inside the collection price. Being based between the French Riviera and Geneva means European travel is usually modest; work in the United States or further afield carries real cost and we say so up front."],
+      ["Do you require a deposit?",
+       "Yes ... a date is only held once a signed agreement and a retainer are in place. The balance is scheduled across the run-up to the wedding rather than falling due all at once."],
+      ["Is a wedding film worth the investment?",
+       "It is the only thing from the day that moves and makes sound. The flowers, the food and the venue exist for one evening; photographs freeze it. A film is the only medium that keeps your father's voice at the speech and the way your partner actually laughed. That is the honest case for it — and the reason we would rather you spend well once than economise and regret it."],
+    ].map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+  }],
+  main: `  <section class="pad-section" style="padding-top:calc(var(--nav-h) + 12vh)" data-section>
+    <div class="container">
+      <p class="kicker">— Investment</p>
+      <h1 class="display-lg" style="margin-top:3vh; max-width:13em">
+        <span class="line-mask"><span class="line-inner">What a wedding film</span></span>
+        <span class="line-mask"><span class="line-inner"><em>actually costs</em></span></span>
+      </h1>
+      <div class="prose" style="max-width:46em; margin-top:6vh">
+        <p style="font-size:clamp(1.15rem,1.7vw,1.6rem)">Chromata Films collections start at <strong>15,000 USD</strong>.</p>
+        <p>That is the honest floor, not a teaser figure. Most of the weddings we film sit above it, because most of them run across several days and need more than one camera team. We would rather tell you the number now than have you spend twenty minutes on a contact form to find out.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">What moves the number</span></span>
+      </h2>
+      <div class="feature__grid" style="margin-top:6vh">
+        <div class="prose">
+          <p>Four things, in roughly this order of impact. <strong>Days filmed</strong> ... a welcome dinner, a wedding day and a recovery lunch is three productions, not one. <strong>Crew size</strong> ... when two events run simultaneously, or a ceremony has moments happening in three rooms at once, you need more than one operator. <strong>Travel</strong> ... quoted openly and separately. <strong>Specialist work</strong> ... licensed aerial and FPV flying, or genuine Super 8mm and 16mm analog film alongside the digital cameras.</p>
+          <p>What does not change is the standard of the film itself. There is no version of Chromata Films where you get a lesser edit because the budget was smaller ... we would rather film fewer days properly than spread a crew too thin across a weekend.</p>
+        </div>
+        <div class="feature__meta">
+          <div class="row"><span>Collections from</span><span class="val">15,000 USD</span></div>
+          <div class="row"><span>Typical delivery</span><span class="val">Feature film · Highlight · Teaser</span></div>
+          <div class="row"><span>Travel</span><span class="val">Quoted separately, openly</span></div>
+          <div class="row"><span>Currencies</span><span class="val">USD · EUR · CHF</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">Where the market sits</span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+        <p>For context, because almost nobody in this industry will give it to you: across the luxury destination market, wedding films generally start around 10,000 USD at the entry of the category and run well past 50,000 USD for multi-day international productions with large crews, aerial teams and fast-turnaround edits.</p>
+        <p>Below roughly 10,000 USD you are usually buying coverage rather than a film ... one or two operators, a fast edit, a highlight reel set to a licensed track. That is a legitimate product and plenty of couples are happy with it. It is simply not what this studio makes.</p>
+        <p>If your budget is not there yet, we would genuinely rather tell you than take the booking and under-crew your wedding. Ask us and we will be straight with you.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— Questions</p>
+      <h2 class="display-md" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">The ones everyone <em>asks</em></span></span>
+      </h2>
+      <div class="prose" style="max-width:52em; margin-top:6vh">
+        <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">Why don't you publish a full price list?</h3>
+        <p>Because it would be wrong for almost everyone. A single-venue Saturday and a five-day celebration across two countries are different productions. Quoting both from one table means somebody overpays and somebody else gets a crew that is too small for their day.</p>
+        <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">What do we actually receive?</h3>
+        <p>A feature-length film of the wedding, a shorter highlight film, and a teaser you can share within days of the celebration. Multi-day weddings usually receive a film per major event as well. Everything is colour-graded the way a feature would be.</p>
+        <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">Do you charge extra for travel?</h3>
+        <p>Travel and accommodation are a separate, visible line rather than something folded into a headline number. From our base between the French Riviera and Geneva, most of Europe is inexpensive to reach; the United States and long-haul destinations are not, and we say so up front.</p>
+        <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">How do we hold our date?</h3>
+        <p>A signed agreement and a retainer. The balance is scheduled across the run-up to the wedding rather than landing in one payment. The most requested European dates ... June to September on the Riviera and Lake Como ... are typically taken a year or more ahead.</p>
+        <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">Is it worth it?</h3>
+        <p>The film is the only thing from the day that moves and makes sound. The flowers last an evening; photographs freeze a moment. A film keeps your father's voice during the speech and the way your partner actually laughed. That is the whole case for it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" data-theme="dark" data-section style="background:var(--night-deep); color:var(--cream); text-align:center">
+    <div class="container">
+      <p class="kicker" style="justify-content:center; color:var(--coral)">— Begin</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Ask us for a <em>real number</em></span></span>
+      </h2>
+      <p class="body-copy" style="max-width:40em; margin:4vh auto 0">Send the date, the place and a sentence about the celebration. We will come back with a proper quote, not a brochure.</p>
+      <a class="btn btn--coral" href="contact.html" style="margin-top:5vh">Check your date →</a>
+    </div>
+  </section>`,
+});
+
+/* ============================== AWARDS & PRESS ==============================
+   Third-party validation in one citable place — the kind of page an answer
+   engine quotes when asked whether a studio is actually any good. */
+pages["awards-press.html"] = shell({
+  page: "press",
+  file: "awards-press.html",
+  title: "Awards & Press | Vogue, Brides, People — Chromata Films",
+  description: "Chromata Films in the press: Vogue, Harper's Bazaar, Brides, People, Over the Moon, Cosmopolitan, WedLuxe and THE WED — and winner of Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards.",
+  ogImage: "assets/img/logos/press-bg.png",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Awards & Press", file: "awards-press.html" },
+  ],
+  main: `  <section class="pad-section" style="padding-top:calc(var(--nav-h) + 12vh)" data-section>
+    <div class="container">
+      <p class="kicker">— Recognition</p>
+      <h1 class="display-lg" style="margin-top:3vh; max-width:13em">
+        <span class="line-mask"><span class="line-inner">Awards</span></span>
+        <span class="line-mask"><span class="line-inner">&amp; <em>press</em></span></span>
+      </h1>
+      <div class="prose" style="max-width:46em; margin-top:6vh">
+        <p style="font-size:clamp(1.05rem,1.5vw,1.4rem)">Chromata Films has been filming luxury weddings since 2016. The work has been recognised by the wedding film industry and published by the magazines that cover this world most closely.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">Awards</span></span>
+      </h2>
+      <div class="feature__meta" style="margin-top:5vh; max-width:48em">
+        <div class="row"><span>Love StoriesTV</span><span class="val">Best Destination Wedding Film — Wedding Film Awards</span></div>
+        <div class="row"><span>Visual Effects Society</span><span class="val">Kevin Lopez — visual effects career recognition</span></div>
+        <div class="row"><span>87th Academy Awards</span><span class="val">Visual-effects work on nominated productions</span></div>
+      </div>
+      <div class="prose" style="max-width:46em; margin-top:5vh">
+        <p>The Love StoriesTV award was won for a film shot at Lake Como ... <a class="text-link" href="journal-film-award.html">the full story is in the journal</a>. The visual-effects recognitions predate the studio: before weddings, Kevin Lopez spent a decade in Hollywood VFX on films including Star Wars: The Last Jedi, The Great Gatsby, Beauty and the Beast and Avengers: Infinity War. <a class="text-link" href="the-studio.html">More about the team →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">As seen in</span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+        <p>Our films and the weddings we have filmed have been published by <strong>Vogue</strong>, <strong>Harper's Bazaar</strong>, <strong>Brides</strong>, <strong>People</strong>, <strong>Over the Moon</strong>, <strong>Cosmopolitan</strong>, <strong>Elle</strong>, <strong>WedLuxe</strong>, <strong>THE WED</strong> and <strong>Style Me Pretty</strong>.</p>
+        <p>Anna Andres and David's wedding at Hôtel du Cap-Eden-Roc was published in Vogue, Cosmopolitan and Elle. Angela and Allister's Paris wedding was <a class="text-link" href="journal-angela-allister-brides.html">featured in Brides</a>.</p>
+      </div>
+      <div class="marquee" aria-label="Press" style="margin-top:7vh">
+        <div class="marquee__track">
+          <img src="assets/img/logos/vogue.png" alt="Vogue" loading="lazy" />
+          <img src="assets/img/logos/harpers-bazaar.png" alt="Harper's Bazaar" loading="lazy" />
+          <img src="assets/img/logos/over-the-moon.png" alt="Over The Moon" loading="lazy" />
+          <img src="assets/img/logos/cosmopolitan.png" alt="Cosmopolitan" loading="lazy" />
+          <img src="assets/img/logos/wedluxe.png" alt="WedLuxe" loading="lazy" />
+          <img src="assets/img/logos/ves.png" alt="Visual Effects Society" loading="lazy" />
+          <img src="assets/img/logos/gala-500.png" alt="500 Gala" loading="lazy" />
+          <img src="assets/img/logos/oscars-87th.png" alt="87th Academy Awards" loading="lazy" />
+          <img src="assets/img/logos/swt-laurels.png" alt="Wedding industry laurels" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">Trusted by planners</span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+        <p>We are recommended by the planners who run the most demanding celebrations in Europe ... among them Alejandra Poupel, Sacks Productions, Mindy Weiss, House of Kirschner, Palazzo Eventi and The Wedding Planners Monaco.</p>
+        <blockquote style="margin-top:5vh; padding-left:clamp(18px,2vw,32px); border-left:2px solid var(--coral); font-family:var(--font-accent); font-style:italic; font-size:clamp(1.1rem,1.8vw,1.6rem)">"Kevin and his team are truly remarkable. Their vision, creativity, and professionalism consistently exceed expectations, and the results are always outstanding. We always recommend them to every couple we work with."<br><span style="font-family:var(--font-body); font-style:normal; font-size:12px; letter-spacing:0.24em; text-transform:uppercase; color:rgba(37,35,33,0.6); display:block; margin-top:2.5vh">Alejandra Poupel · Wedding Planner</span></blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" data-theme="dark" data-section style="background:var(--night-deep); color:var(--cream); text-align:center">
+    <div class="container">
+      <p class="kicker" style="justify-content:center; color:var(--coral)">— Press enquiries</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Writing about <em>us</em>?</span></span>
+      </h2>
+      <p class="body-copy" style="max-width:40em; margin:4vh auto 0">For press materials, film stills, interviews or submissions, write to <a class="text-link" href="mailto:${EMAIL}" style="color:var(--coral)">${EMAIL}</a> and we will come back to you the same week.</p>
+      <a class="btn btn--coral" href="contact.html" style="margin-top:5vh">Get in touch →</a>
+    </div>
+  </section>`,
+});
+
 pages["gettoknowusmore.html"] = shell({
   page: "gtkum",
   noindex: true,
@@ -2473,6 +2678,12 @@ const LANDING_PAGES = [
     heroSub: ["French Riviera · Provence · Paris", "Collections from 15,000 USD"],
     areaServed: ["France", "French Riviera", "Provence", "Paris", "St-Tropez", "Monaco"],
     serviceName: "Wedding Cinematography in France",
+    related: [
+      ["wedding-videographer-french-riviera.html", "French Riviera"],
+      ["wedding-videographer-st-tropez.html", "St-Tropez"],
+      ["wedding-videographer-paris.html", "Paris"],
+      ["wedding-videographer-provence.html", "Provence"],
+    ],
     intro: [
       "France is where Chromata Films was built. Our founders live and work between the French Riviera and Switzerland, and the coastline between Nice and St-Tropez is not a destination we fly into ... it is the stretch of road we have been filming for nine years. We know which room at which villa holds the last of the evening light, which mayor's office runs late, and which coastal road will be closed the weekend of the Grand Prix.",
       "That local knowledge sits on top of an unusual technical foundation. Before weddings, Kevin Lopez spent a decade in Hollywood visual effects, on films including Star Wars: The Last Jedi, The Great Gatsby, Beauty and the Beast and Avengers: Infinity War. The training that goes into a blockbuster frame ... light, composition, invisible perfectionism ... is what we bring to a French wedding weekend.",
@@ -2563,6 +2774,10 @@ const LANDING_PAGES = [
     heroSub: ["Lake Como · Amalfi · Puglia · Tuscany", "Collections from 15,000 USD"],
     areaServed: ["Italy", "Lake Como", "Amalfi Coast", "Puglia", "Tuscany", "Venice", "Positano"],
     serviceName: "Wedding Cinematography in Italy",
+    related: [
+      ["wedding-videographer-lake-como.html", "Lake Como"],
+      ["wedding-cinematographer-europe.html", "Across Europe"],
+    ],
     intro: [
       "Italy asks something specific of a wedding film. The country is already cinematic ... the light off Lake Como at seven in the evening, a Positano staircase, a Puglian masseria at dusk ... and the temptation is to let the scenery do the work. The films that last do the opposite: they use all that beauty as a background for the people standing in front of it.",
       "We have been filming Italian weddings for years, most often on Lake Como, where we have worked at Villa Erba, Villa Balbiano and Villa Bonomi, and along the Amalfi Coast. Our base on the French Riviera puts us a few hours from northern Italy by road.",
@@ -2688,6 +2903,243 @@ const LANDING_PAGES = [
   },
 ];
 
+/* City and region pages sit one level below the country pages: France links
+   down to the Riviera, St-Tropez, Paris and Provence; Italy links down to Lake
+   Como. They target the way people search a specific destination and each one
+   is built on weddings we have actually filmed there. */
+LANDING_PAGES.push(
+  {
+    file: "wedding-videographer-french-riviera.html",
+    h1: "Wedding Videographer on the <em>French Riviera</em>",
+    kicker: "— Côte d'Azur",
+    title: "Wedding Videographer French Riviera | Cap-Ferrat, Èze & Antibes Films — Chromata Films",
+    description: "Luxury wedding videographer on the French Riviera. Chromata Films films at Villa Ephrussi, Hôtel du Cap-Eden-Roc, Grand-Hôtel du Cap-Ferrat and Château de la Chèvre d'Or. From 15,000 USD.",
+    summary: "wedding films on the Côte d'Azur — Cap-Ferrat, Antibes, Èze, Cannes and Monaco",
+    heroImg: "assets/img/anna/an-02.jpg",
+    heroAlt: "A luxury wedding on the French Riviera filmed by Chromata Films",
+    heroSub: ["Cap-Ferrat · Antibes · Èze · Monaco", "Collections from 15,000 USD"],
+    areaServed: ["French Riviera", "Côte d'Azur", "St-Jean-Cap-Ferrat", "Antibes", "Èze", "Cannes", "Nice", "Monaco"],
+    serviceName: "Wedding Cinematography on the French Riviera",
+    related: [["wedding-videographer-france.html", "All of France"], ["wedding-videographer-st-tropez.html", "St-Tropez"], ["wedding-videographer-provence.html", "Provence"]],
+    intro: [
+      "The Riviera is the stretch of coast this studio was built on. Our founders live between here and Geneva, and the road from Nice to Menton is not a location we research before a wedding ... it is the drive home. Nine years of filming here means we know which terrace at which hotel keeps the light until nine in July, and which cliff road closes without warning.",
+      "It is also the most photographed coastline in Europe, which is exactly the problem. Everyone has seen the drone shot of Cap-Ferrat. The films that matter are the ones where that scenery is the setting rather than the subject.",
+    ],
+    body: [
+      ["The venues we know by heart", [
+        "Villa Ephrussi de Rothschild and the Grand-Hôtel du Cap-Ferrat in St-Jean-Cap-Ferrat. Hôtel du Cap-Eden-Roc at Antibes. Château de la Chèvre d'Or, perched above Èze. Château Saint-Martin at Vence, Villa la Vigie in Monaco, and the private estates along the Cap that never appear in a brochure.",
+        "Each of these has its own quirks ... Eden-Roc's light turns at a specific hour, Chèvre d'Or is a village of staircases, Villa Ephrussi has gardens that photograph very differently from how they film. Knowing that in advance is the difference between a schedule that works and one that improvises.",
+      ]],
+      ["Aerials, permits and Riviera logistics", [
+        "The Côte d'Azur is dense controlled airspace ... Nice airport, Monaco's heliport, and a coastline of restricted zones. Our aerial cinematographer is licensed to fly in France and handles the clearances rather than discovering on the wedding morning that the shot is illegal.",
+        "Summer on the Riviera also means traffic that turns a fifteen-minute transfer into an hour, and venues bound by strict noise curfews. We plan the filming day around the real timings, not the ones on the paper schedule.",
+      ]],
+    ],
+    work: [
+      { href: "domantas-sabonis.html", img: "assets/img/domantas/ds-28.jpg", title: "Domantas & Shashana", note: "Villa Ephrussi, St-Jean-Cap-Ferrat" },
+      { href: "anna-andres.html", img: "assets/img/anna/an-09.jpg", title: "Anna Andres", note: "Hôtel du Cap-Eden-Roc, Antibes" },
+      { href: "journal-daria-levin.html", img: "assets/img/daria/dl-01.jpg", title: "Daria Levin", note: "A circus wedding in Èze" },
+      { href: "journal-mozzafiato.html", img: "assets/img/mozzafiato/mz-03.jpg", title: "Mozzafiato", note: "Dolce & Gabbana, Grand-Hôtel du Cap-Ferrat" },
+    ],
+    faq: [
+      ["Who is the best wedding videographer on the French Riviera?",
+       "The useful filter is whether a studio is actually based here. A great deal of Riviera wedding content is made by teams who fly in for a weekend, and it shows in the scouting and the schedule. Chromata Films is based between the Riviera and Geneva, has filmed at Villa Ephrussi, Hôtel du Cap-Eden-Roc, the Grand-Hôtel du Cap-Ferrat and Château de la Chèvre d'Or, and our work from this coast has appeared in Vogue, Brides and People."],
+      ["How much does a wedding videographer cost on the French Riviera?",
+       "Collections start at 15,000 USD. Riviera weddings are frequently multi-day ... a welcome dinner at one hotel, the wedding at another, a beach club recovery lunch ... and the number of days is usually what moves the quote more than anything else."],
+      ["Can you fly a drone at Riviera wedding venues?",
+       "In most locations, yes, with a licensed pilot and the correct clearance, which we arrange. But the Côte d'Azur has genuinely restricted airspace near Nice airport and Monaco, and some venues prohibit drones outright. We check your specific venue and tell you before you book what is and is not possible."],
+      ["Do you film weddings in Monaco?",
+       "Yes. Monaco has its own rules for filming and aerial work, and we have filmed there ... including at Villa la Vigie. It is a short drive from our base."],
+      ["Which Riviera venues have you filmed at?",
+       "Among others: Villa Ephrussi de Rothschild, Grand-Hôtel du Cap-Ferrat, Hôtel du Cap-Eden-Roc, Château de la Chèvre d'Or in Èze, Château Saint-Martin, the Four Seasons on the Riviera, and a number of private villas we cannot name."],
+    ],
+  },
+  {
+    file: "wedding-videographer-st-tropez.html",
+    h1: "Wedding Videographer in <em>St-Tropez</em>",
+    kicker: "— Golfe de St-Tropez",
+    title: "Wedding Videographer St-Tropez | Le Beauvallon & Riviera Wedding Films — Chromata Films",
+    description: "Luxury wedding videographer in St-Tropez and the Gulf. Chromata Films has filmed multi-day celebrations at Le Beauvallon, Hôtel Beauvallon and private villas above the bay. From 15,000 USD.",
+    summary: "multi-day wedding films in St-Tropez, Ramatuelle and the Gulf of St-Tropez",
+    heroImg: "assets/img/jg-blog/jgb-01.jpg",
+    heroAlt: "A luxury wedding in St-Tropez filmed by Chromata Films",
+    heroSub: ["Le Beauvallon · Ramatuelle · Pampelonne", "Collections from 15,000 USD"],
+    areaServed: ["St-Tropez", "Ramatuelle", "Grimaud", "Gassin", "French Riviera", "France"],
+    serviceName: "Wedding Cinematography in St-Tropez",
+    related: [["wedding-videographer-france.html", "All of France"], ["wedding-videographer-french-riviera.html", "French Riviera"], ["wedding-videographer-provence.html", "Provence"]],
+    intro: [
+      "St-Tropez weddings are rarely a single day. They are long weekends ... a welcome party on a beach at Pampelonne, a wedding above the bay, a Sunday that starts late and ends in the sea. More of our multi-day films come from this stretch of coast than anywhere else.",
+      "It is also a place with a particular energy. The celebrations we film here tend to be loud, late and genuinely fun, and a film that treats them like a formal ceremony misses the point entirely.",
+    ],
+    body: [
+      ["Where we film around the Gulf", [
+        "Le Beauvallon and Hôtel Beauvallon above the bay at Grimaud, where we have filmed several times. The villas of Ramatuelle and Gassin. The beach clubs of Pampelonne for welcome parties and recovery lunches. And the private estates in the hills behind the town.",
+        "Access is the recurring problem here: narrow roads, gated properties, and a peninsula that gridlocks in August. Our crews build in the extra hour rather than arriving after the first look.",
+      ]],
+      ["Weddings that run past sunrise", [
+        "A St-Tropez weekend often includes a fashion show, a fireworks set, a drone light display and an after-party that surrenders around dawn ... we have filmed all of those at a single wedding. Covering that needs a crew that can work sixteen-hour days and still be composed at hour fifteen, and camera bodies that hold up in near-darkness.",
+        "Our background is cinema lighting rather than event videography, which is exactly what a 2am party under one string of festoon lights demands.",
+      ]],
+    ],
+    work: [
+      { href: "jacqueline-gordon.html", img: "assets/img/jacky/jg-20.jpg", title: "Jacqueline & Gordon", note: "Five days at Le Beauvallon" },
+      { href: "journal-alexa-wilton.html", img: "assets/img/aw-blog/aw-01.jpg", title: "Alexa & Wilton", note: "A Riviera fairytale in St-Tropez" },
+      { href: "journal-michal-steve.html", img: "assets/img/michal-steve/ms-01.jpg", title: "Michal & Steve", note: "A St-Tropez love story" },
+      { href: "journal-jessica-benjamin.html", img: "assets/img/jg-blog/jgb-03.jpg", title: "Jessica & Benjamin", note: "Hôtel Beauvallon" },
+    ],
+    faq: [
+      ["Do you film multi-day weddings in St-Tropez?",
+       "Yes ... that is the majority of what we film here. Jacqueline and Gordon's wedding at Le Beauvallon ran five days. We build the crew around the full schedule and typically deliver a film per major event alongside the main wedding film."],
+      ["How much does a St-Tropez wedding videographer cost?",
+       "Collections start at 15,000 USD. In St-Tropez the number of days and the number of simultaneous events are what usually determine the final figure ... a welcome party at a beach club and a wedding in the hills on the same weekend need more than one camera team."],
+      ["Which St-Tropez venues have you filmed at?",
+       "Le Beauvallon and Hôtel Beauvallon above the bay, private villas in Ramatuelle and Gassin, and beach clubs along Pampelonne. We also film regularly along the wider Riviera between St-Tropez and Monaco."],
+      ["Can you handle a party that runs until sunrise?",
+       "Yes, and we plan for it. Late coverage is agreed in advance so the crew is scheduled for it rather than being asked at 1am to stay on. Our low-light work comes out of a cinema background, so a dark dancefloor is not a problem."],
+      ["Do you work with St-Tropez wedding planners?",
+       "Regularly. We have worked with planners including House of Kirschner and KBY Designs on celebrations in the area, and we are used to fitting into an established planning team rather than competing with it."],
+    ],
+  },
+  {
+    file: "wedding-videographer-lake-como.html",
+    h1: "Wedding Videographer at <em>Lake Como</em>",
+    kicker: "— Lago di Como",
+    title: "Wedding Videographer Lake Como | Villa Erba & Villa Balbiano Films — Chromata Films",
+    description: "Luxury wedding videographer at Lake Como. Chromata Films has filmed at Villa Erba, Villa Balbiano and Villa Bonomi, including multi-day Indian celebrations. From 15,000 USD.",
+    summary: "wedding films at Villa Erba, Villa Balbiano, Villa Bonomi and the Lake Como estates",
+    heroImg: "assets/img/katya-joey/kj-03.jpg",
+    heroAlt: "A luxury wedding at Lake Como filmed by Chromata Films",
+    heroSub: ["Villa Erba · Villa Balbiano · Villa Bonomi", "Collections from 15,000 USD"],
+    areaServed: ["Lake Como", "Cernobbio", "Bellagio", "Como", "Lombardy", "Italy"],
+    serviceName: "Wedding Cinematography at Lake Como",
+    related: [["wedding-filmmaker-italy.html", "All of Italy"], ["wedding-cinematographer-europe.html", "Across Europe"]],
+    intro: [
+      "Lake Como is the single venue region we have filmed most often outside France. Villa Erba, Villa Balbiano and Villa Bonomi have each hosted celebrations we filmed, several of them running across three or four days and multiple traditions.",
+      "The lake gives you something no other venue does ... a natural amphitheatre where the light comes off the water twice, once directly and once reflected. It also gives you boat transfers, terraced gardens and a strictly enforced curfew, all of which have to be filmed around.",
+    ],
+    body: [
+      ["The villas", [
+        "Villa Erba at Cernobbio, with its lakeside park and vast pavilion. Villa Balbiano, the most cinematic private villa on the lake. Villa Bonomi, where we have filmed both a wedding and a Sangeet night. Villa del Balbianello on its promontory, and the private estates around Bellagio, Tremezzo and Torno.",
+        "Most of these are reached by boat for at least one part of the day. A camera team that has not planned for a water transfer loses twenty minutes of the ceremony to logistics.",
+      ]],
+      ["Indian and multi-day celebrations on the lake", [
+        "A large share of the Lake Como weddings we film are Indian celebrations ... a Sangeet on the first night, a Mehndi, a Haldi, the ceremony and a reception, sometimes across two villas. We have filmed exactly this at Villa Erba and Villa Bonomi.",
+        "These weekends need a bigger crew, a director who knows the running order of the ceremony, and the discipline to be everywhere at once without ever being in a photograph. Rituals do not repeat for a camera.",
+      ]],
+    ],
+    work: [
+      { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-04.jpg", title: "Katya & Joey", note: "Villa Erba, planned by Sacks Productions & Alejandra Poupel" },
+      { href: "journal-jasmiina-tuukka.html", img: "assets/img/jasmiina/jt-04.jpg", title: "Jasmiina & Tuukka Rask", note: "Villa Balbiano" },
+      { href: "journal-nida-sunny-highlight.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi" },
+      { href: "journal-d-a-villa-bonomi.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "D & A", note: "Villa Bonomi" },
+    ],
+    faq: [
+      ["Who is the best wedding videographer at Lake Como?",
+       "Ask for full films from the specific villa you have booked. Lake Como venues differ enormously ... Villa Erba is a park, Villa Balbiano is an interior, Villa del Balbianello is a promontory reached by boat ... and a studio that has filmed yours will show you rather than describe it. Chromata Films has filmed repeatedly at Villa Erba, Villa Balbiano and Villa Bonomi, and won Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards for a film shot at Lake Como."],
+      ["How much does a Lake Como wedding film cost?",
+       "Collections start at 15,000 USD. Lake Como weddings are frequently multi-day and multi-venue, and Indian celebrations in particular need a larger crew, so most quotes here sit above the entry point."],
+      ["Do you film Indian weddings at Lake Como?",
+       "Yes, regularly ... including Sangeet nights and full ceremonies at Villa Erba and Villa Bonomi. Multi-day, multi-tradition celebrations are one of the studio's specialities."],
+      ["Are you based in Italy?",
+       "We are based between the French Riviera and Geneva, both a few hours from the lake by road. That means we scout in person and are not adding long-haul travel to your quote."],
+      ["Which Lake Como villas have you filmed at?",
+       "Villa Erba, Villa Balbiano and Villa Bonomi, among others, plus private estates around Cernobbio and Bellagio."],
+    ],
+  },
+  {
+    file: "wedding-videographer-paris.html",
+    h1: "Wedding Videographer in <em>Paris</em>",
+    kicker: "— Paris & Île-de-France",
+    title: "Wedding Videographer Paris | Château & City Wedding Films — Chromata Films",
+    description: "Luxury wedding videographer in Paris and the Île-de-France, including private weddings at the Château de Vaux-le-Vicomte. Chromata Films — collections from 15,000 USD.",
+    summary: "wedding films in Paris and the Île-de-France châteaux, including Vaux-le-Vicomte",
+    heroImg: "assets/img/parisian-dream/pd-01.jpg",
+    heroAlt: "A luxury wedding in Paris filmed by Chromata Films",
+    heroSub: ["Paris · Vaux-le-Vicomte · Île-de-France", "Collections from 15,000 USD"],
+    areaServed: ["Paris", "Île-de-France", "Versailles", "Vaux-le-Vicomte", "France"],
+    serviceName: "Wedding Cinematography in Paris",
+    related: [["wedding-videographer-france.html", "All of France"], ["wedding-videographer-french-riviera.html", "French Riviera"]],
+    intro: [
+      "Paris weddings split into two very different films. One is the city itself ... a couple crossing a bridge at six in the morning before the traffic, the light down a Haussmann staircase, a car through the Place de la Concorde at night. The other is the châteaux beyond the périphérique, where the scale changes completely.",
+      "We film both, and the most memorable Parisian weddings usually use both: a ceremony out at a château, and an hour in the city that becomes the sequence everyone remembers.",
+    ],
+    body: [
+      ["Châteaux of the Île-de-France", [
+        "We have filmed a private wedding at the Château de Vaux-le-Vicomte, the estate that inspired Versailles and one of the few places in France where the scale genuinely matches the ambition of the couples marrying there.",
+        "The Île-de-France châteaux come with real constraints ... heritage restrictions on lighting and rigging, strict end times, and grounds so large that a camera team without a plan spends the evening walking. We scout them properly.",
+      ]],
+      ["Filming in the city", [
+        "Paris rewards early starts. The couple sequences that make a Parisian film are shot between five and seven in the morning, when the streets are yours. Later in the day the city is a logistics exercise ... permits for certain locations, traffic that does not negotiate, and a police force with firm views about tripods.",
+        "We work in French, which removes most of that friction on the day.",
+      ]],
+    ],
+    work: [
+      { href: "vaux-le-vicomte.html", img: "assets/img/vaux/vlv-05.jpg", title: "A Private Château Wedding", note: "Vaux-le-Vicomte" },
+      { href: "journal-parisian-dream.html", img: "assets/img/parisian-dream/pd-02.jpg", title: "A Parisian Dream", note: "The luxurious wedding of J & A" },
+      { href: "journal-angela-allister-paris.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Angela & Allister", note: "A modern wedding in Paris" },
+      { href: "journal-olympics-ai.html", img: "assets/img/olympics/oly-01.jpg", title: "Paris 2024, Reimagined", note: "An experimental AI film" },
+    ],
+    faq: [
+      ["Do you film weddings in Paris and the surrounding châteaux?",
+       "Yes, both. We have filmed in the city and at Île-de-France châteaux including a private wedding at the Château de Vaux-le-Vicomte. Many Paris weddings combine the two, and we plan the day so the city sequence does not get squeezed out."],
+      ["How much does a Paris wedding videographer cost?",
+       "Collections start at 15,000 USD. In Paris the variables are usually the number of locations and whether an early-morning city shoot is included alongside the wedding day itself."],
+      ["Do you speak French?",
+       "Yes. The studio works in English and French, which matters in Paris more than most places ... venue staff, city permissions and vendors are all easier when someone on the film team speaks the language."],
+      ["Can you film at Vaux-le-Vicomte or Versailles-type venues?",
+       "We have filmed a private wedding at Vaux-le-Vicomte. Heritage estates have their own rules about lighting, drones and access, which we clear with the venue in advance rather than on the day."],
+      ["When is the best time for couple photos in Paris?",
+       "Early. Between roughly five and seven in the morning the landmarks are empty and the light is soft ... the same location at midday is a crowd. Most of our couples do a short sunrise session either the morning after the wedding or on the day before."],
+    ],
+  },
+  {
+    file: "wedding-videographer-provence.html",
+    h1: "Wedding Videographer in <em>Provence</em>",
+    kicker: "— Provence & the Luberon",
+    title: "Wedding Videographer Provence | Château & Vineyard Wedding Films — Chromata Films",
+    description: "Luxury wedding videographer in Provence. Chromata Films films château, vineyard and mas weddings across the Luberon, Gordes, Aix and the Alpilles. Collections from 15,000 USD.",
+    summary: "château, vineyard and mas wedding films across Provence, the Luberon and the Alpilles",
+    heroImg: "assets/img/sandra-pedro/sp-01.jpg",
+    heroAlt: "A luxury wedding in Provence filmed by Chromata Films",
+    heroSub: ["Luberon · Alpilles · Gordes · Aix", "Collections from 15,000 USD"],
+    areaServed: ["Provence", "Luberon", "Gordes", "Aix-en-Provence", "Alpilles", "France"],
+    serviceName: "Wedding Cinematography in Provence",
+    related: [["wedding-videographer-france.html", "All of France"], ["wedding-videographer-french-riviera.html", "French Riviera"], ["wedding-videographer-st-tropez.html", "St-Tropez"]],
+    intro: [
+      "Provence is the quietest of the French wedding regions and, on film, the most forgiving. Stone, olive trees, long tables under plane trees and a light that stays golden for well over an hour ... it is a landscape that rewards patience rather than spectacle.",
+      "We have filmed château weddings, vineyard celebrations and couture shoots across the region, from Château d'Estoublon in the Alpilles to the hill villages around Gordes.",
+    ],
+    body: [
+      ["Châteaux, mas and vineyards", [
+        "Château d'Estoublon near Les Baux, the domaines around Aix and the Luberon, restored mas with courtyards built for long dinners, and the hill villages ... Gordes, Ménerbes, Bonnieux ... where a five-minute drive changes the entire backdrop.",
+        "Provençal venues are often family estates rather than hotels. That means fewer staff, more improvisation, and a filming plan that has to be self-sufficient.",
+      ]],
+      ["Light, heat and the mistral", [
+        "A July wedding in Provence is thirty-five degrees at four in the afternoon and perfect at eight. Ceremonies get moved late for exactly that reason, which compresses the couple session into a short golden window ... we plan for it rather than lose it.",
+        "The mistral is the other local variable. It can ground a drone for an afternoon, so we build aerial coverage across the whole weekend rather than pinning it to one hour.",
+      ]],
+    ],
+    work: [
+      { href: "journal-sandra-pedro.html", img: "assets/img/sandra-pedro/sp-02.jpg", title: "Sandra & Pedro", note: "Mixed-religion ceremony, Château d'Estoublon" },
+      { href: "journal-o-my-gaude.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Ô My Gaude", note: "A couture shooting in Provence" },
+      { href: "journal-samantha-edoardo.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Samantha & Edoardo", note: "From Switzerland to Provence" },
+      { href: "journal-france-venues.html", img: "assets/img/france-venues/fv-01.jpg", title: "Our Favourite Venues", note: "The south of France, chosen by us" },
+    ],
+    faq: [
+      ["Do you film weddings in Provence?",
+       "Yes ... château, vineyard and private mas weddings across the Luberon, the Alpilles, Gordes and Aix-en-Provence. We have filmed at Château d'Estoublon among others, and Provence is a couple of hours from our Riviera base."],
+      ["How much does a Provence wedding videographer cost?",
+       "Collections start at 15,000 USD. Provençal weddings are often two or three days with a welcome dinner and a lazy Sunday lunch, and the number of days is the main factor in the quote."],
+      ["Can you film a multi-faith or mixed-religion ceremony?",
+       "Yes. We filmed Sandra and Pedro's mixed-religion ceremony at Château d'Estoublon, and we have filmed Jewish, Catholic, Hindu and civil ceremonies elsewhere. We ask about the running order in advance so nothing is missed."],
+      ["What if the mistral is blowing on our wedding day?",
+       "Drones stay grounded when it is unsafe or illegal to fly, so we spread aerial coverage across the weekend rather than depending on a single window. Ground coverage is unaffected."],
+      ["Is Provence better than the Riviera for a wedding film?",
+       "Different, not better. Provence is quieter, greener and softer on camera, with long golden evenings. The Riviera is bluer, more dramatic and more glamorous. Couples who want calm usually choose Provence; couples who want spectacle choose the coast."],
+    ],
+  },
+);
+
 const faqBlock = (faq) => `  <section class="pad-section" data-section>
     <div class="container">
       <p class="kicker">— Questions</p>
@@ -2790,7 +3242,16 @@ ${L.work.map((w) => `        <figure class="gitem mat img-reveal">
       <a class="btn btn--coral" href="real-weddings.html" style="margin-top:6vh">See all real weddings →</a>
     </div>
   </section>
-
+${L.related ? `
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— Also Filming In</p>
+      <div style="display:flex; flex-wrap:wrap; gap:clamp(14px,2vw,28px); margin-top:4vh">
+${L.related.map(([href, label]) => `        <a class="text-link" href="${href}" style="font-family:var(--font-display); font-size:clamp(1.1rem,2vw,1.7rem)">${label} →</a>`).join("\n")}
+      </div>
+    </div>
+  </section>
+` : ""}
 ${faqBlock(L.faq)}
 
   <section class="pad-section" data-theme="dark" data-section style="background:var(--night-deep); color:var(--cream); text-align:center">
