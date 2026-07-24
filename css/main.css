@@ -267,13 +267,6 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 /* 3:1 scrub band — non-pinned, sits in normal flow between sections */
 .film--band { height: calc(100vw / 3); }
 .film--scope { height: calc(100vw / 2.39); }
-/* on phones a 2.39:1 slice is too thin to read: the scope band (studio only)
-   fills the screen as a square instead, while the 3:1 bands elsewhere keep
-   their ratio. 768px matches the isMobile query so it lines up with the JS
-   pin length used at that width */
-@media (max-width: 768px) {
-  .film--scope { height: 100vw; }
-}
 .film--header .hero__title--brand { font-size: clamp(3rem, 15vw, 11rem); line-height: 0.92; }
 .film--header .hero__title--page { font-size: clamp(1.1rem, 4.5vw, 5.6rem); }
 /* landing hero rolls back to full-bleed on mobile (phones AND portrait
