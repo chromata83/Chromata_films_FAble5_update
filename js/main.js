@@ -422,8 +422,11 @@
         onToggle,
       });
     } else {
+      // full-height films pin from the top; a short band (the 21:9 studio
+      // film) pins via data-pin-start="center center" so it locks once it sits
+      // mid-screen and holds there until the whole clip has scrubbed through
       ScrollTrigger.create({
-        trigger: section, start: "top top", end: pinLength, pin: true,
+        trigger: section, start: section.dataset.pinStart || "top top", end: pinLength, pin: true,
         scrub: isMobile ? 0.5 : true,
         anticipatePin: 1,
         onUpdate: (self) => { state.target = self.progress; },

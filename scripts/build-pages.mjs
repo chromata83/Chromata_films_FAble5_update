@@ -629,8 +629,10 @@ pages["the-studio.html"] = shell({
     </div>
   </section>
 
-  <!-- GASP scroll-scrubbed film band (2.39:1 cinemascope) between the blockbusters and "beyond the frame" -->
-  <section class="film film--band film--scope vignette" data-scrub data-film-nopin data-theme="dark" data-section aria-label="Chromata Films — cinematic film">
+  <!-- GASP scroll-scrubbed film band between the blockbusters and "beyond the frame".
+       21:9 on desktop, full-bleed square on phones; pins once it reaches
+       mid-screen and holds the screen until the whole clip has played out. -->
+  <section class="film film--band film--scope vignette" data-scrub data-pin-start="center center" data-pin="+=350%" data-theme="dark" data-section aria-label="Chromata Films — cinematic film">
     <video data-src="assets/video/studio-film.mp4" data-src-mobile="assets/video/studio-film-mobile.mp4"
            poster="assets/video/studio-film-poster.jpg" muted playsinline preload="metadata"></video>
     <div class="film__shade"></div>

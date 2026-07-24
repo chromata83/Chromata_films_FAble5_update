@@ -266,7 +266,13 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .film--header:not(.hero) { height: calc(100vw / 3); }
 /* 3:1 scrub band — non-pinned, sits in normal flow between sections */
 .film--band { height: calc(100vw / 3); }
-.film--scope { height: calc(100vw / 2.39); }
+/* 21:9 scrub band (the studio film) — pinned, so it holds the screen while
+   the clip scrubs; on phones it goes full-bleed square instead, a 2.33:1
+   slice being far too thin to read at that width */
+.film--scope { height: calc(100vw * 9 / 21); }
+@media (max-width: 768px) {
+  .film--scope { height: 100vw; }
+}
 .film--header .hero__title--brand { font-size: clamp(3rem, 15vw, 11rem); line-height: 0.92; }
 .film--header .hero__title--page { font-size: clamp(1.1rem, 4.5vw, 5.6rem); }
 /* landing hero rolls back to full-bleed on mobile (phones AND portrait
