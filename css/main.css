@@ -268,8 +268,9 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .film--band { height: calc(100vw / 3); }
 .film--scope { height: calc(100vw / 2.39); }
 /* on phones a 2.39:1 slice is too thin to read: the scope band (studio only)
-   squares up, while the 3:1 bands elsewhere keep their ratio */
-@media (max-width: 760px) {
+   squares up, while the 3:1 bands elsewhere keep their ratio. 768px, not the
+   usual 760px, so it matches the isMobile query that also unpins the band */
+@media (max-width: 768px) {
   .film--scope { height: 100vw; }
 }
 .film--header .hero__title--brand { font-size: clamp(3rem, 15vw, 11rem); line-height: 0.92; }
