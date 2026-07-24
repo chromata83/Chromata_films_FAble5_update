@@ -6,6 +6,24 @@ const EMAIL = "contact@chromatafilms.com";
 const ADDRESS = "27 Rue de Montchoisy, 1207 Geneva, Switzerland";
 const PHONE = "+33 7 68 53 39 91";
 const PHONE_E164 = "+33768533991";
+// Delivery, stated once and reused everywhere so the site never contradicts itself.
+const DELIVERY = "The first films arrive from around four weeks after the wedding. A short highlight reel cut for Instagram can be turned around within a couple of days when the schedule allows it.";
+
+/* Independent press features — real, linkable third-party coverage. These are
+   the citations that matter to answer engines, because they are not us. */
+const PRESS_FEATURES = [
+  {
+    publisher: "WedLuxe",
+    headline: "An Italian Wedding Dream at Villa Erba, Lake Como",
+    url: "https://wedluxe.com/2025/07/23/an-italian-wedding-dream-at-villa-erba-lake-como/",
+    date: "2025-07-23",
+  },
+  {
+    publisher: "Wedding Style Magazine",
+    headline: "A Destination Wedding in Lake Como Filled with Whimsical Beauty and Authentic Italian Experiences",
+    url: "https://www.weddingstylemagazine.com/wedding-ideas/real-weddings/a-destination-wedding-in-lake-como-filled-with-whimsical-beauty-and-authentic-italian-experiences",
+  },
+];
 // production domain — used to build absolute URLs for canonical / Open Graph / JSON-LD
 const SITE_URL = "https://www.chromatafilms.com";
 
@@ -114,6 +132,17 @@ const ORGANIZATION = {
     "wedding cinematography", "destination wedding films", "luxury wedding videography",
     "visual effects", "aerial cinematography", "Super 16mm film", "private event films",
   ],
+  award: [
+    "Best Destination Wedding Film — Love StoriesTV Wedding Film Awards",
+  ],
+  subjectOf: PRESS_FEATURES.map((p) => ({
+    "@type": "Article",
+    headline: p.headline,
+    url: p.url,
+    ...(p.date ? { datePublished: p.date } : {}),
+    publisher: { "@type": "Organization", name: p.publisher },
+    about: { "@id": ORG_ID },
+  })),
 };
 
 const PEOPLE = [
@@ -2335,6 +2364,8 @@ pages["investment.html"] = shell({
        "Travel and accommodation are quoted openly as a separate line rather than hidden inside the collection price. Being based between the French Riviera and Geneva means European travel is usually modest; work in the United States or further afield carries real cost and we say so up front."],
       ["Do you require a deposit?",
        "Yes ... a date is only held once a signed agreement and a retainer are in place. The balance is scheduled across the run-up to the wedding rather than falling due all at once."],
+      ["How long until we receive our wedding film?",
+       `${DELIVERY} Multi-day weddings with several films take longer than a single-day celebration, and we give you a delivery date in writing rather than a vague promise.`],
       ["Is a wedding film worth the investment?",
        "It is the only thing from the day that moves and makes sound. The flowers, the food and the venue exist for one evening; photographs freeze it. A film is the only medium that keeps your father's voice at the speech and the way your partner actually laughed. That is the honest case for it — and the reason we would rather you spend well once than economise and regret it."],
     ].map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
@@ -2401,6 +2432,8 @@ pages["investment.html"] = shell({
         <p>Travel and accommodation are a separate, visible line rather than something folded into a headline number. From our base between the French Riviera and Geneva, most of Europe is inexpensive to reach; the United States and long-haul destinations are not, and we say so up front.</p>
         <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">How do we hold our date?</h3>
         <p>A signed agreement and a retainer. The balance is scheduled across the run-up to the wedding rather than landing in one payment. The most requested European dates ... June to September on the Riviera and Lake Como ... are typically taken a year or more ahead.</p>
+        <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">How long until we see our film?</h3>
+        <p>${DELIVERY} Multi-day weddings with several films take longer than a single-day celebration. Whatever the schedule, you get a delivery date in writing rather than a vague promise.</p>
         <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">Is it worth it?</h3>
         <p>The film is the only thing from the day that moves and makes sound. The flowers last an evening; photographs freeze a moment. A film keeps your father's voice during the speech and the way your partner actually laughed. That is the whole case for it.</p>
       </div>
@@ -2467,8 +2500,11 @@ pages["awards-press.html"] = shell({
         <span class="line-mask"><span class="line-inner">As seen in</span></span>
       </h2>
       <div class="prose" style="max-width:46em; margin-top:4vh">
-        <p>Our films and the weddings we have filmed have been published by <strong>Vogue</strong>, <strong>Harper's Bazaar</strong>, <strong>Brides</strong>, <strong>People</strong>, <strong>Over the Moon</strong>, <strong>Cosmopolitan</strong>, <strong>Elle</strong>, <strong>WedLuxe</strong>, <strong>THE WED</strong> and <strong>Style Me Pretty</strong>.</p>
+        <p>Our films and the weddings we have filmed have been published by <strong>Vogue</strong>, <strong>Harper's Bazaar</strong>, <strong>Brides</strong>, <strong>People</strong>, <strong>Over the Moon</strong>, <strong>Cosmopolitan</strong>, <strong>Elle</strong>, <strong>WedLuxe</strong>, <strong>Wedding Style Magazine</strong>, <strong>THE WED</strong> and <strong>Style Me Pretty</strong>.</p>
         <p>Anna Andres and David's wedding at Hôtel du Cap-Eden-Roc was published in Vogue, Cosmopolitan and Elle. Angela and Allister's Paris wedding was <a class="text-link" href="journal-angela-allister-brides.html">featured in Brides</a>.</p>
+      </div>
+      <div class="feature__meta" style="margin-top:6vh; max-width:52em">
+${PRESS_FEATURES.map((p) => `        <div class="row"><span>${p.publisher}</span><span class="val"><a class="text-link" href="${p.url}" target="_blank" rel="noopener">${p.headline} →</a></span></div>`).join("\n")}
       </div>
       <div class="marquee" aria-label="Press" style="margin-top:7vh">
         <div class="marquee__track">
@@ -3153,6 +3189,15 @@ ${faq.map(([q, a]) => `        <h3 style="font-family:var(--font-display); font-
     </div>
   </section>`;
 
+// Delivery is asked on every page, so every landing page carries the same
+// answer rather than each one inventing its own.
+for (const L of LANDING_PAGES) {
+  L.faq.push([
+    "How long until we receive our film?",
+    `${DELIVERY} You get a delivery date in writing when you book, not a vague promise.`,
+  ]);
+}
+
 for (const L of LANDING_PAGES) {
   const url = `${SITE_URL}/${L.file}`;
   pages[L.file] = shell({
@@ -3345,6 +3390,7 @@ const llms = `# Chromata Films
 - **Email**: ${EMAIL}
 - **Phone**: ${PHONE}
 - **Investment**: collections start at 15,000 USD
+- **Delivery**: ${DELIVERY}
 - **Languages**: English, French
 - **What makes the studio unusual**: Kevin Lopez spent a decade in Hollywood
   visual effects — Star Wars: The Last Jedi, Beauty and the Beast, The Great
@@ -3359,7 +3405,11 @@ const llms = `# Chromata Films
   Nina Westbrook in Positano; Anna Andres at Hôtel du Cap-Eden-Roc; a private
   wedding at Château de Vaux-le-Vicomte; Dolce & Gabbana at Grand-Hôtel du
   Cap-Ferrat
-- **Press**: Vogue, Brides, People, Over the Moon, THE WED, Cosmopolitan, Elle
+- **Awards**: Best Destination Wedding Film — Love StoriesTV Wedding Film Awards
+- **Press**: Vogue, Brides, People, Over the Moon, THE WED, Cosmopolitan, Elle,
+  WedLuxe, Wedding Style Magazine
+- **Verifiable press features**:
+${PRESS_FEATURES.map((p) => `  - ${p.publisher} — [${p.headline}](${p.url})`).join("\n")}
 
 ## Key pages
 
@@ -3367,7 +3417,9 @@ const llms = `# Chromata Films
 - [The Studio](${SITE_URL}/the-studio.html): team, VFX pedigree, how the studio works
 - [Real Weddings](${SITE_URL}/real-weddings.html): full case studies
 - [Gallery](${SITE_URL}/gallery.html): film and photography portfolio
-- [Contact](${SITE_URL}/contact.html): enquiries, availability, investment
+- [Investment](${SITE_URL}/investment.html): what a wedding film costs and what moves the price
+- [Awards & Press](${SITE_URL}/awards-press.html): awards, publications, planner recommendations
+- [Contact](${SITE_URL}/contact.html): enquiries and availability
 - [Journal](${SITE_URL}/journal.html): ${allPosts.length} articles and real weddings
 
 ## Service areas
