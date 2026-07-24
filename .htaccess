@@ -1,0 +1,82 @@
+# ============================================================
+# CHROMATA FILMS — canonicalisation + legacy URL recovery
+#
+# The previous (Squarespace) site lived at /blogchromatafilms/... and a set of
+# extensionless top-level paths. Those URLs still hold the site's backlinks and
+# are still in Google's index, so every one of them is 301'd to its equivalent
+# on the current site rather than left to 404.
+# ============================================================
+
+# Never let Apache content-negotiate /gallery into gallery.html silently —
+# we want an explicit 301 so there is only ever one canonical URL.
+<IfModule mod_negotiation.c>
+  Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # ---------- canonical host: always www ----------
+  # http -> https is already handled by the platform, and testing %{HTTPS} here
+  # would risk a loop behind the CDN (the origin can see it as "off"), so this
+  # only collapses the bare domain onto www.
+  RewriteCond %{HTTP_HOST} !^www\. [NC]
+  RewriteRule ^(.*)$ https://www.chromatafilms.com/$1 [R=301,L]
+
+  # ---------- legacy blog posts -> case studies ----------
+  RewriteRule ^blogchromatafilms/shashanadomantassaboniswedding/?$ /domantas-sabonis.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2025/9/17/jacqueline-and-gordon-wedding-a-st-tropez-experience-unlike-any-other/?$ /jacqueline-gordon.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2020/10/9/anna-andres-amp-david-wedding-french-riviera-escapade-at-hotel-du-cap-eden-roc/?$ /anna-andres.html [R=301,L,NC]
+
+  # ---------- legacy blog posts -> journal articles ----------
+  RewriteRule ^blogchromatafilms/2021/11/29/michal-amp-steve-wedding-a-st-tropez-love-story/?$ /journal-michal-steve.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2024/7/20/a-riviera-fairytale-alexa-and-wiltons-extravagant-st-tropez-wedding-by-house-of-kirschner/?$ /journal-alexa-wilton.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2022/10/15/jessica-amp-benjamin-stylish-jewish-wedding-at-hotel-beauvallon-near-st-tropez/?$ /journal-jessica-benjamin.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2024/2/21/sandra-amp-pedro-mixed-religion-ceremony-at-chateau-estoublon-provence/?$ /journal-sandra-pedro.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2023/11/4/a-four-seasons-buyout-wedding-for-the-most-amazing-celebrations/?$ /journal-four-seasons-buyout.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2023/9/28/daria-levin-crazy-circus-wedding-in-eze-french-riviera/?$ /journal-daria-levin.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2021/7/13/d-amp-a-wedding-in-lake-como-villa-bonomi/?$ /journal-d-a-villa-bonomi.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/mozzafiato-a-four-season-cap-ferrat-story-with-dolce-gabbana/?$ /journal-mozzafiato.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/sacksproductionsandalejandrapoupelweddingonlakecomo/?$ /journal-katya-joey.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/villablabianoluxurywedding/?$ /journal-jasmiina-tuukka.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/omygaude/?$ /journal-o-my-gaude.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/hannahlucasweddingvillaephrussi/?$ /journal-hannah-lucas.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/indianweddinglakecomo/?$ /journal-nida-sunny-highlight.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/lauren-and-jonathan-jewish-wedding-at-villa-rothschild-ephrussi/?$ /journal-lauren-jonathan.html [R=301,L,NC]
+
+  # ---------- legacy blog posts with no direct equivalent ----------
+  RewriteRule ^blogchromatafilms/2019/2/7/recongnition-as-a-visual-artist-oscars-nomination/?$ /the-studio.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/wedding-film-showreel-2018/?$ /gallery.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/clemence-lluc-elegant-wedding-in-the-heart-of-provence/?$ /real-weddings.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/villa-ephrussi-rothschild-wedding-film/?$ /real-weddings.html [R=301,L,NC]
+
+  # ---------- everything else still under the old blog -> journal hub ----------
+  # (tag archives, 2019-era posts, pagination offsets, ?format=amp variants)
+  RewriteRule ^blogchromatafilms(/.*)?$ /journal.html [R=301,L,NC]
+
+  # ---------- legacy top-level pages ----------
+  RewriteRule ^about_chromata_films/?$ /the-studio.html [R=301,L,NC]
+  RewriteRule ^contactus/?$ /contact.html [R=301,L,NC]
+  RewriteRule ^gallery_chromatafilms/?$ /gallery.html [R=301,L,NC]
+  RewriteRule ^pricing-1/?$ /contact.html [R=301,L,NC]
+  RewriteRule ^styling/?$ /gallery.html [R=301,L,NC]
+  RewriteRule ^wedding-showreel-2018/?$ /gallery.html [R=301,L,NC]
+  RewriteRule ^blog_testimonials(/.*)?$ / [R=301,L,NC]
+  RewriteRule ^(home|welcome|chromatafilms|francais)/?$ / [R=301,L,NC]
+  RewriteRule ^a-french-wedding-in-gordes/?$ /journal.html [R=301,L,NC]
+  RewriteRule ^black-and-white-wedding-on-the-french-riviera-cap-estel/?$ /journal.html [R=301,L,NC]
+  RewriteRule ^prewedding-in-singapore-the-lion-city/?$ /journal.html [R=301,L,NC]
+  RewriteRule ^luxury-jewish-wedding-in-provence/?$ /journal.html [R=301,L,NC]
+  RewriteRule ^cote-magazine-corporate-event/?$ /journal.html [R=301,L,NC]
+  RewriteRule ^style-me-pretty-publication/?$ /journal.html [R=301,L,NC]
+
+  # ---------- extensionless -> .html ----------
+  # Catches every other old pretty URL that happens to match a current page,
+  # e.g. /the-studio -> /the-studio.html. Cannot loop: once redirected the
+  # request resolves to a real file and the !-f condition stops matching.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^(.+?)/?$ /$1.html [R=301,L]
+</IfModule>

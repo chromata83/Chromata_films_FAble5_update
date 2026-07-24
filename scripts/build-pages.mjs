@@ -1,11 +1,243 @@
 // Chromata Films — generates all sub-pages from a shared shell.
 // Run: node scripts/build-pages.mjs
-import { writeFileSync } from "node:fs";
+import { writeFileSync, readFileSync } from "node:fs";
 
 const EMAIL = "contact@chromatafilms.com";
 const ADDRESS = "27 Rue de Montchoisy, 1207 Geneva, Switzerland";
+const PHONE = "+33 7 68 53 39 91";
+const PHONE_E164 = "+33768533991";
 // production domain — used to build absolute URLs for canonical / Open Graph / JSON-LD
 const SITE_URL = "https://www.chromatafilms.com";
+
+/* ============================================================
+   SHARED ENTITY GRAPH
+   Every page emits a WebPage node that references these @ids, so search
+   engines and answer engines (ChatGPT, Perplexity, Google AI Overviews)
+   resolve one consistent business entity across the whole site instead of
+   inferring a different one per page. Facts here must stay in sync with
+   what is actually stated on the pages — nothing is asserted that a reader
+   cannot verify on the site.
+   ============================================================ */
+const ORG_ID = `${SITE_URL}/#organization`;
+const BIZ_ID = `${SITE_URL}/#localbusiness`;
+const SITE_ID = `${SITE_URL}/#website`;
+const KEVIN_ID = `${SITE_URL}/the-studio.html#kevin-lopez`;
+const LAURA_ID = `${SITE_URL}/the-studio.html#laura-lopez`;
+
+const POSTAL_ADDRESS = {
+  "@type": "PostalAddress",
+  streetAddress: "27 Rue de Montchoisy",
+  addressLocality: "Geneva",
+  postalCode: "1207",
+  addressCountry: "CH",
+};
+
+const SOCIAL = [
+  "https://www.instagram.com/chromata_films_weddings/",
+  "https://vimeo.com/chromatafilms",
+  "https://www.youtube.com/@chromatafilms",
+  "https://www.facebook.com/ChromataFilm/",
+  "https://caratsandcake.com/vendor/chromata-films",
+  "https://www.partyslate.com/vendors/chromata-films",
+];
+
+const AREA_SERVED = [
+  "French Riviera", "Provence", "Paris", "France", "Lake Como", "Amalfi Coast",
+  "Tuscany", "Puglia", "Italy", "Switzerland", "St Moritz", "Monaco", "Santorini",
+  "Greece", "Marrakech", "Morocco", "Europe", "United States", "Worldwide",
+].map((name) => ({ "@type": "Place", name }));
+
+// Verified, attributable testimonials — these are the real ones published on
+// the homepage carousel. Placeholder cards are deliberately excluded.
+const REVIEWS = [
+  {
+    author: "Alejandra Poupel",
+    role: "Wedding Planner",
+    body: "Kevin and his team are truly remarkable. Their vision, creativity, and professionalism consistently exceed expectations, and the results are always outstanding. We always recommend them to every couple we work with.",
+  },
+  {
+    author: "Selma & Gernot",
+    role: "Bride & Groom",
+    body: "We are speechless!!! From both of us, a big big thank you — we are almost crying, so much emotion! We will recommend you to every friend around who gets married!",
+  },
+  {
+    author: "Clémence & Lluc",
+    role: "Bride & Groom",
+    body: "Oh my god, it is amazing, incroyable! I have no words! I was half crying, half laughing while watching it — it is just perfect. Thank you Kevin and Laura for this amazing work.",
+  },
+  {
+    author: "Tracy & Thomas",
+    role: "Bride & Groom",
+    body: "Amazing work!! We are beyond thrilled with the trailer — we've already watched it five times! It captured the weekend beautifully. Your service and attention to detail are so appreciated. We look forward to watching this for decades to come.",
+  },
+  {
+    author: "Emy & Alessandro",
+    role: "Newlyweds",
+    body: "You and your entire team were amazing — you made me feel so comfortable and made the whole experience even more fun and special. Thank you from the bottom of my heart for your talent, your kindness, and your wonderful spirit.",
+  },
+].map((r) => ({
+  "@type": "Review",
+  author: { "@type": "Person", name: r.author },
+  reviewRating: { "@type": "Rating", ratingValue: 5, bestRating: 5 },
+  reviewBody: r.body,
+  itemReviewed: { "@id": BIZ_ID },
+}));
+
+const SERVICES = [
+  ["Luxury Wedding Cinematography", "Multi-day destination wedding films shot on cinema cameras, delivered as a feature-length film, highlight film and teaser."],
+  ["Destination Wedding Films", "Full-service wedding filmmaking across Europe, the United States and five continents, including travel, permits and multi-camera crews."],
+  ["Private Event Films", "Cinematic coverage of private celebrations, anniversaries, brand events and hotel buyouts under strict confidentiality."],
+  ["Aerial & FPV Cinematography", "Licensed drone and FPV aerial filming across France, Italy, Croatia and the French Riviera."],
+  ["Super 8mm & 16mm Analog Film", "Genuine analog film capture, hand-developed and scanned, layered into the digital edit."],
+];
+
+const ORGANIZATION = {
+  "@type": ["Organization", "ProfessionalService"],
+  "@id": ORG_ID,
+  name: "Chromata Films",
+  alternateName: "Chromata Films SARL",
+  url: `${SITE_URL}/`,
+  logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo-mark.png` },
+  image: `${SITE_URL}/assets/img/landing/domantas-cover.png`,
+  description:
+    "Chromata Films is an award-winning luxury destination wedding cinematography studio led by Kevin and Laura Lopez, filming weddings and private events across the French Riviera, Paris, Lake Como, Italy, Switzerland, the United States and five continents.",
+  slogan: "Where the French Touch meets Modern Elegance",
+  email: EMAIL,
+  telephone: PHONE_E164,
+  foundingDate: "2016",
+  address: POSTAL_ADDRESS,
+  areaServed: AREA_SERVED,
+  knowsLanguage: ["en", "fr"],
+  sameAs: SOCIAL,
+  founder: [{ "@id": KEVIN_ID }, { "@id": LAURA_ID }],
+  knowsAbout: [
+    "wedding cinematography", "destination wedding films", "luxury wedding videography",
+    "visual effects", "aerial cinematography", "Super 16mm film", "private event films",
+  ],
+};
+
+const PEOPLE = [
+  {
+    "@type": "Person",
+    "@id": KEVIN_ID,
+    name: "Kevin Lopez",
+    jobTitle: "Co-founder, Director & Cinematographer",
+    description:
+      "Director, cinematographer and VFX artist. Vancouver Film School graduate with a decade of visual-effects expertise from major studios — including Star Wars: The Last Jedi, Beauty and the Beast, The Great Gatsby, Avengers: Infinity War, Fantastic Four and Solo: A Star Wars Story — and nine years documenting weddings across five continents.",
+    alumniOf: { "@type": "CollegeOrUniversity", name: "Vancouver Film School" },
+    worksFor: { "@id": ORG_ID },
+    knowsAbout: ["wedding cinematography", "visual effects", "colour grading", "film direction"],
+  },
+  {
+    "@type": "Person",
+    "@id": LAURA_ID,
+    name: "Laura Lopez",
+    jobTitle: "Co-founder & Client Experience",
+    description:
+      "Master in Communication and Finance, formerly at Publicis and Mediacom. Runs every Chromata production and vendor relationship from first inquiry to final delivery.",
+    worksFor: { "@id": ORG_ID },
+  },
+];
+
+const LOCAL_BUSINESS = {
+  "@type": "LocalBusiness",
+  "@id": BIZ_ID,
+  name: "Chromata Films",
+  image: `${SITE_URL}/assets/img/landing/domantas-cover.png`,
+  url: `${SITE_URL}/`,
+  email: EMAIL,
+  telephone: PHONE_E164,
+  priceRange: "$$$$",
+  currenciesAccepted: "USD, EUR, CHF",
+  address: POSTAL_ADDRESS,
+  areaServed: AREA_SERVED,
+  parentOrganization: { "@id": ORG_ID },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: 5,
+    bestRating: 5,
+    reviewCount: REVIEWS.length,
+  },
+  review: REVIEWS,
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Wedding & private event film collections",
+    itemListElement: SERVICES.map(([name, description]) => ({
+      "@type": "Offer",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        price: 15000,
+        priceCurrency: "USD",
+        valueAddedTaxIncluded: false,
+        description: "Collections start at 15,000 USD.",
+      },
+      itemOffered: { "@type": "Service", name, description, provider: { "@id": ORG_ID } },
+    })),
+  },
+};
+
+const WEBSITE = {
+  "@type": "WebSite",
+  "@id": SITE_ID,
+  url: `${SITE_URL}/`,
+  name: "Chromata Films",
+  publisher: { "@id": ORG_ID },
+  inLanguage: "en",
+};
+
+// The entity nodes every page carries.
+const BASE_GRAPH = [ORGANIZATION, ...PEOPLE, LOCAL_BUSINESS, WEBSITE];
+
+const jsonLd = (nodes) =>
+  `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": nodes })}</script>`;
+
+/* Full <head> block for a page: canonical, Open Graph, Twitter card and a
+   JSON-LD graph made of the shared entity nodes plus whatever this page adds. */
+const pageHead = ({ file, title, description, image = "assets/img/landing/domantas-cover.png", ogType = "website", graph = [], breadcrumb = [] }) => {
+  const url = `${SITE_URL}/${file}`;
+  const img = image.startsWith("http") ? image : `${SITE_URL}/${image}`;
+  const nodes = [
+    ...BASE_GRAPH,
+    {
+      "@type": "WebPage",
+      "@id": `${url}#webpage`,
+      url,
+      name: title,
+      description,
+      isPartOf: { "@id": SITE_ID },
+      about: { "@id": ORG_ID },
+      primaryImageOfPage: { "@type": "ImageObject", url: img },
+      inLanguage: "en",
+    },
+    ...(breadcrumb.length
+      ? [{
+          "@type": "BreadcrumbList",
+          "@id": `${url}#breadcrumb`,
+          itemListElement: breadcrumb.map((b, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: b.name,
+            item: `${SITE_URL}/${b.file}`,
+          })),
+        }]
+      : []),
+    ...graph,
+  ];
+  return [
+    `<link rel="canonical" href="${url}" />`,
+    `<meta property="og:type" content="${ogType}" />`,
+    `<meta property="og:site_name" content="Chromata Films" />`,
+    `<meta property="og:title" content="${title}" />`,
+    `<meta property="og:description" content="${description}" />`,
+    `<meta property="og:url" content="${url}" />`,
+    `<meta property="og:image" content="${img}" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${title}" />`,
+    `<meta name="twitter:description" content="${description}" />`,
+    `<meta name="twitter:image" content="${img}" />`,
+    jsonLd(nodes),
+  ].join("\n");
+};
 
 // light=true → dark-text nav for pages whose top section is light (e.g. journal
 // articles); default is the cream nav--night used over dark video heroes.
@@ -73,6 +305,14 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
       <a href="contact.html">Contact Us</a>
     </div>
     <div>
+      <h4>Where We Film</h4>
+      <a href="wedding-videographer-france.html">Wedding Films in France</a>
+      <a href="wedding-filmmaker-italy.html">Wedding Films in Italy</a>
+      <a href="wedding-cinematographer-europe.html">Wedding Films in Europe</a>
+      <a href="luxury-wedding-filmmaker-usa.html">Wedding Films in the US</a>
+      <a href="private-event-videographer.html">Private Events</a>
+    </div>
+    <div>
       <h4>Follow</h4>
       <a href="https://www.instagram.com/chromata_films_weddings/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://vimeo.com/chromatafilms" target="_blank" rel="noopener">Vimeo</a>
@@ -83,11 +323,18 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
   <a class="footer__wordmark" id="footerWordmark" href="index.html" aria-label="Chromata Films — home">CHROMATA FILMS</a>
   <div class="footer__legal">
     <span>© 2026 Chromata Films — Wedding Film Cinematography</span>
-    <span>${ADDRESS} · <a href="mailto:${EMAIL}">${EMAIL}</a></span>
+    <span>${ADDRESS} · <a href="tel:${PHONE_E164}">${PHONE}</a> · <a href="mailto:${EMAIL}">${EMAIL}</a></span>
   </div>
 </footer>`;
 
-const shell = ({ page, title, description, main, footerCta = true, noindex = false, headExtra = "", navLight = false }) => `<!DOCTYPE html>
+// Pages that pass `file` get canonical + Open Graph + the shared JSON-LD entity
+// graph generated for them; pages that build their own `headExtra` (the journal
+// articles) keep it untouched.
+const shell = ({ page, file, title, description, main, footerCta = true, noindex = false, headExtra = "", navLight = false, ogImage, ogType, schemaGraph = [], breadcrumb = [] }) => {
+  if (!headExtra && file && !noindex) {
+    headExtra = pageHead({ file, title, description, image: ogImage, ogType, graph: schemaGraph, breadcrumb });
+  }
+  return `<!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
 <meta charset="UTF-8" />
@@ -127,6 +374,7 @@ ${FOOTER(footerCta)}
 </body>
 </html>
 `;
+};
 
 const next = (href, label) => `  <a class="nextproject" href="${href}" data-theme="dark">
     <p class="kicker">— Next wedding</p>
@@ -295,6 +543,14 @@ const AIMC_GALLERY = [
 /* ============================== DOMANTAS ============================== */
 pages["domantas-sabonis.html"] = shell({
   page: "domantas",
+  file: "domantas-sabonis.html",
+  ogType: "article",
+  ogImage: "assets/img/landing/domantas-cover.jpg",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Real Weddings", file: "real-weddings.html" },
+    { name: "Domantas & Shashana", file: "domantas-sabonis.html" },
+  ],
   title: "Domantas Sabonis & Shashana — Villa Ephrussi Wedding, French Riviera | Chromata Films",
   description: "The wedding of NBA All-Star Domantas Sabonis and Shashana at Villa Ephrussi, St-Jean-Cap-Ferrat ... three days on the French Riviera, planned by Mindy Weiss, filmed by Chromata Films.",
   main: `  <section class="page-hero" data-theme="dark">
@@ -378,6 +634,13 @@ ${next("jacqueline-gordon.html", "Jacqueline &amp; Gordon")}`,
 /* ============================== JACQUELINE & GORDON ============================== */
 pages["jacqueline-gordon.html"] = shell({
   page: "jacky",
+  file: "jacqueline-gordon.html",
+  ogType: "article",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Real Weddings", file: "real-weddings.html" },
+    { name: "Jacqueline & Gordon", file: "jacqueline-gordon.html" },
+  ],
   title: "Jacqueline & Gordon — A St-Tropez Wedding Unlike Any Other | Chromata Films",
   description: "Five days on the French Riviera: fashion shows, drone spectacles, fireworks and a sunrise after-party. Jacqueline and Gordon's St-Tropez wedding, filmed by Chromata Films.",
   main: `  <section class="page-hero" data-theme="dark">
@@ -460,6 +723,13 @@ ${next("anna-andres.html", "Anna Andres")}`,
 /* ============================== ANNA ANDRES ============================== */
 pages["anna-andres.html"] = shell({
   page: "anna",
+  file: "anna-andres.html",
+  ogType: "article",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Real Weddings", file: "real-weddings.html" },
+    { name: "Anna Andres", file: "anna-andres.html" },
+  ],
   title: "Anna Andres — A Wedding Shot Like an Editorial | Chromata Films",
   description: "The wedding of Anna Andres, Miss Universe Ukraine 2014 — filmed by Chromata Films with the pace of a fashion editorial and the heart of a love story.",
   main: `  <section class="page-hero" data-theme="dark">
@@ -522,6 +792,18 @@ ${next("russell-westbrook.html", "Russell &amp; Nina Westbrook")}`,
 /* ============================== THE STUDIO ============================== */
 pages["the-studio.html"] = shell({
   page: "studio",
+  file: "the-studio.html",
+  ogImage: "assets/img/studio/studio-01.jpg",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "The Studio", file: "the-studio.html" },
+  ],
+  schemaGraph: [{
+    "@type": "AboutPage",
+    "@id": `${SITE_URL}/the-studio.html#aboutpage`,
+    mainEntity: { "@id": ORG_ID },
+    significantLink: [`${SITE_URL}/real-weddings.html`, `${SITE_URL}/contact.html`],
+  }],
   title: "The Studio — Chromata Films | Award-Winning Wedding Cinematography Team",
   description: "Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stephane Maurin and Michael Bod — Hollywood VFX pedigree in service of your wedding film.",
   main: `  <section class="film film--header vignette" data-theme="dark" aria-label="The Studio — cinematic header">
@@ -1386,6 +1668,23 @@ for (let pg = 1; pg <= JOURNAL_PAGES; pg++) {
   const first = pg === 1;
   pages[journalHref(pg)] = shell({
     page: "journal",
+    file: journalHref(pg),
+    breadcrumb: [
+      { name: "Home", file: "" },
+      { name: "Journal", file: "journal.html" },
+      ...(first ? [] : [{ name: `Page ${pg}`, file: journalHref(pg) }]),
+    ],
+    schemaGraph: [{
+      "@type": "Blog",
+      "@id": `${SITE_URL}/${journalHref(pg)}#blog`,
+      name: "Chromata Films Journal",
+      publisher: { "@id": ORG_ID },
+      blogPost: pagePosts.map((p) => ({
+        "@type": "BlogPosting",
+        headline: (p.seo && p.seo.title) || p.title,
+        url: `${SITE_URL}/${p.file}`,
+      })),
+    }],
     title: first
       ? "Journal — Chromata Films | Latest News & Real Weddings"
       : `Journal (Page ${pg}) — Chromata Films | Real Weddings & Stories`,
@@ -1593,6 +1892,11 @@ const galleryImgs = [
 ];
 pages["gallery.html"] = shell({
   page: "gallery",
+  file: "gallery.html",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Gallery", file: "gallery.html" },
+  ],
   title: "Gallery — Chromata Films | Luxury Wedding Cinematography Worldwide",
   description: "A gallery of films and frames from Chromata Films weddings across the French Riviera, Lake Como, St Moritz, Santorini and beyond.",
   main: `  <section class="page-hero page-hero--full" data-theme="dark">
@@ -1653,6 +1957,13 @@ ${galleryImgs.map(([f, cls]) => `        ${g("carousel", f, cls, "Chromata Films
 /* ============================== RUSSELL WESTBROOK ============================== */
 pages["russell-westbrook.html"] = shell({
   page: "westbrook",
+  file: "russell-westbrook.html",
+  ogType: "article",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Real Weddings", file: "real-weddings.html" },
+    { name: "Russell & Nina Westbrook", file: "russell-westbrook.html" },
+  ],
   title: "Russell & Nina Westbrook — Wedding Anniversary in Positano | Chromata Films",
   description: "Russell and Nina Westbrook celebrated their wedding anniversary on the Amalfi Coast — filmed by Chromata Films in Positano, photographed by Greg Finck.",
   main: `  <section class="page-hero" data-theme="dark">
@@ -1713,6 +2024,13 @@ ${next("vaux-le-vicomte.html", "Vaux-le-Vicomte")}`,
 /* ============================== VAUX-LE-VICOMTE ============================== */
 pages["vaux-le-vicomte.html"] = shell({
   page: "vaux",
+  file: "vaux-le-vicomte.html",
+  ogType: "article",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Real Weddings", file: "real-weddings.html" },
+    { name: "Vaux-le-Vicomte", file: "vaux-le-vicomte.html" },
+  ],
   title: "Vaux-le-Vicomte — A Private Wedding at the Château | Chromata Films",
   description: "A private wedding at the Château de Vaux-le-Vicomte ... grand-siècle splendor for VIP clients, filmed by Chromata Films with florals by Roni Floral Design and photography by Maddy Christina.",
   main: `  <section class="page-hero" data-theme="dark">
@@ -1813,16 +2131,29 @@ pages["real-weddings.html"] = shell({
   page: "real-weddings",
   title: "Real Weddings — Luxury Destination Wedding Films | Chromata Films",
   description: "A selection of real weddings and celebrations filmed by Chromata Films: Domantas Sabonis at Villa Ephrussi, Jacqueline & Gordon in St-Tropez, Anna Andres, Russell & Nina Westbrook in Positano, and a private wedding at Vaux-le-Vicomte.",
-  headExtra: [
-    `<link rel="canonical" href="${SITE_URL}/real-weddings.html" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:site_name" content="Chromata Films" />`,
-    `<meta property="og:title" content="Real Weddings — Luxury Destination Wedding Films | Chromata Films" />`,
-    `<meta property="og:url" content="${SITE_URL}/real-weddings.html" />`,
-    `<meta property="og:image" content="${SITE_URL}/assets/img/real-weddings/real-weddings-header.jpg" />`,
-    `<meta name="twitter:card" content="summary_large_image" />`,
-    `<meta name="twitter:image" content="${SITE_URL}/assets/img/real-weddings/real-weddings-header.jpg" />`,
-  ].join("\n"),
+  file: "real-weddings.html",
+  ogImage: "assets/img/real-weddings/real-weddings-header.jpg",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Real Weddings", file: "real-weddings.html" },
+  ],
+  schemaGraph: [{
+    "@type": "CollectionPage",
+    "@id": `${SITE_URL}/real-weddings.html#collection`,
+    about: { "@id": ORG_ID },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: [
+        ["Domantas & Shashana — Villa Ephrussi, Cap-Ferrat", "domantas-sabonis.html"],
+        ["Jacqueline & Gordon — Le Beauvallon, St-Tropez", "jacqueline-gordon.html"],
+        ["Anna Andres — Hôtel du Cap-Eden-Roc", "anna-andres.html"],
+        ["Russell & Nina Westbrook — Positano", "russell-westbrook.html"],
+        ["A Private Wedding at Vaux-le-Vicomte", "vaux-le-vicomte.html"],
+      ].map(([name, href], i) => ({
+        "@type": "ListItem", position: i + 1, name, url: `${SITE_URL}/${href}`,
+      })),
+    },
+  }],
   main: `  <!-- 3:1 ambient video header (YouTube background film; the page title sits below it) -->
   <section class="videoband videoband--header" data-theme="dark" data-section aria-label="Real Weddings — cinematic video header">
     <iframe data-lazy-src="https://www.youtube-nocookie.com/embed/-CulEs9XwO8?autoplay=1&mute=1&loop=1&playlist=-CulEs9XwO8&controls=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1"
@@ -1860,6 +2191,16 @@ const budgetOptions = ["15,000 – 25,000", "25,000 – 35,000", "35,000 – 45,
 
 pages["contact.html"] = shell({
   page: "contact",
+  file: "contact.html",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Contact", file: "contact.html" },
+  ],
+  schemaGraph: [{
+    "@type": "ContactPage",
+    "@id": `${SITE_URL}/contact.html#contactpage`,
+    mainEntity: { "@id": ORG_ID },
+  }],
   footerCta: false,
   title: "Contact Us — Chromata Films | Global Luxury Destination Wedding Cinematographers",
   description: "Check your date with Chromata Films — global luxury destination wedding cinematographers. Tell us about your wedding and let's begin your journey.",
@@ -1887,6 +2228,7 @@ pages["contact.html"] = shell({
           <p class="photo-credit">Photography by German Larkin</p>
           <div class="feature__meta">
             <div class="row"><span>Email</span><span class="val"><a class="text-link" href="mailto:${EMAIL}">${EMAIL}</a></span></div>
+            <div class="row"><span>Phone</span><span class="val"><a class="text-link" href="tel:${PHONE_E164}">${PHONE}</a></span></div>
             <div class="row"><span>Studio</span><span class="val">${ADDRESS}</span></div>
             <div class="row"><span>Coverage</span><span class="val">Worldwide — five continents</span></div>
           </div>
@@ -2112,6 +2454,358 @@ pages["gettoknowusmore.html"] = shell({
   </section>`,
 });
 
+/* ============================== SERVICE-AREA LANDING PAGES ==============================
+   Pages built for the way couples and planners actually search ("wedding
+   videographer in France", "wedding filmmaker Italy"). Each one answers the
+   question directly in prose, links out to the real weddings that prove it,
+   and carries FAQPage + Service schema so answer engines can quote it.
+   Every claim here is one the rest of the site already supports. */
+const LANDING_PAGES = [
+  {
+    file: "wedding-videographer-france.html",
+    h1: "Wedding Videographer in <em>France</em>",
+    kicker: "— Wedding Films in France",
+    title: "Best Wedding Videographer in France | Luxury Wedding Films — Chromata Films",
+    description: "Luxury wedding videographer in France. Chromata Films makes cinematic wedding films on the French Riviera, in Provence, St-Tropez, Cap-Ferrat and Paris. Hollywood VFX pedigree, collections from 15,000 USD.",
+    summary: "luxury wedding films across the French Riviera, Provence, St-Tropez, Cap-Ferrat and Paris",
+    heroImg: "assets/img/jacky/jacky-header.jpg",
+    heroAlt: "A luxury wedding on the French Riviera filmed by Chromata Films",
+    heroSub: ["French Riviera · Provence · Paris", "Collections from 15,000 USD"],
+    areaServed: ["France", "French Riviera", "Provence", "Paris", "St-Tropez", "Monaco"],
+    serviceName: "Wedding Cinematography in France",
+    intro: [
+      "France is where Chromata Films was built. Our founders live and work between the French Riviera and Switzerland, and the coastline between Nice and St-Tropez is not a destination we fly into ... it is the stretch of road we have been filming for nine years. We know which room at which villa holds the last of the evening light, which mayor's office runs late, and which coastal road will be closed the weekend of the Grand Prix.",
+      "That local knowledge sits on top of an unusual technical foundation. Before weddings, Kevin Lopez spent a decade in Hollywood visual effects, on films including Star Wars: The Last Jedi, The Great Gatsby, Beauty and the Beast and Avengers: Infinity War. The training that goes into a blockbuster frame ... light, composition, invisible perfectionism ... is what we bring to a French wedding weekend.",
+    ],
+    body: [
+      ["Where we film in France", [
+        "The French Riviera is our home ground: Villa Ephrussi de Rothschild and the Grand-Hôtel du Cap-Ferrat in St-Jean-Cap-Ferrat, Hôtel du Cap-Eden-Roc at Antibes, Château de la Chèvre d'Or in Èze, Le Beauvallon above the bay of St-Tropez, and the private villas that never appear in a brochure.",
+        "Inland and north, we film across Provence ... Château d'Estoublon, the Luberon, the Gordes hills ... and in Paris and the Île-de-France, including private weddings at the Château de Vaux-le-Vicomte, the palace that inspired Versailles.",
+      ]],
+      ["What a French wedding weekend actually needs", [
+        "Most of the celebrations we film in France run three to five days: a welcome dinner, the wedding day itself, a beach or château recovery lunch, and often a party that ends at sunrise. A single-day videography package cannot hold that shape. We build the crew around the schedule, with a licensed drone and FPV pilot cleared to fly in France, and a second unit when two events run at once.",
+        "We work in English and French, which matters more than couples expect. Half of a Riviera wedding is coordinated with French vendors, venues and staff; the other half is your family, who may speak neither.",
+      ]],
+    ],
+    work: [
+      { href: "jacqueline-gordon.html", img: "assets/img/jacky/jg-05.jpg", title: "Jacqueline & Gordon", note: "Five days at Le Beauvallon, St-Tropez" },
+      { href: "domantas-sabonis.html", img: "assets/img/domantas/ds-25.jpg", title: "Domantas & Shashana", note: "Villa Ephrussi, St-Jean-Cap-Ferrat" },
+      { href: "vaux-le-vicomte.html", img: "assets/img/vaux/vlv-03.jpg", title: "A Private Château Wedding", note: "Vaux-le-Vicomte, Paris" },
+      { href: "anna-andres.html", img: "assets/img/anna/an-05.jpg", title: "Anna Andres", note: "Hôtel du Cap-Eden-Roc, Antibes" },
+    ],
+    faq: [
+      ["How do I choose the best wedding videographer in France?",
+       "Look for three things. First, real multi-day films from French venues rather than a reel of single-day highlights ... a French wedding weekend has a different rhythm and you want to see that a studio can hold it. Second, aerial permissions: France requires licensed drone operation, and a studio without a cleared pilot will quietly drop those shots. Third, language ... a bilingual crew coordinates with French vendors on your behalf instead of routing everything through your planner. Chromata Films is based between the French Riviera and Geneva, films in English and French, and flies with a licensed aerial cinematographer."],
+      ["How much does a luxury wedding videographer cost in France?",
+       "Our collections start at 15,000 USD. Where a wedding lands above that depends on how many days are filmed, how many camera operators the schedule requires, whether aerial or analog 16mm film is included, and how much of the crew has to travel. Every quote is built for the specific weekend rather than taken from a price list."],
+      ["Do you film weddings across all of France, or only the Riviera?",
+       "All of France. The French Riviera is where we are based and where we film most often, but we work regularly in Provence, Paris and the Île-de-France, and we travel anywhere in the country. There is no travel surcharge hidden in the collection ... it is quoted openly."],
+      ["Can you film a wedding in France for an international couple?",
+       "Yes ... most of our couples are international. We film in English and French, coordinate directly with French venues and vendors, and are used to guests arriving from several continents. We have filmed American, British, Ukrainian, Israeli, Indian and Scandinavian weddings in France."],
+      ["What do we actually receive at the end?",
+       "A feature-length film of the wedding, a shorter highlight film, and a teaser you can share within days of the celebration. Multi-day weddings usually receive a film per major event as well. Everything is colour-graded in the same way a feature would be."],
+    ],
+  },
+  {
+    file: "wedding-cinematographer-europe.html",
+    h1: "Wedding Cinematographer in <em>Europe</em>",
+    kicker: "— Wedding Films across Europe",
+    title: "Best Wedding Cinematographer in Europe | Luxury Destination Wedding Films — Chromata Films",
+    description: "Award-winning luxury wedding cinematographer working across Europe: France, Italy, Switzerland, Greece, Monaco and beyond. Chromata Films — Hollywood VFX pedigree, collections from 15,000 USD.",
+    summary: "destination wedding films across France, Italy, Switzerland, Greece, Monaco and the rest of Europe",
+    heroImg: "assets/img/wed-europe/we-01.jpg",
+    heroAlt: "A luxury destination wedding in Europe filmed by Chromata Films",
+    heroSub: ["France · Italy · Switzerland · Greece", "Collections from 15,000 USD"],
+    areaServed: ["Europe", "France", "Italy", "Switzerland", "Greece", "Monaco", "Montenegro"],
+    serviceName: "Destination Wedding Cinematography in Europe",
+    intro: [
+      "A European destination wedding is a logistics problem wearing a beautiful dress. Three countries of vendors, a villa with a 10pm noise curfew, a drone permit that takes six weeks in one country and an afternoon in another, and a family arriving from four time zones. The films that come out of those weekends are only as good as the studio's ability to absorb all of it without ever becoming part of the couple's day.",
+      "Chromata Films is based between the French Riviera and Geneva, which puts almost every major European wedding region within a day's travel. We have filmed across France, Italy, Switzerland, Monaco, Greece, Montenegro and Morocco, and the studio has been doing it since 2016.",
+    ],
+    body: [
+      ["The regions we film most", [
+        "France: the Riviera between Nice and St-Tropez, Provence, Paris and the châteaux of the Île-de-France. Italy: Lake Como, the Amalfi Coast, Puglia, Tuscany and Venice. Switzerland: Geneva, Zermatt and St Moritz. Beyond that, Monaco, Greece, Montenegro and the Mediterranean islands.",
+        "Because we live in Europe rather than flying in for the season, the crew arrives rested, scouts in person, and knows the venue before the first frame. That is a quiet advantage that shows up on screen.",
+      ]],
+      ["What sets a European wedding film apart", [
+        "The best European venues are old, dark and gorgeous ... frescoed ballrooms, stone chapels, candlelit terraces. They are also technically punishing. Our background is in visual effects and cinema lighting, so low light is a craft problem we enjoy rather than a limitation we apologise for.",
+        "We also shoot genuine Super 8mm and 16mm analog film alongside the digital cameras. On a Lake Como terrace or in a Provençal courtyard, a few frames of real film do something no filter reproduces.",
+      ]],
+    ],
+    work: [
+      { href: "journal-jasmiina-tuukka.html", img: "assets/img/jasmiina/jt-01.jpg", title: "Jasmiina & Tuukka Rask", note: "Villa Balbiano, Lake Como" },
+      { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-01.jpg", title: "Russell & Nina Westbrook", note: "Positano, Amalfi Coast" },
+      { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-01.jpg", title: "Katya & Joey", note: "Villa Erba, Lake Como" },
+      { href: "jacqueline-gordon.html", img: "assets/img/jacky/jg-11.jpg", title: "Jacqueline & Gordon", note: "Le Beauvallon, St-Tropez" },
+    ],
+    faq: [
+      ["Who is the best wedding cinematographer in Europe?",
+       "There is no single answer ... the honest version is that the best studio for a European wedding is the one that is genuinely based in Europe, has filmed your type of celebration before, and can show you a complete film rather than a highlight reel. Ask any studio for a full feature film from a wedding like yours. Chromata Films has been filming across Europe since 2016 from bases on the French Riviera and in Geneva, and our work has appeared in Vogue, Brides, People and Over the Moon."],
+      ["How much does a European destination wedding film cost?",
+       "Collections start at 15,000 USD. The final figure depends on the number of days, the size of the crew, travel and accommodation, and whether aerial work or analog film is part of the plan. A two-country wedding weekend costs more than a single-venue Saturday, and we quote it transparently."],
+      ["Do you travel to other European countries for weddings?",
+       "Yes, and often. Being based between France and Switzerland means most of Europe is reachable without a long-haul flight, so the crew arrives fresh and can scout in person before the celebration."],
+      ["Can you handle multi-day and multi-venue weddings?",
+       "That is the majority of what we film. Welcome dinners, sangeets, rehearsal parties, the wedding day, recovery brunches ... we build a crew around the schedule and can run a second unit when two events overlap."],
+      ["Do you have drone permissions across Europe?",
+       "Our aerial cinematographer is licensed to fly in France, Italy, Croatia and across the French Riviera, and we arrange permissions country by country for anywhere else. Where a venue or country prohibits drone flight, we say so before you book rather than after."],
+    ],
+  },
+  {
+    file: "wedding-filmmaker-italy.html",
+    h1: "Wedding Filmmaker in <em>Italy</em>",
+    kicker: "— Wedding Films in Italy",
+    title: "Best Wedding Filmmaker in Italy | Lake Como & Amalfi Wedding Films — Chromata Films",
+    description: "Luxury wedding filmmaker in Italy. Chromata Films makes cinematic wedding films at Lake Como, the Amalfi Coast, Puglia, Tuscany and Venice. Collections from 15,000 USD.",
+    summary: "wedding films at Lake Como, the Amalfi Coast, Puglia, Tuscany and Venice",
+    heroImg: "assets/img/jasmiina/jt-02.jpg",
+    heroAlt: "A luxury wedding at Lake Como filmed by Chromata Films",
+    heroSub: ["Lake Como · Amalfi · Puglia · Tuscany", "Collections from 15,000 USD"],
+    areaServed: ["Italy", "Lake Como", "Amalfi Coast", "Puglia", "Tuscany", "Venice", "Positano"],
+    serviceName: "Wedding Cinematography in Italy",
+    intro: [
+      "Italy asks something specific of a wedding film. The country is already cinematic ... the light off Lake Como at seven in the evening, a Positano staircase, a Puglian masseria at dusk ... and the temptation is to let the scenery do the work. The films that last do the opposite: they use all that beauty as a background for the people standing in front of it.",
+      "We have been filming Italian weddings for years, most often on Lake Como, where we have worked at Villa Erba, Villa Balbiano and Villa Bonomi, and along the Amalfi Coast. Our base on the French Riviera puts us a few hours from northern Italy by road.",
+    ],
+    body: [
+      ["Where we film in Italy", [
+        "Lake Como is the region we know best ... Villa Erba, Villa Balbiano, Villa Bonomi, Villa del Balbianello and the private estates around Cernobbio and Bellagio. On the Amalfi Coast we have filmed in Positano and the surrounding towns. We also work in Puglia, Tuscany, Venice and Lake Garda.",
+        "Italian venues frequently sit at the top of long private staircases with a 30-minute drive between ceremony and reception. Our crews plan around that rather than discovering it on the day.",
+      ]],
+      ["Indian, Jewish and multi-day celebrations", [
+        "A large share of the Italian weddings we film run three to five days across several religious and cultural traditions ... a Sangeet on one night, a Mehndi the next, a ceremony and a black-tie reception after that. We have filmed Indian celebrations at Villa Erba and Villa Bonomi, Jewish ceremonies in Provence and Italy, and mixed-religion weddings where two officiants share a chuppah.",
+        "These weekends need a bigger crew and a director who has done it before. Ceremonies do not pause for a camera to reposition, and the moments that matter most are frequently the least photogenic ones.",
+      ]],
+    ],
+    work: [
+      { href: "journal-jasmiina-tuukka.html", img: "assets/img/jasmiina/jt-03.jpg", title: "Jasmiina & Tuukka Rask", note: "Villa Balbiano, Lake Como" },
+      { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-02.jpg", title: "Katya & Joey", note: "Villa Erba, Lake Como" },
+      { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-03.jpg", title: "Russell & Nina Westbrook", note: "Positano, Amalfi Coast" },
+      { href: "journal-d-a-villa-bonomi.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "D & A", note: "Villa Bonomi, Lake Como" },
+    ],
+    faq: [
+      ["How do I find the best wedding filmmaker in Italy?",
+       "Start with venue-specific work. Lake Como, the Amalfi Coast and Puglia each present different problems ... boat logistics, cliff staircases, extreme heat ... and a studio that has filmed at your venue will show you rather than tell you. Then ask to watch a complete film, not a three-minute highlight. Chromata Films has filmed repeatedly at Villa Erba, Villa Balbiano and Villa Bonomi on Lake Como, and on the Amalfi Coast."],
+      ["How much does a wedding videographer cost in Italy?",
+       "Our collections start at 15,000 USD, with the final quote shaped by the number of days, the crew size the schedule demands, and travel. Multi-day Italian weddings with several cultural events usually need a larger team than a single-day celebration."],
+      ["Do you film Indian weddings in Italy?",
+       "Yes. We have filmed Indian celebrations on Lake Como across multiple days and venues, including Sangeet nights and ceremonies at Villa Erba and Villa Bonomi. Multi-day, multi-tradition weddings are a large part of what the studio does."],
+      ["Are you based in Italy?",
+       "We are based between the French Riviera and Geneva, which is a few hours by road from Lake Como and northern Italy. In practice that means we scout in person, arrive rested, and are not paying long-haul travel costs that end up in your quote."],
+      ["Can you fly a drone at Italian wedding venues?",
+       "Our aerial cinematographer holds licences covering Italy. Some Italian venues and protected areas restrict drone flight regardless of licensing ... we check the specific venue before you book and tell you honestly what is possible."],
+    ],
+  },
+  {
+    file: "luxury-wedding-filmmaker-usa.html",
+    h1: "Luxury Wedding Filmmaker in the <em>United States</em>",
+    kicker: "— Wedding Films in the US",
+    title: "Best Luxury Wedding Filmmaker in the US | American & Destination Wedding Films — Chromata Films",
+    description: "Luxury wedding filmmaker for American couples. Chromata Films films weddings and celebrations across the United States and takes US couples to Europe. Collections from 15,000 USD.",
+    summary: "luxury wedding and event films in the United States, and European destination weddings for American couples",
+    heroImg: "assets/img/westbrook/rw-02.jpg",
+    heroAlt: "A luxury American wedding celebration filmed by Chromata Films",
+    heroSub: ["Coast to coast · Europe for US couples", "Collections from 15,000 USD"],
+    areaServed: ["United States", "New York", "California", "Texas", "Florida", "Europe"],
+    serviceName: "Luxury Wedding Cinematography for US Clients",
+    intro: [
+      "Most of the couples we film are American, and they hire us for one of two reasons. Either they are marrying in Europe and want a studio that lives there ... or they are marrying at home in the United States and want a film that does not look like every other American wedding video.",
+      "We work in both directions. The studio travels to the United States for weddings and private celebrations, and we take American couples through European destination weddings from the first venue call to final delivery.",
+    ],
+    body: [
+      ["For American couples marrying in Europe", [
+        "This is the majority of our work: a couple in New York, Los Angeles or Dallas, a villa on Lake Como or a château on the Riviera, and a wedding weekend that has to be coordinated across a seven-hour time difference. Being based in Europe means the venue visits, the vendor calls and the permits happen in local business hours rather than yours.",
+        "It also means your film is made by people who know the region. We are not flying in the night before to film a coastline we have never seen.",
+      ]],
+      ["For weddings and private events in the United States", [
+        "We travel to the United States for weddings, anniversaries, engagement parties and private celebrations. Recent work includes Russell and Nina Westbrook's anniversary film and an engagement party at the Ritz-Carlton Dallas.",
+        "The approach does not change with the passport. A cinema-trained crew, a director who has run large productions, and a film that is built like a short feature rather than assembled from ceremony coverage.",
+      ]],
+    ],
+    work: [
+      { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-04.jpg", title: "Russell & Nina Westbrook", note: "Anniversary film, Positano" },
+      { href: "domantas-sabonis.html", img: "assets/img/domantas/ds-27.jpg", title: "Domantas & Shashana", note: "NBA All-Star wedding, Cap-Ferrat" },
+      { href: "journal-marcella-daniel.html", img: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", title: "Marcella & Daniel", note: "Engagement party, Ritz-Carlton Dallas" },
+      { href: "journal-lauren-jonathan.html", img: "assets/img/altos/lj-01.jpg", title: "Lauren & Jonathan", note: "Altos de Chavón, Dominican Republic" },
+    ],
+    faq: [
+      ["Do you film weddings in the United States?",
+       "Yes. We travel to the US for weddings, anniversaries, engagement parties and private events ... recent work includes Russell and Nina Westbrook's anniversary film and an engagement party at the Ritz-Carlton Dallas. Travel is quoted openly as part of the collection."],
+      ["Why hire a European studio for an American wedding?",
+       "Two reasons. If any part of your celebration happens in Europe ... a destination wedding, a European honeymoon film, a welcome party abroad ... a studio based there removes an enormous amount of friction. And if your wedding is entirely in the US, our background is Hollywood visual effects and cinema lighting rather than event videography, which produces a noticeably different film."],
+      ["How much does a luxury wedding film cost for US couples?",
+       "Collections start at 15,000 USD. For weddings in the United States, travel and accommodation for the crew are quoted separately and transparently rather than folded into a headline number."],
+      ["We are American but marrying in Europe. How does that work?",
+       "This is what we do most. We handle European venue and vendor coordination in local time and local language, scout in person, arrange aerial permissions country by country, and keep you on one point of contact throughout. We work in English and French."],
+      ["How far in advance should we book?",
+       "The most requested European dates ... June through September on the Riviera and Lake Como ... are typically reserved a year or more ahead. That said, it is always worth asking; schedules change, and we would rather tell you we are free than have you assume we are not."],
+    ],
+  },
+  {
+    file: "private-event-videographer.html",
+    h1: "Private Event <em>Films</em>",
+    kicker: "— Private & Confidential",
+    title: "Wedding & Private Event Videographer | Discreet Luxury Event Films — Chromata Films",
+    description: "Discreet luxury videographer for private events: anniversaries, engagement parties, brand celebrations, hotel buyouts and confidential weddings. Chromata Films. From 15,000 USD.",
+    summary: "discreet films for private celebrations, anniversaries, brand events, hotel buyouts and confidential weddings",
+    heroImg: "assets/img/mozzafiato/mz-01.jpg",
+    heroAlt: "A private luxury celebration filmed discreetly by Chromata Films",
+    heroSub: ["Private · Confidential · Unpublished", "Collections from 15,000 USD"],
+    areaServed: ["Europe", "France", "Italy", "Switzerland", "United States", "Worldwide"],
+    serviceName: "Private Event Cinematography",
+    intro: [
+      "A significant share of what we film is never published. Private weddings, milestone birthdays, anniversary celebrations, brand events and full hotel buyouts, filmed for people whose names are not going on a website ... including ours.",
+      "Discretion on these productions is not a policy paragraph. It is crew size, where cameras stand, how the team dresses, what gets said about the job afterwards, and a contract that means the film belongs to you alone.",
+    ],
+    body: [
+      ["What we film privately", [
+        "Confidential weddings where no imagery is released. Milestone birthdays and anniversaries ... we have filmed a 50th birthday celebration in Montenegro and an anniversary film for Russell and Nina Westbrook. Engagement parties, including at the Ritz-Carlton Dallas. Brand and fashion work, including Dolce & Gabbana at the Grand-Hôtel du Cap-Ferrat. And full hotel buyouts, where an entire property becomes the venue for several days.",
+        "We have also filmed private shoots under exclusivity in St-Jean-Cap-Ferrat, where the location itself was the thing being protected.",
+      ]],
+      ["How discretion actually works", [
+        "The default is that nothing is published. No social posts, no portfolio entry, no submission to magazines, no showing the film to prospective clients ... unless you sign off on it in writing, event by event. Where a client is happy for us to share, we ask; where they are not, the work simply never appears.",
+        "Practically, that also means a smaller crew than you might expect, cameras that do not announce themselves, and a team that has worked around security details and household staff before.",
+      ]],
+    ],
+    work: [
+      { href: "journal-private-shooting-cap-ferrat.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Private Shooting", note: "Exclusivity in St-Jean-Cap-Ferrat" },
+      { href: "journal-mozzafiato.html", img: "assets/img/mozzafiato/mz-02.jpg", title: "Mozzafiato", note: "Dolce & Gabbana, Grand-Hôtel du Cap-Ferrat" },
+      { href: "journal-natalia-montenegro.html", img: "assets/img/natalia/nm-01.jpg", title: "Natalia's 50th", note: "A private celebration in Montenegro" },
+      { href: "journal-four-seasons-buyout.html", img: "assets/img/four-seasons/fsb-01.jpg", title: "A Four Seasons Buyout", note: "An entire property, several days" },
+    ],
+    faq: [
+      ["Do you film private events other than weddings?",
+       "Yes ... anniversaries, milestone birthdays, engagement parties, brand and fashion events, and full hotel buyouts. The craft is the same as a wedding film; the difference is usually crew size, discretion and how much of the event is filmed."],
+      ["Will our event appear on your website or social media?",
+       "Only if you tell us in writing that it may. The default on private work is that nothing is published anywhere, including in private client presentations. A large part of what we film has never been shown publicly."],
+      ["Can you work alongside a security team?",
+       "Yes. We have filmed for public figures and athletes and are used to working with security details, household staff and venue restrictions ... including agreed no-film zones and cameras kept out of specific rooms."],
+      ["How much does a private event film cost?",
+       "Collections start at 15,000 USD. Private events vary more widely than weddings ... a single evening with a small crew and a five-day hotel buyout are very different productions ... so every private commission is quoted individually."],
+      ["Can you sign a non-disclosure agreement?",
+       "Yes, routinely. Send us yours or we will provide one. Confidentiality also extends to our crew and to any freelancers brought on for your event."],
+    ],
+  },
+];
+
+const faqBlock = (faq) => `  <section class="pad-section" data-section>
+    <div class="container">
+      <p class="kicker">— Questions</p>
+      <h2 class="display-md" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Frequently <em>asked</em></span></span>
+      </h2>
+      <div class="prose" style="max-width:52em; margin-top:6vh">
+${faq.map(([q, a]) => `        <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">${q}</h3>
+        <p>${a}</p>`).join("\n")}
+      </div>
+    </div>
+  </section>`;
+
+for (const L of LANDING_PAGES) {
+  const url = `${SITE_URL}/${L.file}`;
+  pages[L.file] = shell({
+    page: "landing",
+    file: L.file,
+    title: L.title,
+    description: L.description,
+    ogImage: L.heroImg,
+    breadcrumb: [
+      { name: "Home", file: "" },
+      { name: L.h1.replace(/<[^>]+>/g, ""), file: L.file },
+    ],
+    schemaGraph: [
+      {
+        "@type": "Service",
+        "@id": `${url}#service`,
+        name: L.serviceName,
+        serviceType: "Wedding cinematography",
+        provider: { "@id": ORG_ID },
+        areaServed: L.areaServed.map((name) => ({ "@type": "Place", name })),
+        description: L.description,
+        offers: {
+          "@type": "Offer",
+          priceSpecification: {
+            "@type": "PriceSpecification",
+            price: 15000,
+            priceCurrency: "USD",
+            description: "Collections start at 15,000 USD.",
+          },
+        },
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${url}#faq`,
+        mainEntity: L.faq.map(([q, a]) => ({
+          "@type": "Question",
+          name: q,
+          acceptedAnswer: { "@type": "Answer", text: a },
+        })),
+      },
+    ],
+    main: `  <section class="page-hero" data-theme="dark">
+    <div class="page-hero__bg">
+      <img src="${L.heroImg}" alt="${L.heroAlt}" fetchpriority="high" />
+    </div>
+    <div class="page-hero__content">
+      <p class="kicker line-mask"><span class="line-inner">${L.kicker.replace(/^— /, "")}</span></p>
+      <h1 class="page-hero__title">
+        <span class="line-mask"><span class="line-inner">${L.h1}</span></span>
+      </h1>
+      <div class="page-hero__sub">
+${L.heroSub.map((s) => `        <span>${s}</span>`).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" data-section>
+    <div class="container">
+      <div class="prose" style="max-width:46em">
+${L.intro.map((p) => `        <p style="font-size:clamp(1.05rem,1.5vw,1.4rem)">${p}</p>`).join("\n")}
+      </div>
+    </div>
+  </section>
+
+${L.body.map(([heading, paras]) => `  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">${heading}</span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+${paras.map((p) => `        <p>${p}</p>`).join("\n")}
+      </div>
+    </div>
+  </section>`).join("\n\n")}
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— Selected Work</p>
+      <div class="gallery-grid" style="margin-top:5vh">
+${L.work.map((w) => `        <figure class="gitem mat img-reveal">
+          <a href="${w.href}" aria-label="${w.title} — ${w.note}">
+            <img src="${w.img}" alt="${w.title} — ${w.note}" loading="lazy">
+          </a>
+          <figcaption style="margin-top:1.4vh; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(37,35,33,0.62)">${w.title} · ${w.note}</figcaption>
+        </figure>`).join("\n")}
+      </div>
+      <a class="btn btn--coral" href="real-weddings.html" style="margin-top:6vh">See all real weddings →</a>
+    </div>
+  </section>
+
+${faqBlock(L.faq)}
+
+  <section class="pad-section" data-theme="dark" data-section style="background:var(--night-deep); color:var(--cream); text-align:center">
+    <div class="container">
+      <p class="kicker" style="justify-content:center; color:var(--coral)">— Begin</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Tell us about <em>your day</em></span></span>
+      </h2>
+      <p class="body-copy" style="max-width:40em; margin:4vh auto 0">Collections start at 15,000 USD. Send us the date, the place and a sentence about the celebration ... we will come back to you personally.</p>
+      <a class="btn btn--coral" href="contact.html" style="margin-top:5vh">Check your date →</a>
+    </div>
+  </section>`,
+  });
+}
+
 for (const [file, html] of Object.entries(pages)) {
   writeFileSync(new URL("../" + file, import.meta.url), html);
   console.log("wrote", file);
@@ -2131,11 +2825,125 @@ ${sitemapFiles.map((f) => `  <url><loc>${SITE_URL}/${f === "index.html" ? "" : f
 writeFileSync(new URL("../sitemap.xml", import.meta.url), sitemap);
 console.log("wrote sitemap.xml (" + sitemapFiles.length + " urls)");
 
-const robots = `User-agent: *
+// Answer engines are named explicitly rather than left to the wildcard: some
+// of these crawlers default to "no" when a site is silent, and being cited by
+// ChatGPT / Perplexity / Gemini requires them to be able to read the pages.
+const AI_AGENTS = [
+  ["GPTBot", "ChatGPT training + browsing"],
+  ["OAI-SearchBot", "ChatGPT search index"],
+  ["ChatGPT-User", "ChatGPT live page fetches"],
+  ["PerplexityBot", "Perplexity index"],
+  ["Perplexity-User", "Perplexity live fetches"],
+  ["ClaudeBot", "Claude"],
+  ["Claude-User", "Claude live fetches"],
+  ["Claude-SearchBot", "Claude search index"],
+  ["anthropic-ai", "Anthropic"],
+  ["Google-Extended", "Gemini + AI Overviews grounding"],
+  ["Applebot-Extended", "Apple Intelligence"],
+  ["meta-externalagent", "Meta AI"],
+  ["Amazonbot", "Amazon / Alexa"],
+  ["Bytespider", "TikTok / Doubao"],
+  ["CCBot", "Common Crawl — the corpus most LLMs train on"],
+  ["Diffbot", "Diffbot knowledge graph"],
+  ["cohere-ai", "Cohere"],
+  ["YouBot", "You.com"],
+];
+
+const robots = `# Chromata Films — https://www.chromatafilms.com
+User-agent: *
 Allow: /
 Disallow: /gettoknowusmore.html
+
+${AI_AGENTS.map(([ua, why]) => `# ${why}\nUser-agent: ${ua}\nAllow: /\nDisallow: /gettoknowusmore.html`).join("\n\n")}
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `;
 writeFileSync(new URL("../robots.txt", import.meta.url), robots);
 console.log("wrote robots.txt");
+
+/* ---- llms.txt ----
+   A plain-language brief for answer engines: who the studio is, what it does,
+   where it works, and which pages hold the evidence. Facts here must match the
+   site; this is a map, not a marketing page. */
+const journalIndex = allPosts
+  .map((p) => `- [${((p.seo && p.seo.title) || p.title).replace(/<[^>]+>/g, "")}](${SITE_URL}/${p.file})`)
+  .join("\n");
+
+const llms = `# Chromata Films
+
+> Award-winning luxury destination wedding cinematography studio founded in 2016
+> by Kevin and Laura Lopez. Chromata Films makes wedding and private-event films
+> across the French Riviera, Paris, Provence, Lake Como, Italy, Switzerland,
+> Morocco, the United States and five continents. Collections start at 15,000 USD.
+
+## Facts
+
+- **Studio**: Chromata Films (Chromata Films SARL), founded 2016
+- **Founders**: Kevin Lopez (director, cinematographer, VFX artist) and Laura Lopez
+- **Address**: ${ADDRESS}
+- **Email**: ${EMAIL}
+- **Phone**: ${PHONE}
+- **Investment**: collections start at 15,000 USD
+- **Languages**: English, French
+- **What makes the studio unusual**: Kevin Lopez spent a decade in Hollywood
+  visual effects — Star Wars: The Last Jedi, Beauty and the Beast, The Great
+  Gatsby, Avengers: Infinity War, Fantastic Four, Solo: A Star Wars Story —
+  before turning that craft to weddings. The team also shoots genuine Super 8mm
+  and 16mm analog film and flies licensed FPV aerials.
+- **Services**: ${SERVICES.map(([n]) => n).join(", ")}
+- **Regions filmed**: France (French Riviera, St-Tropez, Cap-Ferrat, Provence,
+  Paris), Italy (Lake Como, Amalfi, Puglia, Venice), Switzerland, Monaco,
+  Morocco, Greece, Montenegro, the Caribbean, the United States
+- **Notable work**: NBA All-Star Domantas Sabonis at Villa Ephrussi; Russell &
+  Nina Westbrook in Positano; Anna Andres at Hôtel du Cap-Eden-Roc; a private
+  wedding at Château de Vaux-le-Vicomte; Dolce & Gabbana at Grand-Hôtel du
+  Cap-Ferrat
+- **Press**: Vogue, Brides, People, Over the Moon, THE WED, Cosmopolitan, Elle
+
+## Key pages
+
+- [Home](${SITE_URL}/): studio overview, showreel, testimonials
+- [The Studio](${SITE_URL}/the-studio.html): team, VFX pedigree, how the studio works
+- [Real Weddings](${SITE_URL}/real-weddings.html): full case studies
+- [Gallery](${SITE_URL}/gallery.html): film and photography portfolio
+- [Contact](${SITE_URL}/contact.html): enquiries, availability, investment
+- [Journal](${SITE_URL}/journal.html): ${allPosts.length} articles and real weddings
+
+## Service areas
+
+${LANDING_PAGES.map((l) => `- [${l.h1}](${SITE_URL}/${l.file}): ${l.summary}`).join("\n")}
+
+## Journal archive
+
+${journalIndex}
+`;
+writeFileSync(new URL("../llms.txt", import.meta.url), llms);
+console.log("wrote llms.txt");
+
+/* ---- index.html is handwritten; keep its JSON-LD block in sync ---- */
+{
+  const indexUrl = new URL("../index.html", import.meta.url);
+  const html = readFileSync(indexUrl, "utf8");
+  const block = jsonLd([
+    ...BASE_GRAPH,
+    {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/#webpage`,
+      url: `${SITE_URL}/`,
+      name: "Chromata Films — Award-Winning Luxury Wedding Films",
+      description:
+        "Chromata Films is an award-winning destination wedding film studio. French Riviera, Lake Como, St Moritz, worldwide.",
+      isPartOf: { "@id": SITE_ID },
+      about: { "@id": ORG_ID },
+      inLanguage: "en",
+    },
+  ]);
+  const markers = /<!-- schema:start -->[\s\S]*?<!-- schema:end -->/;
+  if (!markers.test(html)) {
+    console.warn("!! index.html has no <!-- schema:start --> markers; JSON-LD not updated");
+  } else {
+    // replacement passed as a function so `$` sequences inside the JSON are literal
+    writeFileSync(indexUrl, html.replace(markers, () => `<!-- schema:start -->\n${block}\n<!-- schema:end -->`));
+    console.log("wrote index.html (schema block)");
+  }
+}

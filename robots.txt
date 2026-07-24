@@ -1,4 +1,95 @@
+# Chromata Films — https://www.chromatafilms.com
 User-agent: *
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# ChatGPT training + browsing
+User-agent: GPTBot
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# ChatGPT search index
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# ChatGPT live page fetches
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Perplexity index
+User-agent: PerplexityBot
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Perplexity live fetches
+User-agent: Perplexity-User
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Claude
+User-agent: ClaudeBot
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Claude live fetches
+User-agent: Claude-User
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Claude search index
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Anthropic
+User-agent: anthropic-ai
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Gemini + AI Overviews grounding
+User-agent: Google-Extended
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Apple Intelligence
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Meta AI
+User-agent: meta-externalagent
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Amazon / Alexa
+User-agent: Amazonbot
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# TikTok / Doubao
+User-agent: Bytespider
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Common Crawl — the corpus most LLMs train on
+User-agent: CCBot
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Diffbot knowledge graph
+User-agent: Diffbot
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+Disallow: /gettoknowusmore.html
+
+# You.com
+User-agent: YouBot
 Allow: /
 Disallow: /gettoknowusmore.html
 

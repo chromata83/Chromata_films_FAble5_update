@@ -583,7 +583,7 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .footer .kicker { color: var(--gold-deep); }
 .footer__begin { width: 128px; height: 128px; border-radius: 50%; background: var(--coral); color: #fff; display: grid; place-items: center; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; transition: background 0.3s; flex: none; }
 .footer__begin:hover { background: var(--coral-hover); }
-.footer__cols { display: grid; grid-template-columns: repeat(3, minmax(140px, 1fr)); gap: 5vh 4vw; padding: 8vh var(--pad-x); font-size: 13px; }
+.footer__cols { display: grid; grid-template-columns: repeat(4, minmax(140px, 1fr)); gap: 5vh 4vw; padding: 8vh var(--pad-x); font-size: 13px; }
 .footer__cols h4 { font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 2vh; font-weight: 500; }
 .footer__cols a { display: block; padding: 5px 0; color: rgba(37,35,33,0.72); }
 .footer__cols a:hover { color: var(--coral); }
