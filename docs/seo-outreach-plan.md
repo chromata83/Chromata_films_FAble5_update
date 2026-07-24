@@ -89,20 +89,39 @@ eleven studios covering Lake Como; none of them has filmed at Villa Balbiano."
 
 ## 3. Google Business Profile
 
-Not yet set up, and it is the largest single missing signal for local queries.
+**Exists** — listed as "Chromata Films Weddings", Google Knowledge Graph ID
+`/g/11h04f67xx`. The profile is the single strongest local signal, so the work
+here is auditing and feeding it, not creating it.
 
-1. Create at [business.google.com](https://business.google.com) using the
-   Geneva address (service-area business — set the area to Europe-wide).
-2. Category: **Videographer** (primary), then Wedding Photographer, Video
+Audit (sign in at [business.google.com](https://business.google.com)):
+
+1. **Name** — the profile is "Chromata Films Weddings"; the website brand is
+   "Chromata Films". That is fine and consistent with the Instagram/Vimeo names,
+   and the site schema now lists "Chromata Films Weddings" as an alternate name
+   so the two resolve to one entity. Do not rename the profile to match — Google
+   penalises changing an established business name, and the variant now works in
+   your favour.
+2. **Website link** — confirm it points to `https://www.chromatafilms.com` (www,
+   https). An old profile may still link the http:// or a Squarespace URL.
+3. **Address** — confirm it matches the Geneva address used everywhere else, or
+   is set as a service-area business. This is the same NAP conflict flagged
+   below; the profile, Carats & Cake and PartySlate must all agree.
+4. **Category** — primary **Videographer**, then Wedding Photographer and Video
    Production Service.
-3. Fill everything: hours, phone, website, description (long boilerplate above),
-   attributes, and 20+ photos.
-4. **Ask past couples for reviews.** This is the highest-value ongoing task in
-   this document. Google reviews are third-party validation — unlike testimonials
-   on your own site, they feed both local rankings and AI answers. Ten detailed
-   reviews naming the venue and the region ("filmed our wedding at Villa Erba on
-   Lake Como") are worth more than fifty generic five-star ratings.
-5. Repeat on [Bing Places](https://www.bingplaces.com) — it feeds ChatGPT search.
+5. **Completeness** — hours, phone (+33 7 68 53 39 91), the long boilerplate
+   description, attributes, and 20+ recent photos. Add films if the profile
+   supports video.
+
+Then, the highest-value ongoing task in this whole document:
+
+6. **Ask past couples for reviews**, continuously. Unlike testimonials on your
+   own site, Google reviews are third-party validation that feeds both local
+   rankings and AI answers. Ten detailed reviews naming the venue and region
+   ("filmed our wedding at Villa Erba on Lake Como") outweigh fifty generic
+   five-star ratings. Send couples the review link directly when you deliver
+   their film — that is the moment they are happiest.
+7. Repeat the profile on [Bing Places](https://www.bingplaces.com) — it feeds
+   ChatGPT search and is almost certainly not set up yet.
 
 ---
 

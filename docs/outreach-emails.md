@@ -232,6 +232,11 @@ No email needed; these are self-service. For each:
 Mariages.net and Matrimonio.com matter disproportionately — they dominate French
 and Italian search results, and almost no international studio bothers with them.
 
+**Google Business Profile note:** the profile already exists as "Chromata Films
+Weddings" (Knowledge Graph ID `/g/11h04f67xx`). Do not create a second one —
+duplicates get both suspended. The action there is auditing and, above all,
+collecting reviews; see section 3 of the plan doc.
+
 ---
 
 ## 14. Love Stories TV — make the award visible

@@ -113,7 +113,10 @@ const ORGANIZATION = {
   "@type": ["Organization", "ProfessionalService"],
   "@id": ORG_ID,
   name: "Chromata Films",
-  alternateName: "Chromata Films SARL",
+  // every off-site profile the entity is known by — the Google Business
+  // Profile, Instagram, Vimeo and YouTube all use "Chromata Films Weddings",
+  // so it is listed here to let answer engines merge them with this entity
+  alternateName: ["Chromata Films SARL", "Chromata Films Weddings"],
   url: `${SITE_URL}/`,
   logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo-mark.png` },
   image: `${SITE_URL}/assets/img/landing/domantas-cover.png`,
