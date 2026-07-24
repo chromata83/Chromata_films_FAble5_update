@@ -268,8 +268,9 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .film--band { height: calc(100vw / 3); }
 .film--scope { height: calc(100vw / 2.39); }
 /* on phones a 2.39:1 slice is too thin to read: the scope band (studio only)
-   squares up, while the 3:1 bands elsewhere keep their ratio. 768px, not the
-   usual 760px, so it matches the isMobile query that also unpins the band */
+   fills the screen as a square instead, while the 3:1 bands elsewhere keep
+   their ratio. 768px matches the isMobile query so it lines up with the JS
+   pin length used at that width */
 @media (max-width: 768px) {
   .film--scope { height: 100vw; }
 }

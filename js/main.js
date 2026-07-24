@@ -410,10 +410,7 @@
       if (self.isActive && raf === null) raf = requestAnimationFrame(loop);
       else if (!self.isActive && raf !== null) { cancelAnimationFrame(raf); raf = null; }
     };
-    // data-film-nopin-mobile: pinned on desktop, but on phones the band stays
-    // in normal flow (it never detaches from the section it sits under)
-    if (section.hasAttribute("data-film-nopin") ||
-        (isMobile && section.hasAttribute("data-film-nopin-mobile"))) {
+    if (section.hasAttribute("data-film-nopin")) {
       // short band (e.g. 3:1): scrub as the section travels through the
       // viewport — no pin, so the page background never shows around it
       ScrollTrigger.create({
