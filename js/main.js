@@ -422,8 +422,11 @@
         onToggle,
       });
     } else {
+      // full-height films pin from the top; a short band (2.39:1 scope) pins
+      // via data-pin-start="center center" so it locks once it sits mid-screen
+      // and the whole clip scrubs while it holds that spot
       ScrollTrigger.create({
-        trigger: section, start: "top top", end: pinLength, pin: true,
+        trigger: section, start: section.dataset.pinStart || "top top", end: pinLength, pin: true,
         scrub: isMobile ? 0.5 : true,
         anticipatePin: 1,
         onUpdate: (self) => { state.target = self.progress; },
