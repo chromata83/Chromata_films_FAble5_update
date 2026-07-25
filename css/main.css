@@ -817,6 +817,51 @@ form .form-note { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.04
 .enquire-card__title em { font-family: var(--font-accent); font-style: italic; color: var(--active-color); }
 .enquire-card .field + .field, .enquire-card .field.split + .field, .enquire-card .field + .field.split { margin-top: 26px; }
 .enquire-card .field label { color: color-mix(in srgb, var(--active-color) 70%, var(--gold-deep)); }
+/* light in-card group headings for the single-card enquiry form */
+.enquire-sub { font-family: var(--font-ui); font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--active-color, var(--gold)) 70%, var(--gold-deep));
+  margin: 36px 0 6px; padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--active-color, var(--gold)) 22%, transparent); }
+.enquire-sub:first-of-type { margin-top: 6px; padding-top: 0; border-top: 0; }
+.enquire-sub + .field { margin-top: 0; }
+
+/* ---- Success modal (form sent) + cookie-consent banner ---- */
+.cf-modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 6vw;
+  background: rgba(22,19,15,0.55); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: opacity 0.35s; }
+.cf-modal.show { opacity: 1; visibility: visible; }
+.cf-modal__card { position: relative; width: min(440px, 100%); text-align: center; background: var(--cream);
+  border-radius: 20px; border: 1px solid rgba(37,35,33,0.12); box-shadow: 0 40px 90px -40px rgba(22,19,15,0.6);
+  padding: clamp(34px, 5vw, 54px); transform: translateY(14px) scale(0.98); transition: transform 0.4s cubic-bezier(0.22,1,0.36,1); }
+.cf-modal.show .cf-modal__card { transform: none; }
+.cf-modal__mark { width: 60px; height: 60px; margin: 0 auto 22px; border-radius: 50%; display: grid; place-items: center;
+  background: color-mix(in srgb, var(--coral) 14%, var(--cream)); color: var(--coral); }
+.cf-modal__mark svg { width: 30px; height: 30px; }
+.cf-modal h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.5rem, 3vw, 2.1rem); color: var(--ink); }
+.cf-modal h3 em { font-family: var(--font-accent); font-style: italic; color: var(--coral); }
+.cf-modal p { margin-top: 12px; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
+.cf-modal__close { margin-top: 26px; }
+
+.cf-consent { position: fixed; z-index: 190; left: 50%; bottom: clamp(14px, 3vw, 32px); transform: translateX(-50%);
+  width: min(680px, calc(100vw - 28px)); background: var(--night-deep); color: var(--cream);
+  border: 1px solid rgba(255,249,240,0.14); border-radius: 18px; box-shadow: 0 30px 70px -34px rgba(0,0,0,0.7);
+  padding: clamp(20px, 2.6vw, 30px); opacity: 0; visibility: hidden; transform: translateX(-50%) translateY(16px);
+  transition: opacity 0.4s, transform 0.4s; }
+.cf-consent.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.cf-consent__title { font-family: var(--font-display); font-size: clamp(1.15rem, 2vw, 1.5rem); }
+.cf-consent p { margin-top: 8px; font-size: 13px; line-height: 1.55; color: rgba(255,249,240,0.72); }
+.cf-consent p a { color: var(--gold-light); text-decoration: underline; text-underline-offset: 3px; }
+.cf-consent__opts { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.cf-consent__opt { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: rgba(255,249,240,0.85); }
+.cf-consent__opt input { margin-top: 2px; accent-color: var(--coral); width: 15px; height: 15px; flex: none; }
+.cf-consent__opt input:disabled { opacity: 0.5; }
+.cf-consent__opt b { font-weight: 600; }
+.cf-consent__opt span { display: block; color: rgba(255,249,240,0.55); font-size: 11px; margin-top: 1px; }
+.cf-consent__row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.cf-consent__row .btn { font-size: 12px; padding: 12px 20px; }
+.cf-consent__link { background: none; border: 0; color: rgba(255,249,240,0.6); font: inherit; font-size: 12px;
+  letter-spacing: 0.04em; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 12px 4px; }
+.cf-consent__link:hover { color: var(--cream); }
+.btn--ghost-cream { background: transparent; color: var(--cream); border: 1px solid rgba(255,249,240,0.4); }
+.btn--ghost-cream:hover { border-color: var(--cream); background: rgba(255,249,240,0.08); }
 
 /* ---- Year-first date picker ---- */
 .datepick { position: relative; }

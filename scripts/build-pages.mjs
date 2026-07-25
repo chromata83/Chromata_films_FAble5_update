@@ -367,7 +367,7 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
   </div>
   <a class="footer__wordmark" id="footerWordmark" href="index.html" aria-label="Chromata Films — home">CHROMATA FILMS</a>
   <div class="footer__legal">
-    <span>© 2026 Chromata Films — Wedding Film Cinematography</span>
+    <span>© 2026 Chromata Films — Wedding Film Cinematography · <a href="privacy.html">Privacy &amp; Cookies</a></span>
     <span>${ADDRESS} · <a href="tel:${PHONE_E164}">${PHONE}</a> · <a href="mailto:${EMAIL}">${EMAIL}</a></span>
   </div>
 </footer>`;
@@ -391,7 +391,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=50" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=51" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -415,7 +415,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=33" defer></script>
+<script src="js/main.js?v=34" defer></script>
 </body>
 </html>
 `;
@@ -2385,7 +2385,7 @@ pages["enquire.html"] = shell({
           </h1>
           <p class="body-copy" style="max-width:38em; margin-bottom:6vh">A few details and we'll come back to you personally, usually within 48 hours ... with your availability and an honest sense of what your film could be.</p>
 
-          <form class="enquire-form" action="https://formsubmit.co/${EMAIL}" method="POST">
+          <form class="enquire-form" action="https://formsubmit.co/${EMAIL}" method="POST" data-ajax="https://formsubmit.co/ajax/${EMAIL}">
             <input type="hidden" name="_subject" value="New enquiry — chromatafilms.com/enquire">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
@@ -2393,9 +2393,11 @@ pages["enquire.html"] = shell({
 
             <div class="enquire-card enquire-card--coral">
               <div class="enquire-card__head">
-                <span class="enquire-card__num">01</span>
-                <h2 class="enquire-card__title">The <em>celebration</em></h2>
+                <span class="enquire-card__num">✦</span>
+                <h2 class="enquire-card__title">Tell us about <em>your day</em></h2>
               </div>
+
+              <p class="enquire-sub">The celebration</p>
               <div class="field">
                 <label for="eq-name">Your names <span class="req">*</span></label>
                 <input id="eq-name" name="name" type="text" required autocomplete="name" placeholder="Both of you, ideally">
@@ -2428,13 +2430,8 @@ pages["enquire.html"] = shell({
                 <label for="eq-venue">Where — venue, city, country</label>
                 <input id="eq-venue" name="venue" type="text" placeholder="Even a region is fine if you're still deciding">
               </div>
-            </div>
 
-            <div class="enquire-card enquire-card--gold">
-              <div class="enquire-card__head">
-                <span class="enquire-card__num">02</span>
-                <h2 class="enquire-card__title">The <em>details</em></h2>
-              </div>
+              <p class="enquire-sub">The details</p>
               <div class="field split">
                 <div class="field">
                   <label for="eq-guests">Roughly how many guests</label>
@@ -2449,13 +2446,8 @@ pages["enquire.html"] = shell({
                 <label for="eq-budget">Your budget for cinematography <span class="req">*</span></label>
                 <select id="eq-budget" name="cinematography_budget" required>${budgetOptions}</select>
               </div>
-            </div>
 
-            <div class="enquire-card enquire-card--citrus">
-              <div class="enquire-card__head">
-                <span class="enquire-card__num">03</span>
-                <h2 class="enquire-card__title">And <em>you</em></h2>
-              </div>
+              <p class="enquire-sub">And you</p>
               <div class="field split">
                 <div class="field">
                   <label for="eq-email">Email <span class="req">*</span></label>
@@ -2476,6 +2468,57 @@ pages["enquire.html"] = shell({
             <p class="form-note">We answer every enquiry personally, usually within 48 hours. Planners: mention your studio ... we love working with you.</p>
           </form>
         </div>
+      </div>
+    </div>
+  </section>`,
+});
+
+/* ============================== PRIVACY NOTICE ==============================
+   Plain-language GDPR notice, linked from the cookie-consent banner and the
+   footer. Kept factual and specific to what the site actually does. */
+pages["privacy.html"] = shell({
+  page: "privacy",
+  file: "privacy.html",
+  navLight: true,
+  footerCta: false,
+  title: "Privacy & Cookies — Chromata Films",
+  description: "How Chromata Films collects, uses and protects your personal data, and the cookies this website uses — in line with the EU GDPR.",
+  breadcrumb: [
+    { name: "Home", file: "" },
+    { name: "Privacy & Cookies", file: "privacy.html" },
+  ],
+  main: `  <section class="pad-section" style="padding-top:calc(var(--nav-h) + 11vh)" data-section>
+    <div class="container">
+      <p class="kicker">— Privacy &amp; Cookies</p>
+      <h1 class="display-md" style="margin:3vh 0 2vh; max-width:16em">
+        <span class="line-mask"><span class="line-inner">Your privacy,</span></span>
+        <span class="line-mask"><span class="line-inner"><em>plainly explained</em></span></span>
+      </h1>
+      <div class="prose" style="max-width:44em; margin-top:5vh">
+        <p>This notice explains what personal data Chromata Films collects through this website, why, and the choices you have. It is written to meet the EU General Data Protection Regulation (GDPR) and Swiss data-protection law. Last updated 25 July 2026.</p>
+
+        <h2 style="font-family:var(--font-display); font-size:clamp(1.3rem,2.4vw,2rem); margin-top:6vh">Who we are</h2>
+        <p>Chromata Films (registered as Chromata Films SARL), 27 Rue de Montchoisy, 1207 Geneva, Switzerland. For anything related to your data, write to <a class="text-link" href="mailto:${EMAIL}">${EMAIL}</a>. We are the data controller for the information described here.</p>
+
+        <h2 style="font-family:var(--font-display); font-size:clamp(1.3rem,2.4vw,2rem); margin-top:6vh">What we collect, and why</h2>
+        <p><strong>When you contact us.</strong> If you complete an enquiry or contact form, we receive the details you provide — your names, email, phone number, wedding date, venue, planner, guest count, budget range and your message. We use this only to answer your enquiry and, if you become a client, to plan and deliver your film. The legal basis is your consent and our taking steps at your request before entering a contract.</p>
+        <p><strong>Form delivery.</strong> Our forms are delivered to our inbox by <a class="text-link" href="https://formsubmit.co" target="_blank" rel="noopener">FormSubmit</a>, which processes the submission on our behalf. We do not sell your data or use it for advertising.</p>
+        <p><strong>We do not</strong> run advertising trackers or sell personal data. We currently use no third-party analytics; if we add privacy-friendly, anonymous analytics in future, it will only run with your consent.</p>
+
+        <h2 style="font-family:var(--font-display); font-size:clamp(1.3rem,2.4vw,2rem); margin-top:6vh">Cookies &amp; similar technologies</h2>
+        <p><strong>Essential.</strong> We store your cookie choice in your browser (local storage) so we don't ask on every visit. This is required for the site to remember your preference and needs no consent.</p>
+        <p><strong>Embedded media.</strong> Some pages embed films from YouTube (in privacy-enhanced "no-cookie" mode) and Vimeo. These load only after you allow "embedded media" in the consent banner. Until then, they are not loaded and set no cookies. When loaded, those providers may set their own cookies under their privacy policies.</p>
+        <p><strong>Analytics.</strong> Off by default. Only enabled if you allow it.</p>
+        <p>You can change your choice at any time by clearing this site's data in your browser, which brings the consent banner back.</p>
+
+        <h2 style="font-family:var(--font-display); font-size:clamp(1.3rem,2.4vw,2rem); margin-top:6vh">Other services this site relies on</h2>
+        <p>The site is hosted by Hostinger and uses Google Fonts to render type; fonts are served when pages load. These providers process technical data such as your IP address as part of delivering the page, as any web host does.</p>
+
+        <h2 style="font-family:var(--font-display); font-size:clamp(1.3rem,2.4vw,2rem); margin-top:6vh">How long we keep your data</h2>
+        <p>We keep enquiry correspondence for as long as needed to answer you and, if you book, for the duration of our work together plus the period required by Swiss commercial and tax law. You can ask us to delete it sooner.</p>
+
+        <h2 style="font-family:var(--font-display); font-size:clamp(1.3rem,2.4vw,2rem); margin-top:6vh">Your rights</h2>
+        <p>Under the GDPR you may request access to your data, correction, deletion, or a copy in a portable format, and you may withdraw consent or object to certain processing. Email <a class="text-link" href="mailto:${EMAIL}">${EMAIL}</a> and we will respond. You also have the right to complain to a data-protection authority.</p>
       </div>
     </div>
   </section>`,

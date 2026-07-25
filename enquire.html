@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=50" />
+<link rel="stylesheet" href="css/main.css?v=51" />
 </head>
 <body data-page="enquire">
 
@@ -76,7 +76,7 @@
           </h1>
           <p class="body-copy" style="max-width:38em; margin-bottom:6vh">A few details and we'll come back to you personally, usually within 48 hours ... with your availability and an honest sense of what your film could be.</p>
 
-          <form class="enquire-form" action="https://formsubmit.co/contact@chromatafilms.com" method="POST">
+          <form class="enquire-form" action="https://formsubmit.co/contact@chromatafilms.com" method="POST" data-ajax="https://formsubmit.co/ajax/contact@chromatafilms.com">
             <input type="hidden" name="_subject" value="New enquiry — chromatafilms.com/enquire">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
@@ -84,9 +84,11 @@
 
             <div class="enquire-card enquire-card--coral">
               <div class="enquire-card__head">
-                <span class="enquire-card__num">01</span>
-                <h2 class="enquire-card__title">The <em>celebration</em></h2>
+                <span class="enquire-card__num">✦</span>
+                <h2 class="enquire-card__title">Tell us about <em>your day</em></h2>
               </div>
+
+              <p class="enquire-sub">The celebration</p>
               <div class="field">
                 <label for="eq-name">Your names <span class="req">*</span></label>
                 <input id="eq-name" name="name" type="text" required autocomplete="name" placeholder="Both of you, ideally">
@@ -119,13 +121,8 @@
                 <label for="eq-venue">Where — venue, city, country</label>
                 <input id="eq-venue" name="venue" type="text" placeholder="Even a region is fine if you're still deciding">
               </div>
-            </div>
 
-            <div class="enquire-card enquire-card--gold">
-              <div class="enquire-card__head">
-                <span class="enquire-card__num">02</span>
-                <h2 class="enquire-card__title">The <em>details</em></h2>
-              </div>
+              <p class="enquire-sub">The details</p>
               <div class="field split">
                 <div class="field">
                   <label for="eq-guests">Roughly how many guests</label>
@@ -140,13 +137,8 @@
                 <label for="eq-budget">Your budget for cinematography <span class="req">*</span></label>
                 <select id="eq-budget" name="cinematography_budget" required><option>15,000 – 25,000</option><option>25,000 – 35,000</option><option>35,000 – 45,000</option><option>45,000 – 55,000</option><option>55,000 – 65,000</option><option>65,000 – 75,000</option><option>75,000 +</option></select>
               </div>
-            </div>
 
-            <div class="enquire-card enquire-card--citrus">
-              <div class="enquire-card__head">
-                <span class="enquire-card__num">03</span>
-                <h2 class="enquire-card__title">And <em>you</em></h2>
-              </div>
+              <p class="enquire-sub">And you</p>
               <div class="field split">
                 <div class="field">
                   <label for="eq-email">Email <span class="req">*</span></label>
@@ -209,7 +201,7 @@
   </div>
   <a class="footer__wordmark" id="footerWordmark" href="index.html" aria-label="Chromata Films — home">CHROMATA FILMS</a>
   <div class="footer__legal">
-    <span>© 2026 Chromata Films — Wedding Film Cinematography</span>
+    <span>© 2026 Chromata Films — Wedding Film Cinematography · <a href="privacy.html">Privacy &amp; Cookies</a></span>
     <span>27 Rue de Montchoisy, 1207 Geneva, Switzerland · <a href="tel:+33768533991">+33 7 68 53 39 91</a> · <a href="mailto:contact@chromatafilms.com">contact@chromatafilms.com</a></span>
   </div>
 </footer>
@@ -222,6 +214,6 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=33" defer></script>
+<script src="js/main.js?v=34" defer></script>
 </body>
 </html>

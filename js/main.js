@@ -598,11 +598,20 @@
   }
 
   /* ---------------- Lazy embeds (Vimeo bg / YouTube trailers) ---------------- */
+  // These are third-party embeds (YouTube / Vimeo), so they only load once the
+  // visitor has granted "marketing" consent. Until then the frame is held and
+  // shows its container background; granting consent later loads it (see the
+  // consent block below). window.chromataConsent is set before any IO callback
+  // fires, since the consent code runs later in this same synchronous pass.
   const lazyFrames = document.querySelectorAll("iframe[data-lazy-src]");
   if (lazyFrames.length) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
-        if (en.isIntersecting) { en.target.src = en.target.dataset.lazySrc; io.unobserve(en.target); }
+        if (!en.isIntersecting) return;
+        const f = en.target;
+        io.unobserve(f);
+        if (window.chromataConsent && window.chromataConsent.marketing) f.src = f.dataset.lazySrc;
+        else f.setAttribute("data-consent-hold", "");
       });
     }, { rootMargin: "60%" });
     lazyFrames.forEach((f) => io.observe(f));
@@ -741,7 +750,10 @@
       if (t.dataset.day != null) { sel.d = +t.dataset.day; setLabel(); close(); }
     });
 
-    document.addEventListener("click", (e) => { if (!root.contains(e.target)) close(); });
+    // Use composedPath (captured at dispatch) rather than root.contains: picking
+    // a year/month re-renders the panel, so by the time this bubbles the clicked
+    // node is detached and contains() would wrongly report "outside" and close.
+    document.addEventListener("click", (e) => { if (!e.composedPath().includes(root)) close(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
 
     // `required` is ignored on a hidden input, so guard the submit ourselves.
@@ -750,6 +762,7 @@
       form.addEventListener("submit", (e) => {
         if (!hidden.value) {
           e.preventDefault();
+          e.stopImmediatePropagation(); // halt the AJAX submit handler too
           toggle.dataset.empty = "true";
           toggle.style.borderColor = "var(--coral)";
           root.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -760,6 +773,135 @@
     }
     setLabel();
   });
+
+  /* ---------------- Modal helper ---------------- */
+  const showModal = ({ title, body, closeLabel = "Close" }) => {
+    const wrap = document.createElement("div");
+    wrap.className = "cf-modal";
+    wrap.innerHTML =
+      `<div class="cf-modal__card" role="dialog" aria-modal="true" aria-label="${title.replace(/<[^>]+>/g, "")}">` +
+        `<div class="cf-modal__mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` +
+        `<h3>${title}</h3><p>${body}</p>` +
+        `<button type="button" class="btn btn--coral cf-modal__close">${closeLabel}</button>` +
+      `</div>`;
+    document.body.appendChild(wrap);
+    const close = () => { wrap.classList.remove("show"); setTimeout(() => wrap.remove(), 400); };
+    wrap.addEventListener("click", (e) => { if (e.target === wrap || e.target.closest(".cf-modal__close")) close(); });
+    document.addEventListener("keydown", function esc(e) { if (e.key === "Escape") { close(); document.removeEventListener("keydown", esc); } });
+    requestAnimationFrame(() => wrap.classList.add("show"));
+    return close;
+  };
+
+  /* ---------------- AJAX form submit (enquiry) ----------------
+     Posts to FormSubmit's AJAX endpoint so the visitor stays on the page and
+     gets a success modal instead of a redirect. Falls back to a normal POST if
+     fetch fails or JS is unavailable (the form keeps its plain `action`). */
+  document.querySelectorAll("form[data-ajax]").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      if (!form.checkValidity()) return; // let the browser show native validation
+      e.preventDefault();
+      const btn = form.querySelector("[type=submit]");
+      const original = btn ? btn.textContent : "";
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      fetch(form.dataset.ajax, {
+        method: "POST",
+        headers: { "Accept": "application/json" },
+        body: new FormData(form),
+      })
+        .then((r) => r.json().catch(() => ({})).then((d) => ({ ok: r.ok, d })))
+        .then(({ ok }) => {
+          if (!ok) throw new Error("send failed");
+          form.reset();
+          form.querySelectorAll("[data-datepick] .datepick__label").forEach((l) => { l.textContent = "Select a date"; });
+          form.querySelectorAll("[data-datepick] .datepick__toggle").forEach((t) => { t.dataset.empty = "true"; });
+          showModal({
+            title: "Email sent <em>successfully!</em>",
+            body: "Thank you — your enquiry is on its way to our team. We answer every message personally, usually within 48 hours.",
+            closeLabel: "Lovely",
+          });
+        })
+        .catch(() => {
+          showModal({
+            title: "That didn't go through",
+            body: `Something went wrong sending your enquiry. Please email us directly at <a href="mailto:contact@chromatafilms.com" style="color:var(--coral)">contact@chromatafilms.com</a> and we'll take it from there.`,
+          });
+        })
+        .finally(() => { if (btn) { btn.disabled = false; btn.textContent = original; } });
+    });
+  });
+
+  /* ---------------- Cookie / privacy consent (EU) ----------------
+     Shown once on first visit; the choice is stored in localStorage. Marketing
+     consent gates the YouTube/Vimeo embeds (loaded lazily elsewhere): until it
+     is granted, [data-lazy-src] iframes are held back. */
+  const CONSENT_KEY = "cf-consent-v1";
+  const readConsent = () => { try { return JSON.parse(localStorage.getItem(CONSENT_KEY) || "null"); } catch (_) { return null; } };
+  window.chromataConsent = readConsent();
+
+  const applyConsent = (c) => {
+    window.chromataConsent = c;
+    if (c && c.marketing) {
+      document.querySelectorAll("iframe[data-lazy-src][data-consent-hold]").forEach((f) => {
+        f.removeAttribute("data-consent-hold");
+        f.src = f.dataset.lazySrc;
+      });
+    }
+  };
+
+  const saveConsent = (c) => {
+    c.ts = Date.now();
+    try { localStorage.setItem(CONSENT_KEY, JSON.stringify(c)); } catch (_) {}
+    applyConsent(c);
+  };
+
+  if (!readConsent()) {
+    const banner = document.createElement("div");
+    banner.className = "cf-consent";
+    banner.setAttribute("role", "dialog");
+    banner.setAttribute("aria-label", "Privacy and cookie preferences");
+    banner.innerHTML =
+      `<div class="cf-consent__title">Your privacy</div>` +
+      `<p>We use essential cookies to run this site, and — with your consent — cookies from embedded films (YouTube, Vimeo) and anonymous analytics. You can choose what to allow, in line with EU GDPR. See our <a href="privacy.html">privacy notice</a>.</p>` +
+      `<div class="cf-consent__opts" hidden>` +
+        `<label class="cf-consent__opt"><input type="checkbox" checked disabled><span><b>Essential</b><span>Required for the site to work. Always on.</span></span></label>` +
+        `<label class="cf-consent__opt"><input type="checkbox" data-cat="analytics"><span><b>Analytics</b><span>Anonymous stats to help us improve.</span></span></label>` +
+        `<label class="cf-consent__opt"><input type="checkbox" data-cat="marketing"><span><b>Embedded media</b><span>Loads films from YouTube and Vimeo.</span></span></label>` +
+      `</div>` +
+      `<div class="cf-consent__row">` +
+        `<button type="button" class="btn btn--coral" data-consent="all">Accept all</button>` +
+        `<button type="button" class="btn btn--ghost-cream" data-consent="essential">Essential only</button>` +
+        `<button type="button" class="cf-consent__link" data-consent="prefs">Manage preferences</button>` +
+      `</div>`;
+    document.body.appendChild(banner);
+    requestAnimationFrame(() => banner.classList.add("show"));
+
+    const dismiss = () => { banner.classList.remove("show"); setTimeout(() => banner.remove(), 450); };
+    banner.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-consent]");
+      if (!b) return;
+      const kind = b.dataset.consent;
+      if (kind === "prefs") {
+        const opts = banner.querySelector(".cf-consent__opts");
+        opts.hidden = !opts.hidden;
+        // second click of "Manage preferences" becomes "Save"
+        b.textContent = opts.hidden ? "Manage preferences" : "Save my choices";
+        b.dataset.consent = opts.hidden ? "prefs" : "save";
+        return;
+      }
+      if (kind === "all") { saveConsent({ essential: true, analytics: true, marketing: true }); return dismiss(); }
+      if (kind === "essential") { saveConsent({ essential: true, analytics: false, marketing: false }); return dismiss(); }
+      if (kind === "save") {
+        saveConsent({
+          essential: true,
+          analytics: banner.querySelector('[data-cat=analytics]').checked,
+          marketing: banner.querySelector('[data-cat=marketing]').checked,
+        });
+        return dismiss();
+      }
+    });
+  } else {
+    applyConsent(readConsent());
+  }
 
   addEventListener("load", () => ScrollTrigger.refresh());
 })();
