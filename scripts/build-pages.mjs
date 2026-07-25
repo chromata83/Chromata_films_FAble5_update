@@ -391,7 +391,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=51" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=52" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -2358,11 +2358,24 @@ pages["contact.html"] = shell({
 pages["enquire.html"] = shell({
   page: "enquire",
   noindex: true,
-  navLight: true,
   footerCta: false,
   title: "Enquire — Chromata Films | Check Your Wedding Date",
   description: "Tell Chromata Films about your wedding and check your date.",
-  main: `  <section class="pad-section" style="padding-top:calc(var(--nav-h) + 11vh)" data-section>
+  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Enquire — cinematic header">
+    <video src="assets/video/contact-header.mp4" poster="assets/video/contact-header-poster.jpg"
+           muted loop playsinline autoplay data-ambient data-preload-track></video>
+    <div class="film__shade"></div>
+    <div class="hero__head">
+      <p class="kicker" style="color:var(--coral)">— Contact Us</p>
+      <h1 class="hero__title hero__title--page">
+        <span class="line-mask intro-rise"><span class="line-inner">Global luxury</span></span>
+        <span class="line-mask intro-rise"><span class="line-inner">destination wedding <em>cinematographers</em></span></span>
+      </h1>
+    </div>
+    <div class="hero__scroll intro-fade"><span class="lbl">Scroll</span><span class="line"><i></i></span></div>
+  </section>
+
+  <section class="pad-section" data-section>
     <div class="container">
       <div class="contact-wrap">
         <aside class="contact-side">
@@ -2378,12 +2391,11 @@ pages["enquire.html"] = shell({
           </div>
         </aside>
         <div>
-          <p class="kicker">— Check Your Date</p>
-          <h1 class="display-md" style="margin:3vh 0 2vh">
-            <span class="line-mask"><span class="line-inner">Let's find out if we're</span></span>
-            <span class="line-mask"><span class="line-inner"><em>free for your day</em></span></span>
-          </h1>
-          <p class="body-copy" style="max-width:38em; margin-bottom:6vh">A few details and we'll come back to you personally, usually within 48 hours ... with your availability and an honest sense of what your film could be.</p>
+          <p class="kicker">— Tell us everything</p>
+          <h2 class="display-md" style="margin:3vh 0 5vh">
+            <span class="line-mask"><span class="line-inner">Your wedding will happen once.</span></span>
+            <span class="line-mask"><span class="line-inner">Let's make sure you <em>feel it forever</em>.</span></span>
+          </h2>
 
           <form class="enquire-form" action="https://formsubmit.co/${EMAIL}" method="POST" data-ajax="https://formsubmit.co/ajax/${EMAIL}">
             <input type="hidden" name="_subject" value="New enquiry — chromatafilms.com/enquire">
