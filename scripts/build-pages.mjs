@@ -2274,118 +2274,6 @@ pages["contact.html"] = shell({
           <div class="feature__meta">
             <div class="row"><span>Email</span><span class="val"><a class="text-link" href="mailto:${EMAIL}">${EMAIL}</a></span></div>
             <div class="row"><span>Phone</span><span class="val"><a class="text-link" href="tel:${PHONE_E164}">${PHONE}</a></span></div>
-            <div class="row"><span>Studio</span><span class="val">${ADDRESS}</span></div>
-            <div class="row"><span>Coverage</span><span class="val">Worldwide — five continents</span></div>
-          </div>
-        </aside>
-        <div>
-          <p class="kicker">— Tell us everything</p>
-          <h2 class="display-md" style="margin:3vh 0 5vh">
-            <span class="line-mask"><span class="line-inner">Your wedding will happen once.</span></span>
-            <span class="line-mask"><span class="line-inner">Let's make sure you <em>feel it forever</em>.</span></span>
-          </h2>
-          <form class="contact-form" action="https://formsubmit.co/${EMAIL}" method="POST">
-            <input type="hidden" name="_subject" value="New wedding inquiry — chromatafilms.com">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_template" value="table">
-            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-            <div class="field">
-              <label for="cf-name">Your name is <span class="req">*</span></label>
-              <input id="cf-name" name="name" type="text" required autocomplete="name" placeholder="Both of you, ideally">
-            </div>
-            <div class="field split">
-              <div class="field">
-                <label for="cf-type">And you are planning a <span class="req">*</span></label>
-                <select id="cf-type" name="event_type" required>
-                  <option>Wedding</option>
-                  <option>Multi-day destination wedding</option>
-                  <option>Elopement</option>
-                  <option>Engagement / proposal</option>
-                  <option>Anniversary celebration</option>
-                  <option>Private event</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="cf-date">On the date of <span class="req">*</span></label>
-                <input id="cf-date" name="date" type="date" required>
-              </div>
-            </div>
-            <div class="field">
-              <label for="cf-venue">In the venue of <span class="req">*</span></label>
-              <input id="cf-venue" name="venue" type="text" required placeholder="Venue name, city, country">
-            </div>
-            <div class="field split">
-              <div class="field">
-                <label for="cf-planner">With my wedding planner <span class="req">*</span></label>
-                <input id="cf-planner" name="planner" type="text" required placeholder="Planner or planning studio">
-              </div>
-              <div class="field">
-                <label for="cf-guests">And with about — attending guests <span class="req">*</span></label>
-                <input id="cf-guests" name="guests" type="number" min="2" max="2000" required placeholder="120">
-              </div>
-            </div>
-            <div class="field">
-              <label for="cf-photo">Also my photographer will (or might) be</label>
-              <input id="cf-photo" name="photographer" type="text" placeholder="If you already know">
-            </div>
-            <div class="field">
-              <label for="cf-budget">And my budget for cinematography is <span class="req">*</span></label>
-              <select id="cf-budget" name="cinematography_budget" required>${budgetOptions}</select>
-            </div>
-            <div class="field">
-              <label for="cf-msg">Anything else to say to your wedding film maker? <span class="req">*</span></label>
-              <textarea id="cf-msg" name="message" rows="5" required placeholder="Your story, your vision, the moments that matter most…"></textarea>
-            </div>
-            <div class="field">
-              <label for="cf-email">Email address <span class="req">*</span></label>
-              <input id="cf-email" name="email" type="email" required autocomplete="email">
-            </div>
-            <button class="btn btn--coral" type="submit" style="align-self:flex-start">Check your date →</button>
-            <p class="form-note">We answer every inquiry personally, usually within 48 hours. Planners: mention your studio ... we love working with you.</p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>`,
-});
-
-/* ============================== ENQUIRE (unlisted — not in nav, not linked, noindex) ==============================
-   A second, standalone enquiry page with a completely different form from
-   contact.html: accent cards inspired by the testimonial quote-cards, and a
-   custom year-first date picker (pick the year, then month, then day). Meant
-   to be linked privately (proposals, ad campaigns), so it is kept out of the
-   nav and the sitemap and carries a noindex tag. */
-pages["enquire.html"] = shell({
-  page: "enquire",
-  noindex: true,
-  footerCta: false,
-  title: "Enquire — Chromata Films | Check Your Wedding Date",
-  description: "Tell Chromata Films about your wedding and check your date.",
-  main: `  <section class="film film--header vignette" data-theme="dark" aria-label="Enquire — cinematic header">
-    <video src="assets/video/contact-header.mp4" poster="assets/video/contact-header-poster.jpg"
-           muted loop playsinline autoplay data-ambient data-preload-track></video>
-    <div class="film__shade"></div>
-    <div class="hero__head">
-      <p class="kicker" style="color:var(--coral)">— Contact Us</p>
-      <h1 class="hero__title hero__title--page">
-        <span class="line-mask intro-rise"><span class="line-inner">Global luxury</span></span>
-        <span class="line-mask intro-rise"><span class="line-inner">destination wedding <em>cinematographers</em></span></span>
-      </h1>
-    </div>
-    <div class="hero__scroll intro-fade"><span class="lbl">Scroll</span><span class="line"><i></i></span></div>
-  </section>
-
-  <section class="pad-section" data-section>
-    <div class="container">
-      <div class="contact-wrap">
-        <aside class="contact-side">
-          <figure class="mat img-reveal">
-            <img src="assets/img/contact/contact-side.jpg" alt="Bridal portrait — Chromata Films" loading="lazy">
-          </figure>
-          <p class="photo-credit">Photography by German Larkin</p>
-          <div class="feature__meta">
-            <div class="row"><span>Email</span><span class="val"><a class="text-link" href="mailto:${EMAIL}">${EMAIL}</a></span></div>
-            <div class="row"><span>Phone</span><span class="val"><a class="text-link" href="tel:${PHONE_E164}">${PHONE}</a></span></div>
             <div class="row"><span>Filming</span><span class="val">French Riviera · Lake Como · worldwide</span></div>
             <div class="row"><span>From</span><span class="val">15,000 USD</span></div>
           </div>
@@ -2396,9 +2284,8 @@ pages["enquire.html"] = shell({
             <span class="line-mask"><span class="line-inner">Your wedding will happen once.</span></span>
             <span class="line-mask"><span class="line-inner">Let's make sure you <em>feel it forever</em>.</span></span>
           </h2>
-
           <form class="enquire-form" action="https://formsubmit.co/${EMAIL}" method="POST" data-ajax="https://formsubmit.co/ajax/${EMAIL}">
-            <input type="hidden" name="_subject" value="New enquiry — chromatafilms.com/enquire">
+            <input type="hidden" name="_subject" value="New enquiry — chromatafilms.com/contact">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
@@ -3521,7 +3408,7 @@ for (const [file, html] of Object.entries(pages)) {
 /* ---- sitemap.xml + robots.txt ----
    index.html is handwritten (not in `pages`) so it's added explicitly; every
    generated page is included except the deliberately-unlisted noindex ones. */
-const NOINDEX_FILES = new Set(["gettoknowusmore.html", "enquire.html"]);
+const NOINDEX_FILES = new Set(["gettoknowusmore.html"]);
 const sitemapFiles = ["index.html", ...Object.keys(pages).filter((f) => !NOINDEX_FILES.has(f))];
 const today = new Date().toISOString().slice(0, 10);
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
