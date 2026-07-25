@@ -158,9 +158,11 @@ credits, the 50-word and 100-word boilerplate, and the two press links.
 
 Not pitches. Log in and fix these yourself, or ask their support to:
 
-- **Address** — both list France/Cannes; the site and all schema say Geneva.
-  Make them match, or change the site. Inconsistency is why an AI answer hedges
-  about where you're based.
+- **Location** — both list France/Cannes, and that is *good* — leave it. You
+  want to be found as a France/Italy videographer, not a Swiss one. If a full
+  street address is required, use the Geneva registered address for consistency,
+  but keep the region/country as France. (See the location strategy in the plan
+  doc.)
 - **Description** — replace with the 100-word boilerplate, word for word.
 - **Phone** — +33 7 68 53 39 91 everywhere.
 - **Price band** — from 15,000 USD.

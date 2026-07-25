@@ -2,95 +2,114 @@
 User-agent: *
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # ChatGPT training + browsing
 User-agent: GPTBot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # ChatGPT search index
 User-agent: OAI-SearchBot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # ChatGPT live page fetches
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Perplexity index
 User-agent: PerplexityBot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Perplexity live fetches
 User-agent: Perplexity-User
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Claude
 User-agent: ClaudeBot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Claude live fetches
 User-agent: Claude-User
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Claude search index
 User-agent: Claude-SearchBot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Anthropic
 User-agent: anthropic-ai
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Gemini + AI Overviews grounding
 User-agent: Google-Extended
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Apple Intelligence
 User-agent: Applebot-Extended
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Meta AI
 User-agent: meta-externalagent
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Amazon / Alexa
 User-agent: Amazonbot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # TikTok / Doubao
 User-agent: Bytespider
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Common Crawl — the corpus most LLMs train on
 User-agent: CCBot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Diffbot knowledge graph
 User-agent: Diffbot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # Cohere
 User-agent: cohere-ai
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 # You.com
 User-agent: YouBot
 Allow: /
 Disallow: /gettoknowusmore.html
+Disallow: /enquire.html
 
 Sitemap: https://www.chromatafilms.com/sitemap.xml

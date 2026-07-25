@@ -651,5 +651,115 @@
     });
   });
 
+  /* ---------------- Year-first date picker (enquiry page) ----------------
+     A [data-datepick] element wraps a visible toggle button, a hidden input
+     (the ISO value posted with the form) and an empty panel. The user picks
+     the YEAR first, then the month, then the day — so far-out wedding dates
+     never require clicking through dozens of months. */
+  document.querySelectorAll("[data-datepick]").forEach((root) => {
+    const toggle = root.querySelector(".datepick__toggle");
+    const label = root.querySelector(".datepick__label");
+    const panel = root.querySelector(".datepick__panel");
+    const hidden = root.querySelector("input[type=hidden]");
+    if (!toggle || !panel || !hidden) return;
+
+    const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const DOW = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const minYear = today.getFullYear();
+    const sel = { y: null, m: null, d: null };
+    let step = "year";
+
+    const fmt = () => `${sel.d} ${MONTHS[sel.m]} ${sel.y}`;
+    const setLabel = () => {
+      if (sel.y != null && sel.m != null && sel.d != null) {
+        label.textContent = fmt();
+        toggle.dataset.empty = "false";
+        hidden.value = `${sel.y}-${String(sel.m + 1).padStart(2, "0")}-${String(sel.d).padStart(2, "0")}`;
+      } else {
+        label.textContent = "Select a date";
+        toggle.dataset.empty = "true";
+        hidden.value = "";
+      }
+    };
+
+    const crumb = (labelText, target, current, disabled) =>
+      `<button type="button" class="datepick__crumb" data-step="${target}"${current ? ' aria-current="step"' : ""}${disabled ? " disabled" : ""}>${labelText}</button>`;
+
+    const render = () => {
+      const crumbs = [
+        crumb(sel.y != null ? sel.y : "Year", "year", step === "year", false),
+        crumb(sel.m != null ? MONTHS[sel.m].slice(0, 3) : "Month", "month", step === "month", sel.y == null),
+        crumb("Day", "day", step === "day", sel.m == null),
+      ].join('<span aria-hidden="true" style="color:var(--ink-muted)">·</span>');
+
+      let grid = "";
+      if (step === "year") {
+        grid = '<div class="datepick__grid datepick__grid--years">';
+        for (let y = minYear; y <= minYear + 5; y++) {
+          grid += `<button type="button" class="datepick__cell${sel.y === y ? " is-selected" : ""}" data-year="${y}">${y}</button>`;
+        }
+        grid += "</div>";
+      } else if (step === "month") {
+        grid = '<div class="datepick__grid datepick__grid--months">';
+        MONTHS.forEach((mn, i) => {
+          const past = sel.y === minYear && i < today.getMonth();
+          grid += `<button type="button" class="datepick__cell${sel.m === i ? " is-selected" : ""}" data-month="${i}"${past ? " disabled" : ""}>${mn.slice(0, 3)}</button>`;
+        });
+        grid += "</div>";
+      } else {
+        const first = (new Date(sel.y, sel.m, 1).getDay() + 6) % 7; // Monday-first
+        const days = new Date(sel.y, sel.m + 1, 0).getDate();
+        grid = '<div class="datepick__dow">' + DOW.map((d) => `<span>${d}</span>`).join("") + '</div>';
+        grid += '<div class="datepick__grid datepick__grid--days">';
+        for (let i = 0; i < first; i++) grid += '<span class="datepick__cell datepick__cell--empty"></span>';
+        for (let d = 1; d <= days; d++) {
+          const cellDate = new Date(sel.y, sel.m, d);
+          const past = cellDate < today;
+          grid += `<button type="button" class="datepick__cell${sel.d === d ? " is-selected" : ""}" data-day="${d}"${past ? " disabled" : ""}>${d}</button>`;
+        }
+        grid += "</div>";
+      }
+
+      panel.innerHTML =
+        `<div class="datepick__bar"><div class="datepick__crumbs">${crumbs}</div>` +
+        `<button type="button" class="datepick__nav" data-close aria-label="Close">✕</button></div>${grid}`;
+    };
+
+    const open = () => { root.classList.add("is-open"); toggle.setAttribute("aria-expanded", "true"); step = sel.y == null ? "year" : step; render(); };
+    const close = () => { root.classList.remove("is-open"); toggle.setAttribute("aria-expanded", "false"); };
+
+    toggle.addEventListener("click", () => root.classList.contains("is-open") ? close() : open());
+
+    panel.addEventListener("click", (e) => {
+      const t = e.target.closest("button");
+      if (!t) return;
+      if (t.dataset.close != null) return close();
+      if (t.dataset.step) { if (!t.disabled) { step = t.dataset.step; render(); } return; }
+      if (t.dataset.year != null) { sel.y = +t.dataset.year; if (sel.m != null && sel.y === minYear && sel.m < today.getMonth()) { sel.m = null; sel.d = null; } step = "month"; setLabel(); render(); return; }
+      if (t.dataset.month != null) { sel.m = +t.dataset.month; sel.d = null; step = "day"; setLabel(); render(); return; }
+      if (t.dataset.day != null) { sel.d = +t.dataset.day; setLabel(); close(); }
+    });
+
+    document.addEventListener("click", (e) => { if (!root.contains(e.target)) close(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+
+    // `required` is ignored on a hidden input, so guard the submit ourselves.
+    const form = root.closest("form");
+    if (form && hidden.hasAttribute("required")) {
+      form.addEventListener("submit", (e) => {
+        if (!hidden.value) {
+          e.preventDefault();
+          toggle.dataset.empty = "true";
+          toggle.style.borderColor = "var(--coral)";
+          root.scrollIntoView({ behavior: "smooth", block: "center" });
+          open();
+        }
+      });
+      toggle.addEventListener("click", () => { toggle.style.borderColor = ""; });
+    }
+    setLabel();
+  });
+
   addEventListener("load", () => ScrollTrigger.refresh());
 })();

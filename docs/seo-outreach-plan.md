@@ -51,10 +51,26 @@ while five different descriptions resolve into vagueness.
 > Destination Wedding Film at the Love StoriesTV Wedding Film Awards. Work
 > published in Vogue, Brides, People and Over the Moon. Collections from 15,000 USD.
 
-**NAP warning:** the site says Geneva; Carats & Cake lists "France"; PartySlate
-says Cannes. Pick one primary address and correct the others — inconsistent
-location data is why an AI answer says "based in France or Switzerland" instead
-of stating it plainly.
+**Location strategy — read this carefully, it is subtle.** The registered
+company is Swiss (Chromata Films SARL, Geneva), but the studio works mostly on
+the French Riviera and at Lake Como, and that is how couples search. We *want*
+to be found and listed as a videographer in **France, Italy and Europe**, not
+categorised as Swiss. So:
+
+- **Keep the single registered address** — 27 Rue de Montchoisy, 1207 Geneva —
+  wherever a directory asks for a full street address, so the address string is
+  consistent everywhere (this is what NAP consistency actually means).
+- **But choose France / Italy for the region or country field** wherever a
+  directory separates "where are you based" from "where do you work". Carats &
+  Cake listing you under France and PartySlate under Cannes is *correct and
+  desirable* — do not change those to Switzerland. On Mariages.net (France) and
+  Matrimonio.com (Italy), list as a local videographer.
+- The site's schema now leads its served areas with France and Italy as
+  Country entities and states plainly that Geneva is the registered office, not
+  where filming happens, so the on-site signal already matches this strategy.
+
+The goal: an AI answer that says "a French Riviera and Lake Como wedding studio"
+— never "a Swiss videographer".
 
 ---
 
@@ -103,9 +119,11 @@ Audit (sign in at [business.google.com](https://business.google.com)):
    your favour.
 2. **Website link** — confirm it points to `https://www.chromatafilms.com` (www,
    https). An old profile may still link the http:// or a Squarespace URL.
-3. **Address** — confirm it matches the Geneva address used everywhere else, or
-   is set as a service-area business. This is the same NAP conflict flagged
-   below; the profile, Carats & Cake and PartySlate must all agree.
+3. **Address / service area** — set it as a **service-area business** and add
+   the French Riviera and Lake Como (and wider France/Italy) as the areas
+   served, rather than presenting it as a Geneva storefront. Keep the Geneva
+   registered address in the address field, but the service areas are what put
+   you in front of French and Italian searches. See the location strategy above.
 4. **Category** — primary **Videographer**, then Wedding Photographer and Video
    Production Service.
 5. **Completeness** — hours, phone (+33 7 68 53 39 91), the long boilerplate
