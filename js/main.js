@@ -809,8 +809,12 @@
         body: new FormData(form),
       })
         .then((r) => r.json().catch(() => ({})).then((d) => ({ ok: r.ok, d })))
-        .then(({ ok }) => {
-          if (!ok) throw new Error("send failed");
+        .then(({ ok, d }) => {
+          // FormSubmit answers HTTP 200 even when it rejects (e.g. the form is
+          // not yet activated), signalling the real outcome in `success` — a
+          // string "true"/"false" or a boolean. Trust that field, not the status.
+          const sent = ok && d && (d.success === true || d.success === "true");
+          if (!sent) { const e = new Error("send failed"); e.info = d; throw e; }
           form.reset();
           form.querySelectorAll("[data-datepick] .datepick__label").forEach((l) => { l.textContent = "Select a date"; });
           form.querySelectorAll("[data-datepick] .datepick__toggle").forEach((t) => { t.dataset.empty = "true"; });
