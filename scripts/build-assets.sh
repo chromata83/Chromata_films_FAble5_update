@@ -335,6 +335,10 @@ mkdir -p "$OUT/img/real-weddings"
 RW_HEADER_SRC="C:/Users/kev1l/Downloads/Courtney_Ryan_Highlight_film.mp4_snapshot_00.15.016cfgh.png"
 [ -f "$RW_HEADER_SRC" ] && jpg "$RW_HEADER_SRC" "$OUT/img/real-weddings/real-weddings-header.jpg" 2400 || [ -f "$OUT/img/real-weddings/real-weddings-header.jpg" ]
 
+# ---------- private-event-videographer header (Hannah & Lucas highlight-film still) ----------
+mkdir -p "$OUT/img/private-events"
+jpg "$PUB/the studio_illustrations/Hannah & Lucas - Wedding Film Highlight.00_00_42_08.Still003.jpg" "$OUT/img/private-events/private-events-header.jpg" 2000
+
 # ---------- jasmiina-tuukka journal-article gallery (Villa Balbiano, by Les Secrets d'Audrey) ----------
 i=0
 find "$PUB/jaasmina tuukka rask" -maxdepth 1 -name '*.jpg' | sort | while read -r f; do
@@ -402,13 +406,21 @@ cp "$PUB/planner_logos/images (4).jpg"                                      "$OU
 cp "$PUB/planner_logos/images (5).jpg"                                      "$OUT/img/planner-logos/planner-05.jpg"
 cp "$PUB/planner_logos/1631307868847.jpg"                                   "$OUT/img/planner-logos/planner-lg.jpg"
 cp "$PUB/planner_logos/partner_lgpelite.webp"                               "$OUT/img/planner-logos/lgp-elite.webp"
+cp "$PUB/planner_logos/sacks productions.png"                                "$OUT/img/planner-logos/sacks-productions.png"
 
 # ---------- videos: keyframe-dense scrub encodes ----------
-vid () { # src slug
+# Mobile encode is intentionally small (960 wide, GOP 8) because the 3:1 band
+# films only ever show ~33vh tall, so upscaling is minor. The optional 3rd/4th/
+# 5th args (mobile width / GOP / CRF) let a full-bleed hero opt into a sharper,
+# denser-keyframe encode: on portrait phones the hero covers 100vh, so a 2.33:1
+# clip is scaled by its HEIGHT and upscales ~6x — it needs more resolution, and
+# a tighter GOP so the bigger frames still seek cheaply while scroll-scrubbing.
+vid () { # src slug [mobile_w=960] [mobile_gop=8] [mobile_crf=26]
+  local mw="${3:-960}" mg="${4:-8}" mc="${5:-26}"
   $FF -i "$1" -an -vf "scale='min(1920,iw)':-2" -c:v libx264 -profile:v high -pix_fmt yuv420p -g 8 -keyint_min 8 -sc_threshold 0 -crf 23 -preset slow -movflags +faststart "$OUT/video/$2.mp4"
-  $FF -i "$1" -an -vf "scale='min(960,iw)':-2"  -c:v libx264 -profile:v main -pix_fmt yuv420p -g 8 -keyint_min 8 -sc_threshold 0 -crf 26 -preset slow -movflags +faststart "$OUT/video/$2-mobile.mp4"
+  $FF -i "$1" -an -vf "scale='min($mw,iw)':-2"  -c:v libx264 -profile:v main -pix_fmt yuv420p -g "$mg" -keyint_min "$mg" -sc_threshold 0 -crf "$mc" -preset slow -movflags +faststart "$OUT/video/$2-mobile.mp4"
 }
-vid "$PUB/BG_GASP_HEADER.mp4" "hero"
+vid "$PUB/BG_GASP_HEADER.mp4" "hero" 1440 4 22
 vid "$PUB/BG_GASP.mp4"     "reel"
 vid "$PUB/BG_GASP (2).mp4" "film-night"
 vid "$PUB/BG_GASP (3).mp4" "contact"

@@ -427,7 +427,10 @@
       // mid-screen and holds there until the whole clip has scrubbed through
       ScrollTrigger.create({
         trigger: section, start: section.dataset.pinStart || "top top", end: pinLength, pin: true,
-        scrub: isMobile ? 0.5 : true,
+        // tighter mobile scrub (0.3 vs the band's 0.5) so a full-height pinned
+        // film tracks the finger instead of trailing behind it; the denser
+        // keyframe encode keeps the extra seeks from re-introducing jitter
+        scrub: isMobile ? 0.3 : true,
         anticipatePin: 1,
         onUpdate: (self) => { state.target = self.progress; },
         onToggle,
@@ -598,11 +601,9 @@
   }
 
   /* ---------------- Lazy embeds (Vimeo bg / YouTube trailers) ---------------- */
-  // These are third-party embeds (YouTube / Vimeo), so they only load once the
-  // visitor has granted "marketing" consent. Until then the frame is held and
-  // shows its container background; granting consent later loads it (see the
-  // consent block below). window.chromataConsent is set before any IO callback
-  // fires, since the consent code runs later in this same synchronous pass.
+  // Third-party embeds (YouTube / Vimeo) load automatically once they scroll
+  // near the viewport, so the full site experience (films, reels) plays
+  // without requiring an extra consent step.
   const lazyFrames = document.querySelectorAll("iframe[data-lazy-src]");
   if (lazyFrames.length) {
     const io = new IntersectionObserver((entries) => {
@@ -610,8 +611,7 @@
         if (!en.isIntersecting) return;
         const f = en.target;
         io.unobserve(f);
-        if (window.chromataConsent && window.chromataConsent.marketing) f.src = f.dataset.lazySrc;
-        else f.setAttribute("data-consent-hold", "");
+        f.src = f.dataset.lazySrc;
       });
     }, { rootMargin: "60%" });
     lazyFrames.forEach((f) => io.observe(f));
@@ -835,22 +835,14 @@
   });
 
   /* ---------------- Cookie / privacy consent (EU) ----------------
-     Shown once on first visit; the choice is stored in localStorage. Marketing
-     consent gates the YouTube/Vimeo embeds (loaded lazily elsewhere): until it
-     is granted, [data-lazy-src] iframes are held back. */
+     Shown once on first visit; the choice is stored in localStorage. Films
+     and images always load automatically for the full site experience —
+     this only covers optional analytics cookies. */
   const CONSENT_KEY = "cf-consent-v1";
   const readConsent = () => { try { return JSON.parse(localStorage.getItem(CONSENT_KEY) || "null"); } catch (_) { return null; } };
   window.chromataConsent = readConsent();
 
-  const applyConsent = (c) => {
-    window.chromataConsent = c;
-    if (c && c.marketing) {
-      document.querySelectorAll("iframe[data-lazy-src][data-consent-hold]").forEach((f) => {
-        f.removeAttribute("data-consent-hold");
-        f.src = f.dataset.lazySrc;
-      });
-    }
-  };
+  const applyConsent = (c) => { window.chromataConsent = c; };
 
   const saveConsent = (c) => {
     c.ts = Date.now();
@@ -865,11 +857,10 @@
     banner.setAttribute("aria-label", "Privacy and cookie preferences");
     banner.innerHTML =
       `<div class="cf-consent__title">Your privacy</div>` +
-      `<p>We use essential cookies to run this site, and — with your consent — cookies from embedded films (YouTube, Vimeo) and anonymous analytics. You can choose what to allow, in line with EU GDPR. See our <a href="privacy.html">privacy notice</a>.</p>` +
+      `<p>We use essential cookies to run this site, and — with your consent — anonymous analytics. You can choose what to allow, in line with EU GDPR. See our <a href="privacy.html">privacy notice</a>.</p>` +
       `<div class="cf-consent__opts" hidden>` +
         `<label class="cf-consent__opt"><input type="checkbox" checked disabled><span><b>Essential</b><span>Required for the site to work. Always on.</span></span></label>` +
         `<label class="cf-consent__opt"><input type="checkbox" data-cat="analytics"><span><b>Analytics</b><span>Anonymous stats to help us improve.</span></span></label>` +
-        `<label class="cf-consent__opt"><input type="checkbox" data-cat="marketing"><span><b>Embedded media</b><span>Loads films from YouTube and Vimeo.</span></span></label>` +
       `</div>` +
       `<div class="cf-consent__row">` +
         `<button type="button" class="btn btn--coral" data-consent="all">Accept all</button>` +
@@ -892,13 +883,12 @@
         b.dataset.consent = opts.hidden ? "prefs" : "save";
         return;
       }
-      if (kind === "all") { saveConsent({ essential: true, analytics: true, marketing: true }); return dismiss(); }
-      if (kind === "essential") { saveConsent({ essential: true, analytics: false, marketing: false }); return dismiss(); }
+      if (kind === "all") { saveConsent({ essential: true, analytics: true }); return dismiss(); }
+      if (kind === "essential") { saveConsent({ essential: true, analytics: false }); return dismiss(); }
       if (kind === "save") {
         saveConsent({
           essential: true,
           analytics: banner.querySelector('[data-cat=analytics]').checked,
-          marketing: banner.querySelector('[data-cat=marketing]').checked,
         });
         return dismiss();
       }

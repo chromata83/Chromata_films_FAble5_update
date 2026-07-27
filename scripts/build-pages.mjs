@@ -7,7 +7,7 @@ const ADDRESS = "27 Rue de Montchoisy, 1207 Geneva, Switzerland";
 const PHONE = "+33 7 68 53 39 91";
 const PHONE_E164 = "+33768533991";
 // Delivery, stated once and reused everywhere so the site never contradicts itself.
-const DELIVERY = "The first films arrive from around four weeks after the wedding. A short highlight reel cut for Instagram can be turned around within a couple of days when the schedule allows it.";
+const DELIVERY = "Films typically arrive four to eight weeks after the wedding, depending on the season's workload. Where a collection includes an Instagram reel cut, that usually comes together within a few days.";
 
 /* Independent press features — real, linkable third-party coverage. These are
    the citations that matter to answer engines, because they are not us. */
@@ -104,9 +104,15 @@ const REVIEWS = [
     role: "Newlyweds",
     body: "You and your entire team were amazing — you made me feel so comfortable and made the whole experience even more fun and special. Thank you from the bottom of my heart for your talent, your kindness, and your wonderful spirit.",
   },
+  {
+    author: "Sacks Production",
+    authorType: "Organization",
+    role: "L.A. Wedding Planner",
+    body: "I wholeheartedly recommend Chromata Films. Kevin and his team consistently impress with their talent, professionalism, and genuine kindness. They don't just record moments — they capture the heart and soul of every event, creating beautiful, emotional films that clients treasure for years.",
+  },
 ].map((r) => ({
   "@type": "Review",
-  author: { "@type": "Person", name: r.author },
+  author: { "@type": r.authorType || "Person", name: r.author },
   reviewRating: { "@type": "Rating", ratingValue: 5, bestRating: 5 },
   reviewBody: r.body,
   itemReviewed: { "@id": BIZ_ID },
@@ -391,7 +397,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=52" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=54" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -415,7 +421,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=35" defer></script>
+<script src="js/main.js?v=37" defer></script>
 </body>
 </html>
 `;
@@ -850,7 +856,7 @@ pages["the-studio.html"] = shell({
     significantLink: [`${SITE_URL}/real-weddings.html`, `${SITE_URL}/contact.html`],
   }],
   title: "The Studio — Chromata Films | Award-Winning Wedding Cinematography Team",
-  description: "Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stephane Maurin and Michael Bod — Hollywood VFX pedigree in service of your wedding film.",
+  description: "Meet the Chromata Films team: Kevin Lopez, Laura Lopez, Stephane Maurin and Michael Bode — Hollywood VFX pedigree in service of your wedding film.",
   main: `  <section class="film film--header vignette" data-theme="dark" aria-label="The Studio — cinematic header">
     <video src="assets/video/studio-header.mp4" poster="assets/video/studio-header-poster.jpg"
            muted loop playsinline autoplay data-ambient data-preload-track></video>
@@ -904,9 +910,9 @@ pages["the-studio.html"] = shell({
           <p>Licensed aerial cinematographer with permits to fly across international locations including France, Italy, Croatia and the French Riviera. Stephane's FPV work threads through villas, over coastlines and into ballrooms ... the shots that make audiences ask "how?"</p>
         </article>
         <article class="team__card">
-          <figure class="portrait mat img-reveal"><img src="assets/img/studio/michael.jpg" alt="Michael Bod — 16mm film and portrait expert" loading="lazy"></figure>
+          <figure class="portrait mat img-reveal"><img src="assets/img/studio/michael.jpg" alt="Michael Bode — 16mm film and portrait expert" loading="lazy"></figure>
           <span class="role">16mm Film · Portraiture</span>
-          <h3>Michael Bod</h3>
+          <h3>Michael Bode</h3>
           <p>Our 16mm film and portrait expert. Michael shoots true analog motion picture film ... grain, halation and all ... giving Chromata couples the option of a wedding film that looks and feels like it was pulled from a cinema archive, alongside portrait work with a painter's patience.</p>
         </article>
       </div>
@@ -1006,7 +1012,7 @@ const posts = [
       "The numbers back up what we're seeing on set. Pinterest's 2025 Wedding Trends Report found searches for \"film wedding photos\" up 2,258 percent year over year, and The Knot's 2025 wedding-video trend coverage named Super 8, blended with digital footage, as one of the year's defining looks. Kodak, meanwhile, reported film stock sales rising roughly 20 percent in 2024 and released a new Super 8 camera that same year ... its first major update to the format in more than three decades.",
       "Grain and warmth are only part of it. Shooting on film removes the infinite-takes safety net of digital: there is no monitor to check mid-scene, no instant replay, just a fixed number of minutes on a roll and a commitment to the moment as it actually happens. For a generation that has already brought disposable cameras back to the reception table, and that reaches for the soft, imperfect look of 90s and 2000s home movies over anything hyper-polished, that constraint feels less like a limitation and more like the entire point.",
       "It is also genuinely rare. A standard 400-foot roll of 16mm holds around eleven minutes of footage at 24 frames per second, must be processed and scanned by a specialist lab in the days after the wedding, and captures no audio on its own ... every roll is a decision, not a default. Very few working wedding videographers own the cameras, know how to load them correctly, or have a lab relationship that can turn a wedding weekend around in time for the final edit. It sits closer to cinematography school than modern content creation.",
-      "It's a discipline we've built into the studio rather than treated as a novelty. Michael Bod, part of the Chromata Films team, is our dedicated 16mm film and portrait specialist ... one of the only wedding filmmakers we know of who shoots true analog motion-picture film on real weddings, grain, halation and all, rather than a digital \"film-look\" preset applied after the fact. It sits alongside our standard cinema coverage, not instead of it: Super 8 and 16mm can't replace a full wedding film on their own (no built-in sound, only a handful of minutes per roll), but as a companion reel, it gives a day a texture that no amount of 4K can fake.",
+      "It's a discipline we've built into the studio rather than treated as a novelty. Michael Bode, part of the Chromata Films team, is our dedicated 16mm film and portrait specialist ... one of the only wedding filmmakers we know of who shoots true analog motion-picture film on real weddings, grain, halation and all, rather than a digital \"film-look\" preset applied after the fact. It sits alongside our standard cinema coverage, not instead of it: Super 8 and 16mm can't replace a full wedding film on their own (no built-in sound, only a handful of minutes per roll), but as a companion reel, it gives a day a texture that no amount of 4K can fake.",
       "Below are a few frames from recent rolls, shown exactly as they come back from the lab ... unretouched, ungraded, straight off the film.",
       "If you're planning a wedding and want a reel that will look and feel the same in thirty years as it does today, ask us about shooting on film. It won't be for every couple, or every moment of the day ... but for the right few minutes, nothing digital has matched it yet.",
     ],
@@ -2434,6 +2440,7 @@ pages["investment.html"] = shell({
   title: "How Much Does a Luxury Wedding Film Cost? | Investment — Chromata Films",
   description: "Chromata Films collections start at 15,000 USD. What a luxury wedding film actually costs, what drives the number, and what you receive — explained plainly.",
   ogImage: "assets/img/contact/contact-side.jpg",
+  footerCta: false,
   breadcrumb: [
     { name: "Home", file: "" },
     { name: "Investment", file: "investment.html" },
@@ -2447,13 +2454,13 @@ pages["investment.html"] = shell({
       ["Why don't you publish a price list?",
        "Because a price list would be wrong for almost everyone. A single-venue Saturday and a five-day celebration across two countries are entirely different productions, and quoting them from the same table means one couple overpays and the other gets a crew that is too small. Every quote is built from your actual schedule."],
       ["What is included in a Chromata Films collection?",
-       "A feature-length film of the wedding, a shorter highlight film, and a teaser you can share within days. Multi-day weddings usually receive a film per major event as well. Everything is colour-graded to cinema standards, and you receive the films in a format you can keep and play for decades."],
+       "A feature-length film of the wedding, a shorter highlight film, and a teaser you can share within days. Multi-day weddings can also receive a film per major event as well, as an optional add-on. Everything is colour-graded to cinema standards, and you receive the films in a format you can keep and play for decades."],
       ["Do you charge extra for travel?",
-       "Travel and accommodation are quoted openly as a separate line rather than hidden inside the collection price. Being based between the French Riviera and Geneva means European travel is usually modest; work in the United States or further afield carries real cost and we say so up front."],
+       "No. Travel and accommodation are always included in the quote we give you, not added afterward as a surprise. Wherever the wedding takes place ... on the French Riviera, at Lake Como, or further afield in the United States ... the number we send you is the number you pay."],
       ["Do you require a deposit?",
        "Yes ... a date is only held once a signed agreement and a retainer are in place. The balance is scheduled across the run-up to the wedding rather than falling due all at once."],
       ["How long until we receive our wedding film?",
-       `${DELIVERY} Multi-day weddings with several films take longer than a single-day celebration, and we give you a delivery date in writing rather than a vague promise.`],
+       `${DELIVERY} Multi-day weddings with several films tend to sit toward the longer end of that window. It is always an estimate rather than a fixed date ... every wedding's schedule and workload are different, so we would rather be honest about the range than promise something we can't guarantee.`],
       ["Is a wedding film worth the investment?",
        "It is the only thing from the day that moves and makes sound. The flowers, the food and the venue exist for one evening; photographs freeze it. A film is the only medium that keeps your father's voice at the speech and the way your partner actually laughed. That is the honest case for it — and the reason we would rather you spend well once than economise and regret it."],
     ].map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
@@ -2479,13 +2486,13 @@ pages["investment.html"] = shell({
       </h2>
       <div class="feature__grid" style="margin-top:6vh">
         <div class="prose">
-          <p>Four things, in roughly this order of impact. <strong>Days filmed</strong> ... a welcome dinner, a wedding day and a recovery lunch is three productions, not one. <strong>Crew size</strong> ... when two events run simultaneously, or a ceremony has moments happening in three rooms at once, you need more than one operator. <strong>Travel</strong> ... quoted openly and separately. <strong>Specialist work</strong> ... licensed aerial and FPV flying, or genuine Super 8mm and 16mm analog film alongside the digital cameras.</p>
+          <p>Four things, in roughly this order of impact. <strong>Days filmed</strong> ... a welcome dinner, a wedding day and a recovery lunch is three productions, not one. <strong>Crew size</strong> ... when two events run simultaneously, or a ceremony has moments happening in three rooms at once, you need more than one operator. <strong>Travel</strong> ... always folded into the quote itself, so there is no separate line waiting to surprise you later. <strong>Specialist work</strong> ... licensed aerial and FPV flying, or genuine Super 8mm and 16mm analog film alongside the digital cameras.</p>
           <p>What does not change is the standard of the film itself. There is no version of Chromata Films where you get a lesser edit because the budget was smaller ... we would rather film fewer days properly than spread a crew too thin across a weekend.</p>
         </div>
         <div class="feature__meta">
           <div class="row"><span>Collections from</span><span class="val">15,000 USD</span></div>
           <div class="row"><span>Typical delivery</span><span class="val">Feature film · Highlight · Teaser</span></div>
-          <div class="row"><span>Travel</span><span class="val">Quoted separately, openly</span></div>
+          <div class="row"><span>Travel</span><span class="val">Always included, no surprises</span></div>
           <div class="row"><span>Currencies</span><span class="val">USD · EUR · CHF</span></div>
         </div>
       </div>
@@ -2515,13 +2522,13 @@ pages["investment.html"] = shell({
         <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">Why don't you publish a full price list?</h3>
         <p>Because it would be wrong for almost everyone. A single-venue Saturday and a five-day celebration across two countries are different productions. Quoting both from one table means somebody overpays and somebody else gets a crew that is too small for their day.</p>
         <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">What do we actually receive?</h3>
-        <p>A feature-length film of the wedding, a shorter highlight film, and a teaser you can share within days of the celebration. Multi-day weddings usually receive a film per major event as well. Everything is colour-graded the way a feature would be.</p>
+        <p>A feature-length film of the wedding, a shorter highlight film, and a teaser you can share within days of the celebration. Multi-day weddings can also receive a film per major event as well, as an optional add-on. Everything is colour-graded the way a feature would be.</p>
         <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">Do you charge extra for travel?</h3>
-        <p>Travel and accommodation are a separate, visible line rather than something folded into a headline number. From our base between the French Riviera and Geneva, most of Europe is inexpensive to reach; the United States and long-haul destinations are not, and we say so up front.</p>
+        <p>No. Travel and accommodation are always built into the quote itself, not billed as an extra once you've signed. Wherever the wedding takes place ... from our base between the French Riviera and Geneva, or further afield in the United States ... the number you receive is the number you pay, with no surprises at the end.</p>
         <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">How do we hold our date?</h3>
         <p>A signed agreement and a retainer. The balance is scheduled across the run-up to the wedding rather than landing in one payment. The most requested European dates ... June to September on the Riviera and Lake Como ... are typically taken a year or more ahead.</p>
         <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">How long until we see our film?</h3>
-        <p>${DELIVERY} Multi-day weddings with several films take longer than a single-day celebration. Whatever the schedule, you get a delivery date in writing rather than a vague promise.</p>
+        <p>${DELIVERY} Multi-day weddings with several films tend to sit toward the longer end of that window. We always give you an honest estimate rather than a fixed date ... every wedding's workload is different, so we would rather be upfront about the range.</p>
         <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">Is it worth it?</h3>
         <p>The film is the only thing from the day that moves and makes sound. The flowers last an evening; photographs freeze a moment. A film keeps your father's voice during the speech and the way your partner actually laughed. That is the whole case for it.</p>
       </div>
@@ -2549,6 +2556,7 @@ pages["awards-press.html"] = shell({
   title: "Awards & Press | Vogue, Brides, People — Chromata Films",
   description: "Chromata Films in the press: Vogue, Harper's Bazaar, Brides, People, Over the Moon, Cosmopolitan, WedLuxe and THE WED — and winner of Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards.",
   ogImage: "assets/img/logos/press-bg.png",
+  footerCta: false,
   breadcrumb: [
     { name: "Home", file: "" },
     { name: "Awards & Press", file: "awards-press.html" },
@@ -2617,7 +2625,15 @@ ${PRESS_FEATURES.map((p) => `        <div class="row"><span>${p.publisher}</span
       </h2>
       <div class="prose" style="max-width:46em; margin-top:4vh">
         <p>We are recommended by the planners who run the most demanding celebrations in Europe ... among them Alejandra Poupel, Sacks Productions, Mindy Weiss, House of Kirschner, Palazzo Eventi and The Wedding Planners Monaco.</p>
-        <blockquote style="margin-top:5vh; padding-left:clamp(18px,2vw,32px); border-left:2px solid var(--coral); font-family:var(--font-accent); font-style:italic; font-size:clamp(1.1rem,1.8vw,1.6rem)">"Kevin and his team are truly remarkable. Their vision, creativity, and professionalism consistently exceed expectations, and the results are always outstanding. We always recommend them to every couple we work with."<br><span style="font-family:var(--font-body); font-style:normal; font-size:12px; letter-spacing:0.24em; text-transform:uppercase; color:rgba(37,35,33,0.6); display:block; margin-top:2.5vh">Alejandra Poupel · Wedding Planner</span></blockquote>
+        <img src="assets/img/planner-logos/sacks-productions.png" alt="Sacks Production" loading="lazy" style="width:clamp(120px,16vw,180px); height:auto; margin-top:5vh; display:block" />
+        <blockquote style="margin-top:3vh; padding-left:clamp(18px,2vw,32px); border-left:2px solid var(--coral); font-family:var(--font-accent); font-style:italic; font-size:clamp(1.1rem,1.8vw,1.6rem)">
+          <p style="margin:0 0 1.4em">"It is with great pleasure and genuine enthusiasm that I recommend Chromata Films. Over the years, I have had the privilege of working alongside Kevin and his team on numerous events, and they have consistently impressed me not only with their extraordinary talent, but also with their kindness, professionalism, and dedication to their craft.</p>
+          <p style="margin:0 0 1.4em">What sets Chromata Films apart is their remarkable ability to capture the heart and soul of an event. They don't simply record moments ... they tell a story. Kevin has an incredible gift for seeing the details, emotions, and connections that often go unnoticed, weaving them together into films that allow clients to relive their most cherished memories for years to come.</p>
+          <p style="margin:0 0 1.4em">As a planner, I deeply value creative partners who understand the importance of collaboration, and Kevin and his team are among the very best. They bring a calm and reassuring presence to every event, work seamlessly with fellow vendors, and always place the client's experience at the center of everything they do. Their professionalism is matched only by their warmth and generosity of spirit.</p>
+          <p style="margin:0 0 1.4em">The films they create are beautiful, emotional, and timeless. Every project reflects not only technical excellence, but also a genuine passion for storytelling and a commitment to honoring each client's unique journey.</p>
+          <p style="margin:0">I recommend Chromata Films wholeheartedly and without hesitation. Any client fortunate enough to work with Kevin and his team will receive not only an exceptional film, but also the support of true professionals who care deeply about their work and the people they serve."</p>
+          <span style="font-family:var(--font-body); font-style:normal; font-size:12px; letter-spacing:0.24em; text-transform:uppercase; color:rgba(37,35,33,0.6); display:block; margin-top:2.5vh">Sacks Production · Wedding Planner</span>
+        </blockquote>
       </div>
     </div>
   </section>
@@ -2970,12 +2986,12 @@ const LANDING_PAGES = [
     faq: [
       ["Do you film weddings in the United States?",
        "Yes. We travel to the US for weddings, anniversaries, engagement parties and private events ... recent work includes Russell and Nina Westbrook's anniversary film and an engagement party at the Ritz-Carlton Dallas. Travel is quoted openly as part of the collection."],
-      ["Why hire a European studio for an American wedding?",
-       "Two reasons. If any part of your celebration happens in Europe ... a destination wedding, a European honeymoon film, a welcome party abroad ... a studio based there removes an enormous amount of friction. And if your wedding is entirely in the US, our background is Hollywood visual effects and cinema lighting rather than event videography, which produces a noticeably different film."],
+      ["Why do American couples choose Chromata Films?",
+       "It comes down to vision. Our founders bring a French sensibility to every film ... an eye for elegance and restraint, a taste for what's genuinely beautiful, that is rare to find in American wedding videography. We also keep a crew based in the United States, ready to shoot coast to coast, so you are not paying to fly a full team over from Europe. And because our director spent a decade in Hollywood visual effects ... Star Wars: The Last Jedi, The Great Gatsby, Beauty and the Beast, Avengers: Infinity War ... every frame is built with a blockbuster eye for light and composition. That combination is what gives our films the wow factor couples are hoping for on their wedding day."],
       ["How much does a luxury wedding film cost for US couples?",
-       "Collections start at 15,000 USD. For weddings in the United States, travel and accommodation for the crew are quoted separately and transparently rather than folded into a headline number."],
+       "Collections start at 15,000 USD. For weddings in the United States, travel and accommodation for the crew are quoted as part of that number rather than added afterward as a surprise."],
       ["We are American but marrying in Europe. How does that work?",
-       "This is what we do most. We handle European venue and vendor coordination in local time and local language, scout in person, arrange aerial permissions country by country, and keep you on one point of contact throughout. We work in English and French."],
+       "To be clear, we are the film team, not the wedding planner ... we don't handle venue bookings, vendor contracts or on-the-ground logistics. What we strongly recommend is working with a dedicated wedding planner: navigating venues, vendors, permits and timelines from another country is exactly what they do best, and it makes the whole weekend easier for everyone, including us. If you don't have one yet, just ask ... we've worked with planners across France, Italy and beyond, and are always happy to recommend a few based on your taste, budget and location."],
       ["How far in advance should we book?",
        "The most requested European dates ... June through September on the Riviera and Lake Como ... are typically reserved a year or more ahead. That said, it is always worth asking; schedules change, and we would rather tell you we are free than have you assume we are not."],
     ],
@@ -2985,11 +3001,12 @@ const LANDING_PAGES = [
     h1: "Private Event <em>Films</em>",
     kicker: "— Private & Confidential",
     title: "Wedding & Private Event Videographer | Discreet Luxury Event Films — Chromata Films",
-    description: "Discreet luxury videographer for private events: anniversaries, engagement parties, brand celebrations, hotel buyouts and confidential weddings. Chromata Films. From 15,000 USD.",
+    description: "Discreet luxury videographer for private events: anniversaries, engagement parties, brand celebrations, hotel buyouts and confidential weddings. Chromata Films. From 20,000 USD.",
     summary: "discreet films for private celebrations, anniversaries, brand events, hotel buyouts and confidential weddings",
-    heroImg: "assets/img/mozzafiato/mz-01.jpg",
+    startingCost: 20000,
+    heroImg: "assets/img/private-events/private-events-header.jpg",
     heroAlt: "A private luxury celebration filmed discreetly by Chromata Films",
-    heroSub: ["Private · Confidential · Unpublished", "Collections from 15,000 USD"],
+    heroSub: ["Private · Confidential · Unpublished", "Collections from 20,000 USD"],
     areaServed: ["Europe", "France", "Italy", "Switzerland", "United States", "Worldwide"],
     serviceName: "Private Event Cinematography",
     intro: [
@@ -3020,7 +3037,7 @@ const LANDING_PAGES = [
       ["Can you work alongside a security team?",
        "Yes. We have filmed for public figures and athletes and are used to working with security details, household staff and venue restrictions ... including agreed no-film zones and cameras kept out of specific rooms."],
       ["How much does a private event film cost?",
-       "Collections start at 15,000 USD. Private events vary more widely than weddings ... a single evening with a small crew and a five-day hotel buyout are very different productions ... so every private commission is quoted individually."],
+       "Collections start at 20,000 USD. Private events vary more widely than weddings ... a single evening with a small crew and a five-day hotel buyout are very different productions ... so every private commission is quoted individually."],
       ["Can you sign a non-disclosure agreement?",
        "Yes, routinely. Send us yours or we will provide one. Confidentiality also extends to our crew and to any freelancers brought on for your event."],
     ],
@@ -3282,18 +3299,20 @@ ${faq.map(([q, a]) => `        <h3 style="font-family:var(--font-display); font-
 for (const L of LANDING_PAGES) {
   L.faq.push([
     "How long until we receive our film?",
-    `${DELIVERY} You get a delivery date in writing when you book, not a vague promise.`,
+    `${DELIVERY} It is always an estimate rather than a fixed date ... every wedding's schedule and workload are different, so we would rather be honest about the range than promise something we can't guarantee.`,
   ]);
 }
 
 for (const L of LANDING_PAGES) {
   const url = `${SITE_URL}/${L.file}`;
+  const startingCost = L.startingCost || 15000;
   pages[L.file] = shell({
     page: "landing",
     file: L.file,
     title: L.title,
     description: L.description,
     ogImage: L.heroImg,
+    footerCta: false,
     breadcrumb: [
       { name: "Home", file: "" },
       { name: L.h1.replace(/<[^>]+>/g, ""), file: L.file },
@@ -3311,9 +3330,9 @@ for (const L of LANDING_PAGES) {
           "@type": "Offer",
           priceSpecification: {
             "@type": "PriceSpecification",
-            price: 15000,
+            price: startingCost,
             priceCurrency: "USD",
-            description: "Collections start at 15,000 USD.",
+            description: `Collections start at ${startingCost.toLocaleString()} USD.`,
           },
         },
       },
@@ -3393,7 +3412,7 @@ ${faqBlock(L.faq)}
       <h2 class="display-lg" style="margin-top:3vh">
         <span class="line-mask"><span class="line-inner">Tell us about <em>your day</em></span></span>
       </h2>
-      <p class="body-copy" style="max-width:40em; margin:4vh auto 0">Collections start at 15,000 USD. Send us the date, the place and a sentence about the celebration ... we will come back to you personally.</p>
+      <p class="body-copy" style="max-width:40em; margin:4vh auto 0">Collections start at ${startingCost.toLocaleString()} USD. Send us the date, the place and a sentence about the celebration ... we will come back to you personally.</p>
       <a class="btn btn--coral" href="contact.html" style="margin-top:5vh">Check your date →</a>
     </div>
   </section>`,
