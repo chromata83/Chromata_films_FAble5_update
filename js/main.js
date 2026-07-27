@@ -64,15 +64,14 @@
   const preloader = document.getElementById("preloader");
   const runIntro = () => {
     document.body.classList.add("loaded");
-    const heroLines = document.querySelectorAll(".intro-rise .line-inner");
-    if (!reducedMotion && heroLines.length) {
-      gsap.to(heroLines, { y: 0, rotate: 0, duration: 1.1, ease: "power4.out", stagger: 0.12, delay: 0.15 });
-    } else {
-      gsap.set(heroLines, { y: 0, rotate: 0 });
-    }
-    gsap.to(".intro-fade", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay: reducedMotion ? 0 : 0.45 });
-    const heroMedia = document.querySelector(".intro-scale");
-    if (heroMedia && !reducedMotion) gsap.fromTo(heroMedia, { scale: 1.12 }, { scale: 1, duration: 2.4, ease: "power2.out" });
+    // Hero is static on load — no entrance animations. The header video used to
+    // scale from 1.12 → 1 (the "zoom out" on load) and the title/subtitle rose
+    // and faded in; all removed per request. The only motion on the hero is now
+    // the GASP scroll-scrub, driven by scrolling. Snap everything to its resting
+    // state immediately.
+    gsap.set(".intro-rise .line-inner", { y: 0, rotate: 0 });
+    gsap.set(".intro-fade", { opacity: 1, y: 0 });
+    gsap.set(".intro-scale", { scale: 1 });
     armScrollCue();
     ScrollTrigger.refresh();
   };

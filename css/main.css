@@ -273,12 +273,23 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 @media (max-width: 768px) {
   .film--scope { height: 100vw; }
 }
-.film--header .hero__title--brand { font-size: clamp(3rem, 15vw, 11rem); line-height: 0.92; position: relative; width: fit-content; margin-inline: auto; }
-/* 30%-white plate behind the CHROMATA FILMS wordmark so the coral reads over
-   bright video frames. It lives inside .hero__head, whose opacity the scrub
-   animates, so the plate fades out with the title on scroll-down and returns
-   on scroll-up for free. */
-.film--header .hero__title--brand::before { content: ""; position: absolute; inset: -0.16em -0.42em 0.4em; background: rgba(255,255,255,0.4); z-index: -1; border-radius: 4px; }
+/* 13vw (not 15) so the wordmark + its plate always fit inside .hero__head's
+   88vw content box: "CHROMATA" is 5.948em wide and the plate adds 0.44em each
+   side (6.83em total), so at 13vw that is ~89vw — it fits with margin at every
+   width instead of clamping/clipping. Large desktops still reach the 11rem cap. */
+.film--header .hero__title--brand { font-size: clamp(2.7rem, 13vw, 11rem); line-height: 0.92; position: relative; width: fit-content; margin-inline: auto; }
+/* Neutralise the global .line-mask descender padding/margin for this all-caps
+   wordmark (no descenders to clip) so the title's box tightly and predictably
+   wraps the text at every size — otherwise the -0.18em bottom margin shrinks
+   the box up into "FILMS" and the plate can't cover it. */
+.film--header .hero__title--brand .line-mask { padding: 0; margin-bottom: 0; }
+/* 40%-white plate behind the CHROMATA FILMS wordmark so it reads over bright
+   video frames. Symmetric em bleed on every side (insets scale with the clamped
+   font-size), so it ALWAYS fully covers the wordmark plus a little more at any
+   viewport width, desktop or mobile. Lives inside .hero__head, whose opacity the
+   scrub animates, so it fades out with the title on scroll-down and returns on
+   scroll-up for free. */
+.film--header .hero__title--brand::before { content: ""; position: absolute; inset: -0.12em -0.44em; background: rgba(255,255,255,0.4); z-index: -1; border-radius: 4px; }
 .film--header .hero__title--page { font-size: clamp(1.1rem, 4.5vw, 5.6rem); }
 /* landing hero rolls back to full-bleed on mobile (phones AND portrait
    tablets); other headers keep the 21:9 band */
