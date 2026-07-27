@@ -278,7 +278,7 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
    bright video frames. It lives inside .hero__head, whose opacity the scrub
    animates, so the plate fades out with the title on scroll-down and returns
    on scroll-up for free. */
-.film--header .hero__title--brand::before { content: ""; position: absolute; inset: -0.16em -0.42em 0.2em; background: rgba(255,255,255,0.3); z-index: -1; border-radius: 4px; }
+.film--header .hero__title--brand::before { content: ""; position: absolute; inset: -0.16em -0.42em 0.4em; background: rgba(255,255,255,0.4); z-index: -1; border-radius: 4px; }
 .film--header .hero__title--page { font-size: clamp(1.1rem, 4.5vw, 5.6rem); }
 /* landing hero rolls back to full-bleed on mobile (phones AND portrait
    tablets); other headers keep the 21:9 band */
