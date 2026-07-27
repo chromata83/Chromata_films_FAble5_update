@@ -380,14 +380,11 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .duet__left { display: flex; flex-direction: column; gap: 4.5vh; }
 .duet__video { position: relative; z-index: 1; aspect-ratio: 16/9; background: #000; border-radius: 4px; overflow: hidden; }
 .duet__video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-/* cover photo bleeds into the bottom-right corner of the section, 2x its
-   former size (176% vs the old 88%; justify-self:end keeps its right edge
-   flush with the column's edge as it grows past the track into the video
-   column) and reaches all the way to the section's true bottom edge — the
-   negative margin exactly cancels .duet's own 11vh bottom padding so the
-   image touches the next section with no gap, clipped only by .duet's
-   overflow:hidden at the section boundary. */
-.duet__cover { position: relative; z-index: 3; width: 176%; max-width: 1100px; justify-self: end; align-self: end; margin: 0 0 -11vh; filter: drop-shadow(0 30px 60px rgba(37,35,33,0.25)); }
+/* DESKTOP: modest cover photo settled into the bottom-right corner of the
+   section, touching the next section (negative margin cancels .duet's 11vh
+   bottom padding). The big 2x bleeding treatment is MOBILE-only (see the
+   max-width:900px block). */
+.duet__cover { position: relative; z-index: 3; width: 88%; max-width: 620px; justify-self: end; align-self: end; margin: 0 0 -11vh; filter: drop-shadow(0 30px 60px rgba(37,35,33,0.25)); }
 .duet__cover img { width: 100%; height: auto; border-radius: 4px; }
 .duet__side { position: relative; z-index: 2; max-width: 30em; display: flex; flex-direction: column; gap: 2.6vh; align-items: flex-start; }
 
@@ -423,14 +420,17 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .manifesto .kicker { color: var(--gold-deep); }
 .manifesto .kicker::before { background: var(--coral); }
 .manifesto .text-link::after { background: var(--coral); }
-/* upside-down cutout, flush into the top-right corner, 2x its former size
-   (clamp values doubled: 240->480/36vw->72vw/600->1200) */
-.manifesto__cutout { position: absolute; top: 0; right: 0; width: clamp(480px, 72vw, 1200px); transform: rotate(180deg); pointer-events: none; z-index: 1; filter: drop-shadow(0 20px 40px rgba(37,35,33,0.18)); }
+/* DESKTOP: upside-down cutout bleeding off the top-right corner. The big 2x
+   corner-flush treatment is MOBILE-only (see the max-width:760px block). */
+.manifesto__cutout { position: absolute; top: -8%; right: -5%; width: clamp(240px, 36vw, 600px); transform: rotate(180deg); pointer-events: none; z-index: 1; filter: drop-shadow(0 20px 40px rgba(37,35,33,0.18)); }
 @media (max-width: 760px) {
-  /* the 240px floor is ~60% of a phone screen and sits right behind the
-     kicker/title, visually drowning the text — shrink it, fade it, and
-     drop it lower so the title reads clearly in front */
-  .manifesto__cutout { width: 34vw; max-width: 160px; top: 9vh; opacity: 0.5; z-index: 0; }
+  /* MOBILE: cutout doubled (34vw->68vw / 160px->320px cap) and pulled flush
+     into the true top-right corner. The section gets extra top padding (below)
+     so the kicker/title start under the image and stay readable. */
+  .manifesto__cutout { width: 62vw; max-width: 300px; top: 0; right: 0; opacity: 1; z-index: 1; }
+  /* the cutout is a tall 2:3 image, so its bottom sits ~93vw down; push the
+     kicker/title below that so they never fall behind the busy collage */
+  .manifesto.pad-section { padding-top: 84vw; }
 }
 .manifesto .container { position: relative; z-index: 2; }
 /* rotated "top 15" badge filling the empty top-right of the trusted section,
@@ -451,9 +451,7 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
   .trusted .shine__copy .display-lg em { color: #fff; }
 }
 .manifesto__statement { max-width: 15em; }
-/* left-aligned (was flex-end/right) so the paragraph stays clear of the
-   now-2x cutout, which owns the whole top-right corner */
-.manifesto__row { display: flex; justify-content: flex-start; margin-top: 7vh; }
+.manifesto__row { display: flex; justify-content: flex-end; margin-top: 7vh; }
 .manifesto__row-inner { max-width: 34em; display: flex; flex-direction: column; gap: 3.5vh; align-items: flex-start; }
 
 .marquee { overflow: hidden; padding: 6vh 0; background: #FFFFFF; }
@@ -965,17 +963,20 @@ form .form-note { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.04
   .contact-side { position: static; }
   .meta-pivot__frame { clip-path: inset(14vh 9vw round 4px); }
   .duet__stage { grid-template-columns: 1fr; }
-  .duet__cover { width: 100%; margin: 0; }
+  /* MOBILE: 2x bleeding cover flush to the section's bottom-right corner,
+     touching the next section (justify-self:end inherited from the base rule
+     pushes it right; 180% bleeds off the left; -11vh cancels .duet's bottom
+     padding so it meets the next section, clipped by .duet's overflow:hidden). */
+  .duet__cover { width: 140%; max-width: none; justify-self: end; align-self: end; margin: 0 0 -11vh; }
   .hit { min-height: unset; padding: 12vh var(--pad-x) 14vh; display: block; }
   /* Desktop's clamp floor (3.4rem = 54.4px) is wider than "differently" fits
-     inside a phone's content box (376.8px measured vs. 350px available at
-     390px wide, per the site's padding), so the word was silently clipped by
-     the section's overflow:hidden. 11.5vw keeps every word inside the content
-     box down to ~320px-wide phones (checked against the same measurement);
-     overflow-wrap is a defensive fallback in case an even narrower device
-     still can't fit it, so it wraps instead of clipping invisibly. */
-  .hit__title { margin: 8vh 0; font-size: clamp(2.2rem, 11.5vw, 4.5rem); overflow-wrap: break-word; }
-  .hit__videos--left, .hit__videos--right { position: relative; inset: auto; width: min(70vw, 340px); }
+     inside a phone's content box, so it was clipped by the section's
+     overflow:hidden. 10vw keeps every word well inside the content box (with
+     a comfortable margin) down to ~320px-wide phones; overflow-wrap is a
+     defensive fallback so an even narrower device wraps instead of clipping. */
+  .hit__title { margin: 8vh 0; font-size: clamp(1.9rem, 10vw, 3.8rem); overflow-wrap: break-word; }
+  /* reels enlarged (~2x): near-full-width vertical films instead of min(70vw,340px) */
+  .hit__videos--left, .hit__videos--right { position: relative; inset: auto; width: min(90vw, 640px); }
   .hit__videos--left { margin-right: auto; }
   .hit__videos--right { margin-left: auto; }
   .carousel__track figure { height: 38vh; }
