@@ -373,6 +373,17 @@
     window.addEventListener("touchstart", () => { if (!primed) prime(); }, { once: true, passive: true });
     const pinLength = (isMobile && section.dataset.pinMobile) ? section.dataset.pinMobile
       : (isMobile ? "+=250%" : (section.dataset.pin || "+=400%"));
+    // A band can pin from a different edge on phones (the studio film pins at
+    // "center center" on desktop, but from the top on mobile where it fills the
+    // whole viewport) — data-pin-start-mobile overrides data-pin-start there.
+    const pinStart = (isMobile && section.dataset.pinStartMobile) ? section.dataset.pinStartMobile
+      : (section.dataset.pinStart || "top top");
+    // Fraction of the pin over which the clip plays out. Mobile seeks trail the
+    // scroll (numeric scrub + lerp + frame gating), so a section can ask for the
+    // clip to finish early and hold its last frame through the remaining pin —
+    // that way the film is always done before it unpins, with no leftover frames
+    // playing out as the next section arrives. Desktop tracks 1:1 and needs none.
+    const tail = (isMobile && parseFloat(section.dataset.tailMobile)) || 1;
     const state = { current: 0, target: 0 };
     let raf = null;
     // Mobile decoders can't repaint a fresh seek every frame; issuing sub-frame
@@ -388,12 +399,13 @@
     let canSeek = true;
     const reopen = () => { canSeek = true; };
     if (gateFrames && !hasRVFC) video.addEventListener("seeked", reopen);
+    const playhead = (p) => (tail < 1 ? Math.min(1, p / tail) : p) * video.duration;
     const loop = () => {
       state.current += (state.target - state.current) * followLerp;
       if (video.duration && video.readyState >= 2 && !video.seeking && canSeek) {
         // Safari queues seeks much slower than Chromium — issuing a new one
         // while the last is still in flight piles them up and stalls painting.
-        const t = state.current * video.duration;
+        const t = playhead(state.current);
         if (Math.abs(video.currentTime - t) > seekEps) {
           video.currentTime = t;
           if (gateFrames) {
@@ -407,7 +419,18 @@
     };
     const onToggle = (self) => {
       if (self.isActive && raf === null) raf = requestAnimationFrame(loop);
-      else if (!self.isActive && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+      else if (!self.isActive && raf !== null) {
+        cancelAnimationFrame(raf); raf = null;
+        // The loop dies the moment the trigger releases, so a seek still
+        // trailing the scroll (mobile lerps behind by design) would freeze the
+        // clip mid-play and leave its last frames unplayed. Land on the real
+        // scroll position — 1 leaving downwards, 0 leaving upwards — first.
+        state.current = state.target = self.progress;
+        if (video.duration && video.readyState >= 2) {
+          try { video.currentTime = playhead(state.current); } catch (_) {}
+        }
+        paintChapters(state.current);
+      }
     };
     if (section.hasAttribute("data-film-nopin")) {
       // short band (e.g. 3:1): scrub as the section travels through the
@@ -425,7 +448,7 @@
       // film) pins via data-pin-start="center center" so it locks once it sits
       // mid-screen and holds there until the whole clip has scrubbed through
       ScrollTrigger.create({
-        trigger: section, start: section.dataset.pinStart || "top top", end: pinLength, pin: true,
+        trigger: section, start: pinStart, end: pinLength, pin: true,
         // tighter mobile scrub (0.3 vs the band's 0.5) so a full-height pinned
         // film tracks the finger instead of trailing behind it; the denser
         // keyframe encode keeps the extra seeks from re-introducing jitter

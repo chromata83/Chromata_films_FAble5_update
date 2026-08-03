@@ -270,8 +270,22 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
    the clip scrubs; on phones it goes full-bleed square instead, a 2.33:1
    slice being far too thin to read at that width */
 .film--scope { height: calc(100vw * 9 / 21); }
+/* Phones: the section becomes a full-viewport stage instead of a thin band, so
+   once it pins nothing else (the blockbusters posters above, "beyond the frame"
+   below) is on screen while the clip scrubs. The clip itself keeps its square
+   crop — a 2.33:1 slice is far too thin to read at phone width, and covering a
+   9:19.5 viewport would crop the frame to a keyhole — and is centred, so it
+   rides up to mid-screen holding its first frame before the pin takes over. */
 @media (max-width: 768px) {
-  .film--scope { height: 100vw; }
+  .film--scope { height: 100vh; height: 100dvh; }
+  /* .film.film--scope, not .film--scope: the base `.film video` rule below has
+     the same one-class specificity and comes later in the file, so it would
+     otherwise win the height back. */
+  .film.film--scope video, .film.film--scope .film__poster {
+    /* min(): a square band in portrait, capped to the stage in landscape so the
+       clip is never taller than the section it sits in */
+    top: 50%; bottom: auto; height: min(100vw, 100dvh); transform: translateY(-50%);
+  }
 }
 /* 13vw (not 15) so the wordmark + its plate always fit inside .hero__head's
    88vw content box: "CHROMATA" is 5.948em wide and the plate adds 0.44em each

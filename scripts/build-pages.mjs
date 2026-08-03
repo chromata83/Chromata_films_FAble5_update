@@ -397,7 +397,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=58" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=59" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -421,7 +421,7 @@ ${FOOTER(footerCta)}
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="js/main.js?v=38" defer></script>
+<script src="js/main.js?v=39" defer></script>
 </body>
 </html>
 `;
@@ -963,9 +963,12 @@ pages["the-studio.html"] = shell({
   </section>
 
   <!-- GASP scroll-scrubbed film band between the blockbusters and "beyond the frame".
-       21:9 on desktop, full-bleed square on phones; pins once it reaches
-       mid-screen and holds the screen until the whole clip has played out. -->
-  <section class="film film--band film--scope vignette" data-scrub data-pin-start="center center" data-pin="+=350%" data-theme="dark" data-section aria-label="Chromata Films — cinematic film">
+       Desktop: 21:9 band that pins once its centre reaches mid-screen.
+       Phones: the section becomes a full-viewport stage (see .film--scope in the
+       CSS) so the blockbusters section is fully off-screen before anything plays
+       — it pins from the top, the square clip sits dead-centre holding its first
+       frame, and data-tail-mobile lands the last frame before the pin releases. -->
+  <section class="film film--band film--scope vignette" data-scrub data-pin-start="center center" data-pin-start-mobile="top top" data-pin="+=350%" data-pin-mobile="+=300%" data-tail-mobile="0.9" data-theme="dark" data-section aria-label="Chromata Films — cinematic film">
     <video data-src="assets/video/studio-film.mp4" data-src-mobile="assets/video/studio-film-mobile.mp4"
            poster="assets/video/studio-film-poster.jpg" muted playsinline preload="metadata"></video>
     <div class="film__shade"></div>
