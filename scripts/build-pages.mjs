@@ -290,7 +290,11 @@ const pageHead = ({ file, title, description, image = "assets/img/landing/domant
 
 // light=true → dark-text nav for pages whose top section is light (e.g. journal
 // articles); default is the cream nav--night used over dark video heroes.
-const nav = (current, light = false) => `<header class="nav${light ? "" : " nav--night"}" id="nav">
+// `plate` is for pages whose content starts on a LIGHT section directly under
+// the bar: the scroll-driven .nav--solid backdrop only appears past 120px, so
+// without a plate of its own the cream nav--night text sits on cream and
+// disappears until the visitor scrolls.
+const nav = (current, light = false, plate = false) => `<header class="nav${light ? "" : " nav--night"}${plate ? " nav--plate" : ""}" id="nav">
   <a class="nav__brand" href="index.html" aria-label="Chromata Films — home">
     <img class="nav__logo" src="assets/img/logo-mark.png" alt="" />
     <span class="nav__wordmark">Chromata Films</span>
@@ -381,7 +385,7 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
 // Pages that pass `file` get canonical + Open Graph + the shared JSON-LD entity
 // graph generated for them; pages that build their own `headExtra` (the journal
 // articles) keep it untouched.
-const shell = ({ page, file, title, description, main, footerCta = true, noindex = false, headExtra = "", navLight = false, ogImage, ogType, schemaGraph = [], breadcrumb = [] }) => {
+const shell = ({ page, file, title, description, main, footerCta = true, noindex = false, headExtra = "", navLight = false, navPlate = false, ogImage, ogType, schemaGraph = [], breadcrumb = [] }) => {
   if (!headExtra && file && !noindex) {
     headExtra = pageHead({ file, title, description, image: ogImage, ogType, graph: schemaGraph, breadcrumb });
   }
@@ -397,13 +401,13 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=60" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=61" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
 ${PRELOADER}
 
-${nav(page, navLight)}
+${nav(page, navLight, navPlate)}
 
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"><span class="cursor-label"></span></div>
@@ -1966,7 +1970,7 @@ pages["gallery.html"] = shell({
   </section>
 
   <!-- newest teaser, sitting above the whole films grid -->
-  <section class="pad-section" style="padding-bottom:0" data-section>
+  <section class="pad-section section--cutout-bleed" style="padding-bottom:0" data-section>
     <div class="container">
       <p class="kicker">— Latest Video</p>
       <h2 class="display-md" style="margin-top:3vh; max-width:14em">
@@ -1981,6 +1985,9 @@ pages["gallery.html"] = shell({
               title="Chromata Films — latest teaser" loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
+    <!-- straddles the seam into the films grid below, so it needs to escape
+         this section's box: see .gallery-cutout (overflow stays visible) -->
+    <img class="gallery-cutout" src="assets/img/gallery/gallery-cutout.png" alt="" aria-hidden="true" loading="lazy">
   </section>
 
   <section class="pad-section" data-section>
@@ -2290,7 +2297,7 @@ pages["contact.html"] = shell({
     <div class="hero__scroll intro-fade"><span class="lbl">Scroll</span><span class="line"><i></i></span></div>
   </section>
 
-  <section class="pad-section" data-section>
+  <section class="pad-section section--cutout" data-section>
     <div class="container">
       <div class="contact-wrap">
         <aside class="contact-side">
@@ -2396,6 +2403,7 @@ pages["contact.html"] = shell({
         </div>
       </div>
     </div>
+    <img class="contact-cutout" src="assets/img/contact/contact-cutout.png" alt="" aria-hidden="true" loading="lazy">
   </section>`,
 });
 
@@ -2458,6 +2466,7 @@ pages["privacy.html"] = shell({
 pages["investment.html"] = shell({
   page: "investment",
   file: "investment.html",
+  navPlate: true,
   title: "How Much Does a Luxury Wedding Film Cost? | Investment — Chromata Films",
   description: "Chromata Films collections start at 15,000 USD. What a luxury wedding film actually costs, what drives the number, and what you receive — explained plainly.",
   ogImage: "assets/img/contact/contact-side.jpg",
@@ -2493,15 +2502,24 @@ pages["investment.html"] = shell({
         <span class="line-mask"><span class="line-inner">What a wedding film</span></span>
         <span class="line-mask"><span class="line-inner"><em>actually costs</em></span></span>
       </h1>
-      <div class="feature__grid" style="margin-top:6vh">
-        <div class="prose" style="max-width:46em">
+      <div class="reel-grid" style="margin-top:6vh">
+        <div class="reel-grid__intro prose" style="max-width:46em">
           <p style="font-size:clamp(1.15rem,1.7vw,1.6rem)">Chromata Films collections start at <strong>15,000 USD</strong>.</p>
           <p>That is the honest floor, not a teaser figure. Most of the weddings we film sit above it, because most of them run across several days and need more than one camera team. We would rather tell you the number now than have you spend twenty minutes on a contact form to find out.</p>
         </div>
-        <div class="introvid">
+        <div class="reel-grid__video introvid">
           <iframe data-lazy-src="https://player.vimeo.com/video/1215211923?autoplay=1&amp;muted=1&amp;loop=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;playsinline=1"
                   title="Chromata Films — showreel" loading="lazy"
                   allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="reel-grid__more">
+          <h2 class="display-md" style="max-width:14em">
+            <span class="line-mask"><span class="line-inner">What moves the number</span></span>
+          </h2>
+          <div class="prose" style="margin-top:5vh">
+            <p>Four things, in roughly this order of impact. <strong>Days filmed</strong> ... a welcome dinner, a wedding day and a recovery lunch is three productions, not one. <strong>Crew size</strong> ... when two events run simultaneously, or a ceremony has moments happening in three rooms at once, you need more than one operator. <strong>Travel</strong> ... always folded into the quote itself, so there is no separate line waiting to surprise you later. <strong>Specialist work</strong> ... licensed aerial and FPV flying, or genuine Super 8mm and 16mm analog film alongside the digital cameras.</p>
+            <p>What does not change is the standard of the film itself. There is no version of Chromata Films where you get a lesser edit because the budget was smaller ... we would rather film fewer days properly than spread a crew too thin across a weekend.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -2509,20 +2527,11 @@ pages["investment.html"] = shell({
 
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
-      <h2 class="display-md" style="max-width:14em">
-        <span class="line-mask"><span class="line-inner">What moves the number</span></span>
-      </h2>
-      <div class="feature__grid" style="margin-top:6vh">
-        <div class="prose">
-          <p>Four things, in roughly this order of impact. <strong>Days filmed</strong> ... a welcome dinner, a wedding day and a recovery lunch is three productions, not one. <strong>Crew size</strong> ... when two events run simultaneously, or a ceremony has moments happening in three rooms at once, you need more than one operator. <strong>Travel</strong> ... always folded into the quote itself, so there is no separate line waiting to surprise you later. <strong>Specialist work</strong> ... licensed aerial and FPV flying, or genuine Super 8mm and 16mm analog film alongside the digital cameras.</p>
-          <p>What does not change is the standard of the film itself. There is no version of Chromata Films where you get a lesser edit because the budget was smaller ... we would rather film fewer days properly than spread a crew too thin across a weekend.</p>
-        </div>
-        <div class="feature__meta">
-          <div class="row"><span>Collections from</span><span class="val">15,000 USD</span></div>
-          <div class="row"><span>Typical delivery</span><span class="val">Feature film · Highlight · Teaser</span></div>
-          <div class="row"><span>Travel</span><span class="val">Always included, no surprises</span></div>
-          <div class="row"><span>Currencies</span><span class="val">USD · EUR · CHF</span></div>
-        </div>
+      <div class="feature__meta" style="max-width:52em">
+        <div class="row"><span>Collections from</span><span class="val">15,000 USD</span></div>
+        <div class="row"><span>Typical delivery</span><span class="val">Feature film · Highlight · Teaser</span></div>
+        <div class="row"><span>Travel</span><span class="val">Always included, no surprises</span></div>
+        <div class="row"><span>Currencies</span><span class="val">USD · EUR · CHF</span></div>
       </div>
     </div>
   </section>
@@ -2581,6 +2590,7 @@ pages["investment.html"] = shell({
 pages["awards-press.html"] = shell({
   page: "press",
   file: "awards-press.html",
+  navPlate: true,
   title: "Awards & Press | Vogue, Brides, People — Chromata Films",
   description: "Chromata Films in the press: Vogue, Harper's Bazaar, Brides, People, Over the Moon, Cosmopolitan, WedLuxe and THE WED — and winner of Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards.",
   ogImage: "assets/img/logos/press-bg.png",
@@ -2596,31 +2606,28 @@ pages["awards-press.html"] = shell({
         <span class="line-mask"><span class="line-inner">Awards</span></span>
         <span class="line-mask"><span class="line-inner">&amp; <em>press</em></span></span>
       </h1>
-      <div class="feature__grid" style="margin-top:6vh">
-        <div class="prose" style="max-width:46em">
+      <div class="reel-grid" style="margin-top:6vh">
+        <div class="reel-grid__intro prose" style="max-width:46em">
           <p style="font-size:clamp(1.05rem,1.5vw,1.4rem)">Chromata Films has been filming luxury weddings since 2016. The work has been recognised by the wedding film industry and published by the magazines that cover this world most closely.</p>
         </div>
-        <div class="introvid">
+        <div class="reel-grid__video introvid">
           <iframe data-lazy-src="https://player.vimeo.com/video/1215211416?autoplay=1&amp;muted=1&amp;loop=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;playsinline=1"
                   title="Chromata Films — reel" loading="lazy"
                   allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="pad-section" style="padding-top:0" data-section>
-    <div class="container">
-      <h2 class="display-md" style="max-width:14em">
-        <span class="line-mask"><span class="line-inner">Awards</span></span>
-      </h2>
-      <div class="feature__meta" style="margin-top:5vh; max-width:48em">
-        <div class="row"><span>Love StoriesTV</span><span class="val">Best Destination Wedding Film — Wedding Film Awards</span></div>
-        <div class="row"><span>Visual Effects Society</span><span class="val">Kevin Lopez — visual effects career recognition</span></div>
-        <div class="row"><span>87th Academy Awards</span><span class="val">Visual-effects work on nominated productions</span></div>
-      </div>
-      <div class="prose" style="max-width:46em; margin-top:5vh">
-        <p>The Love StoriesTV award was won for a film shot at Lake Como ... <a class="text-link" href="journal-film-award.html">the full story is in the journal</a>. The visual-effects recognitions predate the studio: before weddings, Kevin Lopez spent a decade in Hollywood VFX on films including Star Wars: The Last Jedi, The Great Gatsby, Beauty and the Beast and Avengers: Infinity War. <a class="text-link" href="the-studio.html">More about the team →</a></p>
+        <div class="reel-grid__more">
+          <h2 class="display-md" style="max-width:14em">
+            <span class="line-mask"><span class="line-inner">Awards</span></span>
+          </h2>
+          <div class="feature__meta" style="margin-top:5vh; max-width:48em">
+            <div class="row"><span>Love StoriesTV</span><span class="val">Best Destination Wedding Film — Wedding Film Awards</span></div>
+            <div class="row"><span>Visual Effects Society</span><span class="val">Kevin Lopez — visual effects career recognition</span></div>
+            <div class="row"><span>87th Academy Awards</span><span class="val">Visual-effects work on nominated productions</span></div>
+          </div>
+          <div class="prose" style="max-width:46em; margin-top:5vh">
+            <p>The Love StoriesTV award was won for a film shot at Lake Como ... <a class="text-link" href="journal-film-award.html">the full story is in the journal</a>. The visual-effects recognitions predate the studio: before weddings, Kevin Lopez spent a decade in Hollywood VFX on films including Star Wars: The Last Jedi, The Great Gatsby, Beauty and the Beast and Avengers: Infinity War. <a class="text-link" href="the-studio.html">More about the team →</a></p>
+          </div>
+        </div>
       </div>
     </div>
   </section>

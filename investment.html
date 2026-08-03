@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=60" />
+<link rel="stylesheet" href="css/main.css?v=61" />
 <link rel="canonical" href="https://www.chromatafilms.com/investment.html" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Chromata Films" />
@@ -34,7 +34,7 @@
   <div class="preloader__pct">0%</div>
 </div>
 
-<header class="nav nav--night" id="nav">
+<header class="nav nav--night nav--plate" id="nav">
   <a class="nav__brand" href="index.html" aria-label="Chromata Films — home">
     <img class="nav__logo" src="assets/img/logo-mark.png" alt="" />
     <span class="nav__wordmark">Chromata Films</span>
@@ -71,15 +71,24 @@
         <span class="line-mask"><span class="line-inner">What a wedding film</span></span>
         <span class="line-mask"><span class="line-inner"><em>actually costs</em></span></span>
       </h1>
-      <div class="feature__grid" style="margin-top:6vh">
-        <div class="prose" style="max-width:46em">
+      <div class="reel-grid" style="margin-top:6vh">
+        <div class="reel-grid__intro prose" style="max-width:46em">
           <p style="font-size:clamp(1.15rem,1.7vw,1.6rem)">Chromata Films collections start at <strong>15,000 USD</strong>.</p>
           <p>That is the honest floor, not a teaser figure. Most of the weddings we film sit above it, because most of them run across several days and need more than one camera team. We would rather tell you the number now than have you spend twenty minutes on a contact form to find out.</p>
         </div>
-        <div class="introvid">
+        <div class="reel-grid__video introvid">
           <iframe data-lazy-src="https://player.vimeo.com/video/1215211923?autoplay=1&amp;muted=1&amp;loop=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;playsinline=1"
                   title="Chromata Films — showreel" loading="lazy"
                   allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="reel-grid__more">
+          <h2 class="display-md" style="max-width:14em">
+            <span class="line-mask"><span class="line-inner">What moves the number</span></span>
+          </h2>
+          <div class="prose" style="margin-top:5vh">
+            <p>Four things, in roughly this order of impact. <strong>Days filmed</strong> ... a welcome dinner, a wedding day and a recovery lunch is three productions, not one. <strong>Crew size</strong> ... when two events run simultaneously, or a ceremony has moments happening in three rooms at once, you need more than one operator. <strong>Travel</strong> ... always folded into the quote itself, so there is no separate line waiting to surprise you later. <strong>Specialist work</strong> ... licensed aerial and FPV flying, or genuine Super 8mm and 16mm analog film alongside the digital cameras.</p>
+            <p>What does not change is the standard of the film itself. There is no version of Chromata Films where you get a lesser edit because the budget was smaller ... we would rather film fewer days properly than spread a crew too thin across a weekend.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -87,20 +96,11 @@
 
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
-      <h2 class="display-md" style="max-width:14em">
-        <span class="line-mask"><span class="line-inner">What moves the number</span></span>
-      </h2>
-      <div class="feature__grid" style="margin-top:6vh">
-        <div class="prose">
-          <p>Four things, in roughly this order of impact. <strong>Days filmed</strong> ... a welcome dinner, a wedding day and a recovery lunch is three productions, not one. <strong>Crew size</strong> ... when two events run simultaneously, or a ceremony has moments happening in three rooms at once, you need more than one operator. <strong>Travel</strong> ... always folded into the quote itself, so there is no separate line waiting to surprise you later. <strong>Specialist work</strong> ... licensed aerial and FPV flying, or genuine Super 8mm and 16mm analog film alongside the digital cameras.</p>
-          <p>What does not change is the standard of the film itself. There is no version of Chromata Films where you get a lesser edit because the budget was smaller ... we would rather film fewer days properly than spread a crew too thin across a weekend.</p>
-        </div>
-        <div class="feature__meta">
-          <div class="row"><span>Collections from</span><span class="val">15,000 USD</span></div>
-          <div class="row"><span>Typical delivery</span><span class="val">Feature film · Highlight · Teaser</span></div>
-          <div class="row"><span>Travel</span><span class="val">Always included, no surprises</span></div>
-          <div class="row"><span>Currencies</span><span class="val">USD · EUR · CHF</span></div>
-        </div>
+      <div class="feature__meta" style="max-width:52em">
+        <div class="row"><span>Collections from</span><span class="val">15,000 USD</span></div>
+        <div class="row"><span>Typical delivery</span><span class="val">Feature film · Highlight · Teaser</span></div>
+        <div class="row"><span>Travel</span><span class="val">Always included, no surprises</span></div>
+        <div class="row"><span>Currencies</span><span class="val">USD · EUR · CHF</span></div>
       </div>
     </div>
   </section>

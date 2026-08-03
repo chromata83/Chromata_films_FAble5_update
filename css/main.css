@@ -183,6 +183,12 @@ body::after {
 .nav--solid { height: var(--nav-h-compact); background: color-mix(in srgb, var(--porcelain) 82%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .nav--night { color: var(--cream); }
 .nav--night.nav--solid { background: color-mix(in srgb, var(--night) 82%, transparent); }
+/* Pages that open on a LIGHT section directly under the bar (investment,
+   awards & press) carry their own dark plate from load — .nav--solid only
+   kicks in past 120px of scroll, so until then the cream nav--night text
+   would sit on cream and vanish. Declared after .nav--solid so it also wins
+   if the scrolled state ever resolves to the light porcelain backdrop. */
+.nav--plate { background: color-mix(in srgb, var(--night) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .nav__brand { display: flex; align-items: center; gap: 12px; z-index: 2; }
 .nav__logo { height: 64px; width: auto; flex: none; object-fit: contain; transition: height 0.45s cubic-bezier(0.22,1,0.36,1); filter: drop-shadow(0 1px 6px rgba(22,19,15,0.25)); }
 .nav--solid .nav__logo { height: 50px; }
@@ -669,10 +675,51 @@ a.footer__wordmark:hover { color: var(--coral); }
 .introvid { position: relative; width: 100%; max-width: 320px; margin-left: auto; aspect-ratio: 9 / 16; background: #000; border-radius: 4px; overflow: hidden; }
 .introvid iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 @media (max-width: 900px) { .introvid { margin-inline: auto; max-width: 300px; } }
+/* Section opening built around that reel. Below 900px it is plain flow —
+   copy, reel, then the block that follows. From 901px the reel doubles in
+   width and spans both text rows, and the second block is pulled up to sit
+   beside it (bottom-aligned against the reel) instead of waiting for a whole
+   section of its own underneath: a 9:16 clip at this width is over 1100px
+   tall, so left on its own it would leave a screen-high hole in the page. */
+.reel-grid { display: flex; flex-direction: column; gap: 7vh; }
+.reel-grid__intro { max-width: 46em; }
+@media (min-width: 901px) {
+  .reel-grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(380px, 44vw, 640px);
+    /* max-content / 1fr, NOT two auto rows: a row-spanning item distributes its
+       height evenly across auto rows, which would push the second block halfway
+       down the reel and reopen the gap this layout exists to close. */
+    grid-template-rows: max-content 1fr;
+    column-gap: clamp(28px, 5vw, 80px); row-gap: 7vh; align-items: start; }
+  .reel-grid__intro { grid-column: 1; grid-row: 1; }
+  .reel-grid__more { grid-column: 1; grid-row: 2; align-self: start; }
+  .reel-grid__video { grid-column: 2; grid-row: 1 / span 2; max-width: none; }
+}
 /* near-full-bleed 16:9 embed — breaks out of .container's padding so the newest
    teaser reads as the widest thing on the page */
 .latest__frame { position: relative; width: min(1720px, 94vw); margin: 6vh auto 0; aspect-ratio: 16 / 9; background: #000; border-radius: 4px; overflow: hidden; }
 .latest__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+/* Gallery header: the clip is 2.33:1 inside a 3:1 band, so cover crops ~22% of
+   its height. Anchor it to the top — the model's face sits in the very top of
+   the frame and centring cuts through it. */
+body[data-page="gallery"] .page-hero__bg video { object-position: 50% 0; }
+/* Collage cutouts (transparent PNGs). Decorative only: aria-hidden in the
+   markup, pointer-events off, and always behind the copy. */
+.contact-cutout, .gallery-cutout { position: absolute; height: auto; pointer-events: none; user-select: none; }
+/* bottom-left of the contact form section, bleeding off the corner */
+.contact-cutout { left: max(-3vw, -60px); bottom: 0; width: clamp(150px, 21vw, 380px); z-index: 0; }
+/* --cutout clips at the section edge (the contact collage bleeds off the
+   corner); --cutout-bleed keeps overflow visible so the gallery collage can
+   spill into the section below. Both need a containing block. */
+.section--cutout, .section--cutout-bleed { position: relative; }
+.section--cutout { overflow: hidden; }
+.section--cutout > .container, .section--cutout-bleed > .container { position: relative; z-index: 1; }
+/* straddles the seam between the latest teaser and the films grid: the section
+   keeps overflow visible so the lower half spills into the section below */
+.gallery-cutout { right: max(2vw, 12px); bottom: 0; width: clamp(130px, 17vw, 300px); transform: translateY(42%); z-index: 3; }
+@media (max-width: 760px) {
+  .contact-cutout { width: clamp(120px, 34vw, 190px); opacity: 0.9; }
+  .gallery-cutout { width: clamp(110px, 30vw, 170px); transform: translateY(38%); }
+}
 .prose { display: flex; flex-direction: column; gap: 1.4em; color: color-mix(in srgb, currentColor 82%, transparent); max-width: 38em; }
 .vendor-link { color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--coral) 55%, transparent); text-underline-offset: 3px; transition: text-decoration-color 0.25s ease, color 0.25s ease; }
 .vendor-link:hover { color: var(--coral); text-decoration-color: var(--coral); }

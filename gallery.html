@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=60" />
+<link rel="stylesheet" href="css/main.css?v=61" />
 <link rel="canonical" href="https://www.chromatafilms.com/gallery.html" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Chromata Films" />
@@ -77,7 +77,7 @@
   </section>
 
   <!-- newest teaser, sitting above the whole films grid -->
-  <section class="pad-section" style="padding-bottom:0" data-section>
+  <section class="pad-section section--cutout-bleed" style="padding-bottom:0" data-section>
     <div class="container">
       <p class="kicker">— Latest Video</p>
       <h2 class="display-md" style="margin-top:3vh; max-width:14em">
@@ -92,6 +92,9 @@
               title="Chromata Films — latest teaser" loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
+    <!-- straddles the seam into the films grid below, so it needs to escape
+         this section's box: see .gallery-cutout (overflow stays visible) -->
+    <img class="gallery-cutout" src="assets/img/gallery/gallery-cutout.png" alt="" aria-hidden="true" loading="lazy">
   </section>
 
   <section class="pad-section" data-section>

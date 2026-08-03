@@ -14,7 +14,7 @@ mkdir -p "$OUT/fonts" "$OUT/video" \
   "$OUT/img/carousel" "$OUT/img/logos" "$OUT/img/studio" "$OUT/img/contact" \
   "$OUT/img/parisian-dream" "$OUT/img/four-seasons" "$OUT/img/daria" "$OUT/img/sandra-pedro" "$OUT/img/katya-joey" \
   "$OUT/img/jasmiina" "$OUT/img/wed-europe" "$OUT/img/natalia" "$OUT/img/marrakech" "$OUT/img/altos" \
-  "$OUT/img/michal-steve" "$OUT/img/mozzafiato" "$OUT/img/marcella-daniel" "$OUT/img/heroes"
+  "$OUT/img/michal-steve" "$OUT/img/mozzafiato" "$OUT/img/marcella-daniel" "$OUT/img/heroes" "$OUT/img/gallery"
 
 # ---------- fonts ----------
 # session-scratchpad source only exists on the session that first fetched it;
@@ -350,6 +350,15 @@ i=0
 find "$PUB/blog-wed-europe" -maxdepth 1 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | sort | while read -r f; do
   i=$((i+1)); jpg "$f" "$OUT/img/wed-europe/we-$(printf '%02d' $i).jpg" 1800
 done
+
+# ---------- decorative cutouts (transparent collages) ----------
+# -pix_fmt rgba keeps the alpha channel: these bleed off a section corner and
+# must never carry a background plate.
+cutout () { # src dst
+  $FF -i "$1" -vf "scale=800:-1:flags=lanczos" -pix_fmt rgba -compression_level 100 "$2"
+}
+cutout "$PUB/cutouts/contact-cutout-src.png" "$OUT/img/contact/contact-cutout.png"
+cutout "$PUB/cutouts/gallery-cutout-src.png" "$OUT/img/gallery/gallery-cutout.png"
 
 # ---------- SEO landing-page hero stills ----------
 # Stable names, because the pages reference them directly (the we-NN/… gallery
