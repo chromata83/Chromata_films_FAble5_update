@@ -397,7 +397,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=59" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=60" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -1965,6 +1965,24 @@ pages["gallery.html"] = shell({
     </div>
   </section>
 
+  <!-- newest teaser, sitting above the whole films grid -->
+  <section class="pad-section" style="padding-bottom:0" data-section>
+    <div class="container">
+      <p class="kicker">— Latest Video</p>
+      <h2 class="display-md" style="margin-top:3vh; max-width:14em">
+        <span class="line-mask"><span class="line-inner">Straight from <em>Budapest</em></span></span>
+      </h2>
+      <div class="prose" style="max-width:40em; margin-top:3vh">
+        <p>Come and watch our latest Instagram teaser, fresh off the edit.</p>
+      </div>
+    </div>
+    <div class="latest__frame">
+      <iframe data-lazy-src="https://www.youtube-nocookie.com/embed/eBPDWWr74vs?rel=0&amp;modestbranding=1&amp;playsinline=1"
+              title="Chromata Films — latest teaser" loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </section>
+
   <section class="pad-section" data-section>
     <div class="container">
       <p class="kicker">— The Films</p>
@@ -2475,9 +2493,16 @@ pages["investment.html"] = shell({
         <span class="line-mask"><span class="line-inner">What a wedding film</span></span>
         <span class="line-mask"><span class="line-inner"><em>actually costs</em></span></span>
       </h1>
-      <div class="prose" style="max-width:46em; margin-top:6vh">
-        <p style="font-size:clamp(1.15rem,1.7vw,1.6rem)">Chromata Films collections start at <strong>15,000 USD</strong>.</p>
-        <p>That is the honest floor, not a teaser figure. Most of the weddings we film sit above it, because most of them run across several days and need more than one camera team. We would rather tell you the number now than have you spend twenty minutes on a contact form to find out.</p>
+      <div class="feature__grid" style="margin-top:6vh">
+        <div class="prose" style="max-width:46em">
+          <p style="font-size:clamp(1.15rem,1.7vw,1.6rem)">Chromata Films collections start at <strong>15,000 USD</strong>.</p>
+          <p>That is the honest floor, not a teaser figure. Most of the weddings we film sit above it, because most of them run across several days and need more than one camera team. We would rather tell you the number now than have you spend twenty minutes on a contact form to find out.</p>
+        </div>
+        <div class="introvid">
+          <iframe data-lazy-src="https://player.vimeo.com/video/1215211923?autoplay=1&amp;muted=1&amp;loop=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;playsinline=1"
+                  title="Chromata Films — showreel" loading="lazy"
+                  allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
       </div>
     </div>
   </section>
@@ -2571,8 +2596,15 @@ pages["awards-press.html"] = shell({
         <span class="line-mask"><span class="line-inner">Awards</span></span>
         <span class="line-mask"><span class="line-inner">&amp; <em>press</em></span></span>
       </h1>
-      <div class="prose" style="max-width:46em; margin-top:6vh">
-        <p style="font-size:clamp(1.05rem,1.5vw,1.4rem)">Chromata Films has been filming luxury weddings since 2016. The work has been recognised by the wedding film industry and published by the magazines that cover this world most closely.</p>
+      <div class="feature__grid" style="margin-top:6vh">
+        <div class="prose" style="max-width:46em">
+          <p style="font-size:clamp(1.05rem,1.5vw,1.4rem)">Chromata Films has been filming luxury weddings since 2016. The work has been recognised by the wedding film industry and published by the magazines that cover this world most closely.</p>
+        </div>
+        <div class="introvid">
+          <iframe data-lazy-src="https://player.vimeo.com/video/1215211416?autoplay=1&amp;muted=1&amp;loop=1&amp;title=0&amp;byline=0&amp;portrait=0&amp;playsinline=1"
+                  title="Chromata Films — reel" loading="lazy"
+                  allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
       </div>
     </div>
   </section>
@@ -2912,8 +2944,8 @@ const LANDING_PAGES = [
     title: "Best Wedding Filmmaker in Italy | Lake Como & Amalfi Wedding Films — Chromata Films",
     description: "Luxury wedding filmmaker in Italy. Chromata Films makes cinematic wedding films at Lake Como, the Amalfi Coast, Puglia, Tuscany and Venice. Collections from 15,000 USD.",
     summary: "wedding films at Lake Como, the Amalfi Coast, Puglia, Tuscany and Venice",
-    heroImg: "assets/img/jasmiina/jt-02.jpg",
-    heroAlt: "A luxury wedding at Lake Como filmed by Chromata Films",
+    heroImg: "assets/img/heroes/italy-header.jpg",
+    heroAlt: "Katya and Joey's wedding at Villa Erba, Lake Como, filmed by Chromata Films",
     heroSub: ["Lake Como · Amalfi · Puglia · Tuscany", "Collections from 15,000 USD"],
     areaServed: ["Italy", "Lake Como", "Amalfi Coast", "Puglia", "Tuscany", "Venice", "Positano"],
     serviceName: "Wedding Cinematography in Italy",
@@ -2961,7 +2993,7 @@ const LANDING_PAGES = [
     title: "Best Luxury Wedding Filmmaker in the US | American & Destination Wedding Films — Chromata Films",
     description: "Luxury wedding filmmaker for American couples. Chromata Films films weddings and celebrations across the United States and takes US couples to Europe. Collections from 15,000 USD.",
     summary: "luxury wedding and event films in the United States, and European destination weddings for American couples",
-    heroImg: "assets/img/westbrook/rw-02.jpg",
+    heroImg: "assets/img/heroes/usa-header.jpg",
     heroAlt: "A luxury American wedding celebration filmed by Chromata Films",
     heroSub: ["Coast to coast · Europe for US couples", "Collections from 15,000 USD"],
     areaServed: ["United States", "New York", "California", "Texas", "Florida", "Europe"],

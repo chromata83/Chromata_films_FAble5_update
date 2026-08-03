@@ -14,7 +14,7 @@ mkdir -p "$OUT/fonts" "$OUT/video" \
   "$OUT/img/carousel" "$OUT/img/logos" "$OUT/img/studio" "$OUT/img/contact" \
   "$OUT/img/parisian-dream" "$OUT/img/four-seasons" "$OUT/img/daria" "$OUT/img/sandra-pedro" "$OUT/img/katya-joey" \
   "$OUT/img/jasmiina" "$OUT/img/wed-europe" "$OUT/img/natalia" "$OUT/img/marrakech" "$OUT/img/altos" \
-  "$OUT/img/michal-steve" "$OUT/img/mozzafiato" "$OUT/img/marcella-daniel"
+  "$OUT/img/michal-steve" "$OUT/img/mozzafiato" "$OUT/img/marcella-daniel" "$OUT/img/heroes"
 
 # ---------- fonts ----------
 # session-scratchpad source only exists on the session that first fetched it;
@@ -351,6 +351,17 @@ find "$PUB/blog-wed-europe" -maxdepth 1 \( -iname '*.jpg' -o -iname '*.jpeg' -o 
   i=$((i+1)); jpg "$f" "$OUT/img/wed-europe/we-$(printf '%02d' $i).jpg" 1800
 done
 
+# ---------- SEO landing-page hero stills ----------
+# Stable names, because the pages reference them directly (the we-NN/… gallery
+# numbering above shifts whenever a source file is added to its folder).
+# The Italy source name carries a © and an ampersand, which ffmpeg can't open
+# through Git Bash even when quoted correctly — copy to a safe name first
+# (same workaround as the Estoublon file in the france-venues block).
+cp "$PUB/blog-wed-europe/©BOTTEGA53-KATYA & JOEY-WEDDING-735.jpg" "$PUB/_italy-hero-tmp.jpg"
+jpg "$PUB/_italy-hero-tmp.jpg" "$OUT/img/heroes/italy-header.jpg" 1800
+rm -f "$PUB/_italy-hero-tmp.jpg"
+jpg "$PUB/GH_hotel/SHOWREEL_2021_v4_1.mov_snapshot_01.16.268.jpg" "$OUT/img/heroes/usa-header.jpg" 1800
+
 # ---------- natalia-montenegro journal-article gallery (Tivat 50th birthday) ----------
 i=0
 find "$PUB/blog/Natali_50th_birthday" -maxdepth 1 -name '*.jpg' | sort | while read -r f; do
@@ -433,9 +444,10 @@ ambient () { # src slug
   $FF -i "$1" -an -vf "scale='min(1920,iw)':-2" -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 23 -preset slow -movflags +faststart "$OUT/video/$2.mp4"
   $FF -i "$OUT/video/$2.mp4" -vf "select=eq(n\,0)" -frames:v 1 -q:v 4 "$OUT/video/$2-poster.jpg"
 }
-ambient "$PUB/the journal header.mp4"     "journal-header"
-ambient "$PUB/the studio_header_new.mp4"  "studio-header"
-ambient "$PUB/header_contact_us_NEW.mp4"  "contact-header"
+ambient "$PUB/the journal header.mp4"       "journal-header"
+ambient "$PUB/the studio_header_new.mp4"    "studio-header"
+ambient "$PUB/contact page new header.mp4"  "contact-header"
+ambient "$PUB/the-gallery-new_header.mp4"   "gallery-header"
 
 # poster frames for reduced-motion / first paint
 for s in hero reel film-night contact gallery-film studio-film; do
