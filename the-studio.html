@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=61" />
+<link rel="stylesheet" href="css/main.css?v=62" />
 <link rel="canonical" href="https://www.chromatafilms.com/the-studio.html" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Chromata Films" />
@@ -94,7 +94,7 @@
     </div>
   </section>
 
-  <section class="pad-section" data-section>
+  <section class="pad-section section--cutout-bleed" data-section>
     <div class="container">
       <p class="kicker">— The Team</p>
       <div class="team" style="margin-top:6vh">
@@ -124,6 +124,9 @@
         </article>
       </div>
     </div>
+    <!-- hangs off the bottom of the team section and lands on the video band
+         below it — the section keeps overflow visible for this -->
+    <img class="studio-cutout" src="assets/img/studio/studio-cutout.png" alt="" aria-hidden="true" loading="lazy">
   </section>
 
   <!-- full-bleed ambient film band (3:1) between the team and the blockbusters -->

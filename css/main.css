@@ -704,21 +704,34 @@ a.footer__wordmark:hover { color: var(--coral); }
 body[data-page="gallery"] .page-hero__bg video { object-position: 50% 0; }
 /* Collage cutouts (transparent PNGs). Decorative only: aria-hidden in the
    markup, pointer-events off, and always behind the copy. */
-.contact-cutout, .gallery-cutout { position: absolute; height: auto; pointer-events: none; user-select: none; }
+.contact-cutout, .gallery-cutout, .studio-cutout { position: absolute; height: auto; pointer-events: none; user-select: none; }
 /* bottom-left of the contact form section, bleeding off the corner */
 .contact-cutout { left: max(-3vw, -60px); bottom: 0; width: clamp(150px, 21vw, 380px); z-index: 0; }
 /* --cutout clips at the section edge (the contact collage bleeds off the
    corner); --cutout-bleed keeps overflow visible so the gallery collage can
    spill into the section below. Both need a containing block. */
+/* Long testimonial with a tall collage beside it: stacked on phones, two
+   columns from 901px with the art centred against the quote. */
+.quote-split { display: flex; flex-direction: column; gap: 6vh; margin-top: 4vh; }
+.quote-split__art { width: min(260px, 56vw); height: auto; margin-inline: auto; }
+@media (min-width: 901px) {
+  .quote-split { display: grid; grid-template-columns: minmax(0, 1fr) clamp(200px, 21vw, 340px);
+    column-gap: clamp(28px, 5vw, 80px); align-items: center; }
+  .quote-split__art { width: 100%; margin: 0; }
+}
 .section--cutout, .section--cutout-bleed { position: relative; }
 .section--cutout { overflow: hidden; }
 .section--cutout > .container, .section--cutout-bleed > .container { position: relative; z-index: 1; }
 /* straddles the seam between the latest teaser and the films grid: the section
    keeps overflow visible so the lower half spills into the section below */
-.gallery-cutout { right: max(2vw, 12px); bottom: 0; width: clamp(130px, 17vw, 300px); transform: translateY(42%); z-index: 3; }
+.gallery-cutout { right: max(2vw, 12px); bottom: 0; width: clamp(390px, 51vw, 900px); transform: translateY(42%); z-index: 3; }
+/* Rides the seam between the team grid and the video band under it, tilted so
+   it reads as a pasted collage piece rather than a placed image. */
+.studio-cutout { right: max(5vw, 16px); bottom: 0; width: clamp(220px, 31vw, 520px); transform: translateY(44%) rotate(15deg); transform-origin: 50% 50%; z-index: 3; }
 @media (max-width: 760px) {
   .contact-cutout { width: clamp(120px, 34vw, 190px); opacity: 0.9; }
-  .gallery-cutout { width: clamp(110px, 30vw, 170px); transform: translateY(38%); }
+  .gallery-cutout { width: clamp(240px, 62vw, 380px); transform: translateY(38%); }
+  .studio-cutout { width: clamp(150px, 42vw, 240px); transform: translateY(40%) rotate(15deg); }
 }
 .prose { display: flex; flex-direction: column; gap: 1.4em; color: color-mix(in srgb, currentColor 82%, transparent); max-width: 38em; }
 .vendor-link { color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--coral) 55%, transparent); text-underline-offset: 3px; transition: text-decoration-color 0.25s ease, color 0.25s ease; }
