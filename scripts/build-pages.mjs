@@ -384,9 +384,11 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
 
 // Pages that pass `file` get canonical + Open Graph + the shared JSON-LD entity
 // graph generated for them; pages that build their own `headExtra` (the journal
-// articles) keep it untouched.
+// articles) keep it untouched. Noindex pages still get the canonical tag —
+// noindex and a self-referencing canonical aren't contradictory, and it keeps
+// any parameterised/odd-cased copy of the URL from getting indexed instead.
 const shell = ({ page, file, title, description, main, footerCta = true, noindex = false, headExtra = "", navLight = false, navPlate = false, ogImage, ogType, schemaGraph = [], breadcrumb = [] }) => {
-  if (!headExtra && file && !noindex) {
+  if (!headExtra && file) {
     headExtra = pageHead({ file, title, description, image: ogImage, ogType, graph: schemaGraph, breadcrumb });
   }
   return `<!DOCTYPE html>
@@ -606,7 +608,7 @@ pages["domantas-sabonis.html"] = shell({
     { name: "Real Weddings", file: "real-weddings.html" },
     { name: "Domantas & Shashana", file: "domantas-sabonis.html" },
   ],
-  title: "Domantas Sabonis & Shashana — Villa Ephrussi Wedding, French Riviera | Chromata Films",
+  title: "Villa Ephrussi Wedding Film — Domantas Sabonis & Shashana | Chromata Films",
   description: "The wedding of NBA All-Star Domantas Sabonis and Shashana at Villa Ephrussi, St-Jean-Cap-Ferrat ... three days on the French Riviera, planned by Mindy Weiss, filmed by Chromata Films.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
@@ -730,8 +732,10 @@ pages["jacqueline-gordon.html"] = shell({
       <div class="feature__grid" style="margin-top:5vh">
         <div class="prose">
           <p class="lead">Jacqueline and Gordon's wedding in St-Tropez could be summarized in one simple word: WOW.</p>
-          <p>Five days of celebration at Le Beauvallon, overlooking the bay of St-Tropez. Day one opened with a seaside dinner and a fashion show of designer collections, crowned by a drone light spectacle over the water. Day two honored Gordon's heritage with a traditional tea ceremony before flipping into a Bridgerton-meets-1980s party ... neon, vintage styling, and a dance floor with no mercy.</p>
-          <p>Day three: rare wines and spirits tasted poolside, then a late night in a St-Tropez restaurant. Day four, the main event ... vows on the Beauvallon terrace above the sea, fireworks, a private concert, and an after-party that only surrendered at sunrise. Day five ended the only way it could: a foam party at the pool.</p>
+          <p>Five days of celebration at Le Beauvallon, each one designed to top the last. Day one opened with a seaside dinner and a fashion show of designer collections, crowned by a drone light spectacle over the bay ... a welcome party that would have served most couples as a finale.</p>
+          <p>Day two honored Gordon's Asian heritage with a traditional tea ceremony, before the evening flipped the register entirely: a Bridgerton-meets-1980s party ... neon color, vintage styling, and dancing that did not pause for breath.</p>
+          <p>Day three slowed the pace with tastings of rare wines and spirits from around the world, enjoyed poolside, before late-night celebrations took over a St-Tropez restaurant. Day four was the main event: vows on the Beauvallon terrace above the sea, fireworks, a private concert, and an after-party that only surrendered at sunrise. Day five ended the only way it could ... a foam party at the pool.</p>
+          <p>That private concert was the best-kept secret of the whole week. Gordon surprised Jacqueline with a live performance by Bobby Brown and his group ... her favourite group of all time ... turning the special night into a moment neither of them, nor their guests, will ever forget.</p>
           <p>Alongside the planning of <a class="text-link" href="https://rendezvousinparis.com" target="_blank" rel="noopener">Rendez-vous in Paris</a>, the florals and décor of Reverie d'Azur, entertainment by Black Rabbit Project and our friends at <a class="text-link" href="https://www.maddychristina.com" target="_blank" rel="noopener">Maddy Christina</a>, we filmed a celebration that refused to repeat itself for five straight days.</p>
         </div>
         <div class="feature__meta">
@@ -743,9 +747,6 @@ pages["jacqueline-gordon.html"] = shell({
           <div class="row"><span>Photography</span><span class="val"><a class="text-link" href="https://www.maddychristina.com" target="_blank" rel="noopener">Maddy Christina</a></span></div>
           <div class="row"><span>Film</span><span class="val">Chromata Films</span></div>
         </div>
-      </div>
-      <div class="feature__actions" style="margin-top:6vh">
-        <a class="text-link" href="journal-jacqueline-gordon.html">Read the full story in the Journal →</a>
       </div>
     </div>
   </section>
@@ -772,6 +773,15 @@ pages["jacqueline-gordon.html"] = shell({
     </div>
   </section>
 
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— More From the Week</p>
+      <div class="gallery-grid" style="margin-top:5vh">
+${Array.from({ length: 20 }, (_, i) => `        ${g("jg-blog", "jgb-" + String(i + 1).padStart(2, "0") + ".jpg", "", "Jacqueline & Gordon — five days at Le Beauvallon")}`).join("\n")}
+      </div>
+    </div>
+  </section>
+
 ${next("anna-andres.html", "Anna Andres")}`,
 });
 
@@ -785,7 +795,7 @@ pages["anna-andres.html"] = shell({
     { name: "Real Weddings", file: "real-weddings.html" },
     { name: "Anna Andres", file: "anna-andres.html" },
   ],
-  title: "Anna Andres — A Wedding Shot Like an Editorial | Chromata Films",
+  title: "Hôtel du Cap-Eden-Roc Wedding Film — Anna & David | Chromata Films",
   description: "The wedding of Anna Andres, Miss Universe Ukraine 2014 — filmed by Chromata Films with the pace of a fashion editorial and the heart of a love story.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
@@ -819,6 +829,7 @@ pages["anna-andres.html"] = shell({
         <div class="prose">
           <p class="lead">When a Miss Universe titleholder plans her wedding, the bar is not "beautiful". The bar is "cover story".</p>
           <p>Anna Andres ... Miss Universe Ukraine 2014, model and actress ... trusted us to film her wedding with the same visual intelligence as the editorials she has graced. We treated every setup like a page of a magazine: composed, lit, and directed ... then we let the day breathe and caught what no director could stage.</p>
+          <p>The celebration had originally been planned for Château St Martin that May, before the day was moved to an intimate August ceremony at the Hôtel du Cap-Eden-Roc, with planner Viktoria coordinating the change. The wedding went on to attract significant international press attention.</p>
           <p>With the planning of <a class="text-link" href="https://www.palazzoeventi.com" target="_blank" rel="noopener">Palazzo Eventi</a>, the result is a film that moves between fashion and feeling: couture in golden light, a ceremony that stopped the room, and a celebration carried long into the night. It remains one of the projects that best defines what we mean by the French touch ... editorial polish wrapped around raw, real emotion.</p>
         </div>
         <div class="feature__meta">
@@ -1120,23 +1131,6 @@ const posts = [
     gallery: AIMC_GALLERY,
   },
   {
-    file: "journal-jacqueline-gordon.html", slug: "jacqueline-gordon",
-    title: "Jacqueline and Gordon — A St-Tropez Experience Unlike Any Other",
-    date: "September 17, 2025", tag: "Real Wedding",
-    video: "1117935629",
-    galleryDir: "jg-blog",
-    gallery: Array.from({ length: 20 }, (_, i) => `jgb-${String(i + 1).padStart(2, "0")}.jpg`),
-    excerpt: "Jacqueline and Gordon's wedding in St-Tropez could be summarized in one simple word: WOW.",
-    body: [
-      "Jacqueline and Gordon's wedding in St-Tropez could be summarized in one simple word: WOW. Five days of celebration at Le Beauvallon, each one designed to top the last.",
-      "Day one began with a seaside dinner at the hotel, followed by a fashion show of designer collections and a drone light spectacle over the bay ... a welcome party that would have served most couples as a finale.",
-      "Day two honored Gordon's Asian heritage with a traditional tea ceremony, before the evening flipped the register entirely: a party blending Bridgerton aesthetics with 1980s energy ... neon color, vintage styling, and dancing that did not pause for breath.",
-      "Day three slowed the pace with tastings of rare wines and spirits from around the world, enjoyed poolside, before late-night celebrations took over a St-Tropez restaurant. Day four was the main event: the ceremony on the Beauvallon terrace overlooking the sea, then fireworks, a private concert, and an after-party that extended until sunrise. Day five closed the week the only way it could ... a foam party at the pool.",
-      "That private concert was the best-kept secret of the whole week. Gordon surprised Jacqueline with a live performance by Bobby Brown and his group ... her favourite group of all time ... turning the special night into a moment neither of them, nor their guests, will ever forget.",
-      "Enormous thanks to the creative team: planning and coordination by Heather, floral and décor design by Reverie d'Azur, entertainment by Black Rabbit Project, and our friends at Maddy Christina on the welcome event. Filming five days of this magnitude is a production in the fullest sense ... and exactly what this studio was built for.",
-    ],
-  },
-  {
     file: "journal-westbrook-anniversary.html", slug: "westbrook",
     title: "Russell Westbrook and Nina Westbrook — Wedding Anniversary",
     date: "September 17, 2025", tag: "Celebration",
@@ -1151,7 +1145,7 @@ const posts = [
     ],
   },
   {
-    file: "journal-alexa-wilton.html", slug: "alexa-wilton",
+    file: "journal-alexa-wilton.html", slug: "alexa-wilton", franceLink: true,
     title: "A Riviera Fairytale: Alexa and Wilton's Extravagant St-Tropez Wedding",
     date: "July 20, 2024", tag: "Real Wedding",
     video: "1039575157",
@@ -1166,7 +1160,7 @@ const posts = [
     ],
   },
   {
-    file: "journal-parisian-dream.html", slug: "parisian-dream",
+    file: "journal-parisian-dream.html", slug: "parisian-dream", franceLink: true,
     title: "A Parisian Dream Tour: The Luxurious Wedding of J & A",
     date: "May 21, 2024", tag: "Real Wedding",
     video: "948291710",
@@ -1224,7 +1218,7 @@ const posts = [
 const archive = [
   /* ===================== Page 2 ===================== */
   {
-    file: "journal-france-venues.html", page: 2, tag: "Guide",
+    file: "journal-france-venues.html", page: 2, tag: "Guide", franceLink: true,
     title: "Our Favourite Venues in the South of France", date: "April 22, 2024",
     galleryDir: "france-venues",
     inlineMedia: [
@@ -1250,7 +1244,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-sandra-pedro.html", page: 2, tag: "Real Wedding",
+    file: "journal-sandra-pedro.html", page: 2, tag: "Real Wedding", franceLink: true,
     title: "Sandra and Pedro — A Mixed-Religion Ceremony at Château d'Estoublon", date: "February 21, 2024",
     video: "3AZhvvBCFjU", videoProvider: "youtube",
     galleryDir: "sandra-pedro",
@@ -1264,7 +1258,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-four-seasons-buyout.html", page: 2, tag: "Real Wedding",
+    file: "journal-four-seasons-buyout.html", page: 2, tag: "Real Wedding", franceLink: true,
     title: "A Four Seasons Buyout Wedding for the Most Amazing Celebrations", date: "November 4, 2023",
     video: "879796920",
     galleryDir: "four-seasons",
@@ -1278,7 +1272,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-daria-levin.html", page: 2, tag: "Real Wedding",
+    file: "journal-daria-levin.html", page: 2, tag: "Real Wedding", franceLink: true,
     title: "Daria Levin — A Crazy Circus Wedding in Èze, French Riviera", date: "October 17, 2023",
     video: "880169269",
     galleryDir: "daria",
@@ -1342,7 +1336,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-angela-allister-brides.html", page: 3, tag: "Real Wedding · Press",
+    file: "journal-angela-allister-brides.html", page: 3, tag: "Real Wedding · Press", franceLink: true,
     title: "Angela and Allister — Featured in Brides", date: "May 10, 2023",
     galleryDir: "carousel",
     inlineMedia: [
@@ -1356,7 +1350,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-anastasia-denis.html", page: 3, tag: "Real Wedding",
+    file: "journal-anastasia-denis.html", page: 3, tag: "Real Wedding", franceLink: true,
     title: "Anastasia and Denis — An Intimate Wedding on the French Riviera", date: "May 1, 2023",
     excerpt: "An intimate wedding on the sun-kissed shores of Cap-Ferrat ... the Four Seasons, a fireworks display, and a season opener to remember.",
     body: [
@@ -1407,7 +1401,7 @@ const archive = [
   /* ===================== Page 4 ===================== */
   {
     file: "journal-jasmiina-tuukka.html", page: 4, tag: "Real Wedding",
-    title: "Jasmiina and Tuukka Rask — The Most Elegant Wedding at Villa Balbiano, Lake Como", date: "December 9, 2022",
+    title: "Villa Balbiano Wedding Film, Lake Como — Jasmiina & Tuukka Rask", date: "December 9, 2022",
     video: "788687357",
     verticalVideos: ["789230402", "789230943", "789231356"],
     galleryDir: "jasmiina",
@@ -1420,27 +1414,13 @@ const archive = [
     ],
   },
   {
-    file: "journal-angela-allister-paris.html", page: 4, tag: "Real Wedding",
+    file: "journal-angela-allister-paris.html", page: 4, tag: "Real Wedding", franceLink: true,
     title: "Angela and Allister — A Modern Wedding in Paris", date: "December 8, 2022",
     excerpt: "The same Vancouver couple, seen up close ... a modern Paris wedding at the Ritz, from a Seine cruise to a French cancan finale.",
     body: [
       "Have you ever imagined what Paris looks like in the summer, bathed in warmth and surrounded by the people you love, celebrating your love in the most romantic city in the world? That was exactly what Angela and Allister had in mind for their big day at the Ritz.",
       "Surrounded by their loved ones, they had the best time of their lives. They began the weekend with a trip on the Seine, an editorial photo session near the Louvre where Angela wore a stunning Berta dress, and a welcome dinner at Trocadéro with a view of the Eiffel Tower.",
       "They finished with the wedding of their dreams at the Ritz. With outstanding vendors such as Loli Events, Floraison Paris and Bouchra Sugar Design, plus makeup by Reina Kim, the day went off without a hitch. Jazz Around Midnight and a French cancan performance by Sublime Paris left everyone amazed, as did the breathtaking Ines Di Santo gown. But enough talking ... it's time to see it for yourself.",
-    ],
-  },
-  {
-    file: "journal-vaux-le-vicomte-royal.html", page: 4, tag: "Real Wedding",
-    title: "A Royal Wedding at Vaux-le-Vicomte, Paris", date: "November 9, 2022",
-    video: "t7_JRwa1oDM", videoProvider: "youtube",
-    galleryDir: "vaux",
-    gallery: Array.from({ length: 11 }, (_, i) => `vlv-${String(i + 1).padStart(2, "0")}.jpg`),
-    excerpt: "A royal wedding at Vaux-le-Vicomte, the little Versailles ... video-mapped walls, a secret VIP singer and a cake by Bastien Blanc Tailleur.",
-    body: [
-      "France is renowned for its culture and gastronomy, and for a wide range of spectacular venues ... museums, castles, palaces and more ... where some of the finest chefs will cook for you and your guests. We had the privilege of covering one such event.",
-      "Working with Alejandra Poupel and Alexandra Juan from Artego Luxury Events sets a high standard from the start, and teaming up with our dear friend Maddy Christina for photography was the icing on the cake. Speaking of cake, the one by Bastien Blanc Tailleur was incredible on so many levels.",
-      "The entertainment, decor, flowers by Roni Florals Design, VIP singers whose names we cannot disclose, an orchestra and video-mapping projected onto the walls all made the event exceptional. Everyone, from the bride to the oldest uncle, was impressed by what was accomplished in such an extraordinary venue.",
-      "Vaux-le-Vicomte, known as the little Versailles, is one of the few places with so much history that can be privatised. If you are looking for the wow factor for your wedding, this is the place to go.",
     ],
   },
   {
@@ -1458,7 +1438,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-jessica-benjamin.html", page: 4, tag: "Real Wedding",
+    file: "journal-jessica-benjamin.html", page: 4, tag: "Real Wedding", franceLink: true,
     title: "Jessica and Benjamin — A Stylish Jewish Wedding at Hôtel Beauvallon", date: "October 15, 2022",
     excerpt: "Jessica and Benjamin's stylish Jewish wedding at Hôtel Beauvallon, near St-Tropez ... a two-day celebration and a Brazilian pool party.",
     body: [
@@ -1469,7 +1449,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-ali-bakhtiar.html", page: 4, tag: "Celebration",
+    file: "journal-ali-bakhtiar.html", page: 4, tag: "Celebration", franceLink: true,
     title: "A Persian Wedding Anniversary at the Four Seasons, French Riviera", date: "October 9, 2022",
     video: { id: "769436553", hash: "a19b51aede" },
     thumb: "journal-thumbs/ali-bakhtiar.jpg",
@@ -1480,10 +1460,23 @@ const archive = [
       "The festivities extended across two days, with the second day's farewell lunch taking place at the Monaco Yacht Club. We invite you to watch the film to see the design execution and the work accomplished for this anniversary celebration.",
     ],
   },
+  {
+    file: "journal-villa-la-vigie.html", page: 4, tag: "Guide", franceLink: true,
+    title: "Villa La Vigie — A Belle Époque Jewel Above Monaco", date: "March 27, 2020",
+    galleryDir: "villa-la-vigie",
+    gallery: Array.from({ length: 10 }, (_, i) => `lvg-${String(i + 1).padStart(2, "0")}.jpg`),
+    excerpt: "Villa La Vigie, a private Belle Époque mansion above Monaco ... its history, its setting for intimate weddings, and how to reach it through our contact at the SBM.",
+    body: [
+      "Villa La Vigie takes its name quite literally. \"La Vigie\" means the lookout, and the mansion has held that role for over a century ... a private Belle Époque residence built into the cliffs above Monaco, where the aristocracy of the coast once raised villas to catch the first light off the Mediterranean and keep watch, quite literally, over the principality below. It belongs to the same golden era as the Riviera's grandest addresses, built when this stretch of coastline between Nice and the Italian border was the most fashionable in Europe.",
+      "What makes Villa La Vigie extraordinary today is how little of that history has been diluted. The mansion still reads as a private residence rather than a hotel ... curved stone balconies suspended directly over the water, shuttered windows, a silhouette that seems to grow straight out of the rock. For a couple who wants grandeur without a crowd, it is close to unmatched: an intimate guest list, vows exchanged with the whole of the Mediterranean as a backdrop, and an interior formal enough to carry a black-tie evening without a single rented chair.",
+      "Villa La Vigie is managed through the Société des Bains de Mer de Monaco (SBM), the institution behind the principality's most storied addresses, and we have a direct contact there. If you are seriously considering the villa for your own wedding, tell us and we will put you in touch with the SBM ourselves ... it is one of the advantages of having filmed on this coastline for as long as we have.",
+      "Mansions like this one are not being built anymore, and fewer of them survive intact with every wedding season that passes. Villa La Vigie is truly one of the last great jewels of the Riviera ... a private Belle Époque residence, perched above Monaco, with very few peers left standing.",
+    ],
+  },
 
   /* ===================== Page 5 ===================== */
   {
-    file: "journal-elisa-thomas.html", page: 5, tag: "Real Wedding",
+    file: "journal-elisa-thomas.html", page: 5, tag: "Real Wedding", franceLink: true,
     title: "Elisa and Thomas — A Château Wedding on the French Riviera", date: "October 1, 2022",
     excerpt: "Three days at Château St Georges in Grasse ... Elisa and Thomas's French Riviera wedding, filmed with a team we know by heart.",
     body: [
@@ -1493,7 +1486,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-hannah-lucas.html", page: 5, tag: "Real Wedding",
+    file: "journal-hannah-lucas.html", page: 5, tag: "Real Wedding", franceLink: true,
     title: "Hannah and Lucas — A British Wedding on the French Riviera", date: "October 1, 2022",
     excerpt: "The first wedding of the season ... Hannah and Lucas's British celebration at Villa Ephrussi, from a Monaco yacht to a farewell brunch.",
     body: [
@@ -1548,7 +1541,7 @@ const archive = [
 
   /* ===================== Page 6 ===================== */
   {
-    file: "journal-sabonis-wedding.html", page: 6, tag: "Real Wedding",
+    file: "journal-sabonis-wedding.html", page: 6, tag: "Real Wedding", franceLink: true,
     thumb: "domantas/ds-28.jpg",
     title: "Shashana and Domantas Sabonis — A Sensational Wedding in St-Jean-Cap-Ferrat", date: "January 28, 2022",
     excerpt: "Three days of magic in St-Jean-Cap-Ferrat ... the wedding of Shashana and NBA All-Star Domantas Sabonis, planned by Mindy Weiss.",
@@ -1560,7 +1553,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-michal-steve.html", page: 6, tag: "Real Wedding",
+    file: "journal-michal-steve.html", page: 6, tag: "Real Wedding", franceLink: true,
     title: "Michal and Steve — A St-Tropez Love Story", date: "November 29, 2021",
     video: "642838113",
     galleryDir: "michal-steve",
@@ -1583,7 +1576,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-sabonis-teaser.html", page: 6, tag: "Teaser",
+    file: "journal-sabonis-teaser.html", page: 6, tag: "Teaser", franceLink: true,
     thumb: "domantas/ds-27.jpg",
     title: "Shashana and Domantas Sabonis — Wedding Teaser, Cap-Ferrat", date: "October 21, 2021",
     excerpt: "If you're an NBA fan, you don't need to read further ... a first clip from Shashana and Domantas Sabonis's Cap-Ferrat wedding.",
@@ -1606,20 +1599,7 @@ const archive = [
 
   /* ===================== Page 7 ===================== */
   {
-    file: "journal-anna-andres-eden-roc.html", page: 7, tag: "Real Wedding",
-    title: "Anna Andres and David — A French Riviera Escapade at Hôtel du Cap-Eden-Roc", date: "October 9, 2020",
-    verticalVideos: [{ id: "466573692", hash: "39a3243ffd" }, { id: "466573597", hash: "6b59c916d3" }],
-    galleryDir: "anna",
-    gallery: Array.from({ length: 12 }, (_, i) => `an-${String(i + 1).padStart(2, "0")}.jpg`),
-    excerpt: "Anna Andres and David's intimate August wedding at Hôtel du Cap-Eden-Roc ... a Riviera escapade that made international headlines.",
-    body: [
-      "Anna Andres and David had originally planned to marry at Château St Martin in May, but the pandemic restrictions forced a change. Instead, they celebrated with an intimate August ceremony at the Hôtel du Cap-Eden-Roc on the French Riviera.",
-      "The venue offered distinctive scenery and ambiance, enhanced by beautiful floral design. Event planner Viktoria coordinated the celebration, while our cameras and the photographers documented the day.",
-      "The wedding went on to attract significant media attention, appearing in several prestigious international publications. And the bigger wedding coming the following year promised to be just as fantastic ... with a lot of fun to be had along the way.",
-    ],
-  },
-  {
-    file: "journal-samantha-edoardo.html", page: 7, tag: "Real Wedding",
+    file: "journal-samantha-edoardo.html", page: 7, tag: "Real Wedding", franceLink: true,
     title: "Samantha and Edoardo — From Switzerland to Provence", date: "October 7, 2020",
     excerpt: "A bit of light in a difficult year ... Samantha and Edoardo's wedding at Château de Berne, from Switzerland to Provence.",
     body: [
@@ -1629,7 +1609,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-private-shooting-cap-ferrat.html", page: 7, tag: "Experience",
+    file: "journal-private-shooting-cap-ferrat.html", page: 7, tag: "Experience", franceLink: true,
     title: "Private Shooting Exclusivity in St-Jean-Cap-Ferrat", date: "September 3, 2020",
     excerpt: "A new kind of shoot ... documenting a couple's private stay at the Grand-Hôtel du Cap-Ferrat, with photography and cinematography together.",
     body: [
@@ -1639,7 +1619,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-mozzafiato.html", page: 7, tag: "Campaign",
+    file: "journal-mozzafiato.html", page: 7, tag: "Campaign", franceLink: true,
     title: "Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story with Dolce &amp; Gabbana", date: "August 13, 2020",
     video: "453536410",
     galleryDir: "mozzafiato",
@@ -1664,7 +1644,7 @@ const archive = [
     ],
   },
   {
-    file: "journal-dolce-gabbana-teaser.html", page: 7, tag: "Teaser",
+    file: "journal-dolce-gabbana-teaser.html", page: 7, tag: "Teaser", franceLink: true,
     thumb: "mozzafiato/mz-22.jpg",
     title: "Grand-Hôtel du Cap-Ferrat × Dolce &amp; Gabbana — Teaser", date: "August 7, 2020",
     excerpt: "Think French Riviera, palace, yacht, Dolce & Gabbana ... a short teaser before the full Mozzafiato film.",
@@ -1730,6 +1710,9 @@ for (let pg = 1; pg <= JOURNAL_PAGES; pg++) {
   pages[journalHref(pg)] = shell({
     page: "journal",
     file: journalHref(pg),
+    // Page 1 is the real Journal hub; pages 2-7 are thin pagination archives
+    // with no unique content of their own, so they stay out of the index.
+    noindex: !first,
     breadcrumb: [
       { name: "Home", file: "" },
       { name: "Journal", file: "journal.html" },
@@ -1906,7 +1889,7 @@ ${p.body.map((par, i) => {
 ${row.items.map((it) => "            " + venueFigure(p.galleryDir, it.file, it.caption)).join("\n")}
           </div>`;
 }).join("\n")}
-        </div>
+${p.franceLink ? `          <p><a class="text-link" href="wedding-videographer-france.html">Planning your own wedding in France? See our wedding films in France →</a></p>\n` : ""}        </div>
 ${p.cta ? `        <div class="article-cta">
           <a class="btn btn--coral" href="${p.cta.href}" target="_blank" rel="noopener noreferrer">${p.cta.label}</a>
 ${p.cta.sub ? `          <p class="article-cta__note">${p.cta.sub}</p>\n` : ""}        </div>
@@ -2113,7 +2096,7 @@ pages["vaux-le-vicomte.html"] = shell({
     { name: "Real Weddings", file: "real-weddings.html" },
     { name: "Vaux-le-Vicomte", file: "vaux-le-vicomte.html" },
   ],
-  title: "Vaux-le-Vicomte — A Private Wedding at the Château | Chromata Films",
+  title: "Vaux-le-Vicomte Wedding Videographer | Chromata Films",
   description: "A private wedding at the Château de Vaux-le-Vicomte ... grand-siècle splendor for VIP clients, filmed by Chromata Films with florals by Roni Floral Design and photography by Maddy Christina.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
@@ -2150,12 +2133,15 @@ pages["vaux-le-vicomte.html"] = shell({
         <div class="prose">
           <p class="lead">The château that inspired Versailles, an evening of grand-siècle splendor, and a couple whose names we'll keep to ourselves.</p>
           <p>Some celebrations ask for discretion as much as they ask for grandeur. For this private wedding at the Château de Vaux-le-Vicomte, our VIP clients gathered their closest circle beneath Le Nôtre's gardens and Le Brun's painted ceilings ... a setting that has humbled kings, dressed for one unforgettable night.</p>
-          <p>With florals by Roni Floral Design and the photography of <a class="text-link" href="https://www.maddychristina.com" target="_blank" rel="noopener">Maddy Christina</a>, we filmed candlelit vows, a dinner beneath the painted salons, and dancing that carried through the château until the small hours ... all with the quiet footprint this couple asked of us.</p>
+          <p>Working with Alejandra Poupel and Alexandra Juan from Artego Luxury Events set a high standard from the start. The entertainment, décor, florals by Roni Floral Design, VIP singers whose names we cannot disclose, an orchestra and video-mapping projected onto the walls all made the event exceptional ... down to a cake by Bastien Blanc Tailleur that was incredible on every level.</p>
+          <p>With the photography of <a class="text-link" href="https://www.maddychristina.com" target="_blank" rel="noopener">Maddy Christina</a>, we filmed candlelit vows, a dinner beneath the painted salons, and dancing that carried through the château until the small hours ... all with the quiet footprint this couple asked of us. Vaux-le-Vicomte, known as the little Versailles, is one of the few places with so much history that can be privatised ... if you are looking for the wow factor for your wedding, this is the place to go.</p>
         </div>
         <div class="feature__meta">
           <div class="row"><span>Venue</span><span class="val"><a class="text-link" href="https://vaux-le-vicomte.com/en/" target="_blank" rel="noopener">Château de Vaux-le-Vicomte</a></span></div>
           <div class="row"><span>Setting</span><span class="val">Private wedding · France</span></div>
+          <div class="row"><span>Planning</span><span class="val">Artego Luxury Events</span></div>
           <div class="row"><span>Florals</span><span class="val">Roni Floral Design</span></div>
+          <div class="row"><span>Cake</span><span class="val">Bastien Blanc Tailleur</span></div>
           <div class="row"><span>Photography</span><span class="val"><a class="text-link" href="https://www.maddychristina.com" target="_blank" rel="noopener">Maddy Christina</a></span></div>
           <div class="row"><span>Film</span><span class="val">Chromata Films</span></div>
         </div>
@@ -2418,6 +2404,7 @@ pages["privacy.html"] = shell({
   file: "privacy.html",
   navLight: true,
   footerCta: false,
+  noindex: true,
   title: "Privacy & Cookies — Chromata Films",
   description: "How Chromata Films collects, uses and protects your personal data, and the cookies this website uses — in line with the EU GDPR.",
   breadcrumb: [
@@ -2470,7 +2457,7 @@ pages["investment.html"] = shell({
   page: "investment",
   file: "investment.html",
   navPlate: true,
-  title: "How Much Does a Luxury Wedding Film Cost? | Investment — Chromata Films",
+  title: "Wedding Film Pricing & Collections | Chromata Films",
   description: "Chromata Films collections start at 15,000 USD. What a luxury wedding film actually costs, what drives the number, and what you receive — explained plainly.",
   ogImage: "assets/img/contact/contact-side.jpg",
   footerCta: false,
@@ -2858,7 +2845,7 @@ const LANDING_PAGES = [
     file: "wedding-videographer-france.html",
     h1: "Wedding Videographer in <em>France</em>",
     kicker: "— Wedding Films in France",
-    title: "Best Wedding Videographer in France | Luxury Wedding Films — Chromata Films",
+    title: "Wedding Videographer in France | Luxury Wedding Films — Chromata Films",
     description: "Luxury wedding videographer in France. Chromata Films makes cinematic wedding films on the French Riviera, in Provence, St-Tropez, Cap-Ferrat and Paris. Hollywood VFX pedigree, collections from 15,000 USD.",
     summary: "luxury wedding films across the French Riviera, Provence, St-Tropez, Cap-Ferrat and Paris",
     heroImg: "assets/img/jacky/jacky-header.jpg",
@@ -2964,6 +2951,7 @@ const LANDING_PAGES = [
     serviceName: "Wedding Cinematography in Italy",
     related: [
       ["wedding-videographer-lake-como.html", "Lake Como"],
+      ["wedding-videographer-amalfi-coast.html", "Amalfi Coast"],
       ["wedding-cinematographer-europe.html", "Across Europe"],
     ],
     intro: [
@@ -3236,6 +3224,103 @@ LANDING_PAGES.push(
     ],
   },
   {
+    file: "wedding-videographer-amalfi-coast.html",
+    h1: "Wedding Videographer on the <em>Amalfi Coast</em>",
+    kicker: "— Amalfi Coast & Positano",
+    title: "Amalfi Coast & Positano Wedding Videographer | Chromata Films",
+    description: "Luxury wedding videographer on the Amalfi Coast. Chromata Films films cinematic weddings in Positano, Sorrento, Ravello, Praiano and Amalfi. Collections from 15,000 USD.",
+    summary: "wedding films in Positano, Sorrento, Ravello, Praiano and the villages of the Amalfi Coast",
+    heroImg: "assets/img/westbrook/rw-01.jpg",
+    heroAlt: "Russell and Nina Westbrook's anniversary film in Positano, on the Amalfi Coast",
+    heroSub: ["Positano · Sorrento · Ravello · Praiano", "Collections from 15,000 USD"],
+    areaServed: ["Amalfi Coast", "Positano", "Sorrento", "Ravello", "Praiano", "Amalfi", "Capri", "Italy"],
+    serviceName: "Wedding Cinematography on the Amalfi Coast",
+    related: [["wedding-filmmaker-italy.html", "All of Italy"], ["wedding-videographer-lake-como.html", "Lake Como"]],
+    intro: [
+      "The Amalfi Coast does not photograph like anywhere else in Italy. A single road carved into the cliffs connects a string of villages that each face the Tyrrhenian Sea at a different angle and a different hour, so the same wedding weekend can hold a sunrise over Sorrento, a sunset over Positano, and a candlelit dinner above Amalfi town ... three completely different films in three days.",
+      "We have filmed along this coast, including Russell and Nina Westbrook's anniversary celebration in Positano, and shot an editorial feature at Villa Zagara in Sorrento. Our base on the French Riviera puts the coast within a short flight.",
+    ],
+    body: [
+      ["The villages and venues", [
+        "Positano is the postcard: pastel houses stacked down a near-vertical hillside to the Spiaggia Grande, with Il San Pietro and a handful of cliffside hotels built directly into the rock. A few minutes further along the coast road, Praiano offers the same drama with a fraction of the crowd, and is where several of our couples choose to stay away from the day-trippers.",
+        "Ravello sits higher and quieter, 350 metres above the water, with Villa Cimbrone's Terrace of Infinity and the gardens of Villa Rufolo among the most photographed wedding backdrops in Italy. Amalfi town itself keeps the coast's maritime history ... the Duomo di Sant'Andrea above its sweeping staircase, and a marina that still feels like a working port rather than a film set.",
+        "Sorrento, on the northern tip of the peninsula, trades cliff drama for lemon groves and a gentler cliffside over the Bay of Naples, with private villas ... Villa Zagara among them ... that host weddings away from the coast's busier towns. Capri is a short boat ride from any of these, and a favourite choice for an extra day of celebration.",
+      ]],
+      ["What an Amalfi Coast wedding weekend needs", [
+        "The coast road, the SS163, is narrow, single-lane in places, and can turn a fifteen-minute drive into an hour in August traffic. Boats are frequently faster and more reliable than cars between venues, so we build transfers into the filming plan rather than trusting a schedule to the road.",
+        "Most of the weddings we film here run two or three days across more than one village, with a welcome dinner in one town and the ceremony in another. The light is unusually generous ... the cliffs hold a soft, warm glow well into the evening ... but the heat in July and August means ceremonies are frequently pushed late, which we plan the whole day around.",
+      ]],
+    ],
+    feature: {
+      id: "villa-zagara",
+      kicker: "A Closer Look",
+      title: "An Editorial Shoot at Villa Zagara, Sorrento",
+      instagram: "https://www.instagram.com/reel/DcA6G47Ne2N/",
+      galleryDir: "amalfi-zagara",
+      intro: [
+        "Villa Zagara is a private villa in Sorrento, set among lemon groves above the Bay of Naples ... exactly the kind of address that does not appear on a venue list but is available to couples who know to ask. We shot this editorial feature there with a full creative team, from the bridal styling to the final sparkler-lit cake cutting, and it remains one of our favourite days on the Amalfi Coast.",
+      ],
+      gallery: [
+        { file: "az-01.jpg", alt: "Wedding stationery with a hand-painted Sorrento crest" },
+        { file: "az-02.jpg", alt: "Bridal bouquet of white peonies, Villa Zagara" },
+        { file: "az-03.jpg", alt: "Bridal portrait among the banana leaves at Villa Zagara" },
+        { file: "az-04.jpg", alt: "The couple beneath tropical foliage, Villa Zagara, Sorrento" },
+        { file: "az-05.jpg", alt: "Detail of the bride's gown and bouquet" },
+        { file: "az-06.jpg", alt: "The bride beneath a lemon tree at Villa Zagara, Sorrento" },
+        { file: "az-07.jpg", alt: "The couple at an ornate Sorrento gateway" },
+        { file: "az-08.jpg", alt: "Bridal shoes hanging from an iron gate" },
+        { file: "az-09.jpg", alt: "The ring exchange, Villa Zagara" },
+        { file: "az-10.jpg", alt: "Reception table detail with oranges and candlelight" },
+        { file: "az-11.jpg", alt: "The reception table beneath a canopy of string lights" },
+        { file: "az-12.jpg", alt: "Overhead view of the garden reception table" },
+        { file: "az-13.jpg", alt: "Place setting detail, Villa Zagara reception" },
+        { file: "az-14.jpg", alt: "The couple at the reception table, Villa Zagara" },
+        { file: "az-15.jpg", alt: "Cutting the cake beneath a shower of sparklers" },
+        { file: "az-16.jpg", alt: "A creative portrait inside Villa Zagara's glasshouse" },
+      ],
+      credits: [
+        ["Planning & Styling", "@lafeteofficial"],
+        ["Venue", "@villazagarasorrento"],
+        ["Planning Assistant", "@_me_and_o_"],
+        ["Photography", "@maddy.christina.photo"],
+        ["Videography", "@chromata_films_weddings"],
+        ["Floral Design", "@paularooneythefloralmentor"],
+        ["Florist", "@labflor.aiello"],
+        ["Entertainment", "@yesandworld_"],
+        ["Hair & Makeup", "@makeupsonia.bridal"],
+        ["Furniture & Tableware", "@fgeventi"],
+        ["Analog Super 8mm video", "@thesilverkeepsake"],
+        ["Content Creator", "@tone.and.tell"],
+        ["Stationery", "@carissimo_letterpress"],
+        ["Cake", "@sugarcups_cake_design"],
+        ["Dresses", "@vanilastudiodubai"],
+        ["Dresses", "@cizzybridalaustralia"],
+        ["Shoes", "@renecaovilla"],
+        ["Jewellery", "@dcjewellerylondon"],
+        ["Couple", "@modelcouple_worlwide"],
+        ["Lighting", "fratellipizza lighting"],
+      ],
+    },
+    work: [
+      { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-03.jpg", title: "Russell & Nina Westbrook", note: "Anniversary film, Positano" },
+      { href: "#villa-zagara", img: "assets/img/amalfi-zagara/az-06.jpg", title: "Villa Zagara", note: "An editorial shoot in Sorrento" },
+      { href: "#villa-zagara", img: "assets/img/amalfi-zagara/az-11.jpg", title: "Villa Zagara", note: "Garden reception, Sorrento" },
+      { href: "wedding-filmmaker-italy.html", img: "assets/img/heroes/italy-header.jpg", title: "More from Italy", note: "Lake Como, Puglia & beyond" },
+    ],
+    faq: [
+      ["Do you film weddings on the Amalfi Coast?",
+       "Yes. We have filmed Russell and Nina Westbrook's anniversary celebration in Positano and shot an editorial feature at Villa Zagara in Sorrento, and we take on weddings across the coast ... Positano, Praiano, Ravello, Amalfi and Sorrento."],
+      ["How much does an Amalfi Coast wedding videographer cost?",
+       "Collections start at 15,000 USD. The coast's multi-village weekends, boat transfers and cliffside logistics mean the crew and schedule are usually a little larger than a single-venue wedding, which is reflected in the final quote."],
+      ["Which Amalfi Coast venues have you filmed at?",
+       "Positano, for Russell and Nina Westbrook's anniversary film, and Villa Zagara, a private villa in Sorrento, for an editorial shoot. We are glad to discuss any venue along the coast, including Ravello and Praiano."],
+      ["Is it difficult to film a wedding across the Amalfi Coast's cliffside venues?",
+       "It takes planning rather than difficulty. The coast road is narrow and slows to a crawl in high season, so we move crew and equipment by boat wherever it is faster, and we scout the staircases and transfer points before the wedding day rather than on it."],
+      ["Do you fly a drone on the Amalfi Coast?",
+       "Our aerial cinematographer is licensed to fly in Italy. Some cliffside venues and protected stretches of coastline restrict drone flight regardless of licensing ... we confirm what is possible at your specific venue before you book."],
+    ],
+  },
+  {
     file: "wedding-videographer-paris.html",
     h1: "Wedding Videographer in <em>Paris</em>",
     kicker: "— Paris & Île-de-France",
@@ -3328,6 +3413,35 @@ LANDING_PAGES.push(
     ],
   },
 );
+
+// Optional embedded case-study for a LANDING_PAGES entry: a short write-up, an
+// Instagram reel, a photo gallery and a full vendor-credit list. Reuses the
+// existing .feature__meta row styling (no new CSS) for the credits.
+const featureBlock = (f) => `  <section class="pad-section" style="padding-top:0" data-section id="${f.id}">
+    <div class="container">
+      <p class="kicker">— ${f.kicker}</p>
+      <h2 class="display-md" style="max-width:18em">
+        <span class="line-mask"><span class="line-inner">${f.title}</span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+${f.intro.map((p) => `        <p>${p}</p>`).join("\n")}
+      </div>
+      <div class="mat" style="max-width:36em; margin:5vh auto 0">
+        <blockquote class="instagram-media" data-instgrm-permalink="${f.instagram}" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:4px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin:0 auto; max-width:540px; min-width:326px; padding:0; width:100%;">
+          <div style="padding:16px;">
+            <a href="${f.instagram}" target="_blank" rel="noopener" style="background:#FFFFFF; line-height:0; padding:0; text-align:center; text-decoration:none; width:100%; display:block;">View this reel on Instagram</a>
+          </div>
+        </blockquote>
+      </div>
+      <div class="gallery-grid" style="margin-top:7vh">
+${f.gallery.map((it) => "        " + g(f.galleryDir, it.file, it.cls || "", it.alt)).join("\n")}
+      </div>
+      <div class="feature__meta" style="margin-top:6vh; max-width:36em">
+${f.credits.map(([label, handle]) => `        <div class="row"><span>${label}</span><span class="val">${handle.startsWith("@") ? `<a class="text-link" href="https://www.instagram.com/${handle.slice(1)}/" target="_blank" rel="noopener noreferrer">${handle}</a>` : handle}</span></div>`).join("\n")}
+      </div>
+    </div>
+  </section>
+  <script async src="//www.instagram.com/embed.js"></script>`;
 
 const faqBlock = (faq) => `  <section class="pad-section" data-section>
     <div class="container">
@@ -3427,7 +3541,7 @@ ${paras.map((p) => `        <p>${p}</p>`).join("\n")}
       </div>
     </div>
   </section>`).join("\n\n")}
-
+${L.feature ? `\n${featureBlock(L.feature)}\n` : ""}
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
       <p class="kicker">— Selected Work</p>

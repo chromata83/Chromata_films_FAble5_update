@@ -17,12 +17,15 @@
   RewriteEngine On
   RewriteBase /
 
-  # ---------- canonical host: always www ----------
-  # http -> https is already handled by the platform, and testing %{HTTPS} here
-  # would risk a loop behind the CDN (the origin can see it as "off"), so this
-  # only collapses the bare domain onto www.
+  # ---------- canonical scheme + host: always https://www ----------
+  # Hostinger serves this site directly (no CDN/proxy in front), so %{HTTPS}
+  # reliably reflects the real connection and this single rule is safe.
+  RewriteCond %{HTTPS} off [OR]
   RewriteCond %{HTTP_HOST} !^www\. [NC]
   RewriteRule ^(.*)$ https://www.chromatafilms.com/$1 [R=301,L]
+
+  # ---------- /index.html -> / ----------
+  RewriteRule ^index\.html$ / [R=301,L]
 
   # ---------- legacy blog posts -> case studies ----------
   RewriteRule ^blogchromatafilms/shashanadomantassaboniswedding/?$ /domantas-sabonis.html [R=301,L,NC]
@@ -44,6 +47,31 @@
   RewriteRule ^blogchromatafilms/hannahlucasweddingvillaephrussi/?$ /journal-hannah-lucas.html [R=301,L,NC]
   RewriteRule ^blogchromatafilms/indianweddinglakecomo/?$ /journal-nida-sunny-highlight.html [R=301,L,NC]
   RewriteRule ^blogchromatafilms/lauren-and-jonathan-jewish-wedding-at-villa-rothschild-ephrussi/?$ /journal-lauren-jonathan.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2025/9/29/ai-wedding-masterclass-for-planners-and-designers/?$ /journal-ai-masterclass.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/(jewish|luxury)weddingmarrakech/?$ /journal-alexandra-raphael-marrakech.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2023/5/1/anastasia-amp-denis-intimate-wedding-on-the-french-riviera/?$ /journal-anastasia-denis.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2022/12/7/angela-amp-allister-modern-wedding-in-paris/?$ /journal-angela-allister-paris.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2023/5/10/angela-amp-allister-featured-in-brides/?$ /journal-angela-allister-brides.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2024/4/22/our-favorite-venues-in-south-of-france-to-celebrate-your-wedding/?$ /journal-france-venues.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2022/10/1/elisa-amp-thomas-a-chateau-wedding-on-the-french-riviera/?$ /journal-elisa-thomas.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2022/5/3/lauren-and-jonathan-wedding-dominican-republic-altos-de-chavon/?$ /journal-lauren-jonathan.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/aprincessweddinginpuglia/?$ /journal-puglia-princess.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2021/11/2/nida-amp-sunny-wedding-villa-erba-villa-bonomi-lake-como/?$ /journal-nida-sunny-teaser.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2023/1/19/artificial-intelligence-and-why-it-will-change-the-wedding-industry/?$ /journal-ai-wedding-industry.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2020/8/7/four-season-x-dolce-gabbana-teaser/?$ /journal-dolce-gabbana-teaser.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2022/2/4/giulietta-dreams-a-villa-cortine-story/?$ /journal-giulietta-villa-cortine.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2021/10/21/shashana-amp-domantas-sabonis-wedding-cap-ferrat/?$ /journal-sabonis-teaser.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2023/1/27/planning-your-destination-wedding-in-europe/?$ /journal-planning-europe.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2024/5/20/sumptuousevents-wedding-in-versailles-and-musee-rodin-paris/?$ /journal-parisian-dream.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2025/9/17/russell-westbrook-and-nina-westbrook-wedding-anniversary/?$ /journal-westbrook-anniversary.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2021/1/18/chromata-films-showreel-2021/?$ /gallery.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/2022/11/9/royal-wedding-at-vaux-le-vicomte-paris/?$ /vaux-le-vicomte.html [R=301,L,NC]
+  RewriteRule ^blogchromatafilms/villa-la-vigie-wedding/?$ /journal-villa-la-vigie.html [R=301,L,NC]
+
+  # ---------- consolidated duplicates -> merged page ----------
+  RewriteRule ^journal-jacqueline-gordon\.html/?$ /jacqueline-gordon.html [R=301,L,NC]
+  RewriteRule ^journal-anna-andres-eden-roc\.html/?$ /anna-andres.html [R=301,L,NC]
+  RewriteRule ^journal-vaux-le-vicomte-royal\.html/?$ /vaux-le-vicomte.html [R=301,L,NC]
 
   # ---------- legacy blog posts with no direct equivalent ----------
   RewriteRule ^blogchromatafilms/2019/2/7/recongnition-as-a-visual-artist-oscars-nomination/?$ /the-studio.html [R=301,L,NC]

@@ -14,7 +14,8 @@ mkdir -p "$OUT/fonts" "$OUT/video" \
   "$OUT/img/carousel" "$OUT/img/logos" "$OUT/img/studio" "$OUT/img/contact" \
   "$OUT/img/parisian-dream" "$OUT/img/four-seasons" "$OUT/img/daria" "$OUT/img/sandra-pedro" "$OUT/img/katya-joey" \
   "$OUT/img/jasmiina" "$OUT/img/wed-europe" "$OUT/img/natalia" "$OUT/img/marrakech" "$OUT/img/altos" \
-  "$OUT/img/michal-steve" "$OUT/img/mozzafiato" "$OUT/img/marcella-daniel" "$OUT/img/heroes" "$OUT/img/gallery" "$OUT/img/awards"
+  "$OUT/img/michal-steve" "$OUT/img/mozzafiato" "$OUT/img/marcella-daniel" "$OUT/img/heroes" "$OUT/img/gallery" "$OUT/img/awards" \
+  "$OUT/img/villa-la-vigie" "$OUT/img/amalfi-zagara"
 
 # ---------- fonts ----------
 # session-scratchpad source only exists on the session that first fetched it;
@@ -202,6 +203,45 @@ jpg "$OUT/img/france-venues/_estoublon-tmp.webp"                       "$OUT/img
 rm -f "$OUT/img/france-venues/_estoublon-tmp.webp"
 jpg "$PUB/blog/fav venues/villa+la+vigie+wedding.webp"                 "$OUT/img/france-venues/fv-06.jpg" 1800
 jpg "$PUB/blog/fav venues/wadding-day-anna-andres-opublikovala-pervye-svadebnye-foto-8-962x1024.webp" "$OUT/img/france-venues/fv-07.jpg" 1800
+
+# ---------- villa la vigie journal-article gallery (recovered legacy post) ----------
+# Real shoot stills (49-51) + video-still frame grabs from an IG reel temp
+# export, ordered establishing-shot-first: full facade, architecture detail,
+# the three editorial portraits, then getting-ready/ceremony candids.
+VLV2="$PUB/villa la vigie"
+jpg "$VLV2/VIGIE_SHOOTING IG_TEMP - Copie.mov_snapshot_00.18.323.png" "$OUT/img/villa-la-vigie/lvg-01.jpg" 1800
+jpg "$VLV2/VIGIE_SHOOTING IG_TEMP - Copie.mov_snapshot_00.20.541.png" "$OUT/img/villa-la-vigie/lvg-02.jpg" 1800
+jpg "$VLV2/Shooting La Vigie - Maddy Christina (49 sur 67).jpg"       "$OUT/img/villa-la-vigie/lvg-03.jpg" 1800
+jpg "$VLV2/Shooting La Vigie - Maddy Christina (50 sur 67).jpg"       "$OUT/img/villa-la-vigie/lvg-04.jpg" 1800
+jpg "$VLV2/Shooting La Vigie - Maddy Christina (51 sur 67).jpg"       "$OUT/img/villa-la-vigie/lvg-05.jpg" 1800
+jpg "$VLV2/VIGIE_SHOOTING IG_TEMP - Copie.mov_snapshot_00.03.610.png" "$OUT/img/villa-la-vigie/lvg-06.jpg" 1800
+jpg "$VLV2/VIGIE_SHOOTING IG_TEMP - Copie.mov_snapshot_00.00.811.png" "$OUT/img/villa-la-vigie/lvg-07.jpg" 1800
+jpg "$VLV2/VIGIE_SHOOTING IG_TEMP - Copie.mov_snapshot_00.09.723.png" "$OUT/img/villa-la-vigie/lvg-08.jpg" 1800
+jpg "$VLV2/VIGIE_SHOOTING IG_TEMP - Copie.mov_snapshot_00.17.012.png" "$OUT/img/villa-la-vigie/lvg-09.jpg" 1800
+jpg "$VLV2/VIGIE_SHOOTING IG_TEMP - Copie.mov_snapshot_00.19.730.png" "$OUT/img/villa-la-vigie/lvg-10.jpg" 1800
+
+# ---------- amalfi coast landing page: Villa Zagara, Sorrento feature shoot ----------
+# Curated 16 of 23 source files from the IG download — the 4-up/9-up contact
+# -sheet grids Instagram's export bundles in with the singles are excluded.
+# Order: stationery -> bridal portraits -> ceremony/rings -> reception
+# tablescape -> b&w reception moments -> closing creative flourish.
+AZ="$PUB/amalfi - villa zagara - sorrento"
+jpg "$AZ/maddy.christina.photo_1786634102_3957813722579736317_50112328229.jpg" "$OUT/img/amalfi-zagara/az-01.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786073402_3957788718538429434_50112328229.jpg" "$OUT/img/amalfi-zagara/az-02.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786073402_3957788717791856454_50112328229.jpg" "$OUT/img/amalfi-zagara/az-03.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786073402_3957788717791840212_50112328229.jpg" "$OUT/img/amalfi-zagara/az-04.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786073402_3957788718110632540_50112328229.jpg" "$OUT/img/amalfi-zagara/az-05.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786634102_3957813722084846130_50112328229.jpg" "$OUT/img/amalfi-zagara/az-06.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786634102_3957813721849974496_50112328229.jpg" "$OUT/img/amalfi-zagara/az-07.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786160102_3957793282553590190_50112328229.jpg" "$OUT/img/amalfi-zagara/az-08.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786634102_3957813722596509257_50112328229.jpg" "$OUT/img/amalfi-zagara/az-09.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786160102_3957793282561941624_50112328229.jpg" "$OUT/img/amalfi-zagara/az-10.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786334102_3957802867158975516_50112328229.jpg" "$OUT/img/amalfi-zagara/az-11.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786334102_3957802867184148073_50112328229.jpg" "$OUT/img/amalfi-zagara/az-12.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786334102_3957802867469366051_50112328229.jpg" "$OUT/img/amalfi-zagara/az-13.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786160102_3957793282561942966_50112328229.jpg" "$OUT/img/amalfi-zagara/az-14.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786160102_3957793283400836503_50112328229.jpg" "$OUT/img/amalfi-zagara/az-15.jpg" 1800
+jpg "$AZ/maddy.christina.photo_1786634102_3957813721849930179_50112328229.jpg" "$OUT/img/amalfi-zagara/az-16.jpg" 1800
 
 # ---------- olympics-ai journal-article gallery (AI-generated editorial, sorted filename order) ----------
 i=0

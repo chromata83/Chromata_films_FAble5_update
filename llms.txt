@@ -49,7 +49,7 @@
 - [Investment](https://www.chromatafilms.com/investment.html): what a wedding film costs and what moves the price
 - [Awards & Press](https://www.chromatafilms.com/awards-press.html): awards, publications, planner recommendations
 - [Contact](https://www.chromatafilms.com/contact.html): enquiries and availability
-- [Journal](https://www.chromatafilms.com/journal.html): 44 articles and real weddings
+- [Journal](https://www.chromatafilms.com/journal.html): 42 articles and real weddings
 
 ## Service areas
 
@@ -61,6 +61,7 @@
 - [Wedding Videographer on the <em>French Riviera</em>](https://www.chromatafilms.com/wedding-videographer-french-riviera.html): wedding films on the Côte d'Azur — Cap-Ferrat, Antibes, Èze, Cannes and Monaco
 - [Wedding Videographer in <em>St-Tropez</em>](https://www.chromatafilms.com/wedding-videographer-st-tropez.html): multi-day wedding films in St-Tropez, Ramatuelle and the Gulf of St-Tropez
 - [Wedding Videographer at <em>Lake Como</em>](https://www.chromatafilms.com/wedding-videographer-lake-como.html): wedding films at Villa Erba, Villa Balbiano, Villa Bonomi and the Lake Como estates
+- [Wedding Videographer on the <em>Amalfi Coast</em>](https://www.chromatafilms.com/wedding-videographer-amalfi-coast.html): wedding films in Positano, Sorrento, Ravello, Praiano and the villages of the Amalfi Coast
 - [Wedding Videographer in <em>Paris</em>](https://www.chromatafilms.com/wedding-videographer-paris.html): wedding films in Paris and the Île-de-France châteaux, including Vaux-le-Vicomte
 - [Wedding Videographer in <em>Provence</em>](https://www.chromatafilms.com/wedding-videographer-provence.html): château, vineyard and mas wedding films across Provence, the Luberon and the Alpilles
 
@@ -70,7 +71,6 @@
 - [Marcella Raneri & Daniel Nutkis Engagement Party — Ritz-Carlton Dallas | Chromata Films](https://www.chromatafilms.com/journal-marcella-daniel.html)
 - [Maxence and Elise Caqueret — A Private Wedding Film | Chromata Films](https://www.chromatafilms.com/journal-maxence-elise-caqueret.html)
 - [AI Wedding Masterclass for Planners & Designers | Chromata Films](https://www.chromatafilms.com/journal-ai-masterclass.html)
-- [Jacqueline and Gordon — A St-Tropez Experience Unlike Any Other](https://www.chromatafilms.com/journal-jacqueline-gordon.html)
 - [Russell Westbrook and Nina Westbrook — Wedding Anniversary](https://www.chromatafilms.com/journal-westbrook-anniversary.html)
 - [A Riviera Fairytale: Alexa and Wilton's Extravagant St-Tropez Wedding](https://www.chromatafilms.com/journal-alexa-wilton.html)
 - [A Parisian Dream Tour: The Luxurious Wedding of J & A](https://www.chromatafilms.com/journal-parisian-dream.html)
@@ -87,12 +87,12 @@
 - [Anastasia and Denis — An Intimate Wedding on the French Riviera](https://www.chromatafilms.com/journal-anastasia-denis.html)
 - [Planning a Destination Wedding in Europe — The Complete Guide | Chromata Films](https://www.chromatafilms.com/journal-planning-europe.html)
 - [Artificial Intelligence and Why It Will Change the Wedding Industry](https://www.chromatafilms.com/journal-ai-wedding-industry.html)
-- [Jasmiina and Tuukka Rask — The Most Elegant Wedding at Villa Balbiano, Lake Como](https://www.chromatafilms.com/journal-jasmiina-tuukka.html)
+- [Villa Balbiano Wedding Film, Lake Como — Jasmiina & Tuukka Rask](https://www.chromatafilms.com/journal-jasmiina-tuukka.html)
 - [Angela and Allister — A Modern Wedding in Paris](https://www.chromatafilms.com/journal-angela-allister-paris.html)
-- [A Royal Wedding at Vaux-le-Vicomte, Paris](https://www.chromatafilms.com/journal-vaux-le-vicomte-royal.html)
 - [Alexandra and Raphael — A Luxury Jewish Wedding in Marrakech](https://www.chromatafilms.com/journal-alexandra-raphael-marrakech.html)
 - [Jessica and Benjamin — A Stylish Jewish Wedding at Hôtel Beauvallon](https://www.chromatafilms.com/journal-jessica-benjamin.html)
 - [A Persian Wedding Anniversary at the Four Seasons, French Riviera](https://www.chromatafilms.com/journal-ali-bakhtiar.html)
+- [Villa La Vigie — A Belle Époque Jewel Above Monaco](https://www.chromatafilms.com/journal-villa-la-vigie.html)
 - [Elisa and Thomas — A Château Wedding on the French Riviera](https://www.chromatafilms.com/journal-elisa-thomas.html)
 - [Hannah and Lucas — A British Wedding on the French Riviera](https://www.chromatafilms.com/journal-hannah-lucas.html)
 - [Alexandra and Raphael — Wedding Teaser, Marrakech](https://www.chromatafilms.com/journal-alexandra-raphael-teaser.html)
@@ -104,7 +104,6 @@
 - [Nida and Sunny — Villa Erba, Lake Como, Teaser](https://www.chromatafilms.com/journal-nida-sunny-teaser.html)
 - [Shashana and Domantas Sabonis — Wedding Teaser, Cap-Ferrat](https://www.chromatafilms.com/journal-sabonis-teaser.html)
 - [D and A — A Wedding at Villa Bonomi, Lake Como](https://www.chromatafilms.com/journal-d-a-villa-bonomi.html)
-- [Anna Andres and David — A French Riviera Escapade at Hôtel du Cap-Eden-Roc](https://www.chromatafilms.com/journal-anna-andres-eden-roc.html)
 - [Samantha and Edoardo — From Switzerland to Provence](https://www.chromatafilms.com/journal-samantha-edoardo.html)
 - [Private Shooting Exclusivity in St-Jean-Cap-Ferrat](https://www.chromatafilms.com/journal-private-shooting-cap-ferrat.html)
 - [Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story with Dolce &amp; Gabbana](https://www.chromatafilms.com/journal-mozzafiato.html)
