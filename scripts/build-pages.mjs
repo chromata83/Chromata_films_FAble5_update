@@ -2717,6 +2717,24 @@ pages["gettoknowusmore.html"] = shell({
 
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
+      <p class="kicker">— Latest Films</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,2.4vw,34px) clamp(14px,2vw,28px); margin-top:4vh" class="films-grid">
+${[
+  ["https://player.vimeo.com/video/1117935629", "Jacqueline &amp; Gordon — Wedding Film Highlight"],
+  ["https://www.youtube-nocookie.com/embed/tbgBaGuoAEA?rel=0", "Emy &amp; Alessandro — Wedding Film Highlight"],
+].map(([src, title]) => `        <div>
+          <div class="mat" style="position:relative; aspect-ratio:16/9; background:#000">
+            <iframe data-lazy-src="${src}" title="${title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
+          </div>
+          <p class="kicker" style="margin-top:2vh">— ${title}</p>
+        </div>`).join("\n")}
+      </div>
+      <style>@media (max-width:900px){ .films-grid { grid-template-columns:1fr !important; } }</style>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
       <p class="kicker">— What We Offer</p>
       <p class="body-copy" style="max-width:46em; margin-top:3vh">We understand every wedding is unique, just like your client's story. That's why we customize every quote, considering their specific venue, dreams and celebration length, to capture their once-in-a-lifetime moment perfectly.</p>
     </div>
