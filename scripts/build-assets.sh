@@ -405,6 +405,11 @@ find "$PUB/henna ben" -maxdepth 1 -iname '*.jpg' | sort | while read -r f; do
 done
 jpg "$PUB/henna ben/henna_&_ben_-_highlight_film_v1 (2160p).mp4_snapshot_04.25.598.png" "$OUT/img/henna-ben/hb-banner.jpg" 2400
 
+# ---------- st-moritz destination guide (AI-generated illustrations) ----------
+mkdir -p "$OUT/img/st-moritz"
+jpg "$PUB/st_moritz/st moritz luxury wedding (1).png" "$OUT/img/st-moritz/sm-01.jpg" 2000
+jpg "$PUB/st_moritz/st moritz luxury wedding (2).png" "$OUT/img/st-moritz/sm-02.jpg" 2000
+
 # ---------- planning-europe journal-article gallery (cross-wedding montage curated by the user) ----------
 i=0
 find "$PUB/blog-wed-europe" -maxdepth 1 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | sort | while read -r f; do
