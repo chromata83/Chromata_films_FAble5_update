@@ -3248,8 +3248,13 @@ LANDING_PAGES.push(
     work: [
       { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-04.jpg", title: "Katya & Joey", note: "Villa Erba, planned by Sacks Productions & Alejandra Poupel" },
       { href: "journal-jasmiina-tuukka.html", img: "assets/img/jasmiina/jt-04.jpg", title: "Jasmiina & Tuukka Rask", note: "Villa Balbiano" },
-      { href: "journal-nida-sunny-highlight.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi" },
-      { href: "journal-d-a-villa-bonomi.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "D & A", note: "Villa Bonomi" },
+      { href: "journal-nida-sunny-highlight.html", img: "assets/img/jasmiina/jt-06.jpg", alt: "A Riva boat crossing Lake Como during a wedding weekend filmed by Chromata Films", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi" },
+      { href: "journal-d-a-villa-bonomi.html", img: "assets/img/katya-joey/kj-01.jpg", alt: "A Lake Como wedding reception table filmed by Chromata Films", title: "D & A", note: "Villa Bonomi" },
+    ],
+    films: [
+      { id: "788687357", title: "Jasmiina &amp; Tuukka — Wedding Film Highlights", desc: "Jasmiina and Tuukka Rask's wedding at Villa Balbiano, Lake Como.", uploadDate: "2023-01-12", duration: "PT5M25S" },
+      { id: "645329394", title: "Nida &amp; Sunny — Wedding Film Highlight", desc: "Nida and Sunny's wedding celebration at Lake Como.", uploadDate: "2021-11-12", duration: "PT5M11S" },
+      { id: "934248442", title: "Regina &amp; Marko — Wedding Highlight Film Intro", desc: "The opening of Regina and Marko's wedding highlight film.", uploadDate: "2024-04-13", duration: "PT1M1S" },
     ],
     faq: [
       ["Who is the best wedding videographer at Lake Como?",
@@ -3539,6 +3544,17 @@ for (const L of LANDING_PAGES) {
           },
         },
       },
+      ...(L.films || []).map((v) => ({
+        "@type": "VideoObject",
+        "@id": `${url}#film-${v.id}`,
+        name: v.title.replace(/&amp;/g, "&"),
+        description: v.desc,
+        thumbnailUrl: [v.thumb || `${SITE_URL}/${L.heroImg}`],
+        uploadDate: v.uploadDate,
+        ...(v.duration ? { duration: v.duration } : {}),
+        embedUrl: `https://player.vimeo.com/video/${v.id}`,
+        publisher: { "@id": ORG_ID },
+      })),
       {
         "@type": "FAQPage",
         "@id": `${url}#faq`,
@@ -3582,14 +3598,29 @@ ${paras.map((p) => `        <p>${p}</p>`).join("\n")}
       </div>
     </div>
   </section>`).join("\n\n")}
-${L.feature ? `\n${featureBlock(L.feature)}\n` : ""}
+${L.feature ? `\n${featureBlock(L.feature)}\n` : ""}${L.films ? `
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— The Films</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,2.4vw,34px) clamp(14px,2vw,28px); margin-top:5vh" class="films-grid">
+${L.films.map((v) => `        <div>
+          <div class="mat" style="position:relative; aspect-ratio:16/9; background:#000">
+            <iframe data-lazy-src="https://player.vimeo.com/video/${v.id}" title="${v.title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
+          </div>
+          <p class="kicker" style="margin-top:2vh">— ${v.title}</p>
+        </div>`).join("\n")}
+      </div>
+      <style>@media (max-width:900px){ .films-grid { grid-template-columns:1fr !important; } }</style>
+    </div>
+  </section>
+` : ""}
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
       <p class="kicker">— Selected Work</p>
       <div class="gallery-grid" style="margin-top:5vh">
 ${L.work.map((w) => `        <figure class="gitem mat img-reveal">
           <a href="${w.href}" aria-label="${w.title} — ${w.note}">
-            <img src="${w.img}" alt="${w.title} — ${w.note}" loading="lazy">
+            <img src="${w.img}" alt="${w.alt || `${w.title} — ${w.note}`}" loading="lazy">
           </a>
           <figcaption style="margin-top:1.4vh; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(37,35,33,0.62)">${w.title} · ${w.note}</figcaption>
         </figure>`).join("\n")}
