@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url><loc>https://www.chromatafilms.com/</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/domantas-sabonis.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/jacqueline-gordon.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/anna-andres.html</loc><lastmod>2026-10-06</lastmod></url>
+  <url><loc>https://www.chromatafilms.com/domantas-sabonis.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/4yQBjrSI1hI/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>Shashana &amp; Domantas Sabonis — Wedding Film Highlight</video:title>
+      <video:description>NBA All-Star Domantas Sabonis and Shashana's three-day wedding at Villa Ephrussi, St-Jean-Cap-Ferrat, planned by Mindy Weiss.</video:description>
+      <video:player_loc>https://www.youtube-nocookie.com/embed/4yQBjrSI1hI</video:player_loc>
+      <video:duration>259</video:duration>
+      <video:publication_date>2026-07-09</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/jacqueline-gordon.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/jacky/jg-01.jpg</video:thumbnail_loc>
+      <video:title>Jacqueline &amp; Gordon — Wedding Film Highlight</video:title>
+      <video:description>Five days of celebration at Le Beauvallon, St-Tropez, planned by Rendez-vous in Paris.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/1117935629</video:player_loc>
+      <video:duration>398</video:duration>
+      <video:publication_date>2025-09-11</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/anna-andres.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/anna/anna-header.jpg</video:thumbnail_loc>
+      <video:title>Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part I)</video:title>
+      <video:description>Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/466573692?h=39a3243ffd</video:player_loc>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/anna/an-01.jpg</video:thumbnail_loc>
+      <video:title>Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part II)</video:title>
+      <video:description>Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/466573597?h=6b59c916d3</video:player_loc>
+    </video:video>
+  </url>
   <url><loc>https://www.chromatafilms.com/the-studio.html</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://www.chromatafilms.com/journal.html</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://www.chromatafilms.com/journal-2.html</loc><lastmod>2026-10-06</lastmod></url>
@@ -56,22 +87,288 @@
   <url><loc>https://www.chromatafilms.com/journal-o-my-gaude.html</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://www.chromatafilms.com/gallery.html</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://www.chromatafilms.com/russell-westbrook.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/vaux-le-vicomte.html</loc><lastmod>2026-10-06</lastmod></url>
+  <url><loc>https://www.chromatafilms.com/vaux-le-vicomte.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/t7_JRwa1oDM/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>A Private Wedding at Vaux-le-Vicomte — Teaser</video:title>
+      <video:description>A private château wedding at Vaux-le-Vicomte, outside Paris.</video:description>
+      <video:player_loc>https://www.youtube-nocookie.com/embed/t7_JRwa1oDM</video:player_loc>
+      <video:duration>52</video:duration>
+      <video:publication_date>2022-10-08</video:publication_date>
+    </video:video>
+  </url>
   <url><loc>https://www.chromatafilms.com/real-weddings.html</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://www.chromatafilms.com/contact.html</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://www.chromatafilms.com/privacy.html</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://www.chromatafilms.com/investment.html</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://www.chromatafilms.com/awards-press.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-videographer-france.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-cinematographer-europe.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-filmmaker-italy.html</loc><lastmod>2026-10-06</lastmod></url>
+  <url><loc>https://www.chromatafilms.com/wedding-videographer-france.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/jacky/jg-01.jpg</video:thumbnail_loc>
+      <video:title>Jacqueline &amp; Gordon — Wedding Film Highlight</video:title>
+      <video:description>Five days of celebration at Le Beauvallon, St-Tropez, planned by Rendez-vous in Paris.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/1117935629</video:player_loc>
+      <video:duration>398</video:duration>
+      <video:publication_date>2025-09-11</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/4yQBjrSI1hI/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>Shashana &amp; Domantas Sabonis — Wedding Film Highlight</video:title>
+      <video:description>NBA All-Star Domantas Sabonis and Shashana's three-day wedding at Villa Ephrussi, St-Jean-Cap-Ferrat, planned by Mindy Weiss.</video:description>
+      <video:player_loc>https://www.youtube-nocookie.com/embed/4yQBjrSI1hI</video:player_loc>
+      <video:duration>259</video:duration>
+      <video:publication_date>2026-07-09</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/aw-blog/aw-01.jpg</video:thumbnail_loc>
+      <video:title>Alexa &amp; Wilton — Wedding Film Highlight</video:title>
+      <video:description>Alexa and Wilton's St-Tropez wedding, designed by House of Kirschner.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/1039575157</video:player_loc>
+      <video:duration>296</video:duration>
+      <video:publication_date>2024-12-16</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/t7_JRwa1oDM/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>A Private Wedding at Vaux-le-Vicomte — Teaser</video:title>
+      <video:description>A private château wedding at Vaux-le-Vicomte, outside Paris.</video:description>
+      <video:player_loc>https://www.youtube-nocookie.com/embed/t7_JRwa1oDM</video:player_loc>
+      <video:duration>52</video:duration>
+      <video:publication_date>2022-10-08</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/wedding-cinematographer-europe.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/katya-joey/kj-03.jpg</video:thumbnail_loc>
+      <video:title>Katya &amp; Joey — Wedding Highlight Film</video:title>
+      <video:description>Katya and Joey's wedding at Villa Erba, Lake Como, planned by Sacks Productions and Alejandra Poupel.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/905275321</video:player_loc>
+      <video:duration>336</video:duration>
+      <video:publication_date>2024-01-22</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/jacky/jg-01.jpg</video:thumbnail_loc>
+      <video:title>Jacqueline &amp; Gordon — Wedding Film Highlight</video:title>
+      <video:description>Five days of celebration at Le Beauvallon, St-Tropez, planned by Rendez-vous in Paris.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/1117935629</video:player_loc>
+      <video:duration>398</video:duration>
+      <video:publication_date>2025-09-11</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/logo-mark.png</video:thumbnail_loc>
+      <video:title>Joseph &amp; Ally — Paris Wedding Teaser</video:title>
+      <video:description>A Paris wedding weekend between Versailles, the Musée Rodin and the Shangri-La Paris.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/948291710</video:player_loc>
+      <video:duration>49</video:duration>
+      <video:publication_date>2024-05-20</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/logo-mark.png</video:thumbnail_loc>
+      <video:title>Nadine &amp; Albert — Wedding Highlight Film</video:title>
+      <video:description>Nadine and Albert's luxury wedding in Puglia, Italy, planned by Events Boutique.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/858206093</video:player_loc>
+      <video:duration>301</video:duration>
+      <video:publication_date>2023-08-26</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/wedding-filmmaker-italy.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/katya-joey/kj-03.jpg</video:thumbnail_loc>
+      <video:title>Katya &amp; Joey — Wedding Highlight Film</video:title>
+      <video:description>Katya and Joey's wedding at Villa Erba, Lake Como, planned by Sacks Productions and Alejandra Poupel.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/905275321</video:player_loc>
+      <video:duration>336</video:duration>
+      <video:publication_date>2024-01-22</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/jasmiina/jt-02.jpg</video:thumbnail_loc>
+      <video:title>Jasmiina &amp; Tuukka — Wedding Film Highlights</video:title>
+      <video:description>Jasmiina and Tuukka Rask's wedding at Villa Balbiano, Lake Como.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/788687357</video:player_loc>
+      <video:duration>325</video:duration>
+      <video:publication_date>2023-01-12</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/logo-mark.png</video:thumbnail_loc>
+      <video:title>Nadine &amp; Albert — Wedding Highlight Film</video:title>
+      <video:description>Nadine and Albert's luxury wedding in Puglia, Italy, planned by Events Boutique.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/858206093</video:player_loc>
+      <video:duration>301</video:duration>
+      <video:publication_date>2023-08-26</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/nida-sunny/ns-01.jpg</video:thumbnail_loc>
+      <video:title>Nida &amp; Sunny — Wedding Film Highlight</video:title>
+      <video:description>Nida and Sunny's wedding weekend at Villa Bonomi and Villa Erba, Lake Como.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/645329394</video:player_loc>
+      <video:duration>311</video:duration>
+      <video:publication_date>2021-11-12</video:publication_date>
+    </video:video>
+  </url>
   <url><loc>https://www.chromatafilms.com/luxury-wedding-filmmaker-usa.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/private-event-videographer.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-videographer-french-riviera.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-videographer-st-tropez.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-videographer-lake-como.html</loc><lastmod>2026-10-06</lastmod></url>
+  <url><loc>https://www.chromatafilms.com/private-event-videographer.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/natalia/nm-01.jpg</video:thumbnail_loc>
+      <video:title>Natalia's 50th Birthday — Montenegro Teaser</video:title>
+      <video:description>A three-day 50th birthday celebration in Tivat, Montenegro, by Cocoon Events.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/866854185</video:player_loc>
+      <video:duration>81</video:duration>
+      <video:publication_date>2023-09-21</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg</video:thumbnail_loc>
+      <video:title>Marcella &amp; Dan — Engagement Party Teaser</video:title>
+      <video:description>Marcella and Dan's engagement party.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/1078314523</video:player_loc>
+      <video:duration>49</video:duration>
+      <video:publication_date>2025-04-24</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/four-seasons/fsb-01.jpg</video:thumbnail_loc>
+      <video:title>A Grand-Hôtel du Cap-Ferrat Buyout — Décor &amp; Animations</video:title>
+      <video:description>Décor and animations from a full private buyout of the Grand-Hôtel du Cap-Ferrat, A Four Seasons Hotel.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/879796920</video:player_loc>
+      <video:duration>90</video:duration>
+      <video:publication_date>2023-10-31</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/wedding-videographer-french-riviera.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/4yQBjrSI1hI/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>Shashana &amp; Domantas Sabonis — Wedding Film Highlight</video:title>
+      <video:description>NBA All-Star Domantas Sabonis and Shashana's three-day wedding at Villa Ephrussi, St-Jean-Cap-Ferrat, planned by Mindy Weiss.</video:description>
+      <video:player_loc>https://www.youtube-nocookie.com/embed/4yQBjrSI1hI</video:player_loc>
+      <video:duration>259</video:duration>
+      <video:publication_date>2026-07-09</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/mozzafiato/mz-01.jpg</video:thumbnail_loc>
+      <video:title>Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story</video:title>
+      <video:description>A Four Seasons Hotel story filmed at the Grand-Hôtel du Cap-Ferrat on the French Riviera.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/453536410</video:player_loc>
+      <video:duration>102</video:duration>
+      <video:publication_date>2020-09-01</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/daria/dl-01.jpg</video:thumbnail_loc>
+      <video:title>Daria &amp; Joseph — Wedding Teaser, Èze</video:title>
+      <video:description>A circus-themed Jewish wedding in an Èze villa on the French Riviera, by Cocoon Events.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/880169269</video:player_loc>
+      <video:duration>86</video:duration>
+      <video:publication_date>2023-11-01</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/four-seasons/fsb-01.jpg</video:thumbnail_loc>
+      <video:title>A Grand-Hôtel du Cap-Ferrat Buyout — Décor &amp; Animations</video:title>
+      <video:description>Décor and animations from a full private buyout of the Grand-Hôtel du Cap-Ferrat, A Four Seasons Hotel.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/879796920</video:player_loc>
+      <video:duration>90</video:duration>
+      <video:publication_date>2023-10-31</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/wedding-videographer-st-tropez.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/jacky/jg-01.jpg</video:thumbnail_loc>
+      <video:title>Jacqueline &amp; Gordon — Wedding Film Highlight</video:title>
+      <video:description>Five days of celebration at Le Beauvallon, St-Tropez, planned by Rendez-vous in Paris.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/1117935629</video:player_loc>
+      <video:duration>398</video:duration>
+      <video:publication_date>2025-09-11</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/aw-blog/aw-01.jpg</video:thumbnail_loc>
+      <video:title>Alexa &amp; Wilton — Wedding Film Highlight</video:title>
+      <video:description>Alexa and Wilton's St-Tropez wedding, designed by House of Kirschner.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/1039575157</video:player_loc>
+      <video:duration>296</video:duration>
+      <video:publication_date>2024-12-16</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/michal-steve/ms-01.jpg</video:thumbnail_loc>
+      <video:title>Michal &amp; Steve — A St-Tropez Love Story</video:title>
+      <video:description>A full wedding weekend at Le Beauvallon, St-Tropez.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/642838113</video:player_loc>
+      <video:publication_date>2021-11-29</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/wedding-videographer-lake-como.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/katya-joey/kj-03.jpg</video:thumbnail_loc>
+      <video:title>Katya &amp; Joey — Wedding Highlight Film</video:title>
+      <video:description>Katya and Joey's wedding at Villa Erba, Lake Como, planned by Sacks Productions and Alejandra Poupel.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/905275321</video:player_loc>
+      <video:duration>336</video:duration>
+      <video:publication_date>2024-01-22</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/jasmiina/jt-02.jpg</video:thumbnail_loc>
+      <video:title>Jasmiina &amp; Tuukka — Wedding Film Highlights</video:title>
+      <video:description>Jasmiina and Tuukka Rask's wedding at Villa Balbiano, Lake Como.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/788687357</video:player_loc>
+      <video:duration>325</video:duration>
+      <video:publication_date>2023-01-12</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/nida-sunny/ns-01.jpg</video:thumbnail_loc>
+      <video:title>Nida &amp; Sunny — Wedding Film Highlight</video:title>
+      <video:description>Nida and Sunny's wedding weekend at Villa Bonomi and Villa Erba, Lake Como.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/645329394</video:player_loc>
+      <video:duration>311</video:duration>
+      <video:publication_date>2021-11-12</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/logo-mark.png</video:thumbnail_loc>
+      <video:title>Regina &amp; Marko — Wedding Highlight Film Intro</video:title>
+      <video:description>The opening of Regina and Marko's wedding highlight film.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/934248442</video:player_loc>
+      <video:duration>61</video:duration>
+      <video:publication_date>2024-04-13</video:publication_date>
+    </video:video>
+  </url>
   <url><loc>https://www.chromatafilms.com/wedding-videographer-amalfi-coast.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-videographer-paris.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-videographer-provence.html</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://www.chromatafilms.com/wedding-videographer-marrakech.html</loc><lastmod>2026-10-06</lastmod></url>
+  <url><loc>https://www.chromatafilms.com/wedding-videographer-paris.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/logo-mark.png</video:thumbnail_loc>
+      <video:title>Joseph &amp; Ally — Paris Wedding Teaser</video:title>
+      <video:description>A Paris wedding weekend between Versailles, the Musée Rodin and the Shangri-La Paris.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/948291710</video:player_loc>
+      <video:duration>49</video:duration>
+      <video:publication_date>2024-05-20</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/t7_JRwa1oDM/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>A Private Wedding at Vaux-le-Vicomte — Teaser</video:title>
+      <video:description>A private château wedding at Vaux-le-Vicomte, outside Paris.</video:description>
+      <video:player_loc>https://www.youtube-nocookie.com/embed/t7_JRwa1oDM</video:player_loc>
+      <video:duration>52</video:duration>
+      <video:publication_date>2022-10-08</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/wedding-videographer-provence.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/3AZhvvBCFjU/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>Sandra &amp; Pedro — Highlight Film</video:title>
+      <video:description>A mixed-religion ceremony at Château d'Estoublon, Provence.</video:description>
+      <video:player_loc>https://www.youtube-nocookie.com/embed/3AZhvvBCFjU</video:player_loc>
+      <video:duration>299</video:duration>
+      <video:publication_date>2024-02-20</video:publication_date>
+    </video:video>
+  </url>
+  <url><loc>https://www.chromatafilms.com/wedding-videographer-marrakech.html</loc><lastmod>2026-10-06</lastmod>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/henna-ben/hb-banner.jpg</video:thumbnail_loc>
+      <video:title>Henna &amp; Ben — Highlight Film</video:title>
+      <video:description>Henna and Ben's three-day Indian wedding in Marrakech: a Sangeet and Baraat, a desert night with fire dancers, and a Western ceremony over the fountains of The Oberoi. Planned by Cocoon Events.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/1159256501</video:player_loc>
+      <video:duration>531</video:duration>
+      <video:publication_date>2026-01-28</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://www.chromatafilms.com/assets/img/marrakech/ar-01.jpg</video:thumbnail_loc>
+      <video:title>Alexandra &amp; Raphael — Wedding Film Highlight</video:title>
+      <video:description>Alexandra and Raphael's Jewish wedding in Marrakech, between the Agafay desert and the Selman hotel. Planned by Cocoon Events.</video:description>
+      <video:player_loc>https://player.vimeo.com/video/764060129</video:player_loc>
+      <video:duration>309</video:duration>
+      <video:publication_date>2022-10-26</video:publication_date>
+    </video:video>
+  </url>
 </urlset>

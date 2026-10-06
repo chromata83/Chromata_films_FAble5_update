@@ -398,6 +398,12 @@ i=0
 find "$PUB/henna ben" -maxdepth 1 -iname '*.heic' | sort | while read -r f; do
   i=$((i+1)); jpg "$f" "$OUT/img/henna-ben/hb-$(printf '%02d' $i).jpg" 1800
 done
+# photographer JPGs continue the numbering after the three HEIC frames (hb-04..)
+i=3
+find "$PUB/henna ben" -maxdepth 1 -iname '*.jpg' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/henna-ben/hb-$(printf '%02d' $i).jpg" 1800
+done
+jpg "$PUB/henna ben/henna_&_ben_-_highlight_film_v1 (2160p).mp4_snapshot_04.25.598.png" "$OUT/img/henna-ben/hb-banner.jpg" 2400
 
 # ---------- planning-europe journal-article gallery (cross-wedding montage curated by the user) ----------
 i=0

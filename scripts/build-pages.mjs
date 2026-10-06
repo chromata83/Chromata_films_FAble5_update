@@ -462,12 +462,20 @@ const FILMS = {
   jasmiina: { id: "788687357", title: "Jasmiina &amp; Tuukka — Wedding Film Highlights", desc: "Jasmiina and Tuukka Rask's wedding at Villa Balbiano, Lake Como.", uploadDate: "2023-01-12", duration: "PT5M25S", thumb: "assets/img/jasmiina/jt-02.jpg", href: "journal-jasmiina-tuukka.html", place: "Villa Balbiano, Lake Como, Italy" },
   nida: { id: "645329394", title: "Nida &amp; Sunny — Wedding Film Highlight", desc: "Nida and Sunny's wedding weekend at Villa Bonomi and Villa Erba, Lake Como.", uploadDate: "2021-11-12", duration: "PT5M11S", thumb: "assets/img/nida-sunny/ns-01.jpg", href: "journal-nida-sunny-highlight.html", place: "Villa Erba, Lake Como, Italy" },
   regina: { id: "934248442", title: "Regina &amp; Marko — Wedding Highlight Film Intro", desc: "The opening of Regina and Marko's wedding highlight film.", uploadDate: "2024-04-13", duration: "PT1M1S" },
-  henna: { id: "1159256501", title: "Henna &amp; Ben — Highlight Film", desc: "Henna and Ben's three-day Indian wedding in Marrakech: a Sangeet and Baraat, a desert night with fire dancers, and a Western ceremony over the fountains of The Oberoi. Planned by Cocoon Events.", uploadDate: "2026-01-28", duration: "PT8M51S", thumb: "assets/img/henna-ben/hb-01.jpg", href: "wedding-videographer-marrakech.html#henna-ben", place: "Amanjena and The Oberoi, Marrakech, Morocco" },
+  henna: { id: "1159256501", title: "Henna &amp; Ben — Highlight Film", desc: "Henna and Ben's three-day Indian wedding in Marrakech: a Sangeet and Baraat, a desert night with fire dancers, and a Western ceremony over the fountains of The Oberoi. Planned by Cocoon Events.", uploadDate: "2026-01-28", duration: "PT8M51S", thumb: "assets/img/henna-ben/hb-banner.jpg", href: "wedding-videographer-marrakech.html", place: "Amanjena and The Oberoi, Marrakech, Morocco" },
   alexRaphael: { id: "764060129", title: "Alexandra &amp; Raphael — Wedding Film Highlight", desc: "Alexandra and Raphael's Jewish wedding in Marrakech, between the Agafay desert and the Selman hotel. Planned by Cocoon Events.", uploadDate: "2022-10-26", duration: "PT5M9S", thumb: "assets/img/marrakech/ar-01.jpg", href: "journal-alexandra-raphael-marrakech.html", place: "Marrakech, Morocco" },
   natalia: { id: "866854185", title: "Natalia's 50th Birthday — Montenegro Teaser", desc: "A three-day 50th birthday celebration in Tivat, Montenegro, by Cocoon Events.", uploadDate: "2023-09-21", duration: "PT1M21S", thumb: "assets/img/natalia/nm-01.jpg", href: "journal-natalia-montenegro.html", place: "Tivat, Montenegro" },
   marcella: { id: "1078314523", title: "Marcella &amp; Dan — Engagement Party Teaser", desc: "Marcella and Dan's engagement party.", uploadDate: "2025-04-24", duration: "PT49S", thumb: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", href: "journal-marcella-daniel.html" },
   annaA: { id: "466573692", hash: "39a3243ffd", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part I)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10", thumb: "assets/img/anna/anna-header.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
   annaB: { id: "466573597", hash: "6b59c916d3", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part II)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10", thumb: "assets/img/anna/an-01.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
+};
+// Films per page for the video sitemap (landing pages register themselves
+// in their build loop; the case studies are listed here).
+const SITEMAP_VIDEOS = {
+  "anna-andres.html": [FILMS.annaA, FILMS.annaB],
+  "domantas-sabonis.html": [FILMS.domantas],
+  "jacqueline-gordon.html": [FILMS.jg],
+  "vaux-le-vicomte.html": [FILMS.vaux],
 };
 const filmEmbed = (v) => (v.provider === "youtube" ? `https://www.youtube-nocookie.com/embed/${v.id}` : vimeoSrc(v));
 const filmThumb = (v, fallback) =>
@@ -3693,8 +3701,8 @@ LANDING_PAGES.push({
   title: "Marrakech Wedding Videographer | Chromata Films",
   description: "Marrakech wedding videographer for luxury destination weddings in Morocco. Watch Henna & Ben's three-day Indian wedding at Amanjena and The Oberoi Marrakech. From 15,000 USD.",
   summary: "Marrakech destination wedding films, from Amanjena and The Oberoi to the desert, including multi-day Indian celebrations",
-  heroImg: "assets/img/henna-ben/hb-01.jpg",
-  heroAlt: "Henna and Ben during their Indian wedding in Marrakech, filmed by Chromata Films",
+  heroImg: "assets/img/henna-ben/hb-banner.jpg",
+  heroAlt: "Henna beneath her red veil in Marrakech, a still from Henna and Ben's wedding film by Chromata Films",
   heroSub: ["Amanjena · The Oberoi · The desert", "Collections from 15,000 USD"],
   areaServed: ["Marrakech", "Palmeraie", "Agafay Desert", "Atlas Mountains", "Morocco"],
   serviceName: "Wedding Cinematography in Marrakech",
@@ -3730,9 +3738,24 @@ LANDING_PAGES.push({
       "A Sangeet, a Baraat, a night of fire in the desert and a Western ceremony over the fountains of The Oberoi. Henna and Ben's Marrakech wedding brought guests from all over the world together for three days of celebration, planned by Cocoon Events with flowers by Roni Floral Design.",
     ],
     gallery: [
+      { file: "hb-15.jpg", alt: "Henna and her bridesmaids getting ready in Marrakech" },
+      { file: "hb-09.jpg", alt: "Ben and his groomsmen dancing before the ceremony" },
       { file: "hb-01.jpg", alt: "Henna and Ben beneath the arcades at their Marrakech wedding" },
+      { file: "hb-05.jpg", alt: "Henna in a red lehenga and Ben in a sherwani at night, Marrakech" },
+      { file: "hb-13.jpg", alt: "Henna lifting her red embroidered veil in the Marrakech sun" },
       { file: "hb-02.jpg", alt: "Henna in a red bridal lehenga beneath her veil, Marrakech" },
+      { file: "hb-14.jpg", alt: "Sangeet performance on stage in front of an illuminated triangle" },
+      { file: "hb-08.jpg", alt: "Henna and Ben greeting guests beside the water at night" },
+      { file: "hb-06.jpg", alt: "The Baraat at sunset with a vintage white roadster" },
+      { file: "hb-07.jpg", alt: "Guests dancing around the groom during the Baraat in Marrakech" },
       { file: "hb-03.jpg", alt: "The Baraat with a vintage roadster and dancing guests in Marrakech" },
+      { file: "hb-16.jpg", alt: "Western ceremony aisle among olive trees with plumes of coloured smoke", cls: "w12 wide" },
+      { file: "hb-12.jpg", alt: "Henna and Ben in a Moroccan zellige salon at The Oberoi, Marrakech" },
+      { file: "hb-11.jpg", alt: "Black and white portrait of Henna and Ben in a Marrakech palace corridor" },
+      { file: "hb-17.jpg", alt: "Henna and Ben at night in front of the palace walls" },
+      { file: "hb-18.jpg", alt: "First dance in the palace courtyard at The Oberoi, Marrakech" },
+      { file: "hb-10.jpg", alt: "Henna and Ben surrounded by guests on the dance floor" },
+      { file: "hb-04.jpg", alt: "Henna and Ben cutting their wedding cake at night" },
     ],
     credits: [
       ["Couple", "Henna &amp; Ben"],
@@ -3743,7 +3766,10 @@ LANDING_PAGES.push({
       ["Film", "Chromata Films"],
     ],
   },
-  films: [FILMS.henna, FILMS.alexRaphael],
+  // Henna & Ben's film sits right after the opening story, ahead of the venue
+  // guide, so readers (and crawlers) meet it early in the page.
+  inlineFilm: { after: 0, film: FILMS.henna },
+  films: [FILMS.alexRaphael],
   work: [
     { href: "journal-alexandra-raphael-marrakech.html", img: "assets/img/marrakech/ar-01.jpg", title: "Alexandra & Raphael", note: "A Jewish wedding in Marrakech" },
     { href: "journal-nida-sunny-highlight.html", img: "assets/img/nida-sunny/ns-01.jpg", title: "Nida & Sunny", note: "An Indian wedding at Lake Como" },
@@ -3833,6 +3859,8 @@ for (const L of LANDING_PAGES) if (!L.films && LANDING_FILMS[L.file]) L.films = 
 for (const L of LANDING_PAGES) {
   const url = `${SITE_URL}/${L.file}`;
   const startingCost = L.startingCost || 15000;
+  const pageFilms = [...(L.inlineFilm ? [L.inlineFilm.film] : []), ...(L.films || [])];
+  if (pageFilms.length) SITEMAP_VIDEOS[L.file] = pageFilms;
   pages[L.file] = shell({
     page: "landing",
     file: L.file,
@@ -3863,7 +3891,7 @@ for (const L of LANDING_PAGES) {
           },
         },
       },
-      ...filmSchema(url, L.films || [], L.heroImg),
+      ...filmSchema(url, pageFilms, L.heroImg),
       {
         "@type": "FAQPage",
         "@id": `${url}#faq`,
@@ -3897,7 +3925,7 @@ ${L.intro.map((p) => `        <p style="font-size:clamp(1.05rem,1.5vw,1.4rem)">$
     </div>
   </section>
 
-${L.body.map(([heading, paras]) => `  <section class="pad-section" style="padding-top:0" data-section>
+${L.body.map(([heading, paras], bi) => `  <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
       <h2 class="display-md" style="max-width:14em">
         <span class="line-mask"><span class="line-inner">${heading}</span></span>
@@ -3906,7 +3934,18 @@ ${L.body.map(([heading, paras]) => `  <section class="pad-section" style="paddin
 ${paras.map((p) => `        <p>${p}</p>`).join("\n")}
       </div>
     </div>
-  </section>`).join("\n\n")}
+  </section>${L.inlineFilm && L.inlineFilm.after === bi ? `
+
+  <!-- featured film: real src (not data-lazy-src) so crawlers see the embed in the HTML -->
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— The Film</p>
+      <figure class="mat" style="position:relative; aspect-ratio:16/9; background:#000; margin:4vh 0 0">
+        <iframe src="${filmEmbed(L.inlineFilm.film)}" title="${L.inlineFilm.film.title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
+      </figure>
+      <p class="kicker" style="margin-top:2vh">— ${L.inlineFilm.film.title}</p>
+    </div>
+  </section>` : ""}`).join("\n\n")}
 ${L.feature ? `\n${featureBlock(L.feature)}\n` : ""}${L.films ? `
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
@@ -3965,9 +4004,23 @@ for (const [file, html] of Object.entries(pages)) {
 const NOINDEX_FILES = new Set(["gettoknowusmore.html"]);
 const sitemapFiles = ["index.html", ...Object.keys(pages).filter((f) => !NOINDEX_FILES.has(f))];
 const today = new Date().toISOString().slice(0, 10);
+const isoSeconds = (d) => {
+  const m = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(d || "");
+  return m ? (+(m[1] || 0)) * 3600 + (+(m[2] || 0)) * 60 + (+(m[3] || 0)) : 0;
+};
+const xmlEsc = (t) => t.replace(/&amp;/g, "&").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const sitemapVideos = (f) => (SITEMAP_VIDEOS[f] || []).map((v) => `
+    <video:video>
+      <video:thumbnail_loc>${xmlEsc(filmThumb(v, "assets/img/logo-mark.png"))}</video:thumbnail_loc>
+      <video:title>${xmlEsc(v.title)}</video:title>
+      <video:description>${xmlEsc(v.desc)}</video:description>
+      <video:player_loc>${xmlEsc(filmEmbed(v))}</video:player_loc>${isoSeconds(v.duration) ? `
+      <video:duration>${isoSeconds(v.duration)}</video:duration>` : ""}${/^\d{4}-\d{2}-\d{2}$/.test(v.uploadDate) ? `
+      <video:publication_date>${v.uploadDate}</video:publication_date>` : ""}
+    </video:video>`).join("");
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapFiles.map((f) => `  <url><loc>${SITE_URL}/${f === "index.html" ? "" : f}</loc><lastmod>${today}</lastmod></url>`).join("\n")}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+${sitemapFiles.map((f) => `  <url><loc>${SITE_URL}/${f === "index.html" ? "" : f}</loc><lastmod>${today}</lastmod>${SITEMAP_VIDEOS[f] ? `${sitemapVideos(f)}\n  ` : ""}</url>`).join("\n")}
 </urlset>
 `;
 writeFileSync(new URL("../sitemap.xml", import.meta.url), sitemap);
