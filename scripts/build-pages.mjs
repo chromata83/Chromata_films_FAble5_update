@@ -344,11 +344,12 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
     <div>
       <h4>Real Weddings</h4>
       <a href="real-weddings.html">All Real Weddings</a>
-      <a href="domantas-sabonis.html">Domantas &amp; Shashana</a>
-      <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon</a>
-      <a href="anna-andres.html">Anna Andres</a>
-      <a href="russell-westbrook.html">Russell &amp; Nina Westbrook</a>
-      <a href="vaux-le-vicomte.html">Vaux-le-Vicomte</a>
+      <a href="domantas-sabonis.html">Domantas &amp; Shashana · Cap-Ferrat</a>
+      <a href="jacqueline-gordon.html">Jacqueline &amp; Gordon · St-Tropez</a>
+      <a href="anna-andres.html">Anna Andres · Eden-Roc, Antibes</a>
+      <a href="russell-westbrook.html">Russell &amp; Nina Westbrook · Positano</a>
+      <a href="vaux-le-vicomte.html">Vaux-le-Vicomte · Paris</a>
+      <a href="wedding-videographer-marrakech.html">Henna &amp; Ben · Marrakech</a>
       <a href="gallery.html">Gallery</a>
     </div>
     <div>
@@ -403,7 +404,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=64" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=65" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -741,9 +742,9 @@ pages["domantas-sabonis.html"] = shell({
       <p class="kicker line-mask"><span class="line-inner">Real Wedding · NBA All-Star</span></p>
       <h1 class="page-hero__title">
         <span class="line-mask"><span class="line-inner">Domantas <em>&amp;</em> Shashana</span></span>
+        <span class="h1-place">Villa Ephrussi Wedding · St-Jean-Cap-Ferrat, French Riviera</span>
       </h1>
       <div class="page-hero__sub">
-        <span>Villa Ephrussi · St-Jean-Cap-Ferrat</span>
         <span>Planning — Mindy Weiss</span>
         <span>Film — Chromata Films</span>
       </div>
@@ -833,9 +834,9 @@ pages["jacqueline-gordon.html"] = shell({
       <p class="kicker line-mask"><span class="line-inner">Real Wedding · French Riviera</span></p>
       <h1 class="page-hero__title">
         <span class="line-mask"><span class="line-inner">Jacqueline <em>&amp;</em> Gordon</span></span>
+        <span class="h1-place">Le Beauvallon Wedding · St-Tropez</span>
       </h1>
       <div class="page-hero__sub">
-        <span>Le Beauvallon · St-Tropez</span>
         <span>Five days · June 2025</span>
         <span>One word: WOW</span>
       </div>
@@ -966,9 +967,9 @@ pages["anna-andres.html"] = shell({
       <p class="kicker line-mask"><span class="line-inner">Real Wedding · Miss Universe Ukraine 2014</span></p>
       <h1 class="page-hero__title">
         <span class="line-mask"><span class="line-inner">Anna <em>Andres</em></span></span>
+        <span class="h1-place">Hôtel du Cap-Eden-Roc Wedding · Antibes, French Riviera</span>
       </h1>
       <div class="page-hero__sub">
-        <span>Hôtel du Cap-Eden-Roc · Cap d'Antibes</span>
         <span>Planning — Palazzo Eventi</span>
         <span>Film — Chromata Films</span>
       </div>
@@ -2045,6 +2046,7 @@ for (let pg = 1; pg <= JOURNAL_PAGES; pg++) {
       <p class="kicker" style="color:var(--coral)">${first ? "— Latest News" : "— The Archives"}</p>
       <h1 class="hero__title hero__title--page">
         <span class="line-mask intro-rise"><span class="line-inner">The <em>Journal</em></span></span>
+        <span class="h1-place intro-fade">Real Weddings, Wedding Films &amp; Destination Guides</span>
       </h1>
     </div>
   </section>
@@ -2288,7 +2290,7 @@ pages["gallery.html"] = shell({
     </div>
     <div class="page-hero__content">
       <p class="kicker line-mask"><span class="line-inner">Portfolio</span></p>
-      <h1 class="page-hero__title"><span class="line-mask"><span class="line-inner">The <em>Gallery</em></span></span></h1>
+      <h1 class="page-hero__title"><span class="line-mask"><span class="line-inner">The <em>Gallery</em></span></span><span class="h1-place">Luxury Destination Wedding Films</span></h1>
       <div class="page-hero__sub"><span>French Riviera</span><span>Lake Como</span><span>St Moritz</span><span>Santorini</span><span>Worldwide</span></div>
     </div>
   </section>
@@ -2378,9 +2380,10 @@ pages["russell-westbrook.html"] = shell({
       <h1 class="page-hero__title">
         <span class="line-mask"><span class="line-inner">Russell <em>&amp;</em> Nina</span></span>
         <span class="line-mask"><span class="line-inner">Westbrook</span></span>
+        <span class="h1-place">Anniversary in Positano · Amalfi Coast, Italy</span>
       </h1>
       <div class="page-hero__sub">
-        <span>Positano, Italy · September 2025</span>
+        <span>September 2025</span>
         <span>Photography — Greg Finck</span>
         <span>Film — Chromata Films</span>
       </div>
@@ -2446,9 +2449,9 @@ pages["vaux-le-vicomte.html"] = shell({
       <p class="kicker line-mask"><span class="line-inner">Real Wedding · Private</span></p>
       <h1 class="page-hero__title">
         <span class="line-mask"><span class="line-inner">Vaux-le-Vicomte</span></span>
+        <span class="h1-place">Private Château Wedding · near Paris, France</span>
       </h1>
       <div class="page-hero__sub">
-        <span>Château de Vaux-le-Vicomte, France</span>
         <span>Private wedding · VIP clients</span>
         <span>Film — Chromata Films</span>
       </div>
@@ -2506,37 +2509,37 @@ ${next("domantas-sabonis.html", "Domantas &amp; Shashana")}`,
 const realWeddings = [
   {
     href: "domantas-sabonis.html", title: "Domantas <em>&amp;</em> Shashana",
-    kicker: "NBA All-Star · Villa Ephrussi, Cap-Ferrat", dir: "domantas",
+    kicker: "NBA All-Star Wedding", venue: "Villa Ephrussi de Rothschild · Cap-Ferrat, French Riviera", dir: "domantas",
     thumbs: ["ds-25.jpg", "ds-27.jpg", "ds-28.jpg"],
     excerpt: "Three days at Villa Ephrussi, St-Jean-Cap-Ferrat ... when an NBA All-Star marries the love of his life, the celebration has to hit different. And it did. Mindy Weiss orchestrated a flawless three-day production, with florals by Roni Floral Design, and a party that ran deep into the Riviera night",
   },
   {
     href: "jacqueline-gordon.html", title: "Jacqueline <em>&amp;</em> Gordon",
-    kicker: "Five Days · Le Beauvallon, St-Tropez", dir: "jacky",
+    kicker: "Five-Day Wedding", venue: "Le Beauvallon · St-Tropez", dir: "jacky",
     thumbs: ["jg-05.jpg", "jg-11.jpg", "jg-20.jpg"],
     excerpt: "Jacqueline and Gordon's wedding in St-Tropez could be summarized in one simple word: WOW. Five days at Le Beauvallon above the bay ... a seaside fashion show, a drone light spectacle, a Bridgerton-meets-1980s party, fireworks, and an after-party that only surrendered at sunrise",
   },
   {
     href: "wedding-videographer-marrakech.html", title: "Henna <em>&amp;</em> Ben",
-    kicker: "Indian Wedding · Marrakech, Morocco", dir: "henna-ben",
+    kicker: "Three-Day Indian Wedding", venue: "Amanjena &amp; The Oberoi · Marrakech", dir: "henna-ben",
     thumbs: ["hb-01.jpg", "hb-02.jpg", "hb-03.jpg"],
     excerpt: "Three days in Marrakech for guests from all over the world ... a night of fire dancers in the desert, a Sangeet and a Baraat at Amanjena, and a Western ceremony on a platform built over the fountains of The Oberoi. Planned by Cocoon Events, flowers by Roni Floral Design",
   },
   {
     href: "anna-andres.html", title: "Anna <em>Andres</em>",
-    kicker: "Miss Universe Ukraine · Editorial Film", dir: "anna",
+    kicker: "Miss Universe Ukraine · Editorial Film", venue: "Hôtel du Cap-Eden-Roc · Antibes, French Riviera", dir: "anna",
     thumbs: ["an-02.jpg", "an-05.jpg", "an-09.jpg"],
     excerpt: "When a Miss Universe titleholder plans her wedding, the bar is not \"beautiful\". The bar is \"cover story\". Anna Andres trusted us to film her wedding with the same visual intelligence as the editorials she has graced ... couture in golden light, and a ceremony that stopped the room",
   },
   {
     href: "russell-westbrook.html", title: "Russell <em>&amp;</em> Nina Westbrook",
-    kicker: "Anniversary · Positano, Amalfi Coast", dir: "westbrook",
+    kicker: "Anniversary Film", venue: "Positano · Amalfi Coast", dir: "westbrook",
     thumbs: ["rw-03.jpg", "rw-07.jpg", "rw-11.jpg"],
     excerpt: "Some love stories deserve a sequel ... and Positano wrote this one in gold and sea-blue. When Russell and Nina Westbrook chose the Amalfi Coast to celebrate their anniversary, the brief was simple: all the emotion of a wedding day, none of the script",
   },
   {
     href: "vaux-le-vicomte.html", title: "Vaux-le-Vicomte",
-    kicker: "Private Wedding · Château, France", dir: "vaux",
+    kicker: "Private Wedding", venue: "Château de Vaux-le-Vicomte · near Paris", dir: "vaux",
     thumbs: ["vlv-03.jpg", "vlv-06.jpg", "vlv-09.jpg"],
     excerpt: "The château that inspired Versailles, an evening of grand-siècle splendor, and a couple whose names we'll keep to ourselves. Beneath Le Nôtre's gardens and Le Brun's painted ceilings, our VIP clients gathered their closest circle for one unforgettable night",
   },
@@ -2561,6 +2564,7 @@ pages["real-weddings.html"] = shell({
       itemListElement: [
         ["Domantas & Shashana — Villa Ephrussi, Cap-Ferrat", "domantas-sabonis.html"],
         ["Jacqueline & Gordon — Le Beauvallon, St-Tropez", "jacqueline-gordon.html"],
+        ["Henna & Ben — Amanjena & The Oberoi, Marrakech", "wedding-videographer-marrakech.html"],
         ["Anna Andres — Hôtel du Cap-Eden-Roc", "anna-andres.html"],
         ["Russell & Nina Westbrook — Positano", "russell-westbrook.html"],
         ["A Private Wedding at Vaux-le-Vicomte", "vaux-le-vicomte.html"],
@@ -2581,6 +2585,7 @@ pages["real-weddings.html"] = shell({
       <p class="kicker">— Real Weddings</p>
       <h1 class="display-lg" style="margin-top:3vh">
         <span class="line-mask"><span class="line-inner">Real <em>Weddings</em></span></span>
+        <span class="h1-place">Luxury Destination Wedding Films · France · Italy · Morocco</span>
       </h1>
       <p class="body-copy" style="max-width:44em; margin-top:5vh">A selection of the celebrations we've had the honour of filming ... from an NBA All-Star's Riviera wedding to a private night at the château that inspired Versailles. Each is its own story; step inside any of them below.</p>
       <div class="rw-list" style="margin-top:2vh">
@@ -2588,11 +2593,12 @@ ${realWeddings.map((w, i) => `        <article class="rw-card">
           <div class="rw-card__text">
             <p class="kicker">— ${w.kicker}</p>
             <h2 class="rw-card__title"><a href="${w.href}"><span class="line-mask"><span class="line-inner">${w.title}</span></span></a></h2>
+            <p class="rw-card__venue">${w.venue}</p>
             <p class="rw-card__excerpt">${w.excerpt} <span class="rw-card__more">[...]</span></p>
             <a class="btn btn--coral rw-card__cta" href="${w.href}">Read more →</a>
           </div>
           <a class="rw-card__thumbs" href="${w.href}" aria-label="View the ${w.title.replace(/<[^>]+>/g, "")} wedding">
-${w.thumbs.map((t, j) => `            <figure class="rw-thumb mat img-reveal"><img src="assets/img/${w.dir}/${t}" alt="${w.title.replace(/<[^>]+>/g, "")} wedding — Chromata Films" loading="lazy"></figure>`).join("\n")}
+${w.thumbs.map((t, j) => `            <figure class="rw-thumb mat img-reveal"><img src="assets/img/${w.dir}/${t}" alt="${w.title.replace(/<[^>]+>/g, "")} at ${w.venue.replace(/ · /g, ", ")} — Chromata Films" loading="lazy"></figure>`).join("\n")}
           </a>
         </article>`).join("\n")}
       </div>
@@ -3210,13 +3216,21 @@ const LANDING_PAGES = [
     file: "wedding-videographer-france.html",
     h1: "Wedding Videographer in <em>France</em>",
     kicker: "— Wedding Films in France",
-    title: "Wedding Videographer in France | Luxury Wedding Films — Chromata Films",
-    description: "Luxury wedding videographer in France. Chromata Films makes cinematic wedding films on the French Riviera, in Provence, St-Tropez, Cap-Ferrat and Paris. Hollywood VFX pedigree, collections from 15,000 USD.",
+    title: "Best Wedding Videographer in France | Chromata Films",
+    description: "Award-winning wedding videographer in France, featured in Vogue & Brides. Films for Domantas Sabonis, Anna Andres and couples from Cap-Ferrat to Paris.",
     summary: "luxury wedding films across the French Riviera, Provence, St-Tropez, Cap-Ferrat and Paris",
     heroImg: "assets/img/jacky/jacky-header.jpg",
     heroAlt: "A luxury wedding on the French Riviera filmed by Chromata Films",
-    heroSub: ["French Riviera · Provence · Paris", "Collections from 15,000 USD"],
+    heroSub: ["French Riviera · Provence · Paris", "Award-winning · As seen in Vogue &amp; Brides", "Collections from 15,000 USD"],
     areaServed: ["France", "French Riviera", "Provence", "Paris", "St-Tropez", "Monaco"],
+    proof: [
+      ["Award", "Best Destination Wedding Film ... Love StoriesTV Wedding Film Awards"],
+      ["Press", "Vogue · Brides · People · Cosmopolitan · Elle · Over the Moon"],
+      ["Couples", "Domantas Sabonis &amp; Shashana · Anna Andres · Jacqueline &amp; Gordon · Angela &amp; Allister"],
+      ["Venues", "Villa Ephrussi · Hôtel du Cap-Eden-Roc · Grand-Hôtel du Cap-Ferrat · The Ritz Paris · Vaux-le-Vicomte"],
+      ["Director", "Kevin Lopez ... a decade in Hollywood visual effects"],
+      ["Since", "2016 · Filming in English and French"],
+    ],
     serviceName: "Wedding Cinematography in France",
     related: [
       ["wedding-videographer-french-riviera.html", "French Riviera"],
@@ -3229,6 +3243,12 @@ const LANDING_PAGES = [
       "That local knowledge sits on top of an unusual technical foundation. Before weddings, Kevin Lopez spent a decade in Hollywood visual effects, on films including Star Wars: The Last Jedi, The Great Gatsby, Beauty and the Beast and Avengers: Infinity War. The training that goes into a blockbuster frame ... light, composition, invisible perfectionism ... is what we bring to a French wedding weekend.",
     ],
     body: [
+      ["What makes the best wedding videographer in France", [
+        "Search for the best wedding videographer in France and you will mostly find directories: lists of names, star ratings and a price band. They cannot show you what actually separates one studio from another, so here is the evidence instead, every piece of it verifiable.",
+        "First, recognition. Our work won <a class=\"text-link\" href=\"journal-film-award.html\">Best Destination Wedding Film</a> at the Love StoriesTV Wedding Film Awards, for a film shot at Lake Como, and the weddings we film in France have been published in Vogue, Brides, People, Cosmopolitan and Elle. <a class=\"text-link\" href=\"anna-andres.html\">Anna Andres's wedding at Hôtel du Cap-Eden-Roc</a>, planned by Victoria Kursova of Palazzo Eventi, appeared in Vogue, Cosmopolitan and Elle. <a class=\"text-link\" href=\"journal-angela-allister-brides.html\">Angela and Allister's wedding at the Ritz Paris</a>, planned by Loli Events, was featured in Brides.",
+        "Second, the couples who chose us. NBA All-Star <a class=\"text-link\" href=\"domantas-sabonis.html\">Domantas Sabonis and Shashana</a> trusted us with three days at Villa Ephrussi de Rothschild, planned by Mindy Weiss. <a class=\"text-link\" href=\"jacqueline-gordon.html\">Jacqueline and Gordon</a> celebrated for five days at Le Beauvallon in St-Tropez, planned by Rendez-vous in Paris. The Grand-Hôtel du Cap-Ferrat, A Four Seasons Hotel, asked us to film its own story and a full private buyout. Planners recommend the studio they have already watched deliver, and that is how most of our couples find us.",
+        "Third, the craft. Kevin Lopez, who directs every Chromata film, spent a decade in Hollywood visual effects before turning to weddings. In practice that means candlelit dinners and dark château ballrooms are lit and exposed properly rather than rescued in the edit, and every film is colour-graded the way a feature is. No directory can list that, and it is the difference you see on screen.",
+      ]],
       ["Where we film in France", [
         "The French Riviera is our home ground: Villa Ephrussi de Rothschild and the Grand-Hôtel du Cap-Ferrat in St-Jean-Cap-Ferrat, Hôtel du Cap-Eden-Roc at Antibes, Château de la Chèvre d'Or in Èze, Le Beauvallon above the bay of St-Tropez, and the private villas that never appear in a brochure.",
         "Inland and north, we film across Provence ... Château d'Estoublon, the Luberon, the Gordes hills ... and in Paris and the Île-de-France, including private weddings at the Château de Vaux-le-Vicomte, the palace that inspired Versailles.",
@@ -3239,18 +3259,20 @@ const LANDING_PAGES = [
       ]],
     ],
     work: [
-      { href: "jacqueline-gordon.html", img: "assets/img/jacky/jg-05.jpg", title: "Jacqueline & Gordon", note: "Five days at Le Beauvallon, St-Tropez" },
+      { href: "jacqueline-gordon.html", img: "assets/img/jacky/jg-05.jpg", title: "Jacqueline & Gordon", note: "Le Beauvallon, St-Tropez" },
       { href: "domantas-sabonis.html", img: "assets/img/domantas/ds-25.jpg", title: "Domantas & Shashana", note: "Villa Ephrussi, St-Jean-Cap-Ferrat" },
       { href: "vaux-le-vicomte.html", img: "assets/img/vaux/vlv-03.jpg", title: "A Private Château Wedding", note: "Vaux-le-Vicomte, Paris" },
       { href: "anna-andres.html", img: "assets/img/anna/an-05.jpg", title: "Anna Andres", note: "Hôtel du Cap-Eden-Roc, Antibes" },
     ],
     faq: [
       ["How do I choose the best wedding videographer in France?",
-       "Look for three things. First, real multi-day films from French venues rather than a reel of single-day highlights ... a French wedding weekend has a different rhythm and you want to see that a studio can hold it. Second, aerial permissions: France requires licensed drone operation, and a studio without a cleared pilot will quietly drop those shots. Third, language ... a bilingual crew coordinates with French vendors on your behalf instead of routing everything through your planner. Chromata Films is based between the French Riviera and Geneva, films in English and French, and flies with a licensed aerial cinematographer."],
+       "Look for three things. First, real multi-day films from French venues rather than a reel of single-day highlights ... a French wedding weekend has a different rhythm and you want to see that a studio can hold it. Second, aerial permissions: France requires licensed drone operation, and a studio without a cleared pilot will quietly drop those shots. Third, language ... a bilingual crew coordinates with French vendors on your behalf instead of routing everything through your planner. Chromata Films is based between the French Riviera and Geneva, films in English and French, flies with a licensed aerial cinematographer, won Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards, and has had weddings published in Vogue, Brides and People."],
+      ["Which well-known couples has Chromata Films filmed in France?",
+       "In France, Chromata Films has filmed NBA All-Star Domantas Sabonis and Shashana's three-day wedding at Villa Ephrussi de Rothschild, planned by Mindy Weiss; Miss Universe Ukraine 2014 Anna Andres's wedding at Hôtel du Cap-Eden-Roc, published in Vogue, Cosmopolitan and Elle; Angela and Allister's wedding at the Ritz Paris, featured in Brides; and Jacqueline and Gordon's five-day celebration at Le Beauvallon, St-Tropez. Many other weddings we film are private and never published."],
       ["How much does a luxury wedding videographer cost in France?",
        "Our collections start at 15,000 USD. Where a wedding lands above that depends on how many days are filmed, how many camera operators the schedule requires, whether aerial or analog 16mm film is included, and how much of the crew has to travel. Every quote is built for the specific weekend rather than taken from a price list."],
       ["Do you film weddings across all of France, or only the Riviera?",
-       "All of France. The French Riviera is where we are based and where we film most often, but we work regularly in Provence, Paris and the Île-de-France, and we travel anywhere in the country. There is no travel surcharge hidden in the collection ... it is quoted openly."],
+       "All of France. The French Riviera is where we are based and where we film most often, but we work regularly in Provence, Paris and the Île-de-France, and we travel anywhere in the country. Travel and accommodation are always included in the quote, never added afterwards."],
       ["Can you film a wedding in France for an international couple?",
        "Yes ... most of our couples are international. We film in English and French, coordinate directly with French venues and vendors, and are used to guests arriving from several continents. We have filmed American, British, Ukrainian, Israeli, Indian and Scandinavian weddings in France."],
       ["What do we actually receive at the end?",
@@ -3307,13 +3329,21 @@ const LANDING_PAGES = [
     file: "wedding-filmmaker-italy.html",
     h1: "Wedding Filmmaker in <em>Italy</em>",
     kicker: "— Wedding Films in Italy",
-    title: "Best Wedding Filmmaker in Italy | Lake Como & Amalfi Wedding Films — Chromata Films",
-    description: "Luxury wedding filmmaker in Italy. Chromata Films makes cinematic wedding films at Lake Como, the Amalfi Coast, Puglia, Tuscany and Venice. Collections from 15,000 USD.",
+    title: "Best Wedding Videographer & Filmmaker in Italy | Chromata Films",
+    description: "Award-winning wedding filmmaker in Italy: Best Destination Wedding Film for Lake Como, featured in WedLuxe. Films at Villa Balbiano, Villa Erba, Amalfi and Puglia.",
     summary: "wedding films at Lake Como, the Amalfi Coast, Puglia, Tuscany and Venice",
     heroImg: "assets/img/heroes/italy-header.jpg",
     heroAlt: "Katya and Joey's wedding at Villa Erba, Lake Como, filmed by Chromata Films",
-    heroSub: ["Lake Como · Amalfi · Puglia · Tuscany", "Collections from 15,000 USD"],
+    heroSub: ["Lake Como · Amalfi · Puglia · Tuscany", "Award-winning · Featured in WedLuxe", "Collections from 15,000 USD"],
     areaServed: ["Italy", "Lake Como", "Amalfi Coast", "Puglia", "Tuscany", "Venice", "Positano"],
+    proof: [
+      ["Award", "Best Destination Wedding Film ... Love StoriesTV, for a Lake Como film"],
+      ["Press", "WedLuxe (Villa Erba, 2025) · Wedding Style Magazine · Vogue · Brides · People"],
+      ["Couples", "Tuukka Rask &amp; Jasmiina · Katya &amp; Joey · Nida &amp; Sunny · Nadine &amp; Albert"],
+      ["Venues", "Villa Erba · Villa Balbiano · Villa Bonomi · Positano · Puglia"],
+      ["Director", "Kevin Lopez ... a decade in Hollywood visual effects"],
+      ["Since", "2016 · A few hours from Lake Como by road"],
+    ],
     serviceName: "Wedding Cinematography in Italy",
     related: [
       ["wedding-videographer-lake-como.html", "Lake Como"],
@@ -3325,6 +3355,12 @@ const LANDING_PAGES = [
       "We have been filming Italian weddings for years, most often on Lake Como, where we have worked at Villa Erba, Villa Balbiano and Villa Bonomi, and along the Amalfi Coast. Our base on the French Riviera puts us a few hours from northern Italy by road.",
     ],
     body: [
+      ["What makes the best wedding filmmaker in Italy", [
+        "Italy has more wedding videographers per square kilometre than anywhere in the world, and the lists that claim to rank them mostly measure who paid to be listed. A fairer test is three questions: has the studio been recognised, has independent press published its Italian weddings, and which couples have trusted it with a venue like yours? Here are our answers.",
+        "Recognition: our film from Lake Como won <a class=\"text-link\" href=\"journal-film-award.html\">Best Destination Wedding Film</a> at the Love StoriesTV Wedding Film Awards. Katya and Joey's wedding at Villa Erba, planned by Sacks Productions and Alejandra Poupel, was <a class=\"text-link\" href=\"https://wedluxe.com/2025/07/23/an-italian-wedding-dream-at-villa-erba-lake-como/\" target=\"_blank\" rel=\"noopener\">featured by WedLuxe</a> in 2025, and <a class=\"text-link\" href=\"https://www.weddingstylemagazine.com/wedding-ideas/real-weddings/a-destination-wedding-in-lake-como-filled-with-whimsical-beauty-and-authentic-italian-experiences\" target=\"_blank\" rel=\"noopener\">Wedding Style Magazine</a> published a Lake Como destination wedding we filmed.",
+        "The couples: former Boston Bruins goaltender <a class=\"text-link\" href=\"journal-jasmiina-tuukka.html\">Tuukka Rask and Jasmiina</a> married at Villa Balbiano. <a class=\"text-link\" href=\"journal-nida-sunny-highlight.html\">Nida and Sunny</a>'s Indian wedding weekend moved between Villa Bonomi and Villa Erba. <a class=\"text-link\" href=\"journal-puglia-princess.html\">Nadine and Albert</a> married in Puglia, from a Rocco Forte hotel to the Cathedral of Monopoli. And <a class=\"text-link\" href=\"russell-westbrook.html\">Russell and Nina Westbrook</a> asked us to film their anniversary in Positano.",
+        "The craft: Kevin Lopez, who directs every Chromata film, spent a decade in Hollywood visual effects, on films including Star Wars: The Last Jedi, The Great Gatsby and Beauty and the Beast, before founding the studio. Italian venues ... frescoed salons, candlelit terraces, a lake that turns silver after sunset ... reward exactly that training, and every film is lit and colour-graded the way a feature is.",
+      ]],
       ["Where we film in Italy", [
         "Lake Como is the region we know best ... Villa Erba, Villa Balbiano, Villa Bonomi, Villa del Balbianello and the private estates around Cernobbio and Bellagio. On the Amalfi Coast we have filmed in Positano and the surrounding towns. We also work in Puglia, Tuscany, Venice and Lake Garda.",
         "Italian venues frequently sit at the top of long private staircases with a 30-minute drive between ceremony and reception. Our crews plan around that rather than discovering it on the day.",
@@ -3338,11 +3374,13 @@ const LANDING_PAGES = [
       { href: "journal-jasmiina-tuukka.html", img: "assets/img/jasmiina/jt-03.jpg", title: "Jasmiina & Tuukka Rask", note: "Villa Balbiano, Lake Como" },
       { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-02.jpg", title: "Katya & Joey", note: "Villa Erba, Lake Como" },
       { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-03.jpg", title: "Russell & Nina Westbrook", note: "Positano, Amalfi Coast" },
-      { href: "journal-d-a-villa-bonomi.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "D & A", note: "Villa Bonomi, Lake Como" },
+      { href: "journal-puglia-princess.html", img: "assets/img/journal-thumbs/puglia-princess.jpg", title: "Nadine & Albert", note: "Monopoli, Puglia" },
     ],
     faq: [
       ["How do I find the best wedding filmmaker in Italy?",
-       "Start with venue-specific work. Lake Como, the Amalfi Coast and Puglia each present different problems ... boat logistics, cliff staircases, extreme heat ... and a studio that has filmed at your venue will show you rather than tell you. Then ask to watch a complete film, not a three-minute highlight. Chromata Films has filmed repeatedly at Villa Erba, Villa Balbiano and Villa Bonomi on Lake Como, and on the Amalfi Coast."],
+       "Start with venue-specific work. Lake Como, the Amalfi Coast and Puglia each present different problems ... boat logistics, cliff staircases, extreme heat ... and a studio that has filmed at your venue will show you rather than tell you. Then ask to watch a complete film, not a three-minute highlight. Chromata Films has filmed repeatedly at Villa Erba, Villa Balbiano and Villa Bonomi on Lake Como, and on the Amalfi Coast, won Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards for a Lake Como film, and was featured by WedLuxe for Katya and Joey's Villa Erba wedding."],
+      ["Which well-known couples has Chromata Films filmed in Italy?",
+       "In Italy, Chromata Films has filmed former Boston Bruins goaltender Tuukka Rask and Jasmiina's wedding at Villa Balbiano, Lake Como; Katya and Joey's wedding at Villa Erba, featured by WedLuxe; Nida and Sunny's Indian wedding at Villa Bonomi and Villa Erba; Nadine and Albert's wedding in Puglia; and Russell and Nina Westbrook's anniversary in Positano."],
       ["How much does a wedding videographer cost in Italy?",
        "Our collections start at 15,000 USD, with the final quote shaped by the number of days, the crew size the schedule demands, and travel. Multi-day Italian weddings with several cultural events usually need a larger team than a single-day celebration."],
       ["Do you film Indian weddings in Italy?",
@@ -3380,9 +3418,9 @@ const LANDING_PAGES = [
       ]],
     ],
     work: [
-      { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-04.jpg", title: "Russell & Nina Westbrook", note: "Anniversary film, Positano" },
-      { href: "domantas-sabonis.html", img: "assets/img/domantas/ds-27.jpg", title: "Domantas & Shashana", note: "NBA All-Star wedding, Cap-Ferrat" },
-      { href: "journal-marcella-daniel.html", img: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", title: "Marcella & Daniel", note: "Engagement party, Ritz-Carlton Dallas" },
+      { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-04.jpg", title: "Russell & Nina Westbrook", note: "Positano, Amalfi Coast" },
+      { href: "domantas-sabonis.html", img: "assets/img/domantas/ds-27.jpg", title: "Domantas & Shashana", note: "Villa Ephrussi, Cap-Ferrat" },
+      { href: "journal-marcella-daniel.html", img: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", title: "Marcella & Daniel", note: "The Ritz-Carlton, Dallas" },
       { href: "journal-lauren-jonathan.html", img: "assets/img/altos/lj-01.jpg", title: "Lauren & Jonathan", note: "Altos de Chavón, Dominican Republic" },
     ],
     faq: [
@@ -3525,10 +3563,10 @@ LANDING_PAGES.push(
       ]],
     ],
     work: [
-      { href: "jacqueline-gordon.html", img: "assets/img/jacky/jg-20.jpg", title: "Jacqueline & Gordon", note: "Five days at Le Beauvallon" },
-      { href: "journal-alexa-wilton.html", img: "assets/img/aw-blog/aw-01.jpg", title: "Alexa & Wilton", note: "A Riviera fairytale in St-Tropez" },
-      { href: "journal-michal-steve.html", img: "assets/img/michal-steve/ms-01.jpg", title: "Michal & Steve", note: "A St-Tropez love story" },
-      { href: "journal-jessica-benjamin.html", img: "assets/img/jg-blog/jgb-03.jpg", title: "Jessica & Benjamin", note: "Hôtel Beauvallon" },
+      { href: "jacqueline-gordon.html", img: "assets/img/jacky/jg-20.jpg", title: "Jacqueline & Gordon", note: "Le Beauvallon, St-Tropez" },
+      { href: "journal-alexa-wilton.html", img: "assets/img/aw-blog/aw-01.jpg", title: "Alexa & Wilton", note: "St-Tropez, French Riviera" },
+      { href: "journal-michal-steve.html", img: "assets/img/michal-steve/ms-01.jpg", title: "Michal & Steve", note: "Le Beauvallon, St-Tropez" },
+      { href: "journal-jessica-benjamin.html", img: "assets/img/jg-blog/jgb-03.jpg", title: "Jessica & Benjamin", note: "Le Beauvallon, St-Tropez" },
     ],
     faq: [
       ["Do you film multi-day weddings in St-Tropez?",
@@ -3571,9 +3609,9 @@ LANDING_PAGES.push(
       ]],
     ],
     work: [
-      { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-04.jpg", title: "Katya & Joey", note: "Villa Erba, planned by Sacks Productions & Alejandra Poupel" },
+      { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-04.jpg", title: "Katya & Joey", note: "Villa Erba, Lake Como" },
       { href: "journal-jasmiina-tuukka.html", img: "assets/img/jasmiina/jt-04.jpg", title: "Jasmiina & Tuukka Rask", note: "Villa Balbiano" },
-      { href: "journal-nida-sunny-highlight.html", img: "assets/img/nida-sunny/ns-01.jpg", alt: "Nida and Sunny's wedding at Lake Como, filmed by Chromata Films", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi" },
+      { href: "journal-nida-sunny-highlight.html", img: "assets/img/nida-sunny/ns-01.jpg", alt: "Nida and Sunny's wedding at Lake Como, filmed by Chromata Films", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi, Lake Como" },
       { href: "journal-d-a-villa-bonomi.html", img: "assets/img/katya-joey/kj-01.jpg", alt: "A Lake Como wedding reception table filmed by Chromata Films", title: "D & A", note: "Villa Bonomi" },
     ],
     films: [FILMS.katya, FILMS.jasmiina, FILMS.nida, FILMS.regina],
@@ -3669,7 +3707,7 @@ LANDING_PAGES.push(
       ],
     },
     work: [
-      { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-03.jpg", title: "Russell & Nina Westbrook", note: "Anniversary film, Positano" },
+      { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-03.jpg", title: "Russell & Nina Westbrook", note: "Positano, Amalfi Coast" },
       { href: "#villa-zagara", img: "assets/img/amalfi-zagara/az-06.jpg", title: "Villa Zagara", note: "An editorial shoot in Sorrento" },
       { href: "#villa-zagara", img: "assets/img/amalfi-zagara/az-11.jpg", title: "Villa Zagara", note: "Garden reception, Sorrento" },
       { href: "wedding-filmmaker-italy.html", img: "assets/img/heroes/italy-header.jpg", title: "More from Italy", note: "Lake Como, Puglia & beyond" },
@@ -3717,7 +3755,7 @@ LANDING_PAGES.push(
     work: [
       { href: "vaux-le-vicomte.html", img: "assets/img/vaux/vlv-05.jpg", title: "A Private Château Wedding", note: "Vaux-le-Vicomte" },
       { href: "journal-parisian-dream.html", img: "assets/img/parisian-dream/pd-02.jpg", title: "A Parisian Dream", note: "The luxurious wedding of J & A" },
-      { href: "journal-angela-allister-paris.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Angela & Allister", note: "A modern wedding in Paris" },
+      { href: "journal-angela-allister-paris.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Angela & Allister", note: "The Ritz, Paris" },
       { href: "journal-olympics-ai.html", img: "assets/img/olympics/oly-01.jpg", title: "Paris 2024, Reimagined", note: "An experimental AI film" },
     ],
     faq: [
@@ -3761,9 +3799,9 @@ LANDING_PAGES.push(
       ]],
     ],
     work: [
-      { href: "journal-sandra-pedro.html", img: "assets/img/sandra-pedro/sp-02.jpg", title: "Sandra & Pedro", note: "Mixed-religion ceremony, Château d'Estoublon" },
+      { href: "journal-sandra-pedro.html", img: "assets/img/sandra-pedro/sp-02.jpg", title: "Sandra & Pedro", note: "Château d'Estoublon, Provence" },
       { href: "journal-o-my-gaude.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Ô My Gaude", note: "A couture shooting in Provence" },
-      { href: "journal-samantha-edoardo.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Samantha & Edoardo", note: "From Switzerland to Provence" },
+      { href: "journal-samantha-edoardo.html", img: "assets/img/journal-thumbs/placeholder.jpg", title: "Samantha & Edoardo", note: "Château de Berne, Provence" },
       { href: "journal-france-venues.html", img: "assets/img/france-venues/fv-01.jpg", title: "Our Favourite Venues", note: "The south of France, chosen by us" },
     ],
     faq: [
@@ -3858,8 +3896,8 @@ LANDING_PAGES.push({
   inlineFilm: { after: 0, film: FILMS.henna },
   films: [FILMS.alexRaphael],
   work: [
-    { href: "journal-alexandra-raphael-marrakech.html", img: "assets/img/marrakech/ar-01.jpg", title: "Alexandra & Raphael", note: "A Jewish wedding in Marrakech" },
-    { href: "journal-nida-sunny-highlight.html", img: "assets/img/nida-sunny/ns-01.jpg", title: "Nida & Sunny", note: "An Indian wedding at Lake Como" },
+    { href: "journal-alexandra-raphael-marrakech.html", img: "assets/img/marrakech/ar-01.jpg", title: "Alexandra & Raphael", note: "Selman Hotel, Marrakech" },
+    { href: "journal-nida-sunny-highlight.html", img: "assets/img/nida-sunny/ns-01.jpg", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi, Lake Como" },
     { href: "journal-daria-levin.html", img: "assets/img/daria/dl-01.jpg", title: "Daria Levin", note: "Cocoon Events, Èze" },
     { href: "journal-natalia-montenegro.html", img: "assets/img/natalia/nm-01.jpg", title: "Natalia's 50th", note: "Cocoon Events, Montenegro" },
   ],
@@ -4008,7 +4046,10 @@ ${L.heroSub.map((s) => `        <span>${s}</span>`).join("\n")}
     <div class="container">
       <div class="prose" style="max-width:46em">
 ${L.intro.map((p) => `        <p style="font-size:clamp(1.05rem,1.5vw,1.4rem)">${p}</p>`).join("\n")}
-      </div>
+      </div>${L.proof ? `
+      <div class="feature__meta" style="margin-top:6vh; max-width:52em">
+${L.proof.map(([k, v]) => `        <div class="row"><span>${k}</span><span class="val">${v}</span></div>`).join("\n")}
+      </div>` : ""}
     </div>
   </section>
 
