@@ -441,6 +441,111 @@ const next = (href, label) => `  <a class="nextproject" href="${href}" data-them
 const g = (folder, n, cls = "", alt = "") =>
   `<figure class="gitem ${cls} mat img-reveal"><img src="assets/img/${folder}/${n}" alt="${alt}" loading="lazy"></figure>`;
 
+/* ---- Film library + helpers ----
+   One record per film, reused by destination pages ("The Films" grid), the
+   real-wedding case studies and their VideoObject JSON-LD, so every embed on
+   the site is described to search engines the same way. `href` is the story
+   page the film belongs to (an internal link from every grid it appears in). */
+const FILMS = {
+  jg: { id: "1117935629", title: "Jacqueline &amp; Gordon — Wedding Film Highlight", desc: "Five days of celebration at Le Beauvallon, St-Tropez, planned by Rendez-vous in Paris.", uploadDate: "2025-09-11", duration: "PT6M38S", thumb: "assets/img/jacky/jg-01.jpg", href: "jacqueline-gordon.html", place: "Le Beauvallon, St-Tropez, France" },
+  domantas: { id: "4yQBjrSI1hI", provider: "youtube", title: "Shashana &amp; Domantas Sabonis — Wedding Film Highlight", desc: "NBA All-Star Domantas Sabonis and Shashana's three-day wedding at Villa Ephrussi, St-Jean-Cap-Ferrat, planned by Mindy Weiss.", uploadDate: "2026-07-09", duration: "PT4M19S", href: "domantas-sabonis.html", place: "Villa Ephrussi de Rothschild, St-Jean-Cap-Ferrat, France" },
+  alexaWilton: { id: "1039575157", title: "Alexa &amp; Wilton — Wedding Film Highlight", desc: "Alexa and Wilton's St-Tropez wedding, designed by House of Kirschner.", uploadDate: "2024-12-16", duration: "PT4M56S", thumb: "assets/img/aw-blog/aw-01.jpg", href: "journal-alexa-wilton.html", place: "St-Tropez, France" },
+  mozzafiato: { id: "453536410", title: "Mozzafiato — A Grand-Hôtel du Cap-Ferrat Story", desc: "A Four Seasons Hotel story filmed at the Grand-Hôtel du Cap-Ferrat on the French Riviera.", uploadDate: "2020-09-01", duration: "PT1M42S", thumb: "assets/img/mozzafiato/mz-01.jpg", href: "journal-mozzafiato.html", place: "Grand-Hôtel du Cap-Ferrat, St-Jean-Cap-Ferrat, France" },
+  daria: { id: "880169269", title: "Daria &amp; Joseph — Wedding Teaser, Èze", desc: "A circus-themed Jewish wedding in an Èze villa on the French Riviera, by Cocoon Events.", uploadDate: "2023-11-01", duration: "PT1M26S", thumb: "assets/img/daria/dl-01.jpg", href: "journal-daria-levin.html", place: "Èze, French Riviera, France" },
+  fsBuyout: { id: "879796920", title: "A Grand-Hôtel du Cap-Ferrat Buyout — Décor &amp; Animations", desc: "Décor and animations from a full private buyout of the Grand-Hôtel du Cap-Ferrat, A Four Seasons Hotel.", uploadDate: "2023-10-31", duration: "PT1M30S", thumb: "assets/img/four-seasons/fsb-01.jpg", href: "journal-four-seasons-buyout.html", place: "Grand-Hôtel du Cap-Ferrat, St-Jean-Cap-Ferrat, France" },
+  michal: { id: "642838113", title: "Michal &amp; Steve — A St-Tropez Love Story", desc: "A full wedding weekend at Le Beauvallon, St-Tropez.", uploadDate: "2021-11-29", thumb: "assets/img/michal-steve/ms-01.jpg", href: "journal-michal-steve.html", place: "Le Beauvallon, St-Tropez, France" },
+  katya: { id: "905275321", title: "Katya &amp; Joey — Wedding Highlight Film", desc: "Katya and Joey's wedding at Villa Erba, Lake Como, planned by Sacks Productions and Alejandra Poupel.", uploadDate: "2024-01-22", duration: "PT5M36S", thumb: "assets/img/katya-joey/kj-03.jpg", href: "journal-katya-joey.html", place: "Villa Erba, Cernobbio, Lake Como, Italy" },
+  nadine: { id: "858206093", title: "Nadine &amp; Albert — Wedding Highlight Film", desc: "Nadine and Albert's luxury wedding in Puglia, Italy, planned by Events Boutique.", uploadDate: "2023-08-26", duration: "PT5M1S", place: "Puglia, Italy" },
+  joseph: { id: "948291710", title: "Joseph &amp; Ally — Paris Wedding Teaser", desc: "A Paris wedding weekend between Versailles, the Musée Rodin and the Shangri-La Paris.", uploadDate: "2024-05-20", duration: "PT49S", place: "Paris, France" },
+  vaux: { id: "t7_JRwa1oDM", provider: "youtube", title: "A Private Wedding at Vaux-le-Vicomte — Teaser", desc: "A private château wedding at Vaux-le-Vicomte, outside Paris.", uploadDate: "2022-10-08", duration: "PT52S", href: "vaux-le-vicomte.html", place: "Château de Vaux-le-Vicomte, France" },
+  sandra: { id: "3AZhvvBCFjU", provider: "youtube", title: "Sandra &amp; Pedro — Highlight Film", desc: "A mixed-religion ceremony at Château d'Estoublon, Provence.", uploadDate: "2024-02-20", duration: "PT4M59S", href: "journal-sandra-pedro.html", place: "Château d'Estoublon, Provence, France" },
+  jasmiina: { id: "788687357", title: "Jasmiina &amp; Tuukka — Wedding Film Highlights", desc: "Jasmiina and Tuukka Rask's wedding at Villa Balbiano, Lake Como.", uploadDate: "2023-01-12", duration: "PT5M25S", thumb: "assets/img/jasmiina/jt-02.jpg", href: "journal-jasmiina-tuukka.html", place: "Villa Balbiano, Lake Como, Italy" },
+  nida: { id: "645329394", title: "Nida &amp; Sunny — Wedding Film Highlight", desc: "Nida and Sunny's wedding weekend at Villa Bonomi and Villa Erba, Lake Como.", uploadDate: "2021-11-12", duration: "PT5M11S", thumb: "assets/img/nida-sunny/ns-01.jpg", href: "journal-nida-sunny-highlight.html", place: "Villa Erba, Lake Como, Italy" },
+  regina: { id: "934248442", title: "Regina &amp; Marko — Wedding Highlight Film Intro", desc: "The opening of Regina and Marko's wedding highlight film.", uploadDate: "2024-04-13", duration: "PT1M1S" },
+  natalia: { id: "866854185", title: "Natalia's 50th Birthday — Montenegro Teaser", desc: "A three-day 50th birthday celebration in Tivat, Montenegro, by Cocoon Events.", uploadDate: "2023-09-21", duration: "PT1M21S", thumb: "assets/img/natalia/nm-01.jpg", href: "journal-natalia-montenegro.html", place: "Tivat, Montenegro" },
+  marcella: { id: "1078314523", title: "Marcella &amp; Dan — Engagement Party Teaser", desc: "Marcella and Dan's engagement party.", uploadDate: "2025-04-24", duration: "PT49S", thumb: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", href: "journal-marcella-daniel.html" },
+  annaA: { id: "466573692", hash: "39a3243ffd", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part I)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10", thumb: "assets/img/anna/anna-header.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
+  annaB: { id: "466573597", hash: "6b59c916d3", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part II)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10", thumb: "assets/img/anna/an-01.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
+};
+const filmEmbed = (v) => (v.provider === "youtube" ? `https://www.youtube-nocookie.com/embed/${v.id}` : vimeoSrc(v));
+const filmThumb = (v, fallback) =>
+  v.provider === "youtube" ? `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg` : `${SITE_URL}/${v.thumb || fallback}`;
+// VideoObject nodes for a page's films, credited to Kevin as director/creator.
+const filmSchema = (pageUrl, films, fallbackThumb) => films.map((v) => ({
+  "@type": "VideoObject",
+  "@id": `${pageUrl}#film-${v.id}`,
+  name: v.title.replace(/&amp;/g, "&"),
+  description: v.desc,
+  thumbnailUrl: [filmThumb(v, fallbackThumb)],
+  uploadDate: v.uploadDate,
+  ...(v.duration ? { duration: v.duration } : {}),
+  embedUrl: filmEmbed(v),
+  inLanguage: "en",
+  ...(v.place ? { contentLocation: { "@type": "Place", name: v.place } } : {}),
+  creator: { "@id": KEVIN_ID },
+  director: { "@id": KEVIN_ID },
+  productionCompany: { "@id": ORG_ID },
+  publisher: { "@id": ORG_ID },
+}));
+const filmsGrid = (films) => `      <div style="display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,2.4vw,34px) clamp(14px,2vw,28px); margin-top:5vh" class="films-grid">
+${films.map((v) => `        <div>
+          <div class="mat" style="position:relative; aspect-ratio:16/9; background:#000">
+            <iframe data-lazy-src="${filmEmbed(v)}" title="${v.title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
+          </div>
+          <p class="kicker" style="margin-top:2vh">— ${v.href ? `<a href="${v.href}" style="color:inherit">${v.title}</a>` : v.title}</p>
+        </div>`).join("\n")}
+      </div>
+      <style>@media (max-width:900px){ .films-grid { grid-template-columns:1fr !important; } }</style>`;
+
+/* ---- Destination links ----
+   Most of the site's backlinks land on the homepage, so every story page
+   passes authority on to the destination landing page(s) it belongs to.
+   Rules run most-specific first; planner/band names that merely contain a
+   place ("Rendez-vous in Paris") are stripped before matching. */
+const DESTINATIONS = [
+  { href: "wedding-videographer-st-tropez.html", label: "St-Tropez", re: /St-Tropez|Saint-Tropez|Beauvallon|Ramatuelle/i, parent: "france" },
+  { href: "wedding-videographer-lake-como.html", label: "Lake Como", re: /Lake Como|Villa Erba|Balbiano|Villa Bonomi|Cernobbio|Bellagio|\bComo\b/i, parent: "italy" },
+  { href: "wedding-videographer-amalfi-coast.html", label: "the Amalfi Coast", re: /Amalfi|Positano|Sorrento|Ravello/i, parent: "italy" },
+  { href: "wedding-videographer-paris.html", label: "Paris", re: /\bParis\b|Versailles|Vaux-le-Vicomte|Parisian/i, parent: "france" },
+  { href: "wedding-videographer-provence.html", label: "Provence", re: /Provence|Estoublon|Luberon|Gordes/i, parent: "france" },
+  { href: "wedding-videographer-french-riviera.html", label: "the French Riviera", re: /Riviera|Cap-Ferrat|Cap Ferrat|Èze|\bEze\b|\bNice\b|Cannes|Antibes|Monaco|Eden-Roc|Ephrussi|Côte d'Azur/i, parent: "france" },
+];
+const PARENT_DEST = {
+  france: { href: "wedding-videographer-france.html", label: "France", re: /\bFrance\b/ },
+  italy: { href: "wedding-filmmaker-italy.html", label: "Italy", re: /\bItaly\b|Puglia|Tuscany|Sicily|Venice|Lake Garda|Villa Cortine/ },
+};
+const EUROPE_DEST = { href: "wedding-cinematographer-europe.html", label: "Europe" };
+const USA_DEST = { href: "luxury-wedding-filmmaker-usa.html", label: "the United States" };
+// Explicit per-post `dest` keys override the text matching where it misfires
+// (a place named only in passing, a football club called "Como 1907" ...).
+const DEST_KEYS = {
+  "st-tropez": DESTINATIONS[0], como: DESTINATIONS[1], amalfi: DESTINATIONS[2], paris: DESTINATIONS[3],
+  provence: DESTINATIONS[4], riviera: DESTINATIONS[5], france: PARENT_DEST.france, italy: PARENT_DEST.italy,
+  europe: EUROPE_DEST, usa: USA_DEST,
+};
+const destinationsFor = (text, { forceFrance = false, max = 3 } = {}) => {
+  const t = text.replace(/Rendez-vous in Paris|Festival Band Paris|Audrey paris|Italian Weddings and Events/gi, "");
+  const out = [];
+  const add = (d) => { if (d && !out.some((o) => o.href === d.href)) out.push(d); };
+  const hits = DESTINATIONS.filter((d) => d.re.test(t));
+  hits.forEach(add);
+  hits.forEach((d) => add(PARENT_DEST[d.parent]));
+  if (PARENT_DEST.italy.re.test(t)) add(PARENT_DEST.italy);
+  if (forceFrance || PARENT_DEST.france.re.test(t)) add(PARENT_DEST.france);
+  add(EUROPE_DEST);
+  return out.slice(0, max);
+};
+// "— Wedding films nearby" link row for the real-wedding case-study pages.
+const regionLinks = (dests) => `  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— Wedding Films in the Region</p>
+      <div style="display:flex; flex-wrap:wrap; gap:clamp(14px,2vw,28px); margin-top:4vh">
+${dests.map((d) => `        <a class="text-link" href="${d.href}" style="font-family:var(--font-display); font-size:clamp(1.1rem,2vw,1.7rem)">${d.label.replace(/^the /, "").replace(/^./, (c) => c.toUpperCase())} wedding videographer →</a>`).join("\n")}
+      </div>
+    </div>
+  </section>
+`;
+
 const venueFigure = (folder, file, caption) =>
   `<figure class="mat img-reveal venue-figure"><img src="assets/img/${folder}/${file}" alt="${caption} — Chromata Films" loading="lazy"><figcaption>${caption}</figcaption></figure>`;
 
@@ -608,6 +713,13 @@ pages["domantas-sabonis.html"] = shell({
     { name: "Real Weddings", file: "real-weddings.html" },
     { name: "Domantas & Shashana", file: "domantas-sabonis.html" },
   ],
+  schemaGraph: [
+    ...filmSchema(`${SITE_URL}/domantas-sabonis.html`, [FILMS.domantas], "assets/img/landing/domantas-cover.jpg"),
+    {
+      "@type": "Person", "@id": `${SITE_URL}/domantas-sabonis.html#domantas-sabonis`, name: "Domantas Sabonis",
+      jobTitle: "Professional basketball player, NBA All-Star", sameAs: ["https://en.wikipedia.org/wiki/Domantas_Sabonis"],
+    },
+  ],
   title: "Villa Ephrussi Wedding Film — Domantas Sabonis & Shashana | Chromata Films",
   description: "The wedding of NBA All-Star Domantas Sabonis and Shashana at Villa Ephrussi, St-Jean-Cap-Ferrat ... three days on the French Riviera, planned by Mindy Weiss, filmed by Chromata Films.",
   main: `  <section class="page-hero" data-theme="dark">
@@ -685,6 +797,7 @@ pages["domantas-sabonis.html"] = shell({
     </div>
   </section>
 
+${regionLinks([DESTINATIONS[5], PARENT_DEST.france])}
 ${next("jacqueline-gordon.html", "Jacqueline &amp; Gordon")}`,
 });
 
@@ -698,6 +811,7 @@ pages["jacqueline-gordon.html"] = shell({
     { name: "Real Weddings", file: "real-weddings.html" },
     { name: "Jacqueline & Gordon", file: "jacqueline-gordon.html" },
   ],
+  schemaGraph: filmSchema(`${SITE_URL}/jacqueline-gordon.html`, [FILMS.jg], "assets/img/jacky/jacky-header.jpg"),
   title: "Jacqueline & Gordon — A St-Tropez Wedding Unlike Any Other | Chromata Films",
   description: "Five days on the French Riviera: fashion shows, drone spectacles, fireworks and a sunrise after-party. Jacqueline and Gordon's St-Tropez wedding, filmed by Chromata Films.",
   main: `  <section class="page-hero" data-theme="dark">
@@ -782,33 +896,69 @@ ${Array.from({ length: 20 }, (_, i) => `        ${g("jg-blog", "jgb-" + String(i
     </div>
   </section>
 
+${regionLinks([DESTINATIONS[0], DESTINATIONS[5], PARENT_DEST.france])}
 ${next("anna-andres.html", "Anna Andres")}`,
 });
 
 /* ============================== ANNA ANDRES ============================== */
+const ANNA_FAQ = [
+  ["Where did Anna Andres get married?",
+   "Anna Andres, Miss Universe Ukraine 2014, married David at the Hôtel du Cap-Eden-Roc on the Cap d'Antibes, French Riviera, in August 2020. The ceremony was officiated by the Mayor of Cannes."],
+  ["Who planned Anna Andres's wedding?",
+   "The wedding was planned by Victoria Kursova of Palazzo Eventi, who moved the celebration from Château Saint-Martin to an intimate ceremony at Hôtel du Cap-Eden-Roc when Covid made a large wedding impossible."],
+  ["Who filmed and photographed the wedding?",
+   "The wedding film was made by Chromata Films, directed by Kevin Lopez. Photography was by Maddy Christina. The wedding was later published in Vogue, Cosmopolitan and Elle."],
+];
 pages["anna-andres.html"] = shell({
   page: "anna",
   file: "anna-andres.html",
   ogType: "article",
+  ogImage: "assets/img/anna/anna-header.jpg",
   breadcrumb: [
     { name: "Home", file: "" },
     { name: "Real Weddings", file: "real-weddings.html" },
     { name: "Anna Andres", file: "anna-andres.html" },
   ],
+  schemaGraph: [
+    {
+      "@type": "Article",
+      "@id": `${SITE_URL}/anna-andres.html#article`,
+      headline: "Anna Andres and David's Wedding at Hôtel du Cap-Eden-Roc",
+      description: "Miss Universe Ukraine 2014 Anna Andres married David in an intimate 2020 ceremony at Hôtel du Cap-Eden-Roc, officiated by the Mayor of Cannes and planned by Victoria Kursova of Palazzo Eventi.",
+      image: [`${SITE_URL}/assets/img/anna/anna-header.jpg`, ...Array.from({ length: 4 }, (_, i) => `${SITE_URL}/assets/img/anna/an-0${i + 1}.jpg`)],
+      inLanguage: "en",
+      author: { "@id": KEVIN_ID },
+      publisher: { "@id": ORG_ID },
+      mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/anna-andres.html` },
+      about: { "@id": `${SITE_URL}/anna-andres.html#anna-andres` },
+      contentLocation: { "@type": "Place", name: "Hôtel du Cap-Eden-Roc", address: { "@type": "PostalAddress", addressLocality: "Antibes", addressRegion: "Provence-Alpes-Côte d'Azur", addressCountry: "FR" } },
+      video: [{ "@id": `${SITE_URL}/anna-andres.html#film-466573692` }, { "@id": `${SITE_URL}/anna-andres.html#film-466573597` }],
+    },
+    {
+      "@type": "Person", "@id": `${SITE_URL}/anna-andres.html#anna-andres`, name: "Anna Andres",
+      jobTitle: "Model and actress", award: "Miss Universe Ukraine 2014",
+    },
+    ...filmSchema(`${SITE_URL}/anna-andres.html`, [FILMS.annaA, FILMS.annaB], "assets/img/anna/anna-header.jpg"),
+    {
+      "@type": "FAQPage",
+      "@id": `${SITE_URL}/anna-andres.html#faq`,
+      mainEntity: ANNA_FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+    },
+  ],
   title: "Anna Andres Wedding Film | Chromata Films",
-  description: "The wedding of Anna Andres, Miss Universe Ukraine 2014 — filmed by Chromata Films with the pace of a fashion editorial and the heart of a love story.",
+  description: "Inside Miss Universe Ukraine Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, officiated by the Mayor of Cannes and planned by Palazzo Eventi. Watch the film.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
-      <img src="assets/img/anna/anna-header.jpg" alt="Anna Andres wedding — editorial bridal portrait" fetchpriority="high" />
+      <img src="assets/img/anna/anna-header.jpg" alt="Anna Andres, Miss Universe Ukraine 2014, on her wedding day at Hôtel du Cap-Eden-Roc" fetchpriority="high" />
     </div>
     <div class="page-hero__content">
-      <p class="kicker line-mask"><span class="line-inner">Real Wedding · Miss Universe Ukraine</span></p>
+      <p class="kicker line-mask"><span class="line-inner">Real Wedding · Miss Universe Ukraine 2014</span></p>
       <h1 class="page-hero__title">
         <span class="line-mask"><span class="line-inner">Anna <em>Andres</em></span></span>
       </h1>
       <div class="page-hero__sub">
-        <span>Miss Universe Ukraine 2014</span>
-        <span>Editorial cinematography</span>
+        <span>Hôtel du Cap-Eden-Roc · Cap d'Antibes</span>
+        <span>Planning — Palazzo Eventi</span>
         <span>Film — Chromata Films</span>
       </div>
     </div>
@@ -816,29 +966,77 @@ pages["anna-andres.html"] = shell({
 
   <section class="pad-section" data-section>
     <div class="container">
-      <div class="vidpair" aria-label="Anna Andres — vertical wedding films">
-        <div class="vidpair__item">
-          <iframe data-lazy-src="https://player.vimeo.com/video/466573692?h=39a3243ffd" title="Anna Andres wedding — vertical film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-        </div>
-        <div class="vidpair__item">
-          <iframe data-lazy-src="https://player.vimeo.com/video/466573597?h=6b59c916d3" title="Anna Andres wedding — vertical film" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-        </div>
-      </div>
       <p class="kicker">— The Story</p>
+      <h2 class="display-md" style="max-width:16em; margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">A wedding the world <em>wasn't</em> allowed to attend</span></span>
+      </h2>
       <div class="feature__grid" style="margin-top:5vh">
         <div class="prose">
-          <p class="lead">When a Miss Universe titleholder plans her wedding, the bar is not "beautiful". The bar is "cover story".</p>
-          <p>Anna Andres ... Miss Universe Ukraine 2014, model and actress ... trusted us to film her wedding with the same visual intelligence as the editorials she has graced. We treated every setup like a page of a magazine: composed, lit, and directed ... then we let the day breathe and caught what no director could stage.</p>
-          <p>The celebration had originally been planned for Château St Martin that May, before the day was moved to an intimate August ceremony at the Hôtel du Cap-Eden-Roc, with planner Viktoria coordinating the change. The wedding went on to attract significant international press attention.</p>
-          <p>With the planning of <a class="text-link" href="https://www.palazzoeventi.com" target="_blank" rel="noopener">Palazzo Eventi</a>, the result is a film that moves between fashion and feeling: couture in golden light, a ceremony that stopped the room, and a celebration carried long into the night. It remains one of the projects that best defines what we mean by the French touch ... editorial polish wrapped around raw, real emotion.</p>
+          <p class="lead">In the summer of 2020, almost nobody on the French Riviera was getting married. Anna Andres and David did ... and they did it at the Hôtel du Cap-Eden-Roc.</p>
+          <p>Anna Andres is Miss Universe Ukraine 2014, a model and actress who has spent her career in front of the best cameras in fashion. Her wedding was meant to be a large celebration at Château Saint-Martin in the hills above the Riviera that May. Then Covid closed borders, cancelled flights and emptied the coast. Almost every wedding on the calendar that season was postponed or simply abandoned.</p>
+          <p>Anna and David refused to wait for the world to reopen. With planner Victoria Kursova of <a class="text-link" href="https://www.palazzoeventi.com" target="_blank" rel="noopener">Palazzo Eventi</a>, they rebuilt the whole day in a few weeks around one idea: a small committee of the people who mattered most, in one of the most beautiful places on earth. The guest list shrank. The ambition did not.</p>
         </div>
         <div class="feature__meta">
-          <div class="row"><span>Bride</span><span class="val">Anna Andres</span></div>
-          <div class="row"><span>Title</span><span class="val">Miss Universe Ukraine 2014</span></div>
-          <div class="row"><span>Planning</span><span class="val"><a class="text-link" href="https://www.palazzoeventi.com" target="_blank" rel="noopener">Palazzo Eventi</a></span></div>
-          <div class="row"><span>Style</span><span class="val">Editorial · fashion film</span></div>
+          <div class="row"><span>Bride</span><span class="val">Anna Andres, Miss Universe Ukraine 2014</span></div>
+          <div class="row"><span>Groom</span><span class="val">David</span></div>
+          <div class="row"><span>Venue</span><span class="val">Hôtel du Cap-Eden-Roc, Cap d'Antibes</span></div>
+          <div class="row"><span>Date</span><span class="val">August 2020</span></div>
+          <div class="row"><span>Officiant</span><span class="val">The Mayor of Cannes</span></div>
+          <div class="row"><span>Planning</span><span class="val">Victoria Kursova, <a class="text-link" href="https://www.palazzoeventi.com" target="_blank" rel="noopener">Palazzo Eventi</a></span></div>
+          <div class="row"><span>Photography</span><span class="val"><a class="text-link" href="https://www.maddychristina.com" target="_blank" rel="noopener">Maddy Christina</a></span></div>
           <div class="row"><span>Film</span><span class="val">Chromata Films</span></div>
+          <div class="row"><span>Press</span><span class="val">Vogue · Cosmopolitan · Elle</span></div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— The Films</p>
+      <div class="vidpair" aria-label="Anna Andres wedding films" style="margin-top:4vh">
+        <div class="vidpair__item">
+          <iframe data-lazy-src="${filmEmbed(FILMS.annaA)}" title="${FILMS.annaA.title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="vidpair__item">
+          <iframe data-lazy-src="${filmEmbed(FILMS.annaB)}" title="${FILMS.annaB.title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">The venue: <em>Eden-Roc</em></span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+        <p>The Hôtel du Cap-Eden-Roc sits at the tip of the Cap d'Antibes, between Cannes and Nice, inside nine hectares of pine forest that run down to the sea. Since 1870 it has hosted the people the rest of the world reads about, and every May it becomes the unofficial home of the Cannes Film Festival. The Pavillon Eden-Roc stands on the rocks above the water, beside a saltwater pool carved straight into the cliff.</p>
+        <p>In August 2020 it was almost silent. For a film crew, that changed everything. The terraces, the long walk from the hotel down to the pavilion and the view across the bay to the Lérins Islands belonged to one wedding party. There were no tourists to wait out and no other events to work around ... only the Mediterranean light and a couple who knew exactly how to stand in it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">The ceremony</span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+        <p>Their union was celebrated by the Mayor of Cannes himself ... a rare honour at any time, and an extraordinary one in a summer when town halls along the coast were barely holding ceremonies at all. With only a small committee of family and close friends present, every word carried. There was no crowd to perform for. The vows were said to each other, not to an audience, and that is exactly what the film captures.</p>
+        <p>Intimate weddings are harder to film than big ones. With thirty guests instead of three hundred, there is nowhere for a camera to hide and no room for a crew that behaves like a crew. We worked light and quiet, alongside our friend <a class="text-link" href="https://www.maddychristina.com" target="_blank" rel="noopener">Maddy Christina</a> on photography, so that the only thing anyone remembered about us was the film.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">How we filmed it</span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+        <p>When a Miss Universe titleholder plans her wedding, the bar is not "beautiful". The bar is "cover story". Anna has worked with some of the best photographers in fashion, so we treated every portrait setup like a page of a magazine: composed, lit and directed ... and then we stepped back and let the day breathe, catching what no director could stage.</p>
+        <p>The result moves between fashion and feeling: couture in golden light on the Eden-Roc terraces, a ceremony that stopped the room, and a celebration carried long into the Riviera night. The wedding went on to be published in Vogue, Cosmopolitan and Elle. For us, it remains the project that best defines what we mean by the French touch ... editorial polish wrapped around raw, real emotion, at a moment when a celebration like this felt almost impossible.</p>
       </div>
     </div>
   </section>
@@ -847,11 +1045,22 @@ pages["anna-andres.html"] = shell({
     <div class="container">
       <p class="kicker">— Frames</p>
       <div class="gallery-grid" style="margin-top:5vh">
-${Array.from({ length: 12 }, (_, i) => `        ${g("anna", "an-" + String(i + 1).padStart(2, "0") + ".jpg", "", "Anna Andres wedding — Hôtel du Cap-Eden-Roc")}`).join("\n")}
+${Array.from({ length: 12 }, (_, i) => `        ${g("anna", "an-" + String(i + 1).padStart(2, "0") + ".jpg", "", "Anna Andres and David's wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes")}`).join("\n")}
       </div>
     </div>
   </section>
 
+  <section class="pad-section" style="padding-top:0" data-section>
+    <div class="container">
+      <p class="kicker">— Questions</p>
+      <div class="prose" style="max-width:52em; margin-top:4vh">
+${ANNA_FAQ.map(([q, a]) => `        <h3 style="font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.8rem); margin-top:5vh">${q}</h3>
+        <p>${a}</p>`).join("\n")}
+      </div>
+    </div>
+  </section>
+
+${regionLinks([DESTINATIONS[5], PARENT_DEST.france, EUROPE_DEST])}
 ${next("russell-westbrook.html", "Russell &amp; Nina Westbrook")}`,
 });
 
@@ -1039,7 +1248,7 @@ const posts = [
     ],
   },
   {
-    file: "journal-marcella-daniel.html", slug: "marcella-daniel",
+    file: "journal-marcella-daniel.html", dest: ["usa", "europe"], slug: "marcella-daniel",
     title: "Marcella Raneri and Daniel Nutkis — A Floral Engagement Party at the Ritz-Carlton Dallas, with a Surprise Set by The Chainsmokers",
     date: "April 19, 2025", tag: "Engagement · Press",
     video: "1078314523",
@@ -1083,7 +1292,7 @@ const posts = [
     ],
   },
   {
-    file: "journal-maxence-elise-caqueret.html", slug: "maxence-elise-caqueret",
+    file: "journal-maxence-elise-caqueret.html", dest: ["europe"], slug: "maxence-elise-caqueret",
     title: "Maxence and Elise Caqueret — A Private Wedding Film",
     date: "October 10, 2024", tag: "Real Wedding",
     video: "1018353157",
@@ -1131,7 +1340,7 @@ const posts = [
     gallery: AIMC_GALLERY,
   },
   {
-    file: "journal-westbrook-anniversary.html", slug: "westbrook",
+    file: "journal-westbrook-anniversary.html", dest: ["amalfi", "italy", "europe"], slug: "westbrook",
     title: "Russell Westbrook and Nina Westbrook — Wedding Anniversary",
     date: "September 17, 2025", tag: "Celebration",
     galleryDir: "westbrook",
@@ -1311,7 +1520,7 @@ const archive = [
 
   /* ===================== Page 3 ===================== */
   {
-    file: "journal-puglia-princess.html", page: 3, tag: "Real Wedding",
+    file: "journal-puglia-princess.html", dest: ["italy", "europe"], page: 3, tag: "Real Wedding",
     title: "A True Princess Wedding in Puglia", date: "September 9, 2023",
     video: "858206093",
     thumb: "journal-thumbs/puglia-princess.jpg",
@@ -1911,7 +2120,8 @@ ${p.body.map((par, i) => {
 ${row.items.map((it) => "            " + venueFigure(p.galleryDir, it.file, it.caption)).join("\n")}
           </div>`;
 }).join("\n")}
-${p.franceLink ? `          <p><a class="text-link" href="wedding-videographer-france.html">Planning your own wedding in France? See our wedding films in France →</a></p>\n` : ""}        </div>
+          <p class="article-destinations">Planning your own celebration? Explore our wedding films in ${(p.dest ? p.dest.map((k) => DEST_KEYS[k]) : destinationsFor([p.title, p.excerpt, ...p.body].join(" "), { forceFrance: p.franceLink })).map((d) => `<a class="text-link" href="${d.href}">${d.label}</a>`).join(", ").replace(/, ([^,]*)$/, " and $1")}.</p>
+        </div>
 ${p.authorBio ? `        <aside class="article-author" id="author" aria-label="About the author">
           <img class="article-author__photo" src="assets/img/studio/studio-01.jpg" alt="Kevin Lopez, co-founder and film director of Chromata Films" loading="lazy">
           <div>
@@ -2114,6 +2324,7 @@ pages["russell-westbrook.html"] = shell({
     </div>
   </section>
 
+${regionLinks([DESTINATIONS[2], PARENT_DEST.italy, EUROPE_DEST])}
 ${next("vaux-le-vicomte.html", "Vaux-le-Vicomte")}`,
 });
 
@@ -2127,6 +2338,7 @@ pages["vaux-le-vicomte.html"] = shell({
     { name: "Real Weddings", file: "real-weddings.html" },
     { name: "Vaux-le-Vicomte", file: "vaux-le-vicomte.html" },
   ],
+  schemaGraph: filmSchema(`${SITE_URL}/vaux-le-vicomte.html`, [FILMS.vaux], "assets/img/vaux/vlv-01.jpg"),
   title: "Vaux-le-Vicomte Wedding Videographer | Chromata Films",
   description: "A private wedding at the Château de Vaux-le-Vicomte ... grand-siècle splendor for VIP clients, filmed by Chromata Films with florals by Roni Floral Design and photography by Maddy Christina.",
   main: `  <section class="page-hero" data-theme="dark">
@@ -2189,6 +2401,7 @@ pages["vaux-le-vicomte.html"] = shell({
     </div>
   </section>
 
+${regionLinks([DESTINATIONS[3], PARENT_DEST.france, EUROPE_DEST])}
 ${next("domantas-sabonis.html", "Domantas &amp; Shashana")}`,
 });
 
@@ -3259,11 +3472,7 @@ LANDING_PAGES.push(
       { href: "journal-nida-sunny-highlight.html", img: "assets/img/nida-sunny/ns-01.jpg", alt: "Nida and Sunny's wedding at Lake Como, filmed by Chromata Films", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi" },
       { href: "journal-d-a-villa-bonomi.html", img: "assets/img/katya-joey/kj-01.jpg", alt: "A Lake Como wedding reception table filmed by Chromata Films", title: "D & A", note: "Villa Bonomi" },
     ],
-    films: [
-      { id: "788687357", title: "Jasmiina &amp; Tuukka — Wedding Film Highlights", desc: "Jasmiina and Tuukka Rask's wedding at Villa Balbiano, Lake Como.", uploadDate: "2023-01-12", duration: "PT5M25S" },
-      { id: "645329394", title: "Nida &amp; Sunny — Wedding Film Highlight", desc: "Nida and Sunny's wedding celebration at Lake Como.", thumb: `${SITE_URL}/assets/img/nida-sunny/ns-01.jpg`, uploadDate: "2021-11-12", duration: "PT5M11S" },
-      { id: "934248442", title: "Regina &amp; Marko — Wedding Highlight Film Intro", desc: "The opening of Regina and Marko's wedding highlight film.", uploadDate: "2024-04-13", duration: "PT1M1S" },
-    ],
+    films: [FILMS.katya, FILMS.jasmiina, FILMS.nida, FILMS.regina],
     faq: [
       ["Who is the best wedding videographer at Lake Como?",
        "Ask for full films from the specific villa you have booked. Lake Como venues differ enormously ... Villa Erba is a park, Villa Balbiano is an interior, Villa del Balbianello is a promontory reached by boat ... and a studio that has filmed yours will show you rather than describe it. Chromata Films has filmed repeatedly at Villa Erba, Villa Balbiano and Villa Bonomi, and won Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards for a film shot at Lake Como."],
@@ -3519,6 +3728,19 @@ for (const L of LANDING_PAGES) {
   ]);
 }
 
+// Films per destination page (Lake Como sets its own inline above).
+const LANDING_FILMS = {
+  "wedding-videographer-france.html": [FILMS.jg, FILMS.domantas, FILMS.alexaWilton, FILMS.vaux],
+  "wedding-cinematographer-europe.html": [FILMS.katya, FILMS.jg, FILMS.joseph, FILMS.nadine],
+  "wedding-videographer-french-riviera.html": [FILMS.domantas, FILMS.mozzafiato, FILMS.daria, FILMS.fsBuyout],
+  "wedding-videographer-st-tropez.html": [FILMS.jg, FILMS.alexaWilton, FILMS.michal],
+  "wedding-videographer-paris.html": [FILMS.joseph, FILMS.vaux],
+  "wedding-videographer-provence.html": [FILMS.sandra],
+  "wedding-filmmaker-italy.html": [FILMS.katya, FILMS.jasmiina, FILMS.nadine, FILMS.nida],
+  "private-event-videographer.html": [FILMS.natalia, FILMS.marcella, FILMS.fsBuyout],
+};
+for (const L of LANDING_PAGES) if (!L.films && LANDING_FILMS[L.file]) L.films = LANDING_FILMS[L.file];
+
 for (const L of LANDING_PAGES) {
   const url = `${SITE_URL}/${L.file}`;
   const startingCost = L.startingCost || 15000;
@@ -3552,17 +3774,7 @@ for (const L of LANDING_PAGES) {
           },
         },
       },
-      ...(L.films || []).map((v) => ({
-        "@type": "VideoObject",
-        "@id": `${url}#film-${v.id}`,
-        name: v.title.replace(/&amp;/g, "&"),
-        description: v.desc,
-        thumbnailUrl: [v.thumb || `${SITE_URL}/${L.heroImg}`],
-        uploadDate: v.uploadDate,
-        ...(v.duration ? { duration: v.duration } : {}),
-        embedUrl: `https://player.vimeo.com/video/${v.id}`,
-        publisher: { "@id": ORG_ID },
-      })),
+      ...filmSchema(url, L.films || [], L.heroImg),
       {
         "@type": "FAQPage",
         "@id": `${url}#faq`,
@@ -3610,15 +3822,7 @@ ${L.feature ? `\n${featureBlock(L.feature)}\n` : ""}${L.films ? `
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
       <p class="kicker">— The Films</p>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,2.4vw,34px) clamp(14px,2vw,28px); margin-top:5vh" class="films-grid">
-${L.films.map((v) => `        <div>
-          <div class="mat" style="position:relative; aspect-ratio:16/9; background:#000">
-            <iframe data-lazy-src="https://player.vimeo.com/video/${v.id}" title="${v.title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
-          </div>
-          <p class="kicker" style="margin-top:2vh">— ${v.title}</p>
-        </div>`).join("\n")}
-      </div>
-      <style>@media (max-width:900px){ .films-grid { grid-template-columns:1fr !important; } }</style>
+${filmsGrid(L.films)}
     </div>
   </section>
 ` : ""}
