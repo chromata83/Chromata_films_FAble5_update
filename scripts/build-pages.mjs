@@ -462,6 +462,8 @@ const FILMS = {
   jasmiina: { id: "788687357", title: "Jasmiina &amp; Tuukka — Wedding Film Highlights", desc: "Jasmiina and Tuukka Rask's wedding at Villa Balbiano, Lake Como.", uploadDate: "2023-01-12", duration: "PT5M25S", thumb: "assets/img/jasmiina/jt-02.jpg", href: "journal-jasmiina-tuukka.html", place: "Villa Balbiano, Lake Como, Italy" },
   nida: { id: "645329394", title: "Nida &amp; Sunny — Wedding Film Highlight", desc: "Nida and Sunny's wedding weekend at Villa Bonomi and Villa Erba, Lake Como.", uploadDate: "2021-11-12", duration: "PT5M11S", thumb: "assets/img/nida-sunny/ns-01.jpg", href: "journal-nida-sunny-highlight.html", place: "Villa Erba, Lake Como, Italy" },
   regina: { id: "934248442", title: "Regina &amp; Marko — Wedding Highlight Film Intro", desc: "The opening of Regina and Marko's wedding highlight film.", uploadDate: "2024-04-13", duration: "PT1M1S" },
+  henna: { id: "1159256501", title: "Henna &amp; Ben — Highlight Film", desc: "Henna and Ben's three-day Indian wedding in Marrakech: a Sangeet and Baraat, a desert night with fire dancers, and a Western ceremony over the fountains of The Oberoi. Planned by Cocoon Events.", uploadDate: "2026-01-28", duration: "PT8M51S", thumb: "assets/img/henna-ben/hb-01.jpg", href: "wedding-videographer-marrakech.html#henna-ben", place: "Amanjena and The Oberoi, Marrakech, Morocco" },
+  alexRaphael: { id: "764060129", title: "Alexandra &amp; Raphael — Wedding Film Highlight", desc: "Alexandra and Raphael's Jewish wedding in Marrakech, between the Agafay desert and the Selman hotel. Planned by Cocoon Events.", uploadDate: "2022-10-26", duration: "PT5M9S", thumb: "assets/img/marrakech/ar-01.jpg", href: "journal-alexandra-raphael-marrakech.html", place: "Marrakech, Morocco" },
   natalia: { id: "866854185", title: "Natalia's 50th Birthday — Montenegro Teaser", desc: "A three-day 50th birthday celebration in Tivat, Montenegro, by Cocoon Events.", uploadDate: "2023-09-21", duration: "PT1M21S", thumb: "assets/img/natalia/nm-01.jpg", href: "journal-natalia-montenegro.html", place: "Tivat, Montenegro" },
   marcella: { id: "1078314523", title: "Marcella &amp; Dan — Engagement Party Teaser", desc: "Marcella and Dan's engagement party.", uploadDate: "2025-04-24", duration: "PT49S", thumb: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", href: "journal-marcella-daniel.html" },
   annaA: { id: "466573692", hash: "39a3243ffd", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part I)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10", thumb: "assets/img/anna/anna-header.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
@@ -509,6 +511,7 @@ const DESTINATIONS = [
   { href: "wedding-videographer-paris.html", label: "Paris", re: /\bParis\b|Versailles|Vaux-le-Vicomte|Parisian/i, parent: "france" },
   { href: "wedding-videographer-provence.html", label: "Provence", re: /Provence|Estoublon|Luberon|Gordes/i, parent: "france" },
   { href: "wedding-videographer-french-riviera.html", label: "the French Riviera", re: /Riviera|Cap-Ferrat|Cap Ferrat|Èze|\bEze\b|\bNice\b|Cannes|Antibes|Monaco|Eden-Roc|Ephrussi|Côte d'Azur/i, parent: "france" },
+  { href: "wedding-videographer-marrakech.html", label: "Marrakech", re: /Marrakech|Morocco|Moroccan/i },
 ];
 const PARENT_DEST = {
   france: { href: "wedding-videographer-france.html", label: "France", re: /\bFrance\b/ },
@@ -2420,6 +2423,12 @@ const realWeddings = [
     excerpt: "Jacqueline and Gordon's wedding in St-Tropez could be summarized in one simple word: WOW. Five days at Le Beauvallon above the bay ... a seaside fashion show, a drone light spectacle, a Bridgerton-meets-1980s party, fireworks, and an after-party that only surrendered at sunrise",
   },
   {
+    href: "wedding-videographer-marrakech.html", title: "Henna <em>&amp;</em> Ben",
+    kicker: "Indian Wedding · Marrakech, Morocco", dir: "henna-ben",
+    thumbs: ["hb-01.jpg", "hb-02.jpg", "hb-03.jpg"],
+    excerpt: "Three days in Marrakech for guests from all over the world ... a night of fire dancers in the desert, a Sangeet and a Baraat at Amanjena, and a Western ceremony on a platform built over the fountains of The Oberoi. Planned by Cocoon Events, flowers by Roni Floral Design",
+  },
+  {
     href: "anna-andres.html", title: "Anna <em>Andres</em>",
     kicker: "Miss Universe Ukraine · Editorial Film", dir: "anna",
     thumbs: ["an-02.jpg", "an-05.jpg", "an-09.jpg"],
@@ -2442,7 +2451,7 @@ const realWeddings = [
 pages["real-weddings.html"] = shell({
   page: "real-weddings",
   title: "Real Weddings — Luxury Destination Wedding Films | Chromata Films",
-  description: "A selection of real weddings and celebrations filmed by Chromata Films: Domantas Sabonis at Villa Ephrussi, Jacqueline & Gordon in St-Tropez, Anna Andres, Russell & Nina Westbrook in Positano, and a private wedding at Vaux-le-Vicomte.",
+  description: "A selection of real weddings and celebrations filmed by Chromata Films: Domantas Sabonis at Villa Ephrussi, Jacqueline & Gordon in St-Tropez, Henna & Ben in Marrakech, Anna Andres, Russell & Nina Westbrook in Positano, and a private wedding at Vaux-le-Vicomte.",
   file: "real-weddings.html",
   ogImage: "assets/img/real-weddings/real-weddings-header.jpg",
   breadcrumb: [
@@ -3677,6 +3686,86 @@ LANDING_PAGES.push(
   },
 );
 
+LANDING_PAGES.push({
+  file: "wedding-videographer-marrakech.html",
+  h1: "Wedding Videographer in <em>Marrakech</em>",
+  kicker: "— Marrakech & Morocco",
+  title: "Marrakech Wedding Videographer | Chromata Films",
+  description: "Marrakech wedding videographer for luxury destination weddings in Morocco. Watch Henna & Ben's three-day Indian wedding at Amanjena and The Oberoi Marrakech. From 15,000 USD.",
+  summary: "Marrakech destination wedding films, from Amanjena and The Oberoi to the desert, including multi-day Indian celebrations",
+  heroImg: "assets/img/henna-ben/hb-01.jpg",
+  heroAlt: "Henna and Ben during their Indian wedding in Marrakech, filmed by Chromata Films",
+  heroSub: ["Amanjena · The Oberoi · The desert", "Collections from 15,000 USD"],
+  areaServed: ["Marrakech", "Palmeraie", "Agafay Desert", "Atlas Mountains", "Morocco"],
+  serviceName: "Wedding Cinematography in Marrakech",
+  related: [["wedding-cinematographer-europe.html", "Across Europe"], ["wedding-videographer-french-riviera.html", "The French Riviera"], ["wedding-videographer-lake-como.html", "Lake Como"]],
+  intro: [
+    "A Marrakech destination wedding is unlike anything in Europe. The palaces are older, the gardens are larger, the desert is twenty minutes away, and the light turns everything gold for an hour longer than you expect. It is also a city where a three-day celebration for guests flying in from every continent can be staged with a scale and a hospitality that few places can match.",
+    "As a Marrakech wedding videographer, we have filmed for couples from all over the world, from a Jewish wedding between the desert and the Selman hotel to Henna and Ben's three-day Indian celebration at Amanjena and The Oberoi. Our base on the French Riviera is a short flight away, and we work with the planners who know the city best.",
+  ],
+  body: [
+    ["Henna & Ben: three days, two palaces and a desert", [
+      "Henna and Ben's guests travelled from all over the world to Marrakech, and the couple gave them three days they will be telling stories about for years. Cocoon Events planned the whole weekend, with Roni Floral Design dressing every space in flowers, and every day had a completely different character.",
+      "It began in the desert outside the city, where a platform was built from nothing for the first night's celebration. Under an open sky, fire dancers lit up the dark while guests who had landed only hours earlier found themselves in a scene from another century. The second day belonged to tradition: a Sangeet full of choreographed family performances, and a Baraat that brought the groom in on a wave of drums, dancing and a vintage roadster, through the gardens of Amanjena.",
+      "The final day was the Western ceremony at The Oberoi, Marrakech. A platform was constructed over the central fountains and pools of the palace garden, so the couple exchanged vows standing above the water, framed by the long reflecting pools and the arcades behind them. It was the calmest moment of the weekend, and one of the most beautiful things we have ever filmed.",
+    ]],
+    ["The great wedding venues of Marrakech", [
+      "Amanjena, in the Palmeraie, is built around a vast reflecting basin and pink-walled pavilions, with an intimacy that makes even a large wedding feel private. The Oberoi, Marrakech, set against the Atlas Mountains, has some of the most spectacular water gardens in the city, perfect for a ceremony that needs a sense of grandeur.",
+      "La Mamounia is the most famous address in Marrakech and a legendary wedding venue in its own right, with its century-old gardens and Art Deco interiors. It does not appear in Henna and Ben's film ... they chose Amanjena and The Oberoi ... but for many couples it is the first name on the list. Beyond the palaces, the desert camps of Agafay and the private riads of the Medina give a Marrakech wedding film a range of settings that no single venue in Europe can offer.",
+    ]],
+    ["Indian weddings in Morocco", [
+      "Marrakech has become one of the great destinations for Indian weddings outside India, and for good reason: the palaces can host hundreds of guests, the climate is reliable, and Moroccan hospitality is built for multi-day celebrations. A Morocco wedding videographer filming an Indian wedding needs to know the running order of every ritual, from the Haldi and Mehndi to the Sangeet, the Baraat and the pheras, because none of them repeat for a camera.",
+      "We have filmed Indian celebrations at Lake Como and in Marrakech, and we build the crew around the schedule: enough cameras to be with the bride, the groom and the guests at the same time, and a director who knows where the next moment will happen before it does.",
+    ]],
+    ["A Marrakech wedding film, and the photographer beside it", [
+      "Many couples start by searching for a Marrakech wedding photographer and only later realise how much of the weekend a film can hold: the music of the Sangeet, the noise of the Baraat, the sound of the vows over the fountains. We are filmmakers first. We work alongside your photographer rather than around them, sharing light and timings so both of you end up with the frames you want, and we are happy to recommend photographers we have worked with in Morocco.",
+    ]],
+  ],
+  feature: {
+    id: "henna-ben",
+    kicker: "A Closer Look",
+    title: "Henna &amp; Ben ... Three Days in Marrakech",
+    galleryDir: "henna-ben",
+    intro: [
+      "A Sangeet, a Baraat, a night of fire in the desert and a Western ceremony over the fountains of The Oberoi. Henna and Ben's Marrakech wedding brought guests from all over the world together for three days of celebration, planned by Cocoon Events with flowers by Roni Floral Design.",
+    ],
+    gallery: [
+      { file: "hb-01.jpg", alt: "Henna and Ben beneath the arcades at their Marrakech wedding" },
+      { file: "hb-02.jpg", alt: "Henna in a red bridal lehenga beneath her veil, Marrakech" },
+      { file: "hb-03.jpg", alt: "The Baraat with a vintage roadster and dancing guests in Marrakech" },
+    ],
+    credits: [
+      ["Couple", "Henna &amp; Ben"],
+      ["Venues", "Amanjena · The Oberoi, Marrakech"],
+      ["Celebrations", "Desert night · Sangeet · Baraat · Western ceremony"],
+      ["Planning", "Cocoon Events"],
+      ["Florals", "Roni Floral Design"],
+      ["Film", "Chromata Films"],
+    ],
+  },
+  films: [FILMS.henna, FILMS.alexRaphael],
+  work: [
+    { href: "journal-alexandra-raphael-marrakech.html", img: "assets/img/marrakech/ar-01.jpg", title: "Alexandra & Raphael", note: "A Jewish wedding in Marrakech" },
+    { href: "journal-nida-sunny-highlight.html", img: "assets/img/nida-sunny/ns-01.jpg", title: "Nida & Sunny", note: "An Indian wedding at Lake Como" },
+    { href: "journal-daria-levin.html", img: "assets/img/daria/dl-01.jpg", title: "Daria Levin", note: "Cocoon Events, Èze" },
+    { href: "journal-natalia-montenegro.html", img: "assets/img/natalia/nm-01.jpg", title: "Natalia's 50th", note: "Cocoon Events, Montenegro" },
+  ],
+  faq: [
+    ["Who is the best wedding videographer in Marrakech?",
+     "Look for a studio that has filmed full multi-day weddings in Marrakech, not just a styled shoot, and ask to see the whole film. Chromata Films has filmed Henna and Ben's three-day Indian wedding at Amanjena and The Oberoi, and Alexandra and Raphael's wedding between the Agafay desert and the Selman hotel, both planned by Cocoon Events."],
+    ["How much does a Marrakech wedding film cost?",
+     "Collections start at 15,000 USD, with travel and accommodation included. Most Marrakech weddings run across two or three days and several venues, so the majority of quotes sit above the entry point."],
+    ["Have you filmed at La Mamounia?",
+     "La Mamounia is the most famous wedding venue in Marrakech, but it does not appear in the films on this page: Henna and Ben chose Amanjena and The Oberoi. We would love to film there, and the way we work in any Marrakech palace is the same ... scouting the gardens and the light in advance, and planning around the heat of the day."],
+    ["Do you film Indian weddings in Morocco?",
+     "Yes. Henna and Ben's wedding included a Sangeet, a Baraat and a Western ceremony across three days, and we have filmed multi-day Indian celebrations at Lake Como as well. We plan the crew around the order of the rituals so nothing is missed."],
+    ["Are you also a Marrakech wedding photographer?",
+     "We specialise in wedding films. We work closely with your photographer on the day, and we are happy to recommend photographers we have worked with in Morocco."],
+    ["Can you film a celebration in the desert?",
+     "Yes. Henna and Ben's first night took place on a platform built in the desert, with fire dancers after dark. Desert events need planning for dust, wind, power and very low light, and we bring the equipment for all of it."],
+  ],
+});
+
 // Optional embedded case-study for a LANDING_PAGES entry: a short write-up, an
 // Instagram reel, a photo gallery and a full vendor-credit list. Reuses the
 // existing .feature__meta row styling (no new CSS) for the credits.
@@ -3689,14 +3778,14 @@ const featureBlock = (f) => `  <section class="pad-section" style="padding-top:0
       <div class="prose" style="max-width:46em; margin-top:4vh">
 ${f.intro.map((p) => `        <p>${p}</p>`).join("\n")}
       </div>
-      <div class="mat" style="max-width:36em; margin:5vh auto 0">
+${f.instagram ? `      <div class="mat" style="max-width:36em; margin:5vh auto 0">
         <blockquote class="instagram-media" data-instgrm-permalink="${f.instagram}" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:4px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin:0 auto; max-width:540px; min-width:326px; padding:0; width:100%;">
           <div style="padding:16px;">
             <a href="${f.instagram}" target="_blank" rel="noopener" style="background:#FFFFFF; line-height:0; padding:0; text-align:center; text-decoration:none; width:100%; display:block;">View this reel on Instagram</a>
           </div>
         </blockquote>
       </div>
-      <div class="gallery-grid" style="margin-top:7vh">
+` : ""}      <div class="gallery-grid" style="margin-top:7vh">
 ${f.gallery.map((it) => "        " + g(f.galleryDir, it.file, it.cls || "", it.alt)).join("\n")}
       </div>
       <div class="feature__meta" style="margin-top:6vh; max-width:36em">
@@ -3704,7 +3793,7 @@ ${f.credits.map(([label, handle]) => `        <div class="row"><span>${label}</s
       </div>
     </div>
   </section>
-  <script async src="//www.instagram.com/embed.js"></script>`;
+${f.instagram ? `  <script async src="//www.instagram.com/embed.js"></script>` : ""}`;
 
 const faqBlock = (faq) => `  <section class="pad-section" data-section>
     <div class="container">

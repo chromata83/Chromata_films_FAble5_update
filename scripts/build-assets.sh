@@ -392,6 +392,13 @@ find "$PUB/nida_sunny" -maxdepth 1 -iname '*.jpg' | sort | while read -r f; do
   i=$((i+1)); jpg "$f" "$OUT/img/nida-sunny/ns-$(printf '%02d' $i).jpg" 1800
 done
 
+# ---------- henna-ben (Marrakech destination page; HEIC sources need ffmpeg 8+) ----------
+mkdir -p "$OUT/img/henna-ben"
+i=0
+find "$PUB/henna ben" -maxdepth 1 -iname '*.heic' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/henna-ben/hb-$(printf '%02d' $i).jpg" 1800
+done
+
 # ---------- planning-europe journal-article gallery (cross-wedding montage curated by the user) ----------
 i=0
 find "$PUB/blog-wed-europe" -maxdepth 1 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | sort | while read -r f; do
