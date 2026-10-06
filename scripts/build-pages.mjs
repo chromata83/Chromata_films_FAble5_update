@@ -403,7 +403,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=62" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=63" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -795,7 +795,7 @@ pages["anna-andres.html"] = shell({
     { name: "Real Weddings", file: "real-weddings.html" },
     { name: "Anna Andres", file: "anna-andres.html" },
   ],
-  title: "Hôtel du Cap-Eden-Roc Wedding Film — Anna & David | Chromata Films",
+  title: "Anna Andres Wedding Film | Chromata Films",
   description: "The wedding of Anna Andres, Miss Universe Ukraine 2014 — filmed by Chromata Films with the pace of a fashion editorial and the heart of a love story.",
   main: `  <section class="page-hero" data-theme="dark">
     <div class="page-hero__bg">
@@ -1272,7 +1272,8 @@ const archive = [
     ],
   },
   {
-    file: "journal-daria-levin.html", page: 2, tag: "Real Wedding", franceLink: true,
+    file: "journal-daria-levin.html", page: 2, tag: "Real Wedding", franceLink: true, authorBio: true,
+    location: "Èze, French Riviera, France",
     title: "Daria Levin — A Crazy Circus Wedding in Èze, French Riviera", date: "October 17, 2023",
     video: "880169269",
     galleryDir: "daria",
@@ -1553,7 +1554,8 @@ const archive = [
     ],
   },
   {
-    file: "journal-michal-steve.html", page: 6, tag: "Real Wedding", franceLink: true,
+    file: "journal-michal-steve.html", page: 6, tag: "Real Wedding", franceLink: true, schemaType: "Article",
+    location: "Le Beauvallon, Saint-Tropez, France",
     title: "Michal and Steve — A St-Tropez Love Story", date: "November 29, 2021",
     video: "642838113",
     galleryDir: "michal-steve",
@@ -1797,8 +1799,17 @@ for (const p of allPosts) {
     || `${p.title}, ${p.tag}, wedding videographer Europe, luxury wedding film, best wedding videographers in Europe, destination wedding cinematography, Chromata Films`;
   const imageList = (p.gallery || []).slice(0, 6).map((it) => `${SITE_URL}/assets/img/${p.galleryDir}/${galleryFile(it)}`);
   if (!imageList.length) imageList.push(ogImage);
+  // Posts flagged `authorBio` (or given an explicit `schemaType`) credit Kevin
+  // as a Person, matching the visible "By Kevin Lopez" byline, so search
+  // engines see a real, named author rather than only the company.
+  const kevinAuthor = {
+    "@type": "Person", "@id": KEVIN_ID, name: "Kevin Lopez",
+    url: `${SITE_URL}/the-studio.html`, jobTitle: "Co-founder, Director & Cinematographer",
+    worksFor: { "@type": "Organization", name: "Chromata Films", url: SITE_URL },
+  };
+  const namedAuthor = p.authorBio || p.schemaType;
   const jsonGraph = [{
-    "@type": "BlogPosting",
+    "@type": p.schemaType || "BlogPosting",
     "@id": `${pageUrl}#article`,
     headline: p.title,
     description: metaDesc,
@@ -1806,10 +1817,11 @@ for (const p of allPosts) {
     datePublished: iso,
     dateModified: iso,
     inLanguage: "en",
-    author: { "@type": "Organization", name: "Chromata Films", url: SITE_URL },
+    author: namedAuthor ? kevinAuthor : { "@type": "Organization", name: "Chromata Films", url: SITE_URL },
     publisher: { "@type": "Organization", name: "Chromata Films", logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo-mark.png` } },
     mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
     keywords,
+    ...(p.video && namedAuthor ? { video: { "@id": `${pageUrl}#video` } } : {}),
   }];
   if (p.video) {
     jsonGraph.push({
@@ -1821,6 +1833,8 @@ for (const p of allPosts) {
       uploadDate: iso,
       publisher: { "@type": "Organization", name: "Chromata Films", logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo-mark.png` } },
       embedUrl: videoEmbedUrl(p.video, p.videoProvider),
+      ...(namedAuthor ? { url: pageUrl, inLanguage: "en", creator: { "@id": KEVIN_ID } } : {}),
+      ...(p.location ? { contentLocation: { "@type": "Place", name: p.location } } : {}),
     });
   }
   const headExtra = [
@@ -1833,7 +1847,7 @@ for (const p of allPosts) {
     `<meta property="og:url" content="${pageUrl}" />`,
     `<meta property="og:image" content="${ogImage}" />`,
     `<meta property="article:published_time" content="${iso}" />`,
-    `<meta property="article:author" content="Chromata Films" />`,
+    `<meta property="article:author" content="${namedAuthor ? "Kevin Lopez" : "Chromata Films"}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${metaTitle}" />`,
     `<meta name="twitter:description" content="${metaDesc}" />`,
@@ -1853,7 +1867,7 @@ for (const p of allPosts) {
         <h1 class="display-md" style="margin-top:3vh">
           <span class="line-mask"><span class="line-inner">${p.title}</span></span>
         </h1>
-        <div class="article__meta"><span>${p.date}</span><span>By Kevin Lopez</span></div>
+        <div class="article__meta"><span>${p.date}</span><span>By ${p.authorBio ? `<a href="#author">Kevin Lopez</a>` : "Kevin Lopez"}</span></div>
       </article>
 ${p.video ? `      <figure class="article__film mat">
         <div class="article__film-frame">
@@ -1890,7 +1904,16 @@ ${row.items.map((it) => "            " + venueFigure(p.galleryDir, it.file, it.c
           </div>`;
 }).join("\n")}
 ${p.franceLink ? `          <p><a class="text-link" href="wedding-videographer-france.html">Planning your own wedding in France? See our wedding films in France →</a></p>\n` : ""}        </div>
-${p.cta ? `        <div class="article-cta">
+${p.authorBio ? `        <aside class="article-author" id="author" aria-label="About the author">
+          <img class="article-author__photo" src="assets/img/studio/studio-01.jpg" alt="Kevin Lopez, co-founder and film director of Chromata Films" loading="lazy">
+          <div>
+            <p class="article-author__kicker">Written by</p>
+            <p class="article-author__name"><a href="the-studio.html">Kevin Lopez</a></p>
+            <p class="article-author__role">Co-founder &amp; Film Director, Chromata Films</p>
+            <p class="article-author__bio">Kevin is a Vancouver Film School graduate who spent a decade in Hollywood visual effects, on films including Star Wars: The Last Jedi, Beauty and the Beast and The Great Gatsby, before turning that craft to weddings. For nine years he has directed wedding films across five continents, from the French Riviera to Lake Como, alongside his wife and co-founder Laura Lopez.</p>
+          </div>
+        </aside>
+` : ""}${p.cta ? `        <div class="article-cta">
           <a class="btn btn--coral" href="${p.cta.href}" target="_blank" rel="noopener noreferrer">${p.cta.label}</a>
 ${p.cta.sub ? `          <p class="article-cta__note">${p.cta.sub}</p>\n` : ""}        </div>
 ` : ""}      </article>
@@ -3199,7 +3222,7 @@ LANDING_PAGES.push(
     file: "wedding-videographer-lake-como.html",
     h1: "Wedding Videographer at <em>Lake Como</em>",
     kicker: "— Lago di Como",
-    title: "Wedding Videographer Lake Como | Villa Erba & Villa Balbiano Films — Chromata Films",
+    title: "Lake Como Wedding Videographer | Chromata Films",
     description: "Luxury wedding videographer at Lake Como. Chromata Films has filmed at Villa Erba, Villa Balbiano and Villa Bonomi, including multi-day Indian celebrations. From 15,000 USD.",
     summary: "wedding films at Villa Erba, Villa Balbiano, Villa Bonomi and the Lake Como estates",
     heroImg: "assets/img/katya-joey/kj-03.jpg",
@@ -3388,7 +3411,7 @@ LANDING_PAGES.push(
     file: "wedding-videographer-provence.html",
     h1: "Wedding Videographer in <em>Provence</em>",
     kicker: "— Provence & the Luberon",
-    title: "Wedding Videographer Provence | Château & Vineyard Wedding Films — Chromata Films",
+    title: "Provence Wedding Videographer | Chromata Films",
     description: "Luxury wedding videographer in Provence. Chromata Films films château, vineyard and mas weddings across the Luberon, Gordes, Aix and the Alpilles. Collections from 15,000 USD.",
     summary: "château, vineyard and mas wedding films across Provence, the Luberon and the Alpilles",
     heroImg: "assets/img/sandra-pedro/sp-01.jpg",

@@ -813,6 +813,17 @@ figure.gitem figcaption { position: absolute; left: 18px; bottom: 14px; z-index:
 .article .prose { max-width: none; }
 .article .prose p:first-of-type::first-letter { font-family: var(--font-display); font-size: 3.2em; float: left; line-height: 0.85; padding-right: 0.12em; color: var(--coral); }
 .article__meta { display: flex; flex-wrap: wrap; gap: 10px 30px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-muted); margin: 3vh 0 6vh; }
+.article__meta a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+/* author byline + short bio closing a journal article */
+.article-author { display: flex; gap: 24px; align-items: flex-start; margin-top: 7vh; padding-top: 4vh; border-top: 1px solid rgba(37, 35, 33, 0.14); }
+.article-author__photo { width: 96px; height: 96px; flex: none; border-radius: 50%; object-fit: cover; object-position: 50% 20%; }
+.article-author p { margin: 0; }
+.article-author__kicker { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-muted); }
+.article-author__name { font-family: var(--font-display); font-size: 1.6em; line-height: 1.2; margin-top: 4px !important; }
+.article-author__name a { color: inherit; text-decoration: none; }
+.article-author__role { font-size: 13px; color: var(--gold-deep); margin-top: 2px !important; }
+.article-author__bio { margin-top: 12px !important; line-height: 1.65; }
+@media (max-width: 560px) { .article-author { flex-direction: column; gap: 16px; } .article-author__photo { width: 80px; height: 80px; } }
 /* optional lead film + photo gallery on a journal article */
 .article__film { max-width: 64em; margin: 0 auto 7vh; }
 .vidpair--article { max-width: 64em; margin: -3vh auto 7vh; }
