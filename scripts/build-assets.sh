@@ -385,6 +385,13 @@ find "$PUB/jaasmina tuukka rask" -maxdepth 1 -name '*.jpg' | sort | while read -
   i=$((i+1)); jpg "$f" "$OUT/img/jasmiina/jt-$(printf '%02d' $i).jpg" 1800
 done
 
+# ---------- nida-sunny journal-article gallery (Villa Erba & Villa Bonomi, Lake Como) ----------
+mkdir -p "$OUT/img/nida-sunny"
+i=0
+find "$PUB/nida_sunny" -maxdepth 1 -iname '*.jpg' | sort | while read -r f; do
+  i=$((i+1)); jpg "$f" "$OUT/img/nida-sunny/ns-$(printf '%02d' $i).jpg" 1800
+done
+
 # ---------- planning-europe journal-article gallery (cross-wedding montage curated by the user) ----------
 i=0
 find "$PUB/blog-wed-europe" -maxdepth 1 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | sort | while read -r f; do

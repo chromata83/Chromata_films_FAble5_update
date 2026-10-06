@@ -1532,6 +1532,13 @@ const archive = [
   {
     file: "journal-nida-sunny-highlight.html", page: 5, tag: "Real Wedding",
     title: "Nida and Sunny — Villa Erba, Lake Como, Highlight Film", date: "January 28, 2022",
+    video: "645329394",
+    galleryDir: "nida-sunny",
+    gallery: [
+      { file: "ns-01.jpg", alt: "Nida and Sunny in their wedding attire among the flowers at Lake Como" },
+      { file: "ns-02.jpg", alt: "Nida and Sunny at the entrance of Villa Erba, Lake Como" },
+      { file: "ns-03.jpg", alt: "Guests dancing on the lawn at Nida and Sunny's Villa Erba wedding" },
+    ],
     excerpt: "A wedding you could never forget ... Nida and Sunny at Villa Bonomi and Villa Erba, Lake Como, from Sangeet to a wild party night.",
     body: [
       "There are some weddings you could never forget, and Nida and Sunny's is clearly one of them. Their love, their families and friends, their kindness ... it was all perfect, as if it were meant to be.",
@@ -1569,6 +1576,7 @@ const archive = [
   },
   {
     file: "journal-nida-sunny-teaser.html", page: 6, tag: "Teaser",
+    thumb: "nida-sunny/ns-02.jpg",
     title: "Nida and Sunny — Villa Erba, Lake Como, Teaser", date: "November 2, 2021",
     excerpt: "Party. A first taste of Nida and Sunny's Lake Como wedding ... dance competitions, vibrant decor and non-stop celebration.",
     body: [
@@ -3248,12 +3256,12 @@ LANDING_PAGES.push(
     work: [
       { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-04.jpg", title: "Katya & Joey", note: "Villa Erba, planned by Sacks Productions & Alejandra Poupel" },
       { href: "journal-jasmiina-tuukka.html", img: "assets/img/jasmiina/jt-04.jpg", title: "Jasmiina & Tuukka Rask", note: "Villa Balbiano" },
-      { href: "journal-nida-sunny-highlight.html", img: "assets/img/jasmiina/jt-06.jpg", alt: "A Riva boat crossing Lake Como during a wedding weekend filmed by Chromata Films", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi" },
+      { href: "journal-nida-sunny-highlight.html", img: "assets/img/nida-sunny/ns-01.jpg", alt: "Nida and Sunny's wedding at Lake Como, filmed by Chromata Films", title: "Nida & Sunny", note: "Villa Erba & Villa Bonomi" },
       { href: "journal-d-a-villa-bonomi.html", img: "assets/img/katya-joey/kj-01.jpg", alt: "A Lake Como wedding reception table filmed by Chromata Films", title: "D & A", note: "Villa Bonomi" },
     ],
     films: [
       { id: "788687357", title: "Jasmiina &amp; Tuukka — Wedding Film Highlights", desc: "Jasmiina and Tuukka Rask's wedding at Villa Balbiano, Lake Como.", uploadDate: "2023-01-12", duration: "PT5M25S" },
-      { id: "645329394", title: "Nida &amp; Sunny — Wedding Film Highlight", desc: "Nida and Sunny's wedding celebration at Lake Como.", uploadDate: "2021-11-12", duration: "PT5M11S" },
+      { id: "645329394", title: "Nida &amp; Sunny — Wedding Film Highlight", desc: "Nida and Sunny's wedding celebration at Lake Como.", thumb: `${SITE_URL}/assets/img/nida-sunny/ns-01.jpg`, uploadDate: "2021-11-12", duration: "PT5M11S" },
       { id: "934248442", title: "Regina &amp; Marko — Wedding Highlight Film Intro", desc: "The opening of Regina and Marko's wedding highlight film.", uploadDate: "2024-04-13", duration: "PT1M1S" },
     ],
     faq: [
