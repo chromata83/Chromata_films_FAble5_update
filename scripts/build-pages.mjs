@@ -40,6 +40,9 @@ const ORG_ID = `${SITE_URL}/#organization`;
 const BIZ_ID = `${SITE_URL}/#localbusiness`;
 const SITE_ID = `${SITE_URL}/#website`;
 const KEVIN_ID = `${SITE_URL}/the-studio.html#kevin-lopez`;
+// Inline credit used inside VideoObject nodes: Google's video validator wants
+// name/url on the creator itself rather than only an @id reference.
+const KEVIN_CREDIT = { "@type": "Person", "@id": KEVIN_ID, name: "Kevin Lopez", url: `${SITE_URL}/the-studio.html` };
 const LAURA_ID = `${SITE_URL}/the-studio.html#laura-lopez`;
 
 const POSTAL_ADDRESS = {
@@ -170,6 +173,7 @@ const PEOPLE = [
     "@type": "Person",
     "@id": KEVIN_ID,
     name: "Kevin Lopez",
+    url: `${SITE_URL}/the-studio.html`,
     jobTitle: "Co-founder, Director & Cinematographer",
     description:
       "Director, cinematographer and VFX artist. Vancouver Film School graduate with a decade of visual-effects expertise from major studios — including Star Wars: The Last Jedi, Beauty and the Beast, The Great Gatsby, Avengers: Infinity War, Fantastic Four and Solo: A Star Wars Story — and nine years documenting weddings across five continents.",
@@ -181,6 +185,7 @@ const PEOPLE = [
     "@type": "Person",
     "@id": LAURA_ID,
     name: "Laura Lopez",
+    url: `${SITE_URL}/the-studio.html`,
     jobTitle: "Co-founder & Client Experience",
     description:
       "Master in Communication and Finance, formerly at Publicis and Mediacom. Runs every Chromata production and vendor relationship from first inquiry to final delivery.",
@@ -467,8 +472,8 @@ const FILMS = {
   alexRaphael: { id: "764060129", title: "Alexandra &amp; Raphael — Wedding Film Highlight", desc: "Alexandra and Raphael's Jewish wedding in Marrakech, between the Agafay desert and the Selman hotel. Planned by Cocoon Events.", uploadDate: "2022-10-26", duration: "PT5M9S", thumb: "assets/img/marrakech/ar-01.jpg", href: "journal-alexandra-raphael-marrakech.html", place: "Marrakech, Morocco" },
   natalia: { id: "866854185", title: "Natalia's 50th Birthday — Montenegro Teaser", desc: "A three-day 50th birthday celebration in Tivat, Montenegro, by Cocoon Events.", uploadDate: "2023-09-21", duration: "PT1M21S", thumb: "assets/img/natalia/nm-01.jpg", href: "journal-natalia-montenegro.html", place: "Tivat, Montenegro" },
   marcella: { id: "1078314523", title: "Marcella &amp; Dan — Engagement Party Teaser", desc: "Marcella and Dan's engagement party.", uploadDate: "2025-04-24", duration: "PT49S", thumb: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", href: "journal-marcella-daniel.html" },
-  annaA: { id: "466573692", hash: "39a3243ffd", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part I)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10", thumb: "assets/img/anna/anna-header.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
-  annaB: { id: "466573597", hash: "6b59c916d3", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part II)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10", thumb: "assets/img/anna/an-01.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
+  annaA: { id: "466573692", hash: "39a3243ffd", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part I)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10-01", thumb: "assets/img/anna/anna-header.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
+  annaB: { id: "466573597", hash: "6b59c916d3", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part II)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10-01", thumb: "assets/img/anna/an-01.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
 };
 // Films per page for the video sitemap (landing pages register themselves
 // in their build loop; the case studies are listed here).
@@ -478,6 +483,9 @@ const SITEMAP_VIDEOS = {
   "jacqueline-gordon.html": [FILMS.jg],
   "vaux-le-vicomte.html": [FILMS.vaux],
 };
+// Search Console rejects a bare "YYYY-MM-DD" uploadDate ("missing timezone"),
+// so every film date is emitted as a full ISO 8601 instant in UTC.
+const isoUpload = (d) => new Date(`${d}T12:00:00Z`).toISOString();
 const filmEmbed = (v) => (v.provider === "youtube" ? `https://www.youtube-nocookie.com/embed/${v.id}` : vimeoSrc(v));
 const filmThumb = (v, fallback) =>
   v.provider === "youtube" ? `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg` : `${SITE_URL}/${v.thumb || fallback}`;
@@ -488,13 +496,13 @@ const filmSchema = (pageUrl, films, fallbackThumb) => films.map((v) => ({
   name: v.title.replace(/&amp;/g, "&"),
   description: v.desc,
   thumbnailUrl: [filmThumb(v, fallbackThumb)],
-  uploadDate: v.uploadDate,
+  uploadDate: isoUpload(v.uploadDate),
   ...(v.duration ? { duration: v.duration } : {}),
   embedUrl: filmEmbed(v),
   inLanguage: "en",
   ...(v.place ? { contentLocation: { "@type": "Place", name: v.place } } : {}),
-  creator: { "@id": KEVIN_ID },
-  director: { "@id": KEVIN_ID },
+  creator: KEVIN_CREDIT,
+  director: KEVIN_CREDIT,
   productionCompany: { "@id": ORG_ID },
   publisher: { "@id": ORG_ID },
 }));
@@ -2143,7 +2151,9 @@ for (const p of allPosts) {
       uploadDate: iso,
       publisher: { "@type": "Organization", name: "Chromata Films", logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/img/logo-mark.png` } },
       embedUrl: videoEmbedUrl(p.video, p.videoProvider),
-      ...(namedAuthor ? { url: pageUrl, inLanguage: "en", creator: { "@id": KEVIN_ID } } : {}),
+      url: pageUrl,
+      inLanguage: "en",
+      creator: KEVIN_CREDIT,
       ...(p.location ? { contentLocation: { "@type": "Place", name: p.location } } : {}),
     });
   }
@@ -4143,8 +4153,8 @@ const sitemapVideos = (f) => (SITEMAP_VIDEOS[f] || []).map((v) => `
       <video:title>${xmlEsc(v.title)}</video:title>
       <video:description>${xmlEsc(v.desc)}</video:description>
       <video:player_loc>${xmlEsc(filmEmbed(v))}</video:player_loc>${isoSeconds(v.duration) ? `
-      <video:duration>${isoSeconds(v.duration)}</video:duration>` : ""}${/^\d{4}-\d{2}-\d{2}$/.test(v.uploadDate) ? `
-      <video:publication_date>${v.uploadDate}</video:publication_date>` : ""}
+      <video:duration>${isoSeconds(v.duration)}</video:duration>` : ""}${v.uploadDate ? `
+      <video:publication_date>${isoUpload(v.uploadDate)}</video:publication_date>` : ""}
     </video:video>`).join("");
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
