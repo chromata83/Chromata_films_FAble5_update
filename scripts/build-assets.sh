@@ -429,6 +429,9 @@ cutout "$PUB/cutouts/gallery-cutout-src.png" "$OUT/img/gallery/gallery-cutout.pn
 # crop to the alpha bounding box first, then scale.
 $FF -i "$PUB/cutouts/awards-cutout-src.png" -vf "crop=1358:3065:85:0,scale=700:-1:flags=lanczos" -pix_fmt rgba -compression_level 100 "$OUT/img/awards/awards-cutout.png"
 $FF -i "$PUB/cutouts/studio-cutout-src.png" -vf "crop=1269:1176:13:324,scale=800:-1:flags=lanczos" -pix_fmt rgba -compression_level 100 "$OUT/img/studio/studio-cutout.png"
+# Homepage hero banner corner illustrations (alpha WebP, ~5x lighter than PNG).
+$FF -i "$PUB/landingpage_images/header_update/d5cde3e8-3acb-44c0-bd63-d63998f1b844 copy.png" -vf "crop=1379:1108:0:0,scale=900:-1:flags=lanczos" -c:v libwebp -quality 86 -compression_level 6 -pix_fmt yuva420p "$OUT/img/landing/hero-brooch.webp"
+$FF -i "$PUB/landingpage_images/header_update/bcc5890e-6ea5-474a-9a00-a67260597784.png" -vf "crop=865:1173:77:70,scale=700:-1:flags=lanczos" -c:v libwebp -quality 86 -compression_level 6 -pix_fmt yuva420p "$OUT/img/landing/hero-bust.webp"
 
 # ---------- SEO landing-page hero stills ----------
 # Stable names, because the pages reference them directly (the we-NN/… gallery
