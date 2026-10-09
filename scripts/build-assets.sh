@@ -432,6 +432,11 @@ $FF -i "$PUB/cutouts/studio-cutout-src.png" -vf "crop=1269:1176:13:324,scale=800
 # Homepage hero banner corner illustrations (alpha WebP, ~5x lighter than PNG).
 $FF -i "$PUB/landingpage_images/header_update/d5cde3e8-3acb-44c0-bd63-d63998f1b844 copy.png" -vf "crop=1379:1108:0:0,scale=900:-1:flags=lanczos" -c:v libwebp -quality 86 -compression_level 6 -pix_fmt yuva420p "$OUT/img/landing/hero-brooch.webp"
 $FF -i "$PUB/landingpage_images/header_update/bcc5890e-6ea5-474a-9a00-a67260597784.png" -vf "crop=865:1173:77:70,scale=700:-1:flags=lanczos" -c:v libwebp -quality 86 -compression_level 6 -pix_fmt yuva420p "$OUT/img/landing/hero-bust.webp"
+# Destination-page art. Lobster: crop to its alpha bounds and erase a stray
+# speck above the claws. Eye-bust is a poster crop (cut on top/left/bottom), so
+# it is kept whole and placed where section edges hide the cuts.
+$FF -i "$PUB/landingpage_images/header_update/8e000b21-6fa0-480c-a8fb-62fd958f5af0.png" -vf "format=rgba,crop=1521:1139:55:94,drawbox=x=16:y=74:w=20:h=24:color=black@0:t=fill:replace=1,scale=900:-1:flags=lanczos" -c:v libwebp -quality 86 -compression_level 6 -pix_fmt yuva420p "$OUT/img/landing/art-lobster-sun.webp"
+$FF -i "$PUB/landingpage_images/header_update/a7c7611c-1b6c-4a20-bdb7-46a8067c1ee6.png" -vf "scale=1000:-1:flags=lanczos" -c:v libwebp -quality 86 -compression_level 6 -pix_fmt yuva420p "$OUT/img/landing/art-eye-bust.webp"
 
 # ---------- SEO landing-page hero stills ----------
 # Stable names, because the pages reference them directly (the we-NN/… gallery

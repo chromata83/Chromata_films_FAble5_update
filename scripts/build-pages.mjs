@@ -367,6 +367,7 @@ const FOOTER = (withCta = true) => `${withCta ? `<section class="begin" data-the
     </div>
     <div>
       <h4>Where We Film</h4>
+      <a href="destination-wedding-videographer.html">Destination Weddings Worldwide</a>
       <a href="wedding-videographer-france.html">Wedding Films in France</a>
       <a href="wedding-filmmaker-italy.html">Wedding Films in Italy</a>
       <a href="wedding-cinematographer-europe.html">Wedding Films in Europe</a>
@@ -409,7 +410,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link re
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=67" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=69" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -472,6 +473,7 @@ const FILMS = {
   alexRaphael: { id: "764060129", title: "Alexandra &amp; Raphael — Wedding Film Highlight", desc: "Alexandra and Raphael's Jewish wedding in Marrakech, between the Agafay desert and the Selman hotel. Planned by Cocoon Events.", uploadDate: "2022-10-26", duration: "PT5M9S", thumb: "assets/img/marrakech/ar-01.jpg", href: "journal-alexandra-raphael-marrakech.html", place: "Marrakech, Morocco" },
   natalia: { id: "866854185", title: "Natalia's 50th Birthday — Montenegro Teaser", desc: "A three-day 50th birthday celebration in Tivat, Montenegro, by Cocoon Events.", uploadDate: "2023-09-21", duration: "PT1M21S", thumb: "assets/img/natalia/nm-01.jpg", href: "journal-natalia-montenegro.html", place: "Tivat, Montenegro" },
   marcella: { id: "1078314523", title: "Marcella &amp; Dan — Engagement Party Teaser", desc: "Marcella and Dan's engagement party.", uploadDate: "2025-04-24", duration: "PT49S", thumb: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", href: "journal-marcella-daniel.html" },
+  laurenJonathan: { id: "704850376", title: "Lauren &amp; Jonathan — Wedding Film Highlight", desc: "Lauren and Jonathan's destination wedding at Altos de Chavón in the Dominican Republic, planned by LS Planning.", uploadDate: "2022-05-03", thumb: "assets/img/altos/lj-01.jpg", href: "journal-lauren-jonathan.html", place: "Altos de Chavón, La Romana, Dominican Republic", aspect: "426/204" },
   annaA: { id: "466573692", hash: "39a3243ffd", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part I)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10-01", thumb: "assets/img/anna/anna-header.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
   annaB: { id: "466573597", hash: "6b59c916d3", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part II)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10-01", thumb: "assets/img/anna/an-01.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
 };
@@ -542,6 +544,7 @@ const DEST_KEYS = {
   "st-tropez": DESTINATIONS[0], como: DESTINATIONS[1], amalfi: DESTINATIONS[2], paris: DESTINATIONS[3],
   provence: DESTINATIONS[4], riviera: DESTINATIONS[5], france: PARENT_DEST.france, italy: PARENT_DEST.italy,
   europe: EUROPE_DEST, usa: USA_DEST,
+  worldwide: { href: "destination-wedding-videographer.html", label: "destinations worldwide" },
 };
 const destinationsFor = (text, { forceFrance = false, max = 3 } = {}) => {
   const t = text.replace(/Rendez-vous in Paris|Festival Band Paris|Audrey paris|Italian Weddings and Events/gi, "");
@@ -1242,7 +1245,7 @@ ${Array.from({ length: 6 }, (_, i) => `        ${g("studio", "illus-" + String(i
 /* ============================== JOURNAL ============================== */
 const posts = [
   {
-    file: "wedding-videographer-st-moritz.html", slug: "st-moritz", dest: ["europe", "como", "riviera"], authorBio: true,
+    file: "wedding-videographer-st-moritz.html", slug: "st-moritz", dest: ["europe", "como", "riviera", "worldwide"], authorBio: true,
     title: "Getting Married in St Moritz: The Complete Winter Wedding Guide",
     date: "October 6, 2026", tag: "Destination Guide",
     galleryDir: "st-moritz",
@@ -3927,6 +3930,145 @@ LANDING_PAGES.push({
   ],
 });
 
+// Bulleted copy for landing pages: each item is [lead, text] → "<strong>Lead.</strong> text".
+const bullets = (items) => `<ul class="prose-list">
+${items.map(([lead, text]) => `          <li><strong>${lead}</strong> ${text}</li>`).join("\n")}
+        </ul>`;
+const ext = (href, label) => `<a class="vendor-link" target="_blank" rel="noopener noreferrer nofollow" href="${href}">${label}</a>`;
+const weFig = (file, alt) => ({ dir: "wed-europe", file, alt });
+// Decorative surreal cut-out layered into a landing section (purely ornamental).
+const landingArt = (a) => a ? `
+    <img class="landing-art ${a.cls}" src="${a.src}" alt="" aria-hidden="true" loading="lazy"${a.speed ? ` data-speed="${a.speed}"` : ""} />` : "";
+
+LANDING_PAGES.push({
+  file: "destination-wedding-videographer.html",
+  h1: "Destination Wedding Videographer · <em>Worldwide</em>",
+  kicker: "— Destination Weddings Worldwide",
+  title: "Destination Wedding Videographer Worldwide | Chromata Films",
+  description: "Destination wedding videographer filming in France, Italy, Monaco, Morocco, Croatia and the US. Hollywood-grade craft, a French touch, worldwide.",
+  summary: "A worldwide destination wedding videographer filming across France, Italy, Monaco, Morocco, Croatia, the Dominican Republic and the United States - feature films, highlight cuts and teasers, with Hollywood-grade craft and a French touch.",
+  heroImg: "assets/img/wed-europe/we-75.jpg",
+  heroAlt: "Aerial view of a lakeside villa wedding ceremony on Lake Como, filmed by Chromata Films",
+  heroSub: ["France · Italy · Monaco · Morocco · Croatia · USA", "Feature films · Highlight cuts · Teasers", "Collections from 15,000 USD"],
+  areaServed: ["Worldwide", "France", "Italy", "Monaco", "Morocco", "Croatia", "Dominican Republic", "United States"],
+  serviceName: "Destination Wedding Videography",
+  byline: `By <a class="vendor-link" href="the-studio.html">Kevin Lopez</a> - VFX-trained filmmaker and founder of Chromata Films.`,
+  takeaways: [
+    ["The studio.", "A destination wedding videographer for couples who want the day to feel like cinema: Hollywood-grade craft, a French touch, and a team that knows the world's most photographed venues from the inside."],
+    ["The reach.", "We film across France, Italy, Monaco, Morocco, Croatia, the Dominican Republic and the United States - with US-based crews for American celebrations."],
+    ["The film.", "A feature-length destination wedding film, a highlight cut, a teaser for the morning after."],
+  ],
+  intro: [],
+  body: [
+    ["A destination wedding film, made the way cinema is made", [
+      "Most wedding video is captured. Ours is directed, and the difference starts with the two people behind it.",
+      bullets([
+        ["Kevin.", "Founder and cinematographer, trained in visual effects. He learned to build a shot before anyone stepped into it... so the framing, the movement and the light are decided long before the day, never improvised during it."],
+        ["Laura.", "She came to film through luxury weddings, where the bar is not \"beautiful\". The bar is \"cover story\". She reads an itinerary, a family, a room, and protects the moments a director alone would miss."],
+        ["The method.", "Every wedding begins as a treatment: a plan written like a short film, with an opening, a middle, and a final frame you will remember for the rest of your life."],
+        ["The result.", "A destination wedding film that plays less like a record and more like cinema you happen to be in - editorial polish wrapped around raw, real emotion."],
+      ]),
+    ], [
+      weFig("we-06.jpg", "Aerial view of a vintage wooden speedboat crossing open water at a destination wedding"),
+      weFig("we-13.jpg", "Black and white photograph of a groom dancing at a wedding reception"),
+      weFig("we-25.jpg", "Laser and fireworks show over the water at a destination wedding party"),
+    ]],
+    ["Where we film", [
+      "Destination weddings are no longer a niche; for a certain couple they are simply how they marry. Zola's 2025 report put the average destination wedding at $41,312, against $34,208 at home. When a weekend is budgeted that deliberately, a luxury wedding videographer is never the afterthought.",
+      bullets([
+        ["France.", `<a class="vendor-link" href="wedding-videographer-provence.html">Provence</a> and its lavender light. <a class="vendor-link" href="wedding-videographer-paris.html">Paris</a> at golden hour. <a class="vendor-link" href="wedding-videographer-st-tropez.html">St-Tropez</a> and the <a class="vendor-link" href="wedding-videographer-french-riviera.html">French Riviera</a>, where a wedding can move from a chapel to a superyacht before dinner.`],
+        ["Monaco.", "Hôtel de Paris Monte-Carlo, the harbour, the light coming off the water as the evening cools."],
+        ["Italy.", `<a class="vendor-link" href="wedding-videographer-lake-como.html">Lake Como</a> - ${ext("https://italianvenues.com/weddings/journal/best-lake-como-wedding-villas/", "Villa del Balbianello")} for a ceremony on the terrace, Villa Balbiano for a full reception - the terraces of Ravello on the <a class="vendor-link" href="wedding-videographer-amalfi-coast.html">Amalfi Coast</a>, and the cypress-lined estates of Tuscany.`],
+        ["Morocco.", `<a class="vendor-link" href="wedding-videographer-marrakech.html">Marrakech</a>, from the gardens of ${ext("https://www.palaisronsard.com/en/wedding.html", "Palais Ronsard")} in the Palmeraie to the courtyards of the medina's riads.`],
+        ["Croatia.", "Dubrovnik's stone walls, Hvar's fields, the Adriatic at blue hour."],
+        ["Dominican Republic.", "La Romana and Punta Cana - sea, palms, and weather that arrives on schedule."],
+        ["The United States.", `Dallas and Las Vegas, covered by <a class="vendor-link" href="luxury-wedding-filmmaker-usa.html">US-based teams</a> so travel costs stay where they belong.`],
+      ]),
+    ], [
+      weFig("we-09.jpg", "Formal gardens of a lakeside villa beneath the mountains"),
+      weFig("we-68.jpg", "A bride walking the aisle of a garden ceremony in front of a grand hotel"),
+      weFig("we-20.jpg", "A grand hotel facade framed by white floral installations and a reflecting pool"),
+    ]],
+    ["Filming a wedding you have never seen before", [
+      "Destination wedding videography is nine-tenths preparation, and almost none of it shows in the finished film.",
+      bullets([
+        ["Scouting.", "Villa del Balbianello's terrace is reached by boat, and the light crosses the lake at one particular hour. We walk a venue at the exact hour your ceremony will happen, and lock the shots then."],
+        ["Logistics.", "Kit that survives cobbles, tarmac and a tender. Backup bodies, cards copied twice before dinner, batteries charged for the voltage you are actually on. On multi-day weddings the schedule becomes a second production."],
+        ["Light.", "Marrakech at three in the afternoon is hard and white; Provence in June glows until nearly ten. We shoot for the light we will really have - which is why the film looks calm instead of colour-corrected."],
+        ["The rehearsal.", "Wherever a couple travels, one of us flies in ahead of the guests to see the venue, meet the planner, and shoot a test of the exact light at the exact hour."],
+        ["The people around you.", `We work with your planner rather than around them, and we handle the local paperwork early. Aerial coverage in Italy runs through ${ext("https://www.enac.gov.it/sicurezza-aerea/droni/categoria-aperta-open-category/requisiti-generali-per-operare-nella/", "ENAC's open-category rules")} and the ${ext("https://www.d-flight.it/new_portal/en/services/mappe/", "D-Flight airspace maps")}; in the United States it runs through the ${ext("https://www.faa.gov/uas/commercial_operators/operations_over_people", "FAA's operations-over-people framework")}. Permissions are decided months out... never mid-ceremony.`],
+      ]),
+    ], [
+      weFig("we-74.jpg", "Aerial view of a lakeside wedding ceremony with guests seated along the aisle"),
+      weFig("we-65.jpg", "Aerial view of a dinner table set on the bow of a superyacht"),
+      weFig("we-46.jpg", "A pink villa at dusk with an illuminated fountain and lily pond"),
+    ]],
+    ["What a destination wedding film includes", [
+      bullets([
+        ["The Feature Film.", "The centrepiece: a feature-length destination wedding film, cut in movements, with the vows and speeches heard rather than summarised."],
+        ["The Highlight Cut.", "A tighter edit for family who missed the flight, and for the reception replay."],
+        ["The Teaser.", "Sixty to ninety seconds, delivered fast, built for a phone and for the group chat that will not stop."],
+        ["Frames.", "Aerial coverage of the venue and the landscape, wherever it is permitted and wherever it genuinely serves the story."],
+        ["Multi-Day Coverage.", "Welcome dinner, ceremony, day-after brunch - an entire wedding weekend held in one continuous arc."],
+      ]),
+    ], [
+      weFig("we-15.jpg", "A bride and groom at their lakeside ceremony with bridesmaids behind them"),
+      weFig("we-14.jpg", "An Indian bride and groom in traditional dress surrounded by flowers"),
+      weFig("we-22.jpg", "A performer in a sequinned costume dancing at a wedding celebration"),
+    ]],
+  ],
+  inlineFilm: { after: 0, film: FILMS.laurenJonathan },
+  art: {
+    intro: { src: "assets/img/landing/art-lobster-sun.webp", cls: "landing-art--float", speed: "1.1" },
+    cta: { src: "assets/img/landing/art-eye-bust.webp", cls: "landing-art--corner" },
+  },
+  films: [FILMS.henna, FILMS.katya, FILMS.domantas, FILMS.jg, FILMS.joseph, FILMS.sandra],
+  work: [
+    { href: "wedding-videographer-marrakech.html", img: "assets/img/henna-ben/hb-01.jpg", title: "Henna & Ben", note: "Amanjena & The Oberoi, Marrakech" },
+    { href: "journal-katya-joey.html", img: "assets/img/katya-joey/kj-03.jpg", title: "Katya & Joey", note: "Villa Erba, Lake Como" },
+    { href: "russell-westbrook.html", img: "assets/img/westbrook/rw-01.jpg", title: "Russell & Nina Westbrook", note: "Positano, Amalfi Coast" },
+    { href: "journal-lauren-jonathan.html", img: "assets/img/altos/lj-01.jpg", title: "Lauren & Jonathan", note: "Altos de Chavón, Dominican Republic" },
+    { href: "jacqueline-gordon.html", img: "assets/img/jacky/jg-05.jpg", title: "Jacqueline & Gordon", note: "Le Beauvallon, St-Tropez" },
+    { href: "journal-marcella-daniel.html", img: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", title: "Marcella & Daniel", note: "The Ritz-Carlton, Dallas" },
+  ],
+  related: [
+    ["wedding-videographer-france.html", "France"],
+    ["wedding-filmmaker-italy.html", "Italy"],
+    ["wedding-cinematographer-europe.html", "Europe"],
+    ["luxury-wedding-filmmaker-usa.html", "The United States"],
+    ["wedding-videographer-french-riviera.html", "The French Riviera"],
+    ["wedding-videographer-st-tropez.html", "St-Tropez"],
+    ["wedding-videographer-paris.html", "Paris"],
+    ["wedding-videographer-provence.html", "Provence"],
+    ["wedding-videographer-lake-como.html", "Lake Como"],
+    ["wedding-videographer-amalfi-coast.html", "The Amalfi Coast"],
+    ["wedding-videographer-st-moritz.html", "St Moritz"],
+    ["wedding-videographer-marrakech.html", "Marrakech"],
+  ],
+  faq: [
+    ["Do you travel?",
+     "Yes. Travel is not an add-on; it is the work. We quote flights, transfers, accommodation, and any permit or customs paperwork transparently, so the figure you approve is the figure you see."],
+    ["How far in advance should we book?",
+     `Twelve to eighteen months is the sweet spot, and the film team belongs in that same early window as the venue - the best June and September dates in Italy and France go first. Most planners advise locking destination vendors about a year out (${ext("https://destinationido.com/planning-and-advice/when-to-book-each-vendor-for-a-destination-wedding/", "Destination I Do")}). If your date sits inside twelve months, still ask; couples move, and calendars open.`],
+    ["Do you work with our planner?",
+     "Always. Your planner owns the schedule; we own the light. We share a filming brief before the week begins, agree access and aerial windows, and keep the one thing that ruins a ceremony - a camera in the wrong place - off the table."],
+    ["What about multi-day celebrations?",
+     "Most of our destination couples plan three days, often more. We cover the welcome dinner, the ceremony and the day-after brunch as a single story, because a weekend has a rhythm and a two-hour window cannot hold it."],
+    ["Do you film in the United States?",
+     "Yes. US-based teams handle events in the United States, including Dallas and Las Vegas, so an American celebration is covered without transatlantic travel inflating the quote."],
+  ],
+  cta: [
+    "<strong>The first step.</strong> Send the date, the destination and the shape of the weekend. We will reply with availability, a first read on how we would film it, and the questions we ask before a camera ever appears.",
+    "<strong>What happens next.</strong> A call, a plan, a scouting date... and then, months later, a destination wedding film your guests will still be talking about.",
+  ],
+});
+
+// Every other destination page links up to the worldwide hub ("Also Filming In").
+for (const L of LANDING_PAGES) {
+  if (L.file === "destination-wedding-videographer.html") continue;
+  L.related = [...(L.related || []), ["destination-wedding-videographer.html", "Destination weddings worldwide"]];
+}
+
 // Optional embedded case-study for a LANDING_PAGES entry: a short write-up, an
 // Instagram reel, a photo gallery and a full vendor-credit list. Reuses the
 // existing .feature__meta row styling (no new CSS) for the credits.
@@ -4052,25 +4194,35 @@ ${L.heroSub.map((s) => `        <span>${s}</span>`).join("\n")}
     </div>
   </section>
 
-  <section class="pad-section" data-section>
-    <div class="container">
+  <section class="pad-section${L.art?.intro ? " has-art" : ""}" data-section>${landingArt(L.art?.intro)}
+    <div class="container">${L.byline ? `
+      <p class="landing-byline">${L.byline}</p>` : ""}${L.takeaways ? `
+      <h2 class="display-md" style="max-width:14em">
+        <span class="line-mask"><span class="line-inner">Key <em>takeaways</em></span></span>
+      </h2>
+      <div class="prose" style="max-width:46em; margin-top:4vh">
+        ${bullets(L.takeaways)}
+      </div>` : ""}${L.intro.length ? `
       <div class="prose" style="max-width:46em">
 ${L.intro.map((p) => `        <p style="font-size:clamp(1.05rem,1.5vw,1.4rem)">${p}</p>`).join("\n")}
-      </div>${L.proof ? `
+      </div>` : ""}${L.proof ? `
       <div class="feature__meta" style="margin-top:6vh; max-width:52em">
 ${L.proof.map(([k, v]) => `        <div class="row"><span>${k}</span><span class="val">${v}</span></div>`).join("\n")}
       </div>` : ""}
     </div>
   </section>
 
-${L.body.map(([heading, paras], bi) => `  <section class="pad-section" style="padding-top:0" data-section>
+${L.body.map(([heading, paras, figs], bi) => `  <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
       <h2 class="display-md" style="max-width:14em">
         <span class="line-mask"><span class="line-inner">${heading}</span></span>
       </h2>
       <div class="prose" style="max-width:46em; margin-top:4vh">
-${paras.map((p) => `        <p>${p}</p>`).join("\n")}
-      </div>
+${paras.map((p) => p.startsWith("<ul") ? `        ${p}` : `        <p>${p}</p>`).join("\n")}
+      </div>${figs ? `
+      <div class="venue-row venue-row--${figs.length}">
+${figs.map((f) => `        <figure class="mat img-reveal venue-figure"><img src="assets/img/${f.dir}/${f.file}" alt="${f.alt}" loading="lazy"></figure>`).join("\n")}
+      </div>` : ""}
     </div>
   </section>${L.inlineFilm && L.inlineFilm.after === bi ? `
 
@@ -4078,7 +4230,7 @@ ${paras.map((p) => `        <p>${p}</p>`).join("\n")}
   <section class="pad-section" style="padding-top:0" data-section>
     <div class="container">
       <p class="kicker">— The Film</p>
-      <figure class="mat" style="position:relative; aspect-ratio:16/9; background:#000; margin:4vh 0 0">
+      <figure class="mat" style="position:relative; aspect-ratio:${L.inlineFilm.film.aspect || "16/9"}; background:#000; margin:4vh 0 0">
         <iframe src="${filmEmbed(L.inlineFilm.film)}" title="${L.inlineFilm.film.title}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
       </figure>
       <p class="kicker" style="margin-top:2vh">— ${L.inlineFilm.film.title}</p>
@@ -4118,13 +4270,13 @@ ${L.related.map(([href, label]) => `        <a class="text-link" href="${href}" 
 ` : ""}
 ${faqBlock(L.faq)}
 
-  <section class="pad-section" data-theme="dark" data-section style="background:var(--night-deep); color:var(--cream); text-align:center">
+  <section class="pad-section${L.art?.cta ? " has-art" : ""}" data-theme="dark" data-section style="background:var(--night-deep); color:var(--cream); text-align:center">${landingArt(L.art?.cta)}
     <div class="container">
       <p class="kicker" style="justify-content:center; color:var(--coral)">— Begin</p>
       <h2 class="display-lg" style="margin-top:3vh">
         <span class="line-mask"><span class="line-inner">Tell us about <em>your day</em></span></span>
       </h2>
-      <p class="body-copy" style="max-width:40em; margin:4vh auto 0">Collections start at ${startingCost.toLocaleString()} USD. Send us the date, the place and a sentence about the celebration ... we will come back to you personally.</p>
+${L.cta ? L.cta.map((p, i) => `      <p class="body-copy" style="max-width:40em; margin:${i ? "2.4vh" : "4vh"} auto 0">${p}</p>`).join("\n") : `      <p class="body-copy" style="max-width:40em; margin:4vh auto 0">Collections start at ${startingCost.toLocaleString()} USD. Send us the date, the place and a sentence about the celebration ... we will come back to you personally.</p>`}
       <a class="btn btn--coral" href="contact.html" style="margin-top:5vh">Check your date →</a>
     </div>
   </section>`,
