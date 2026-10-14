@@ -545,5 +545,32 @@ done
 jpg "$OUT/img/landing/shashana.00_14_44_08.Still004-WEB.jpg"     "$OUT/video/amour-poster.jpg" 1920
 jpg "$OUT/img/landing/Derush_WedDay3.01_15_34_04.Still013.jpg"   "$OUT/video/amour-outro.jpg"  1920
 
+# ---------- press room (unlisted press-room.html) ----------
+# Every image gets a web JPG for the page. Portraits and logos also get a
+# full-resolution download file. The hero poster is cropped above its printed
+# "SEASON ENDS" caption. The bridge is cut to exactly 3:1 for the band.
+PR="$PUB/press_room"; PRO="$OUT/img/press-room"
+mkdir -p "$PRO"
+$FF -i "$PR/b1c47aa2-bdea-44cc-b230-a613d23312f0.png" -vf "crop=1904:2080:0:0,scale=1400:-2" -q:v 3 "$PRO/hero.jpg"
+$FF -i "$PR/lopium83_httpss.mj.run3jCiDavAIOY_httpss.mj.runjHz_jbKWU20_ht_f7f3db7e-30b8-4e1b-b896-194b772b701a_3.png" -vf "crop=3804:1268,scale=2400:800" -q:v 3 "$PRO/bridge.jpg"
+pr_src=(
+  "magnific__low-deformation-studio-portrait-shot-of-the-man-in__19430.png"
+  "magnific_studio-portrait-shot-of-t_2919192551.png"
+  "magnific_studio-portrait-shot-of-t_9RmFY70NYZ.png"
+  "magnific__klops02img5413312397img5413312384img5413312347-sel__53134.png"
+  "magnific__closeup-high-fashion-mario-testino-style-photograp__43581.png"
+)
+pr_dst=(kevin-01 kevin-02 kevin-03 kevin-04 kevin-laura-05)
+for i in "${!pr_src[@]}"; do
+  $FF -i "$PR/portraits/${pr_src[$i]}" -vf "scale='min(1000,iw)':-2" -q:v 4 "$PRO/${pr_dst[$i]}.jpg"
+  $FF -i "$PR/portraits/${pr_src[$i]}" -q:v 2 "$PRO/${pr_dst[$i]}-hd.jpg"
+done
+cp "$PUB/chromata films logo.png" "$PRO/chromata-films-logo.png"
+$FF -i "$PUB/chromata films logo.png" -vf "crop=1009:1940:0:0" "$PRO/chromata-films-mark.png"
+$FF -i "$PRO/chromata-films-logo.png" -vf "scale=440:-2" -c:v libwebp -quality 86 "$PRO/logo-web.webp"
+$FF -i "$PRO/chromata-films-mark.png" -vf "scale=440:-2" -c:v libwebp -quality 86 "$PRO/mark-web.webp"
+# belt-and-braces: the downloads must not turn up in image search either
+printf '<IfModule mod_headers.c>\n  Header set X-Robots-Tag "noindex, nofollow, noimageindex"\n</IfModule>\n' > "$PRO/.htaccess"
+
 echo "ASSET PIPELINE DONE"
 du -sm "$OUT"/*

@@ -1,6 +1,6 @@
 // Chromata Films — generates all sub-pages from a shared shell.
 // Run: node scripts/build-pages.mjs
-import { writeFileSync, readFileSync } from "node:fs";
+import { writeFileSync, readFileSync, statSync } from "node:fs";
 
 const EMAIL = "contact@chromatafilms.com";
 const ADDRESS = "27 Rue de Montchoisy, 1207 Geneva, Switzerland";
@@ -405,12 +405,12 @@ const shell = ({ page, file, title, description, main, footerCta = true, noindex
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${title}</title>
 <meta name="description" content="${description}" />
-${noindex ? '<meta name="robots" content="noindex, nofollow" />\n' : ""}<link rel="icon" type="image/png" href="assets/img/logo-mark.png" />
+${noindex ? '<meta name="robots" content="noindex, nofollow, noarchive, noimageindex" />\n' : ""}<link rel="icon" type="image/png" href="assets/img/logo-mark.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=69" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=70" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -3218,6 +3218,283 @@ ${[
   </section>`,
 });
 
+/* ============================== PRESS ROOM (unlisted — reachable only by its link) ==============================
+   A press & brand kit for journalists, editors and planners. Hidden from
+   search on every layer: noindex meta, an X-Robots-Tag header (.htaccess),
+   left out of sitemap.xml, and linked from nowhere. It is deliberately NOT in
+   robots.txt: a Disallow would stop Google from ever reading the noindex, and
+   robots.txt is public, so listing it would advertise the URL. */
+const PR = "assets/img/press-room";
+const fileSize = (p) => {
+  const b = statSync(new URL("../" + p, import.meta.url)).size;
+  return b >= 1e6 ? (b / 1e6).toFixed(1) + " MB" : Math.round(b / 1e3) + " KB";
+};
+const PRESS_PORTRAITS = [
+  { n: "01", slug: "kevin-01", w: 1728, h: 2304, alt: "Kevin Lopez, co-founder and film director of Chromata Films, studio portrait in a velvet dinner jacket" },
+  { n: "02", slug: "kevin-02", w: 1536, h: 2048, alt: "Kevin Lopez of Chromata Films, smiling, in a black velvet tuxedo with a gold brooch" },
+  { n: "03", slug: "kevin-03", w: 1536, h: 2048, alt: "Kevin Lopez of Chromata Films, standing portrait in a black velvet tuxedo" },
+  { n: "04", slug: "kevin-04", w: 1536, h: 2752, alt: "Kevin Lopez of Chromata Films in a fashion boutique, holding a Dolce &amp; Gabbana heel to his ear" },
+  { n: "05", slug: "kevin-laura-05", w: 1536, h: 2048, alt: "Kevin and Laura Lopez, founders of Chromata Films, at an evening event, Kevin wearing a gilded peacock-feather brooch" },
+];
+const PRESS_PALETTE = [
+  ["Porcelain", "#F8F4EE", "248 · 244 · 238", "Backgrounds"],
+  ["Ink", "#252321", "37 · 35 · 33", "Text"],
+  ["Coral", "#E94437", "233 · 68 · 55", "Accents and calls to action"],
+  ["Gold", "#C99A2E", "201 · 154 · 46", "The peacock, details"],
+  ["Sky", "#BFD8F6", "191 · 216 · 246", "Section colour"],
+  ["Lemon", "#F6D54E", "246 · 213 · 78", "Highlights"],
+  ["Citrus", "#F78C29", "247 · 140 · 41", "Section colour"],
+  ["Night", "#16130F", "22 · 19 · 15", "Dark sections, footer"],
+];
+const pressBio = (id, label, note, body, cls = "") => `        <div class="press-bio${cls}">
+          <p class="press-bio__label">${label}<small>${note}</small></p>
+          <div class="press-bio__text" id="${id}">
+${body.map((p) => `            <p>${p}</p>`).join("\n")}
+          </div>
+          <button class="press-copy" type="button" data-copy-from="${id}">Copy</button>
+        </div>`;
+const PRESS_TITLE = "Press Room — Chromata Films";
+const PRESS_DESC = "Chromata Films press and brand kit: bios, credit line, portraits of the founders, palette, typefaces and logos.";
+
+pages["press-room.html"] = shell({
+  page: "pressroom",
+  noindex: true,
+  navPlate: true,
+  footerCta: false,
+  title: PRESS_TITLE,
+  description: PRESS_DESC,
+  // link-preview tags only (for when the URL is pasted into an email or chat);
+  // no JSON-LD, nothing that invites indexing
+  headExtra: `<link rel="canonical" href="${SITE_URL}/press-room.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="${PRESS_TITLE}" />
+<meta property="og:description" content="${PRESS_DESC}" />
+<meta property="og:url" content="${SITE_URL}/press-room.html" />
+<meta property="og:image" content="${SITE_URL}/${PR}/bridge.jpg" />
+<meta name="twitter:card" content="summary_large_image" />`,
+  main: `  <section class="press-hero" data-section>
+    <div class="container press-hero__grid">
+      <div>
+        <p class="kicker">— Press Room</p>
+        <h1 class="display-lg" style="margin-top:3vh">
+          <span class="line-mask"><span class="line-inner">Press &amp;</span></span>
+          <span class="line-mask"><span class="line-inner"><em>brand kit</em></span></span>
+        </h1>
+        <p class="press-hero__lead">Everything a journalist, editor or planner needs to write about Chromata Films: the words, the faces, the colours and the marks. All material is for editorial use alongside coverage of our work.</p>
+        <nav class="press-index" aria-label="Press kit contents">
+          <a href="#words"><span>01</span>Words</a>
+          <a href="#portraits"><span>02</span>Portraits</a>
+          <a href="#colours"><span>03</span>Colours</a>
+          <a href="#typefaces"><span>04</span>Typefaces</a>
+          <a href="#logos"><span>05</span>Logos</a>
+          <a href="#published"><span>06</span>Published work</a>
+        </nav>
+        <p class="press-hero__meta">Updated October 2026 · <a href="mailto:${EMAIL}">${EMAIL}</a></p>
+      </div>
+      <figure class="press-hero__art mat img-reveal"><img src="${PR}/hero.jpg" alt="Chromata Films art direction: a gilded sun, a blue lobster, blood oranges and crushed ice" width="1400" height="1530"></figure>
+    </div>
+  </section>
+
+  <!-- ==================== 01 · WORDS ==================== -->
+  <section class="pad-section" id="words" data-section>
+    <div class="container">
+      <p class="kicker">— 01 · Words</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">The bio</span></span>
+        <span class="line-mask"><span class="line-inner">&amp; <em>the credit</em></span></span>
+      </h2>
+      <div class="press-bios">
+${pressBio("bio-line", "One line", "For captions", [
+  "Chromata Films is a luxury wedding film studio working across France, Italy and Europe, founded by Kevin and Laura Lopez and directed with the eye of a Hollywood visual-effects artist.",
+], " press-bio--line")}
+${pressBio("bio-short", "Short", "About 80 words", [
+  "Founded by Kevin and Laura Lopez, Chromata Films has been filming luxury weddings since 2016, from the French Riviera and Paris to Lake Como. Before weddings, Kevin spent a decade in Hollywood visual effects on films including Star Wars: The Last Jedi, The Great Gatsby and Beauty and the Beast. The studio's work has been published by Vogue, Harper's Bazaar, Brides and People, and won Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards.",
+])}
+${pressBio("bio-full", "Full", "For features", [
+  "Chromata Films is a wedding film studio founded by Kevin and Laura Lopez, a husband-and-wife team together for more than twenty years. Since 2016 they have filmed luxury weddings and private celebrations across France, Italy and Europe, most often on the French Riviera and at Lake Como, for couples who want a film rather than a recording of the day.",
+  "Kevin Lopez directs every production. A Vancouver Film School graduate, he spent a decade in Hollywood visual effects on films including Star Wars: The Last Jedi, Beauty and the Beast, The Great Gatsby and Avengers: Infinity War, and brings the same discipline of light, composition and invisible perfectionism to weddings. Laura Lopez, who holds a Master in Communication and Finance and worked at Publicis and Mediacom, runs every production and vendor relationship from first enquiry to final delivery. The team includes aerial cinematographer Stephane Maurin and 16mm film specialist Michael Bode.",
+  "The studio has filmed for Domantas Sabonis, Russell Westbrook, Anna Andres, the amfAR Gala and the Four Seasons, and its work has been published by Vogue, Harper's Bazaar, Brides, People, Cosmopolitan, Elle and WedLuxe. A Lake Como film won Best Destination Wedding Film at the Love StoriesTV Wedding Film Awards.",
+])}
+      </div>
+      <div class="press-credit">
+        <div>
+          <p class="kicker">— Credit line</p>
+          <p class="press-credit__text" id="credit-film">Film: Chromata Films · @chromata_films_weddings · chromatafilms.com</p>
+          <p class="press-credit__sub" id="credit-director">Directed by Kevin Lopez for Chromata Films</p>
+        </div>
+        <div class="press-credit__actions">
+          <button class="press-copy press-copy--ink" type="button" data-copy-from="credit-film">Copy credit</button>
+          <button class="press-copy press-copy--ink" type="button" data-copy-from="credit-director">Copy director credit</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 02 · PORTRAITS ==================== -->
+  <section class="pad-section on-deep" id="portraits" data-theme="dark" data-section>
+    <div class="container">
+      <p class="kicker">— 02 · Portraits</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Portraits of</span></span>
+        <span class="line-mask"><span class="line-inner"><em>the founders</em></span></span>
+      </h2>
+      <p class="body-copy" style="margin-top:4vh; max-width:40em">Kevin Lopez, co-founder and film director, and Laura Lopez, co-founder. For editorial use alongside coverage of Chromata Films. Please run them as supplied, without cropping into the face or changing the colour.</p>
+      <div class="press-portraits">
+${PRESS_PORTRAITS.map((p) => `        <div class="press-portrait" style="--ar:${(p.w / p.h).toFixed(4)}">
+          <figure class="mat img-reveal"><img src="${PR}/${p.slug}.jpg" alt="${p.alt}" width="${p.w}" height="${p.h}" loading="lazy"></figure>
+          <div class="press-dl">
+            <a href="${PR}/${p.slug}.jpg" download="chromata-films-portrait-${p.n}-web.jpg">Web <span>${fileSize(`${PR}/${p.slug}.jpg`)}</span></a>
+            <a href="${PR}/${p.slug}-hd.jpg" download="chromata-films-portrait-${p.n}-hd.jpg">HD <span>${p.w}×${p.h} · ${fileSize(`${PR}/${p.slug}-hd.jpg`)}</span></a>
+          </div>
+        </div>`).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <!-- full-bleed 3:1 bridge between the portraits and the palette -->
+  <figure class="press-bridge img-reveal fill" aria-hidden="true"><img src="${PR}/bridge.jpg" alt="" width="2400" height="800" loading="lazy"></figure>
+
+  <!-- ==================== 03 · COLOURS ==================== -->
+  <section class="pad-section" id="colours" data-section>
+    <div class="container">
+      <p class="kicker">— 03 · Colours</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">The <em>palette</em></span></span>
+      </h2>
+      <p class="body-copy" style="margin-top:4vh; max-width:40em">Pop-luxe, Dalí by way of Schiaparelli: porcelain and ink, lit by coral, gold and citrus. Tap a colour to copy its hex.</p>
+      <div class="press-swatches">
+${PRESS_PALETTE.map(([name, hex, rgb, role]) => `        <button class="press-swatch" type="button" data-copy="${hex}" style="--c:${hex}" aria-label="Copy ${name} ${hex}">
+          <span class="press-swatch__chip"><span class="press-swatch__hint">Copy</span></span>
+          <span class="press-swatch__info">
+            <span class="press-swatch__name">${name}</span>
+            <span class="press-swatch__role">${role}</span>
+            <span class="press-swatch__codes"><span>${hex}</span><span>RGB ${rgb}</span></span>
+          </span>
+        </button>`).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 04 · TYPEFACES ==================== -->
+  <section class="pad-section on-sky" id="typefaces" data-section>
+    <div class="container">
+      <p class="kicker">— 04 · Typefaces</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Three <em>typefaces</em></span></span>
+      </h2>
+      <div class="press-type">
+        <div class="press-type__item">
+          <span class="press-type__aa" style="font-family:var(--font-display)">Aa</span>
+          <span class="press-type__name">Germany Sans</span>
+          <span class="press-type__role">Titles and the wordmark</span>
+          <span class="press-type__sample" style="font-family:var(--font-display)">CHROMATA FILMS</span>
+        </div>
+        <div class="press-type__item">
+          <span class="press-type__aa" style="font-family:var(--font-accent); font-style:italic">Aa</span>
+          <span class="press-type__name">Cormorant Garamond</span>
+          <span class="press-type__role">Italic accents · 400, 500</span>
+          <span class="press-type__sample" style="font-family:var(--font-accent); font-style:italic">Modern elegance</span>
+          <a class="text-link" href="https://fonts.google.com/specimen/Cormorant+Garamond" target="_blank" rel="noopener">Google Fonts →</a>
+        </div>
+        <div class="press-type__item">
+          <span class="press-type__aa" style="font-family:var(--font-ui)">Aa</span>
+          <span class="press-type__name">Space Grotesk</span>
+          <span class="press-type__role">Body and interface · 400, 500</span>
+          <span class="press-type__sample" style="font-family:var(--font-ui)">Wedding films, France · Italy</span>
+          <a class="text-link" href="https://fonts.google.com/specimen/Space+Grotesk" target="_blank" rel="noopener">Google Fonts →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 05 · LOGOS ==================== -->
+  <section class="pad-section" id="logos" data-section>
+    <div class="container">
+      <p class="kicker">— 05 · Logos</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">The <em>peacock</em></span></span>
+      </h2>
+      <p class="body-copy" style="margin-top:4vh; max-width:40em">Transparent PNGs that work on light and dark grounds. Please use them as supplied: no recolouring, stretching or effects, and give the peacock room to breathe.</p>
+      <div class="press-logos">
+        <div class="press-logo">
+          <div class="press-logo__stage"><img src="${PR}/logo-web.webp" alt="Chromata Films logo: gold peacock and nautilus with the wordmark" width="440" height="960" loading="lazy"></div>
+          <div class="press-logo__meta">
+            <span><strong>Logo with wordmark</strong>PNG · transparent · 1009×2200 · ${fileSize(`${PR}/chromata-films-logo.png`)}</span>
+            <a class="press-copy" href="${PR}/chromata-films-logo.png" download="chromata-films-logo.png">Download</a>
+          </div>
+        </div>
+        <div class="press-logo">
+          <div class="press-logo__stage press-logo__stage--dark"><img src="${PR}/mark-web.webp" alt="Chromata Films mark: gold peacock and nautilus" width="440" height="846" loading="lazy"></div>
+          <div class="press-logo__meta">
+            <span><strong>Peacock mark</strong>PNG · transparent · 1009×1940 · ${fileSize(`${PR}/chromata-films-mark.png`)}</span>
+            <a class="press-copy" href="${PR}/chromata-films-mark.png" download="chromata-films-mark.png">Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 06 · PUBLISHED WORK ==================== -->
+  <section class="pad-section" id="published" style="padding-top:0; padding-bottom:0" data-section>
+    <div class="container">
+      <p class="kicker">— 06 · Published work</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Where the</span></span>
+        <span class="line-mask"><span class="line-inner"><em>work has run</em></span></span>
+      </h2>
+      <div class="feature__meta press-published">
+${PRESS_FEATURES.map((p) => `        <div class="row"><span>${p.publisher}${p.date ? ` · ${p.date.slice(0, 4)}` : ""}</span><span class="val"><a class="text-link" href="${p.url}" target="_blank" rel="noopener">${p.headline} →</a></span></div>`).join("\n")}
+        <div class="row"><span>Brides</span><span class="val"><a class="text-link" href="journal-angela-allister-brides.html">Angela &amp; Allister's modern wedding in Paris →</a></span></div>
+        <div class="row"><span>Vogue · Cosmopolitan · Elle</span><span class="val"><a class="text-link" href="anna-andres.html">Anna Andres &amp; David at Hôtel du Cap-Eden-Roc →</a></span></div>
+        <div class="row"><span>Love StoriesTV</span><span class="val"><a class="text-link" href="journal-film-award.html">Best Destination Wedding Film, Wedding Film Awards →</a></span></div>
+      </div>
+      <p class="body-copy" style="margin-top:5vh; max-width:46em">Also published by Harper's Bazaar, People, Over the Moon, THE WED and Style Me Pretty.</p>
+    </div>
+    <div class="marquee" aria-label="Press" style="margin-top:8vh">
+      <div class="marquee__track">
+        <img src="assets/img/logos/vogue.png" alt="Vogue" loading="lazy" />
+        <img src="assets/img/logos/harpers-bazaar.png" alt="Harper's Bazaar" loading="lazy" />
+        <img src="assets/img/logos/over-the-moon.png" alt="Over The Moon" loading="lazy" />
+        <img src="assets/img/logos/cosmopolitan.png" alt="Cosmopolitan" loading="lazy" />
+        <img src="assets/img/logos/wedluxe.png" alt="WedLuxe" loading="lazy" />
+        <img src="assets/img/logos/swt-laurels.png" alt="Wedding industry laurels" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PRESS ENQUIRIES ==================== -->
+  <section class="pad-section press-contact" data-section>
+    <div class="container">
+      <p class="kicker" style="justify-content:center">— Press enquiries</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Writing about <em>us</em>?</span></span>
+      </h2>
+      <p class="body-copy" style="max-width:38em; margin:4vh auto 0">Interviews, film stills, screeners or anything not on this page: write to us and we will come back to you the same week.</p>
+      <div class="press-contact__actions">
+        <a class="btn press-btn--cream" href="mailto:${EMAIL}?subject=Press%20enquiry">${EMAIL}</a>
+        <a class="btn btn--ghost-cream" href="https://www.instagram.com/chromata_films_weddings/" target="_blank" rel="noopener">@chromata_films_weddings</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // copy buttons: data-copy-from="<id>" copies that element's text,
+    // data-copy="<literal>" copies the literal (the palette hex codes)
+    document.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-copy], [data-copy-from]");
+      if (!b || !navigator.clipboard) return;
+      const text = b.dataset.copy || document.getElementById(b.dataset.copyFrom).innerText.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        const label = b.querySelector(".press-swatch__hint") || b;
+        const was = label.textContent;
+        label.textContent = "Copied";
+        b.classList.add("is-done");
+        setTimeout(() => { label.textContent = was; b.classList.remove("is-done"); }, 1600);
+      });
+    });
+  </script>`,
+});
+
 /* ============================== SERVICE-AREA LANDING PAGES ==============================
    Pages built for the way couples and planners actually search ("wedding
    videographer in France", "wedding filmmaker Italy"). Each one answers the
@@ -4290,9 +4567,14 @@ for (const [file, html] of Object.entries(pages)) {
 
 /* ---- sitemap.xml + robots.txt ----
    index.html is handwritten (not in `pages`) so it's added explicitly; every
-   generated page is included except the deliberately-unlisted noindex ones. */
+   generated page is included except the deliberately-unlisted noindex ones.
+   NOINDEX_FILES are also Disallowed in robots.txt; HIDDEN_FILES are not, on
+   purpose: a Disallow would stop crawlers from ever seeing the noindex, and
+   robots.txt is public, so it would advertise a page that should only be
+   reachable by its link. */
 const NOINDEX_FILES = new Set(["gettoknowusmore.html"]);
-const sitemapFiles = ["index.html", ...Object.keys(pages).filter((f) => !NOINDEX_FILES.has(f))];
+const HIDDEN_FILES = new Set(["press-room.html"]);
+const sitemapFiles = ["index.html", ...Object.keys(pages).filter((f) => !NOINDEX_FILES.has(f) && !HIDDEN_FILES.has(f))];
 const today = new Date().toISOString().slice(0, 10);
 const isoSeconds = (d) => {
   const m = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(d || "");

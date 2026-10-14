@@ -13,6 +13,14 @@
   Options -MultiViews
 </IfModule>
 
+# Unlisted pages: keep them out of every search index even if someone links
+# to them. Sent as a header as well as the page's robots meta tag.
+<IfModule mod_headers.c>
+  <Files "press-room.html">
+    Header set X-Robots-Tag "noindex, nofollow, noarchive, noimageindex"
+  </Files>
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
