@@ -272,26 +272,23 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .film--header:not(.hero) { height: calc(100vw / 3); }
 /* 3:1 scrub band — non-pinned, sits in normal flow between sections */
 .film--band { height: calc(100vw / 3); }
-/* 21:9 scrub band (the studio film) — pinned, so it holds the screen while
-   the clip scrubs; on phones it goes full-bleed square instead, a 2.33:1
-   slice being far too thin to read at that width */
-.film--scope { height: calc(100vw * 9 / 21); }
-/* Phones: the section becomes a full-viewport stage instead of a thin band, so
-   once it pins nothing else (the blockbusters posters above, "beyond the frame"
-   below) is on screen while the clip scrubs. The clip itself keeps its square
-   crop — a 2.33:1 slice is far too thin to read at phone width, and covering a
-   9:19.5 viewport would crop the frame to a keyhole — and is centred, so it
-   rides up to mid-screen holding its first frame before the pin takes over. */
+/* The studio film: its own full-viewport dark stage on every device, pinned
+   from the top, so while the clip scrubs nothing else (the blockbusters posters
+   above, "beyond the frame" below) is on screen and the film never floats over
+   them. The clip keeps its 21:9 cinemascope frame, centred and letterboxed on
+   the stage — capped to the stage height on very wide screens. */
+.film--scope { height: 100vh; height: 100dvh; }
+/* .film.film--scope, not .film--scope: the base `.film video` rule below has
+   the same one-class specificity and comes later in the file, so it would
+   otherwise win the height back. */
+.film.film--scope video, .film.film--scope .film__poster {
+  top: 50%; bottom: auto; height: min(calc(100vw * 9 / 21), 100dvh); transform: translateY(-50%);
+}
+/* Phones: the clip goes square instead — a 2.33:1 slice is far too thin to read
+   at phone width, and covering a 9:19.5 viewport would crop the frame to a
+   keyhole. min(): capped to the stage in landscape. */
 @media (max-width: 768px) {
-  .film--scope { height: 100vh; height: 100dvh; }
-  /* .film.film--scope, not .film--scope: the base `.film video` rule below has
-     the same one-class specificity and comes later in the file, so it would
-     otherwise win the height back. */
-  .film.film--scope video, .film.film--scope .film__poster {
-    /* min(): a square band in portrait, capped to the stage in landscape so the
-       clip is never taller than the section it sits in */
-    top: 50%; bottom: auto; height: min(100vw, 100dvh); transform: translateY(-50%);
-  }
+  .film.film--scope video, .film.film--scope .film__poster { height: min(100vw, 100dvh); }
 }
 /* 13vw (not 15) so the wordmark + its plate always fit inside .hero__head's
    88vw content box: "CHROMATA" is 5.948em wide and the plate adds 0.44em each
@@ -807,6 +804,9 @@ figure.gitem figcaption { position: absolute; left: 18px; bottom: 14px; z-index:
 .team { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(28px, 4vw, 64px) clamp(28px, 4vw, 64px); }
 .team__card { display: flex; flex-direction: column; gap: 2.4vh; }
 .team__card .portrait { align-self: start; }
+/* the img carries its intrinsic width/height so the space is reserved before
+   the lazy load lands (keeps the scrub-film pin below measured correctly) */
+.team__card .portrait img { width: 100%; height: auto; }
 .team__card h3 { font-family: var(--font-display); font-size: var(--display-sm); }
 .team__card .role { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-deep); }
 .team__card p { color: var(--ink-soft); max-width: 34em; }
@@ -1103,6 +1103,20 @@ form .form-note { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.04
 
 /* sky section (studio philosophy) */
 .on-sky { background: var(--sky); color: var(--ink); }
+
+/* lemon section (studio inspiration) — copy left, the gilded lobster bleeding
+   off the right edge; stacks below the copy on tablets/phones */
+.inspiration { background: var(--lemon); color: var(--ink); position: relative; overflow: hidden; }
+.inspiration .kicker { color: var(--gold-deep); }
+.inspiration .kicker::before { background: var(--coral); }
+.inspiration__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(28px, 5vw, 90px); align-items: center; }
+.inspiration__copy .prose { max-width: 36em; }
+.inspiration__art { margin: 0 -6vw 0 0; transform: rotate(-8deg); pointer-events: none; }
+.inspiration__art img { width: 100%; height: auto; filter: drop-shadow(0 24px 48px rgba(37,35,33,0.22)); }
+@media (max-width: 900px) {
+  .inspiration__grid { grid-template-columns: 1fr; }
+  .inspiration__art { width: min(84vw, 460px); margin: 2vh auto 0; }
+}
 
 /* ============================================================
    RESPONSIVE

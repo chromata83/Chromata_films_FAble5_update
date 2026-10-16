@@ -373,9 +373,8 @@
     window.addEventListener("touchstart", () => { if (!primed) prime(); }, { once: true, passive: true });
     const pinLength = (isMobile && section.dataset.pinMobile) ? section.dataset.pinMobile
       : (isMobile ? "+=250%" : (section.dataset.pin || "+=400%"));
-    // A band can pin from a different edge on phones (the studio film pins at
-    // "center center" on desktop, but from the top on mobile where it fills the
-    // whole viewport) — data-pin-start-mobile overrides data-pin-start there.
+    // A section can pin from another edge via data-pin-start (e.g. "center
+    // center" for a short band); data-pin-start-mobile overrides it on phones.
     const pinStart = (isMobile && section.dataset.pinStartMobile) ? section.dataset.pinStartMobile
       : (section.dataset.pinStart || "top top");
     // Fraction of the pin over which the clip plays out. Mobile seeks trail the
@@ -444,9 +443,8 @@
         onToggle,
       });
     } else {
-      // full-height films pin from the top; a short band (the 21:9 studio
-      // film) pins via data-pin-start="center center" so it locks once it sits
-      // mid-screen and holds there until the whole clip has scrubbed through
+      // pinned films lock (from the top unless data-pin-start says otherwise)
+      // and hold there until the whole clip has scrubbed through
       ScrollTrigger.create({
         trigger: section, start: pinStart, end: pinLength, pin: true,
         // tighter mobile scrub (0.3 vs the band's 0.5) so a full-height pinned
@@ -920,4 +918,17 @@
   }
 
   addEventListener("load", () => ScrollTrigger.refresh());
+
+  // Lazy images arrive long after window "load" and, without reserved space,
+  // push everything below them down. Pins measured before that fire at stale
+  // scroll positions and lock a film on top of the content above it (the
+  // studio GASP film over the blockbusters). Re-measure once a burst of late
+  // image loads settles — only when the page height actually moved.
+  let measuredH = doc.scrollHeight, lateLoad = null;
+  ScrollTrigger.addEventListener("refresh", () => { measuredH = doc.scrollHeight; });
+  document.addEventListener("load", (e) => {
+    if (e.target.tagName !== "IMG") return;
+    clearTimeout(lateLoad);
+    lateLoad = setTimeout(() => { if (doc.scrollHeight !== measuredH) ScrollTrigger.refresh(); }, 150);
+  }, true);
 })();
