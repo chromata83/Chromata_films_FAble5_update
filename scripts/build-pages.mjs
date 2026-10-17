@@ -473,7 +473,7 @@ const FILMS = {
   alexRaphael: { id: "764060129", title: "Alexandra &amp; Raphael — Wedding Film Highlight", desc: "Alexandra and Raphael's Jewish wedding in Marrakech, between the Agafay desert and the Selman hotel. Planned by Cocoon Events.", uploadDate: "2022-10-26", duration: "PT5M9S", thumb: "assets/img/marrakech/ar-01.jpg", href: "journal-alexandra-raphael-marrakech.html", place: "Marrakech, Morocco" },
   natalia: { id: "866854185", title: "Natalia's 50th Birthday — Montenegro Teaser", desc: "A three-day 50th birthday celebration in Tivat, Montenegro, by Cocoon Events.", uploadDate: "2023-09-21", duration: "PT1M21S", thumb: "assets/img/natalia/nm-01.jpg", href: "journal-natalia-montenegro.html", place: "Tivat, Montenegro" },
   marcella: { id: "1078314523", title: "Marcella &amp; Dan — Engagement Party Teaser", desc: "Marcella and Dan's engagement party.", uploadDate: "2025-04-24", duration: "PT49S", thumb: "assets/img/marcella-daniel/marcella-raneri-daniel-nutkis-engagement-01.jpg", href: "journal-marcella-daniel.html" },
-  laurenJonathan: { id: "704850376", title: "Lauren &amp; Jonathan — Wedding Film Highlight", desc: "Lauren and Jonathan's destination wedding at Altos de Chavón in the Dominican Republic, planned by LS Planning.", uploadDate: "2022-05-03", thumb: "assets/img/altos/lj-01.jpg", href: "journal-lauren-jonathan.html", place: "Altos de Chavón, La Romana, Dominican Republic", aspect: "426/204" },
+  laurenJonathan: { id: "_OC3wElCAGc", provider: "youtube", title: "Lauren &amp; Jonathan — Wedding Film Highlight", desc: "Lauren and Jonathan's destination wedding at Altos de Chavón in the Dominican Republic, planned by LS Planning.", uploadDate: "2022-05-03", thumb: "assets/img/altos/lj-01.jpg", href: "journal-lauren-jonathan.html", place: "Altos de Chavón, La Romana, Dominican Republic" },
   annaA: { id: "466573692", hash: "39a3243ffd", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part I)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10-01", thumb: "assets/img/anna/anna-header.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
   annaB: { id: "466573597", hash: "6b59c916d3", title: "Anna Andres — Wedding Film at Hôtel du Cap-Eden-Roc (Part II)", desc: "Miss Universe Ukraine 2014 Anna Andres's intimate wedding at Hôtel du Cap-Eden-Roc, Cap d'Antibes, planned by Victoria Kursova of Palazzo Eventi.", uploadDate: "2020-10-01", thumb: "assets/img/anna/an-01.jpg", href: "anna-andres.html", place: "Hôtel du Cap-Eden-Roc, Antibes, France" },
 };
@@ -1832,7 +1832,7 @@ const archive = [
   {
     file: "journal-lauren-jonathan.html", page: 5, tag: "Real Wedding",
     title: "Lauren and Jonathan — A Wedding in the Dominican Republic, Altos de Chavón", date: "May 3, 2022",
-    video: "704850376",
+    video: "_OC3wElCAGc", videoProvider: "youtube",
     galleryDir: "altos",
     gallery: Array.from({ length: 35 }, (_, i) => `lj-${String(i + 1).padStart(2, "0")}.jpg`),
     excerpt: "A transatlantic wedding at Altos de Chavón in the Dominican Republic ... Lauren and Jonathan's unforgettable start to the 2022 season.",
