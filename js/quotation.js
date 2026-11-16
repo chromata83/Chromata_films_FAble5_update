@@ -387,6 +387,7 @@
   /* ---------- our latest work: four frames, then the films one by one ---------- */
   $("#qxRow").innerHTML = '<div class="qx-films__rowwrap">' + Q.rowHTML() + "</div>";
   $("#qxStack").innerHTML = Q.stackHTML();
+  Q.lazyFrames();
 
   Q.initMenu();
   render(false);

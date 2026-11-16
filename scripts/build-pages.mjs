@@ -3314,8 +3314,8 @@ ${QX_MENU}
     <div id="qxStack"></div>
   </section>
 </main>
-<script src="js/quote-core.js?v=7"></script>
-<script src="js/quotation.js?v=6" defer></script>
+<script src="js/quote-core.js?v=8"></script>
+<script src="js/quotation.js?v=7" defer></script>
 </body>
 </html>
 `;
@@ -3335,8 +3335,8 @@ ${QX_MENU}
   <div class="frame" id="qxLbFrame"></div>
   <button class="nav next" id="qxLbNext" type="button" aria-label="Next" hidden>&#8250;</button>
 </div>
-<script src="js/quote-core.js?v=7"></script>
-<script src="js/proposal.js?v=5" defer></script>
+<script src="js/quote-core.js?v=8"></script>
+<script src="js/proposal.js?v=6" defer></script>
 </body>
 </html>
 `;

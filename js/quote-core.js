@@ -288,7 +288,7 @@
       return '<article class="film-layer film-layer--' + (i % 2 ? "b" : "a") + '" style="z-index:' + (i + 1) + '">' +
         '<div class="film-layer__in"><header><span class="num">' + String(i + 1).padStart(2, "0") + " / " + String(FILMS.length).padStart(2, "0") + "</span>" +
         "<h3>" + esc(f.t) + "</h3><p>" + esc(f.p) + "</p></header>" +
-        '<div class="film-layer__frame"><iframe src="' + filmSrc(f) + '" title="' + esc(f.t) + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe></div>' +
+        '<div class="film-layer__frame"><iframe data-src="' + filmSrc(f) + '" title="' + esc(f.t) + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe></div>' +
         "</div></article>";
     }).join("") + "</div>";
   }
@@ -345,6 +345,18 @@
     };
   })();
 
+  /* Film players only receive their address once they are close to the screen and actually laid out.
+     A player started inside a hidden (0x0) box can fail with YouTube error 153. */
+  function lazyFrames() {
+    var frames = Array.prototype.slice.call(document.querySelectorAll("iframe[data-src]"));
+    var load = function (f) { if (f.getAttribute("data-src")) { f.src = f.getAttribute("data-src"); f.removeAttribute("data-src"); } };
+    if (!("IntersectionObserver" in w)) { frames.forEach(load); return; }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting && e.target.offsetWidth > 0) { load(e.target); io.unobserve(e.target); } });
+    }, { rootMargin: "400px 0px" });
+    frames.forEach(function (f) { io.observe(f); });
+  }
+
   w.CQ = {
     EMAIL: EMAIL, WHATSAPP: WHATSAPP,
     eur: eur, esc: esc, clip: clip,
@@ -352,6 +364,6 @@
     by: by, blank: blank, lines: lines, total: total, recapText: recapText,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,
-    initMenu: initMenu, lightbox: lightbox
+    initMenu: initMenu, lazyFrames: lazyFrames, lightbox: lightbox
   };
 })(window);

@@ -96,5 +96,6 @@
   Array.prototype.forEach.call(document.querySelectorAll(".px-tile"), function (b) {
     b.addEventListener("click", function () { Q.lightbox.photo(Q.PHOTOS, +b.getAttribute("data-i"), b); });
   });
+  Q.lazyFrames();
   document.getElementById("pxPrint").addEventListener("click", function () { window.print(); });
 })();

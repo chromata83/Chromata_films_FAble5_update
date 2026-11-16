@@ -19,6 +19,10 @@
   <FilesMatch "^(press-room|quotation|proposal|investment)\.html$">
     Header set X-Robots-Tag "noindex, nofollow, noarchive, noimageindex"
   </FilesMatch>
+  # Film embeds (YouTube error 153) need the site origin as referrer; never send the full private link.
+  <FilesMatch "^(quotation|proposal)\.html$">
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+  </FilesMatch>
 </IfModule>
 
 <IfModule mod_rewrite.c>
