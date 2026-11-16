@@ -394,14 +394,20 @@ body[data-tone="dark"] .qx-menu { color: #FFF9F0; }
   .qx-crest { left: 16px; top: 16px; }
   .qx-crest img { height: 46px; }
   .qx-menu { right: 16px; top: 18px; height: 40px; }
-  #qxStage { grid-template-columns: 1fr; grid-template-rows: 24vh auto; height: auto; min-height: 100svh; overflow: visible; }
-  #qxLeft { height: auto; min-height: 0; padding: 18px 22px 0; }
-  #qxMid { overflow: visible; max-height: none; justify-content: flex-start; padding-top: 12px; }
-  #qxMid.center { justify-content: center; padding-left: 0; }
-  #qxRight { order: -1; }
-  #qxBottom { position: sticky; bottom: 0; z-index: 5; }
-  #qxCut { bottom: auto; height: 34vh; }
-  .qx-cut { height: var(--mh, 25vh); left: var(--ml, 24vw); right: auto; top: var(--mt, 2vh); bottom: auto; transform: rotate(var(--mrot, var(--rot, 0deg))); }
+  /* text and options first, the picture in full below them; the total + buttons stay pinned at the bottom of the screen */
+  #qxStage { display: flex; flex-direction: column; height: auto; min-height: 100svh; overflow: visible; background: var(--panel); transition: background-color .6s ease; }
+  #qxLeft { display: contents; }
+  #qxProg { z-index: 6; }
+  #qxTop { padding: 72px 22px 6px; min-height: 0; }
+  #qxMid { overflow: visible; max-height: none; justify-content: flex-start; padding: 12px 22px 28px; flex: 0 0 auto; }
+  #qxMid.center { justify-content: center; padding-left: 22px; }
+  #qxMid > :first-child, #qxMid > :last-child { margin-top: 0; margin-bottom: 0; }
+  #qxRight { display: block; background: transparent; width: 100%; order: 2; }
+  #qxRight .hero { width: 100%; height: auto; max-height: none; object-fit: contain; margin: 0; }
+  #qxBottom { position: sticky; bottom: 0; z-index: 5; order: 3; padding: 14px 22px; margin-top: auto; }
+  #qxStage > #qxRight { order: 2; }
+  #qxCut { inset: auto 0 0 0; height: 40vh; }
+  .qx-cut { height: var(--mh, 24vh); left: var(--ml, 24vw); right: auto; top: auto; bottom: 0; transform: rotate(var(--mrot, var(--rot, 0deg))); }
   .qx-films { padding: 10vh 0 0; }
   .qx-films__head { padding: 0 16px; }
   .qx-films__rowwrap { padding: 0 16px 9vh; }
@@ -409,7 +415,6 @@ body[data-tone="dark"] .qx-menu { color: #FFF9F0; }
   .qx-row4 figure { flex: var(--ar) 1 40%; }
 }
 @media (max-width: 540px) {
-  #qxStage { grid-template-rows: 20vh auto; }
   .qx-cut { --mh: 21vh; }
   .navbtns { gap: 8px; }
   .cont { padding: 14px 18px; }

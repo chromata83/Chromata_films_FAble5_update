@@ -3243,7 +3243,7 @@ const QX_HEAD = (title, desc) => `<meta charset="UTF-8" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/quotation.css?v=6" />`;
+<link rel="stylesheet" href="css/quotation.css?v=8" />`;
 
 const QX_MENU = `<a class="qx-crest" href="index.html" aria-label="Chromata Films, home"><img src="assets/img/logo-mark.png" alt="" width="32" height="64" /></a>
 <button class="qx-menu" id="qxMenu" type="button" aria-expanded="false" aria-controls="qxDrawer"><span>Menu</span><span class="l" aria-hidden="true"><i></i><i></i></span></button>
