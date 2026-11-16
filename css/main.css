@@ -389,6 +389,9 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .videoband iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: calc(100vw * 9 / 16); transform: translate(-50%, -50%); border: 0; pointer-events: none; }
 .videoband .display-lg { font-size: clamp(1.15rem, 4.6vw, 5.2rem); }
 .videoband .kicker { font-size: clamp(8px, 0.85vw, 12px); }
+/* the capital "A" of "L'amour avec un grand A" is the point of the line: make it big */
+.videoband .big-a { display: inline-block; font-size: 1.9em; line-height: .5; vertical-align: -.04em; margin: 0 .04em; }
+.videoband .display-lg:has(.big-a) { white-space: nowrap; }
 /* videoband used as a page header: layer a title + shade over the ambient film */
 .videoband--header .hero__title--page { font-size: clamp(1.1rem, 4.5vw, 5.6rem); }
 .videoband--header .hero__head { z-index: 4; }
@@ -447,6 +450,12 @@ body.menu-open .nav { color: var(--cream); background: transparent; backdrop-fil
 .hit__scrollcue svg { width: clamp(40px, 3.4vw, 54px); height: auto; color: var(--coral); animation: hit-cue-bob 1.4s ease-in-out infinite alternate; }
 .hit__scrollcue:hover svg, .hit__scrollcue:focus-visible svg { color: var(--lemon); }
 @keyframes hit-cue-bob { to { transform: translateY(10px); } }
+/* "Keep scrolling" cue layered over the left side of the GASP scrub film: same look and size as the arrow above it */
+.gasp__cue { position: absolute; left: clamp(24px, 6vw, 110px); bottom: clamp(96px, 16vh, 200px); z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 14px; color: var(--cream); pointer-events: none; text-shadow: 0 1px 14px rgba(22,19,15,0.55); padding: 18px 22px 16px; background: rgba(22,19,15,0.4); border-radius: 6px; }
+.gasp__cue .lbl { font-family: var(--font-ui); font-weight: 700; font-size: clamp(15px, 1.5vw, 22px); letter-spacing: 0.28em; text-indent: 0.28em; text-transform: uppercase; }
+.gasp__cue svg { width: clamp(40px, 3.4vw, 54px); height: auto; color: var(--coral); filter: drop-shadow(0 1px 8px rgba(22,19,15,0.55)); animation: hit-cue-bob 1.4s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) { .gasp__cue svg { animation: none; } }
+@media (max-width: 860px) { .gasp__cue { left: 16px; bottom: 90px; gap: 8px; padding: 12px 14px 10px; } .gasp__cue .lbl { font-size: 12px; letter-spacing: 0.2em; } .gasp__cue svg { width: 32px; } }
 @media (prefers-reduced-motion: reduce) { .hit__scrollcue svg { animation: none; } }
 
 /* ============================================================
