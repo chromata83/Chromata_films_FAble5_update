@@ -122,6 +122,31 @@
     return d.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (day < 10 ? "0" : "") + day;
   }
 
+  /* One-click "Add to Google Calendar" link for the team email: an all-day OPTION on the wedding date,
+     opened in the studio's own Google account (authuser). The static site cannot write to a calendar
+     by itself, so the email carries this link and one click adds the hold. */
+  function calendarLink(a, proposalUrl) {
+    if (!ISO.test(a.date || "")) return "";
+    var start = a.date.replace(/-/g, "");
+    var nx = new Date(a.date + "T12:00:00"); nx.setDate(nx.getDate() + 1);
+    var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+    var end = nx.getFullYear() + pad(nx.getMonth() + 1) + pad(nx.getDate());
+    var r = by(REGIONS, a.region);
+    var details = [
+      "Quote request from " + a.names, "Email: " + a.email,
+      "Total: " + eur(total(a)) + (r && r.tbc ? " (travel / accommodation TBC, outside Europe)" : ""),
+      "Venue: " + a.venue + ", " + a.place, "", "Proposal: " + proposalUrl
+    ].join("\n");
+    var q = function (k, v) { return k + "=" + encodeURIComponent(v); };
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE&" + [
+      q("text", "OPTION \u00B7 " + a.names + " \u00B7 " + a.venue),
+      "dates=" + start + "/" + end,
+      q("location", a.venue + ", " + a.place),
+      q("details", details),
+      q("authuser", EMAIL)
+    ].join("&");
+  }
+
   /* One sentence under every total about travel, depending on the wedding's location. */
   function travelNote(a) {
     return a.region === "ow"
@@ -323,7 +348,7 @@
   w.CQ = {
     EMAIL: EMAIL, WHATSAPP: WHATSAPP,
     eur: eur, esc: esc, clip: clip,
-    fmtDate: fmtDate, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, REGIONS: REGIONS, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
+    fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, REGIONS: REGIONS, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
     by: by, blank: blank, lines: lines, total: total, recapText: recapText,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

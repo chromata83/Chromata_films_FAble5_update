@@ -369,6 +369,8 @@
     fd.append("Total investment", eur(tot));
     fd.append("Selections", Q.recapText(A));
     fd.append("Proposal page", url);
+    var cal = Q.calendarLink(A, url);
+    if (cal) fd.append("Add the date to Google Calendar", cal);
     fetch("https://formsubmit.co/ajax/" + Q.EMAIL, { method: "POST", headers: { Accept: "application/json" }, body: fd })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (x) {
