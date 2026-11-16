@@ -16,9 +16,9 @@
 # Unlisted pages: keep them out of every search index even if someone links
 # to them. Sent as a header as well as the page's robots meta tag.
 <IfModule mod_headers.c>
-  <Files "press-room.html">
+  <FilesMatch "^(press-room|quotation|proposal|investment)\.html$">
     Header set X-Robots-Tag "noindex, nofollow, noarchive, noimageindex"
-  </Files>
+  </FilesMatch>
 </IfModule>
 
 <IfModule mod_rewrite.c>

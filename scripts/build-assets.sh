@@ -572,5 +572,22 @@ $FF -i "$PRO/chromata-films-mark.png" -vf "scale=440:-2" -c:v libwebp -quality 8
 # belt-and-braces: the downloads must not turn up in image search either
 printf '<IfModule mod_headers.c>\n  Header set X-Robots-Tag "noindex, nofollow, noimageindex"\n</IfModule>\n' > "$PRO/.htaccess"
 
+# ---------- quotation page: Dali x Schiaparelli collage cutouts (transparent WebP, longest side 1100px) ----------
+mkdir -p "$OUT/img/quote"
+qcut () { # src-prefix dst-name
+  local src; src=$(ls "$PUB/cutouts/"$1* | head -1)
+  $FF -i "$src" -vf "format=rgba,scale=w='if(gt(a,1),1100,-2)':h='if(gt(a,1),-2,1100)':flags=lanczos" -c:v libwebp -quality 86 -compression_level 6 -pix_fmt yuva420p "$OUT/img/quote/$2.webp"
+}
+qcut 80468bf9 q-intro      # face + sun collage
+qcut ec1c47e3 q-flute      # champagne flute + grapefruit
+qcut 3fb72276 q-swan       # golden swan + orange
+qcut b4a29aeb q-shades     # orange in sunglasses
+qcut 19d5a9da q-coupe      # coupe + lotus
+qcut 874dcec9 q-collage    # sun, eyes, vase
+qcut 7ec37ec8 q-camera     # camera eye
+qcut bcc5890e q-bust       # bust + bird of paradise
+qcut contact-cutout-src q-lobster
+qcut a9e6b0bd q-peacock    # peacock + nautilus
+
 echo "ASSET PIPELINE DONE"
 du -sm "$OUT"/*
