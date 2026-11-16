@@ -3243,7 +3243,7 @@ const QX_HEAD = (title, desc) => `<meta charset="UTF-8" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/quotation.css?v=8" />`;
+<link rel="stylesheet" href="css/quotation.css?v=9" />`;
 
 const QX_MENU = `<a class="qx-crest" href="index.html" aria-label="Chromata Films, home"><img src="assets/img/logo-mark.png" alt="" width="32" height="64" /></a>
 <button class="qx-menu" id="qxMenu" type="button" aria-expanded="false" aria-controls="qxDrawer"><span>Menu</span><span class="l" aria-hidden="true"><i></i><i></i></span></button>
@@ -3314,8 +3314,10 @@ ${QX_MENU}
     <div id="qxStack"></div>
   </section>
 </main>
-<script src="js/quote-core.js?v=9"></script>
-<script src="js/quotation.js?v=8" defer></script>
+<script src="js/crm-config.js?v=2"></script>
+<script src="js/quote-core.js?v=10"></script>
+<script src="js/quote-link.js?v=2"></script>
+<script src="js/quotation.js?v=9" defer></script>
 </body>
 </html>
 `;
@@ -3324,7 +3326,7 @@ pages["proposal.html"] = `<!DOCTYPE html>
 <html lang="en">
 <head>
 ${QX_HEAD("Your proposal · Chromata Films", "A private proposal from Chromata Films.")}
-<link rel="stylesheet" href="css/proposal.css?v=4" />
+<link rel="stylesheet" href="css/proposal.css?v=6" />
 </head>
 <body data-page="proposal" class="qx px">
 ${QX_MENU}
@@ -3335,8 +3337,10 @@ ${QX_MENU}
   <div class="frame" id="qxLbFrame"></div>
   <button class="nav next" id="qxLbNext" type="button" aria-label="Next" hidden>&#8250;</button>
 </div>
-<script src="js/quote-core.js?v=9"></script>
-<script src="js/proposal.js?v=7" defer></script>
+<script src="js/crm-config.js?v=2"></script>
+<script src="js/quote-core.js?v=10"></script>
+<script src="js/quote-link.js?v=2"></script>
+<script src="js/proposal.js?v=10" defer></script>
 </body>
 </html>
 `;

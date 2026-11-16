@@ -6,7 +6,6 @@
      Tags: {{name}} {{date}} {{venue}} {{days}}. The same defaults live in docs/crm/daily-jobs/index.ts. */
   var DEFAULT_EMAILS = {
     email_tpl_followup: "Subject: Your wedding film with Chromata Films\n\nHello {{name}},\n\nI wanted to follow up on the proposal we sent for your wedding on {{date}} at {{venue}}. Do you have any questions, or would you like us to adjust anything? We would love to reserve your date for you.\n\nWarmly,\nChromata Films",
-    email_tpl_thanks: "Subject: Thank you, {{name}}\n\nHello {{name}},\n\nThank you for letting us be part of your wedding. It was a real privilege to film it. We are now starting the edit and will keep you posted on the delivery of your films.\n\nWarmly,\nChromata Films",
     email_tpl_before: "Subject: {{days}} days until your wedding\n\nHello {{name}},\n\nYour wedding at {{venue}} is only {{days}} days away. To prepare the filming perfectly, could you send us your final timeline, the list of key moments you do not want us to miss, and the contacts of your planner and venue?\n\nWarmly,\nChromata Films"
   };
   var DEFAULT_CHECKLIST = ["Venue and timeline confirmed", "Call with the planner", "Music and special requests", "Travel and accommodation booked", "Shoot", "Rushes backed up", "Highlight film edited", "Feature film edited", "Delivery to the couple"].join("\n");

@@ -76,7 +76,7 @@
   /* ---------- the couple's answers ---------- */
   function blank() {
     return { welcome: null, wedding: null, team: [], brunch: null, options: {}, creator: null, privacy: "A",
-             names: "", email: "", date: "", place: "", venue: "", nonce: "" };
+             names: "", email: "", date: "", place: "", venue: "", role: "couple", planner: "", nonce: "" };
   }
 
   /* Turns answers into priced lines. Order follows the on-screen recap. */
@@ -98,6 +98,24 @@
     return L;
   }
   var total = function (a) { return lines(a).reduce(function (s, l) { return s + l.price; }, 0); };
+
+  /* The choices only (codes, never prices): what the proposal link and the back office receive. */
+  function selection(a) {
+    return { w: a.welcome, c: a.wedding, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy };
+  }
+  /* The price list in a form the back office database can use to RE-COMPUTE every total itself, so a quote or a
+     contract can never carry a price edited in the browser. The back office keeps a copy (Settings table) each time
+     it is opened, so changing a number in this file is all it takes. */
+  function priceTable() {
+    var t = { w: {}, b: {}, c: {}, n: {}, x: {}, o: {}, k: {}, p: {} };
+    EVENT_HOURS.forEach(function (e) { t.w[e.v] = e.price || 0; t.b[e.v] = e.price || 0; });
+    COLLECTIONS.forEach(function (c) { t.c[c.v] = c.price; t.n[c.v] = c.name; });
+    TEAM.forEach(function (x) { t.x[x.v] = x.price; });
+    OPTIONS.forEach(function (o) { t.o[o.v] = { p: o.price, m: o.max || 1 }; });
+    CREATOR.forEach(function (c) { t.k[c.v] = c.price || 0; });
+    PRIVACY.forEach(function (p) { t.p[p.v] = p.price || 0; });
+    return t;
+  }
 
   /* Plain-text recap (used in the email to the team). */
   function recapText(a) {
@@ -149,7 +167,7 @@
 
   /* ---------- the proposal link ----------
      Format:  proposal.html#<names>-<nonce>.<token>
-     names = the couple's names as a slug, nonce = 6 random letters/digits,
+     names = the couple's names as a slug, nonce = 12 random letters/digits (also the private reference of the quote),
      token = their choices as base64url. The hash never reaches the server. */
   function b64uEnc(str) {
     var bytes = new TextEncoder().encode(str), s = "";
@@ -169,7 +187,7 @@
     return out || "your-proposal";
   };
   var nonce = function () {
-    var a = new Uint8Array(6), s = "";
+    var a = new Uint8Array(12), s = "";
     (w.crypto || w.msCrypto).getRandomValues(a);
     for (var i = 0; i < a.length; i++) s += "0123456789abcdefghijklmnopqrstuvwxyz"[a[i] % 36];
     return s;
@@ -179,6 +197,7 @@
     var n = a.nonce || (a.nonce = nonce());
     var p = { v: 1, pv: PRICE_VERSION, id: n, ts: Date.now(),
       n: clip(a.names, 80), e: clip(a.email, 120), d: clip(a.date, 60), l: clip(a.place, 100), u: clip(a.venue, 100),
+      r: a.role === "planner" ? "planner" : "couple", pn: clip(a.planner, 100),
       w: a.welcome, c: a.wedding, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy,
       t: total(a) };
     var base = new URL("proposal.html", w.location.href);
@@ -197,6 +216,8 @@
       if (!raw || raw.v !== 1) return null;
       var a = blank();
       a.names = clip(raw.n, 80); a.email = clip(raw.e, 120); a.date = clip(raw.d, 60); a.place = clip(raw.l, 100); a.venue = clip(raw.u, 100);
+      a.role = raw.r === "planner" ? "planner" : "couple"; a.planner = clip(raw.pn, 100);
+      a.nonce = clip(raw.id, 16).toLowerCase().replace(/[^a-z0-9]/g, "");
       a.welcome = by(EVENT_HOURS, raw.w) ? raw.w : null;
       a.wedding = by(COLLECTIONS, raw.c) ? raw.c : null;
       a.team = (Array.isArray(raw.x) ? raw.x : []).filter(function (v, i, r) { return by(TEAM, v) && r.indexOf(v) === i; });
@@ -353,7 +374,7 @@
     EMAIL: EMAIL, WHATSAPP: WHATSAPP,
     eur: eur, esc: esc, clip: clip,
     fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
-    by: by, blank: blank, lines: lines, total: total, recapText: recapText,
+    by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, priceTable: priceTable,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,
     initMenu: initMenu, lazyFrames: lazyFrames, lightbox: lightbox

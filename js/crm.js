@@ -81,11 +81,14 @@
     var fl = fu.length ? fu.map(function (p) { return row("#/project/" + p.id, daysAgo(p.quote_sent_at) + " days", p.couple_names, "Quote sent " + C.fmtDate(p.quote_sent_at.slice(0, 10)), '<span class="pill quote">Chase</span>'); }).join("") : '<p class="empty">No quote is waiting for an answer.</p>';
     var od = S.payments.filter(function (x) { return !x.paid_at && x.due_date < today; });
     var odl = od.length ? od.map(function (x) { var p = byId(S.projects, x.project_id) || {}; return row("#/project/" + x.project_id, "Due " + esc(C.fmtDate(x.due_date)), p.couple_names || "", x.label, '<span class="am">' + eur(x.amount) + '</span><span class="pill declined">Overdue</span>'); }).join("") : '<p class="empty">No overdue payment.</p>';
+    var web = P.filter(function (p) { return p.quote_ref && p.status === "quote" && daysAgo(p.created_at) <= 14; }).sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; });
+    var wl2 = web.length ? web.map(function (p) { return row("#/project/" + p.id, daysAgo(p.created_at) === 0 ? "Today" : daysAgo(p.created_at) + " d ago", p.couple_names, [p.wedding_date ? C.fmtDate(p.wedding_date) : "No date", p.venue].filter(Boolean).join(" · "), '<span class="am">' + (p.total ? eur(p.total) : "") + '</span><span class="pill ' + (p.quote_validated_at ? "signed" : "quote") + '">' + (p.quote_validated_at ? "Validated" : "To validate") + "</span>"); }).join("") : '<p class="empty">No quote received from the website in the last two weeks.</p>';
     var rev = S.payments.filter(function (x) { return x.paid_at && x.paid_at.slice(0, 4) === year; }).reduce(function (s, x) { return s + (+x.amount || 0); }, 0);
     var exp = S.expenses.filter(function (x) { return (x.spent_on || "").slice(0, 4) === year; }).reduce(function (s, x) { return s + (+x.amount || 0); }, 0);
     shell("dashboard", '<header class="top"><h1>Dashboard</h1><a class="btn" href="#/new">New project</a></header>' +
       '<div class="stats"><div><b>' + open + "</b><span>Open leads and quotes</span></div><div><b>" + booked.length + "</b><span>Signed dates</span></div><div><b>" + eur(val) + "</b><span>Signed value</span></div><div><b>" + P.filter(function (p) { return p.status === "declined"; }).length + "</b><span>Declined</span></div></div>" +
       '<div class="stats s3"><div><b>' + eur(rev) + "</b><span>Revenue " + year + "</span></div><div><b>" + eur(exp) + "</b><span>Expenses " + year + "</span></div><div><b>" + eur(rev - exp) + "</b><span>Profit " + year + "</span></div></div>" +
+      '<section class="cr-card"><h2>New quotes from the website</h2>' + wl2 + "</section>" +
       '<div class="two"><section class="cr-card"><h2>Next dates</h2>' + list + '</section><section class="cr-card"><h2>Waiting for a signature</h2>' + wl + "</section></div>" +
       '<div class="two"><section class="cr-card"><h2>Follow-ups · quotes awaiting an answer</h2>' + fl + '</section><section class="cr-card"><h2>Overdue payments</h2>' + odl + "</section></div>");
   }
@@ -139,7 +142,7 @@
     shell("projects", '<header class="top"><h1>Projects</h1><a class="btn" href="#/new">New project</a></header><div class="bar"><div class="tabs">' + tabs +
       '</div><input id="q" type="search" placeholder="Search couple, venue, planner…" value="' + esc(S.q) + '"></div><section class="cr-card tbl">' +
       (rows.length ? rows.map(function (p) {
-        return '<a class="row" href="#/project/' + p.id + '"><span class="d">' + esc(p.wedding_date ? C.fmtDate(p.wedding_date) : "No date") + '</span><span class="t">' + esc(p.couple_names) + "<small>" + esc([p.venue, p.location].filter(Boolean).join(", ")) + "</small></span><span class=\"pl\">" + esc(p.planner_name || "") + "</span><span class=\"am\">" + (p.total ? eur(p.total) : "") + "</span>" + pill(p.status) + "</a>";
+        return '<a class="row" href="#/project/' + p.id + '"><span class="d">' + esc(p.wedding_date ? C.fmtDate(p.wedding_date) : "No date") + '</span><span class="t">' + esc(p.couple_names) + "<small>" + esc([p.venue, p.location].filter(Boolean).join(", ") + (p.quote_ref ? " · from the website" : "")) + "</small></span><span class=\"pl\">" + esc(p.planner_name || "") + "</span><span class=\"am\">" + (p.total ? eur(p.total) : "") + "</span>" + pill(p.status) + "</a>";
       }).join("") : '<p class="empty">No project matches. Create one with “New project”.</p>') + "</section>");
     $$(".tabs button").forEach(function (b) { b.onclick = function () { S.filter = b.getAttribute("data-f"); projects(); }; });
     $("#q").oninput = function (e) { S.q = e.target.value; var pos = e.target.selectionStart; projects(); var el = $("#q"); el.focus(); el.setSelectionRange(pos, pos); };
@@ -155,15 +158,21 @@
 
   /* ---------------- project form (new / edit) ---------------- */
   var F = [["couple_names", "Couple", "text", 1], ["couple_email", "Couple email", "email"], ["couple_phone", "Couple phone", "tel"], ["wedding_date", "Wedding date", "date"],
-    ["venue", "Venue", "text"], ["location", "Location", "text"], ["collection", "Collection", "text"], ["total", "Total (€)", "number"]];
+    ["venue", "Venue", "text"], ["location", "Location", "text"], ["collection", "Collection", "text"], ["total", "Quote total excl. travel (€)", "number"], ["travel_fees", "Travel / accommodation fees (€)", "number"]];
   var PL = [["planner_name", "Wedding planner", "text"], ["planner_company", "Company", "text"], ["planner_email", "Planner email", "email"], ["planner_phone", "Planner phone", "tel"]];
-  function fld(f, p) { return '<label class="fld"><span>' + f[1] + '</span><input name="' + f[0] + '" type="' + f[2] + '" value="' + esc(p[f[0]] == null ? "" : p[f[0]]) + '"' + (f[3] ? " required" : "") + (f[2] === "number" ? ' step="any" min="0"' : "") + "></label>"; }
+  /* "total" is stored all-in (travel included); the form shows it without travel and adds the travel fees on save. */
+  function fieldValue(f, p) {
+    if (f[0] === "total") return p.total == null ? "" : Math.round((+p.total - (+p.travel_fees || 0)) * 100) / 100;
+    return p[f[0]] == null ? "" : p[f[0]];
+  }
+  function fld(f, p) { return '<label class="fld"><span>' + f[1] + '</span><input name="' + f[0] + '" type="' + f[2] + '" value="' + esc(fieldValue(f, p)) + '"' + (f[3] ? " required" : "") + (f[2] === "number" ? ' step="any" min="0"' : "") + "></label>"; }
 
   function readForm(form) {
     var o = {};
     F.concat(PL).forEach(function (f) { var v = form.elements[f[0]].value.trim(); o[f[0]] = f[2] === "number" ? (v === "" ? null : +v) : (v === "" ? null : v); });
+    if (o.total != null || o.travel_fees != null) o.total = Math.round(((+o.total || 0) + (+o.travel_fees || 0)) * 100) / 100;   // stored all-in
     o.status = form.elements.status.value; o.notes = form.elements.notes.value.trim() || null; o.proposal_url = form.elements.proposal_url.value.trim() || null;
-    o.planner_id = form.elements.planner_id.value || null; o.auto_emails = form.elements.auto_emails.checked;
+    o.planner_id = form.elements.planner_id.value || null; o.auto_emails = form.elements.auto_emails.checked; o.bank_account = form.elements.bank_account.value || "EUR";
     return o;
   }
   function fromProposal(url) {
@@ -206,17 +215,26 @@
     var planners = S.contacts.filter(function (c) { return c.kind === "planner"; });
     shell("projects", '<header class="top"><h1>' + (isNew ? "New project" : esc(p.couple_names)) + '</h1>' + (isNew ? "" : pill(p.status)) + "</header>" +
       (isNew ? '<section class="cr-card"><h2>Start from a quotation</h2><p class="hint">Paste the “See my proposal” link of a couple: their names, date, venue and total are filled in for you.</p><div class="inl"><input id="imp" type="url" placeholder="https://www.chromatafilms.com/proposal.html#…"><button class="btn ghost" id="impGo" type="button">Fill from link</button></div></section>' : "") +
+      (p.quote_ref ? validationPanel(p) : "") +
       '<form id="pf" class="cr-card"><h2>Wedding</h2><div class="grid2">' + F.map(function (f) { return fld(f, p); }).join("") + '<label class="fld"><span>Status</span><select name="status">' +
-      Object.keys(ST).map(function (k) { return '<option value="' + k + '"' + ((p.status || "lead") === k ? " selected" : "") + ">" + ST[k].label + "</option>"; }).join("") + "</select></label></div>" +
+      Object.keys(ST).map(function (k) { return '<option value="' + k + '"' + ((p.status || "lead") === k ? " selected" : "") + ">" + ST[k].label + "</option>"; }).join("") + "</select></label>" +
+      '<label class="fld"><span>Bank account to give the couple</span><select name="bank_account">' + ["EUR", "CHF", "USD"].map(function (a) { return '<option value="' + a + '"' + ((p.bank_account || "EUR") === a ? " selected" : "") + ">" + a + " account" + (C.bankFor(S.settings, a) ? "" : " (not filled in Settings)") + "</option>"; }).join("") + "</select></label></div>" +
+      '<p class="hint" id="totAll" style="margin-top:10px"></p>' +
       '<h2>Wedding planner</h2><div class="grid2"><label class="fld" style="grid-column:1/-1"><span>Pick from your contacts</span><select name="planner_id"><option value="">None / not in my contacts</option>' +
       planners.map(function (c) { return '<option value="' + c.id + '"' + (p.planner_id === c.id ? " selected" : "") + ">" + esc(c.name + (c.company ? " · " + c.company : "")) + "</option>"; }).join("") + "</select></label>" + PL.map(function (f) { return fld(f, p); }).join("") + "</div>" +
       '<h2>Notes</h2><label class="fld"><textarea name="notes" rows="4" placeholder="Anything useful: dress code, timeline, contacts on the day…">' + esc(p.notes || "") + '</textarea></label>' +
-      '<label class="auto" style="margin-top:14px"><input type="checkbox" name="auto_emails"' + (p.auto_emails === false ? "" : " checked") + '> Send the automatic emails to this couple (quote follow-up, countdown, thank-you)</label>' +
+      '<label class="auto" style="margin-top:14px"><input type="checkbox" name="auto_emails"' + (p.auto_emails === false ? "" : " checked") + '> Send the automatic emails to this couple (quote follow-up and countdown)</label>' +
       '<input type="hidden" name="proposal_url" value="' + esc(p.proposal_url || "") + '">' +
       '<div class="acts"><button class="btn" type="submit">' + (isNew ? "Create project" : "Save") + "</button>" + (isNew ? "" : '<button class="btn danger" id="del" type="button">Delete project</button>') +
-      (p.proposal_url ? '<a class="btn ghost" target="_blank" rel="noopener" href="' + esc(p.proposal_url) + '">View proposal</a>' : "") + "</div></form>" +
+      (p.proposal_url ? '<a class="btn ghost" target="_blank" rel="noopener" href="' + esc(p.proposal_url) + '">View proposal</a>' : "") +
+      (isNew ? "" : '<a class="btn ghost" href="' + esc(selfMail(p)) + '">Email me this quote</a>') + "</div></form>" +
       (isNew ? "" : contractsPanel(p) + paymentsPanel(p) + checklistPanel(p) + '<section class="cr-card soon"><h2>Film delivery</h2><p class="hint">Coming in version 2: add the private streaming link and the download links for each film, and share one page with the couple after the wedding.</p></section>'));
     var pf = $("#pf");
+    var showAll = function () {
+      var b = pf.elements.total.value, t = pf.elements.travel_fees.value, el = $("#totAll"); if (!el) return;
+      el.innerHTML = b === "" && t === "" ? "" : "Total including travel and accommodation: <strong>" + eur((+b || 0) + (+t || 0)) + "</strong>" + (t === "" ? " (travel and accommodation still to be confirmed with the couple)" : " (shown to the couple as the final amount, “all travel and accommodation fees included”)");
+    };
+    pf.elements.total.addEventListener("input", showAll); pf.elements.travel_fees.addEventListener("input", showAll); showAll();
     if (isNew) $("#impGo").onclick = function () {
       var d = fromProposal($("#imp").value.trim());
       if (!d) { toast("That link is not a valid proposal link", true); return; }
@@ -242,6 +260,43 @@
       if (confirm("Delete this project and its contracts? This cannot be undone.")) api.deleteProject(p.id).then(reload).then(function () { location.hash = "#/projects"; }).catch(fail);
     };
     if (!isNew) { wireContracts(p); wirePayments(p); wireChecklist(p); }
+    wireValidation(p);
+  }
+
+  /* ---------------- website quote: the studio validates before the couple can sign ---------------- */
+  function selfMail(p) {
+    var me = (S.user && S.user.email && S.user.email.indexOf("@") > 0 && S.user.email.indexOf("demo") !== 0) ? S.user.email : "contact@chromatafilms.com";
+    var L = ["Quote for " + (p.couple_names || ""), "", "Status: " + (ST[p.status] || ST.lead).label, "Wedding date: " + (p.wedding_date ? C.fmtDate(p.wedding_date) : "not set"),
+      "Venue: " + [p.venue, p.location].filter(Boolean).join(", "), "Collection: " + (p.collection || ""), "Total: " + (p.total ? C.money(p.total) : "not set") + (p.travel_fees != null ? " (travel and accommodation included: " + C.money(p.travel_fees) + ")" : " (travel and accommodation still to be confirmed)"),
+      "Couple email: " + (p.couple_email || ""), "Couple phone: " + (p.couple_phone || ""),
+      p.planner_name ? "Wedding planner: " + [p.planner_name, p.planner_company, p.planner_email, p.planner_phone].filter(Boolean).join(" · ") : "",
+      p.proposal_url ? "Proposal: " + p.proposal_url : "", p.notes ? "\nNotes:\n" + p.notes : "", "", "Back office: " + location.origin + location.pathname + "#/project/" + p.id].filter(function (x) { return x !== ""; });
+    return "mailto:" + encodeURIComponent(me) + "?subject=" + encodeURIComponent("Quote · " + (p.couple_names || "") + (p.wedding_date ? " · " + C.fmtDate(p.wedding_date) : "")) + "&body=" + encodeURIComponent(L.join("\n"));
+  }
+  function proposalMail(p) {
+    var b = "Hello " + (p.couple_names || "") + ",\n\nThank you for your request. Your personal proposal is ready:\n" + (p.proposal_url || "") + "\n\nIf you are happy with it, you can accept it there and sign the agreement online, in about two minutes. We will confirm your date as soon as the first payment is received. Do not hesitate to write back if you would like to adjust anything.\n\nWarmly,\nChromata Films";
+    return "mailto:" + encodeURIComponent(p.couple_email || "") + "?subject=" + encodeURIComponent("Your Chromata Films proposal") + "&body=" + encodeURIComponent(b);
+  }
+  function validationPanel(p) {
+    var v = p.quote_validated_at, ref = esc(p.quote_ref.slice(0, 6).toUpperCase());
+    return '<section class="cr-card" id="qv"><div class="sh"><h2>Website quote · ' + (v ? "validated" : "to validate") + '</h2><span class="pill ' + (v ? "signed" : "quote") + '">' + (v ? "Validated" : "Not validated") + "</span></div>" +
+      '<p class="hint">Created automatically from the website quotation (ref <strong>' + ref + "</strong>)." + (p.contact_id && byId(S.contacts, p.contact_id) ? ' <a href="#/contacts/' + p.contact_id + '">Open the contact card</a>.' : "") + "</p>" +
+      (v ? '<p class="hint"><strong>Validated on ' + esc(C.fmtDate(v.slice(0, 10))) + ".</strong> The signing button now shows on their proposal page. Email them the proposal, or create and send the contract yourself below.</p>"
+         : '<p class="hint"><strong>The couple cannot sign yet.</strong> Check the details and the total (add travel or accommodation if needed, then Save), pick the bank account, and validate. Only then does the signing button appear on their proposal page.</p>') +
+      (p.quote_verified === false ? '<p class="hint" style="color:var(--bad)">The database could not re-check the total of this quote yet (open the back office once after updating it), so online signing stays closed for it.</p>' : "") +
+      '<div class="acts">' + (v ? '<a class="btn" href="' + esc(proposalMail(p)) + '">Email the proposal to the couple</a><button class="btn ghost" id="qWithdraw" type="button">Withdraw validation</button>' : '<button class="btn" id="qValidate" type="button">Validate the quote</button>') +
+      (p.proposal_url ? '<button class="btn ghost" id="qCopy" type="button">Copy proposal link</button>' : "") + "</div></section>";
+  }
+  function wireValidation(p) {
+    var go = $("#qValidate"), wd = $("#qWithdraw"), cp = $("#qCopy");
+    if (go) go.onclick = function () {
+      var acct = p.bank_account || "EUR", msg = "Validate this quote at " + (p.total ? C.money(p.total) : "an unset total") + (p.travel_fees == null ? ", travel and accommodation NOT filled in yet" : ", travel and accommodation included") + " (bank account: " + acct + ")? The couple will then be able to sign online.";
+      if (!C.bankFor(S.settings, acct)) msg += "\n\nWarning: the " + acct + " bank details are empty in Settings, so they still cannot sign until you add them.";
+      if (!confirm(msg)) return;
+      api.saveProject({ id: p.id, quote_validated_at: new Date().toISOString() }).then(reload).then(function () { toast("Quote validated"); render(); }).catch(fail);
+    };
+    if (wd) wd.onclick = function () { if (confirm("Withdraw the validation? The signing button disappears from their proposal page.")) api.saveProject({ id: p.id, quote_validated_at: null }).then(reload).then(function () { toast("Validation withdrawn"); render(); }).catch(fail); };
+    if (cp) cp.onclick = function () { (navigator.clipboard ? navigator.clipboard.writeText(p.proposal_url) : Promise.reject()).then(function () { toast("Proposal link copied"); }, function () { prompt("Copy this link:", p.proposal_url); }); };
   }
 
   /* ---------------- contracts inside a project ---------------- */
@@ -313,7 +368,7 @@
   }
   function reminderMail(p, x) {
     var c = byId(S.contracts, x.contract_id) || {}, to = c.client_email || p.couple_email || "";
-    var b = "Hello " + (c.client_names || p.couple_names || "") + ",\n\nA friendly reminder: the payment below is now due for your wedding film.\n\n" + x.label + "\nAmount: " + C.money(x.amount) + "\nDue date: " + C.fmtDate(x.due_date) + "\n\nBank details:\n" + (S.settings.bank_details || "[see clause 13 of your agreement]") + "\n\nPlease note that, as per clause 11 of the agreement, interest of 5% per annum applies to late payments. If you have already paid, thank you and please ignore this message.\n\nWarmly,\nChromata Films";
+    var b = "Hello " + (c.client_names || p.couple_names || "") + ",\n\nA friendly reminder: the payment below is now due for your wedding film.\n\n" + x.label + "\nAmount: " + C.money(x.amount) + "\nDue date: " + C.fmtDate(x.due_date) + "\n\nBank details:\n" + (C.bankFor(S.settings, p.bank_account) || "[see clause 13 of your agreement]") + "\n\nPlease note that, as per clause 11 of the agreement, interest of 5% per annum applies to late payments. If you have already paid, thank you and please ignore this message.\n\nWarmly,\nChromata Films";
     return "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent("Payment reminder · " + (p.couple_names || "")) + "&body=" + encodeURIComponent(b);
   }
   function wirePayments(p) {
@@ -343,6 +398,16 @@
     window.scrollTo(0, 0);
   }
 
+  /* The database re-computes every website quote and builds contracts itself, so it needs a copy of the price list
+     (js/quote-core.js) and of the default contract text. Refreshed here each time the studio opens the back office. */
+  function syncQuoteSettings() {
+    if (api.kind !== "supabase" || !window.CQ || !CQ.priceTable) return;
+    var want = { quote_prices: JSON.stringify(CQ.priceTable()), contract_template_default: C.DEFAULT_TEMPLATE }, diff = {};
+    Object.keys(want).forEach(function (k) { if (S.settings[k] !== want[k]) diff[k] = want[k]; });
+    if (!Object.keys(diff).length) return;
+    api.saveSettings(diff).then(function () { Object.assign(S.settings, diff); }).catch(function () {});
+  }
+
   function boot() {
     api.session().then(function (u) {
       S.user = u;
@@ -351,7 +416,7 @@
       return m.then(function (st) {
         S.mfa = st;
         if (st.needsChallenge) { mfaView(); return; }
-        return reload().then(function () { render(); });
+        return reload().then(function () { render(); syncQuoteSettings(); });
       });
     }).catch(function (e) { app.innerHTML = '<div class="cr-login"><div class="cr-card"><h1>Connection problem</h1><p class="err">' + esc(e.message) + "</p></div></div>"; });
   }

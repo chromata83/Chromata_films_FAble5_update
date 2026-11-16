@@ -3,7 +3,6 @@
 //  1. PAYMENT REMINDERS  an overdue, unpaid payment of a signed contract -> email to the client (studio in copy)
 //  2. QUOTE FOLLOW-UP    quote sent and still unanswered after 5 days (then 12 days) -> polite follow-up
 //  3. COUNTDOWN          90 / 60 / 30 days before a signed wedding -> "send us your timeline" email
-//  4. THANK-YOU          the day after the wedding -> thank-you email
 //
 // Every email goes out once only (table email_log), only to projects with "automatic emails" ticked.
 // The wording comes from the back office, Settings > Automatic emails (the defaults below are used otherwise).
@@ -23,7 +22,6 @@ const STUDIO = "contact@chromatafilms.com";
 
 const DEFAULTS: Record<string, string> = {
   email_tpl_followup: "Subject: Your wedding film with Chromata Films\n\nHello {{name}},\n\nI wanted to follow up on the proposal we sent for your wedding on {{date}} at {{venue}}. Do you have any questions, or would you like us to adjust anything? We would love to reserve your date for you.\n\nWarmly,\nChromata Films",
-  email_tpl_thanks: "Subject: Thank you, {{name}}\n\nHello {{name}},\n\nThank you for letting us be part of your wedding. It was a real privilege to film it. We are now starting the edit and will keep you posted on the delivery of your films.\n\nWarmly,\nChromata Films",
   email_tpl_before: "Subject: {{days}} days until your wedding\n\nHello {{name}},\n\nYour wedding at {{venue}} is only {{days}} days away. To prepare the filming perfectly, could you send us your final timeline, the list of key moments you do not want us to miss, and the contacts of your planner and venue?\n\nWarmly,\nChromata Films",
 };
 
@@ -46,7 +44,7 @@ Deno.serve(async (req) => {
   if (req.headers.get("authorization") !== `Bearer ${Deno.env.get("CRON_SECRET")}`) return new Response("Forbidden", { status: 403 });
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const now = new Date(), today = now.toISOString().slice(0, 10), todayN = dayNum(today);
-  const report = { paymentReminders: 0, followups: 0, countdown: 0, thanks: 0, errors: [] as string[] };
+  const report = { paymentReminders: 0, followups: 0, countdown: 0, errors: [] as string[] };
 
   const { data: st } = await db.from("settings").select("key,value");
   const S: Record<string, string> = {};
@@ -65,7 +63,7 @@ Deno.serve(async (req) => {
     const dueBefore = new Date(Date.now() - PAY_GRACE_DAYS * 864e5).toISOString().slice(0, 10);
     const repeatBefore = new Date(Date.now() - PAY_REPEAT_DAYS * 864e5).toISOString();
     const { data: pays, error } = await db.from("payments")
-      .select("id,label,amount,due_date,reminders_count,last_reminder_at,contract:contracts(status,client_names,client_email),project:projects(couple_names,couple_email)")
+      .select("id,label,amount,due_date,reminders_count,last_reminder_at,contract:contracts(status,client_names,client_email),project:projects(couple_names,couple_email,bank_account)")
       .is("paid_at", null).eq("remind", true).lt("due_date", dueBefore).lt("reminders_count", PAY_MAX_REMINDERS);
     if (error) report.errors.push("payments: " + error.message);
     for (const p of pays ?? []) {
@@ -75,7 +73,8 @@ Deno.serve(async (req) => {
       if (c?.status !== "signed" || !to) continue;
       if (p.last_reminder_at && p.last_reminder_at > repeatBefore) continue;
       const name = esc(c.client_names || pr?.couple_names || "");
-      const bank = esc(S.bank_details || "See clause 13 of your agreement.").replace(/\n/g, "<br>");
+      const bankKey = pr?.bank_account === "CHF" ? "bank_details_chf" : pr?.bank_account === "USD" ? "bank_details_usd" : "bank_details";   // the account chosen in the project
+      const bank = esc(S[bankKey] || "See clause 13 of your agreement.").replace(/\n/g, "<br>");
       const html = wrap(`<p>Hello ${name},</p><p>A friendly reminder: the following payment for your wedding film is now overdue.</p>
         <p><strong>${esc(p.label)}</strong><br>Amount: <strong>${money(p.amount)}</strong><br>Due date: ${dateLong(p.due_date)}</p>
         <p><strong>Bank details</strong><br>${bank}</p>
@@ -87,7 +86,7 @@ Deno.serve(async (req) => {
     }
   }
 
-  // ---------- 2-4. emails to couples ----------
+  // ---------- 2-3. emails to couples ----------
   const { data: projects } = await db.from("projects")
     .select("id,couple_names,couple_email,wedding_date,venue,status,quote_sent_at,auto_emails").eq("auto_emails", true).not("couple_email", "is", null);
   const { data: logs } = await db.from("email_log").select("project_id,kind");
@@ -115,10 +114,6 @@ Deno.serve(async (req) => {
       for (const mark of COUNTDOWN) {
         if (left <= mark && left > mark - 7 && (await once(p, `before${mark}`, "email_tpl_before", { ...vars, days: String(left) }))) report.countdown++;
       }
-    }
-    if (["payment", "booked", "delivered"].includes(p.status) && p.wedding_date) {
-      const left = dayNum(p.wedding_date) - todayN;
-      if (left <= -1 && left >= -3 && (await once(p, "thanks", "email_tpl_thanks", vars))) report.thanks++;
     }
   }
   return new Response(JSON.stringify({ today, ...report }), { headers: { "Content-Type": "application/json" } });

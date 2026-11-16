@@ -41,9 +41,9 @@ which is good for trying it out but is *not* saved anywhere else.
   Authentication > Users > your user > **Remove MFA factors**). Then sign in with the password only and turn 2FA back on.
 
 ## 5. Automatic emails and payment reminders (optional, about 15 minutes)
-One daily job does four things: it emails the client when a **payment is late** (2 days after the due date, then weekly,
+One daily job does three things: it emails the client when a **payment is late** (2 days after the due date, then weekly,
 4 reminders at most), **follows up a quote** that was not answered (after 5 and 12 days), sends a **countdown** email
-(90 / 60 / 30 days before the wedding) and a **thank-you** the day after. Each email goes out once, only to projects with
+(90 / 60 / 30 days before the wedding). Each email goes out once, only to projects with
 "automatic emails" ticked, and `contact@chromatafilms.com` is in copy. Rules are at the top of `daily-jobs/index.ts`;
 the wording is in Settings > Automatic emails.
 
@@ -74,7 +74,21 @@ Your options, signed dates, declined dates, payments due and quote follow-ups ap
    Google refreshes subscribed calendars every few hours. Keep the link private; "Make a new link" cancels the old one.
    (Without this step you can still use **Download .ics** in the Calendar page.)
 
-## 7. Use it
+## 7. Quotation page linked to the back office (already built in)
+Re-run the whole `docs/crm/schema.sql` in the SQL Editor once (it is safe to re-run; the last block adds this feature), then open the back office once
+(it stores the price list and the default contract text in the database; it does this by itself at each sign-in).
+* A couple **or a wedding planner** who presses *Send to Chromata's team* on the quotation page creates, by itself:
+  a **project** "Quote sent" (its date shows on the calendar as an option), and a **contact card** with every detail of the quote.
+  The dashboard lists them under "New quotes from the website". The team still gets its usual email.
+* **A couple can never sign on their own.** You get the usual email, open the project (Projects, or the dashboard block "New quotes from the website"),
+  check the details, fill in **Travel / accommodation fees** (the total updates by itself and the couple's proposal then reads "all travel and accommodation fees included", no extra line), pick the **bank account** to give them (EUR, CHF or USD, filled in Settings), then press **Validate the quote**.
+  Only then does **Accept and sign online** appear on their proposal page; use "Email the proposal to the couple" to answer them. When they sign,
+  the project becomes "Awaiting payment", the 50% / 50% payments are created, and you get an email. You can also withdraw the validation.
+* A quote you create yourself in the CRM has a button **Email me this quote** (an email to the studio address with all the details).
+* Prices are never trusted from the browser: the database recomputes every total from the choices. Online signing stays closed until
+  the bank details of the chosen account are saved, and can be switched off in Settings > Quotation page and online signing.
+
+## 8. Use it
 * `https://www.chromatafilms.com/crm.html` → sign in (password, then your 2FA code).
 * **New project** (paste a couple's "See my proposal" link to pre-fill it) → **Create contract** → review →
   **Send for signature** → **Copy link** or **Email it**. The couple fills in their details, draws their signature and signs.

@@ -27,6 +27,10 @@
 .px-total .tv { display: block; font-size: clamp(28px, 3vw, 40px); font-weight: 600; color: var(--accent); margin-top: 4px; letter-spacing: .01em; }
 .px-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
 .px-hero__cta .btn-main, .px-hero__cta .btn-ghost { display: inline-block; text-decoration: none; }
+.px-hero__cta button.btn-main, .px-hero__cta button.btn-ghost { cursor: pointer; font-family: inherit; }
+.px-signmsg { margin-top: 18px; min-height: 1.4em; font-size: 13.5px; line-height: 1.6; color: var(--accent); max-width: 460px; }
+.px-signnote { margin-top: 8px; font-size: 11.5px; color: var(--dim); max-width: 460px; line-height: 1.7; }
+.px-wrap--center .px-signmsg, .px-wrap--center .px-signnote { margin-inline: auto; text-align: center; }
 .px-ref { margin-top: 30px; font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--dim); }
 .px-hero__img { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: flex-end; background: var(--panel); }
 .px-hero__img .hero { max-width: 100%; max-height: 100vh; max-height: 100svh; width: auto; height: auto; object-fit: contain; margin: auto 0 auto auto; animation: gf 1s ease both; }
@@ -103,3 +107,4 @@
   .srow.grand { border-top-color: #8D6430 !important; }
   .px-foot { border-color: #ddd; color: var(--ink-soft); margin-top: 10mm; }
 }
+.px-hero__cta [hidden], .px-signnote[hidden] { display: none !important; }

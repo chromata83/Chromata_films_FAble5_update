@@ -4,7 +4,7 @@
   var A = window.CRMApp, S = A.S, api = A.api, C = A.C, T = A.T, esc = A.esc, eur = A.eur, $ = A.$, $$ = A.$$, shell = A.shell, toast = A.toast, fail = A.fail, byId = A.byId, iso = A.iso;
   var views = A.views;
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  var KINDS = { planner: "Wedding planner", venue: "Venue", supplier: "Supplier", other: "Other" };
+  var KINDS = { planner: "Wedding planner", client: "Couple / prospect", venue: "Venue", supplier: "Supplier", other: "Other" };
   var TAGS = { key: "Key contact", interesting: "Interesting", polite: "Keep polite", blacklist: "Blacklist" };
   var again = function () { return A.reload().then(A.render); };
 
@@ -23,7 +23,7 @@
       '<p class="hint">Wedding planners, venues and suppliers: tag each contact, filter the book, and pick a planner directly in a project.</p>' +
       '<div class="bar"><div class="tabs"><select id="ctKind">' + opts(KINDS, CF.kind, "All types") + '</select><select id="ctTag">' + opts(TAGS, CF.tag, "All tags") + '</select><label class="auto"><input type="checkbox" id="ctFu"' + (CF.fu ? " checked" : "") + '> to follow up only</label></div><input id="q" type="search" placeholder="Search…" value="' + esc(CF.q) + '"></div>' +
       '<section class="cr-card tbl">' + (rows.length ? rows.map(function (c) {
-        var ps = S.projects.filter(function (p) { return p.planner_id === c.id; }), rev = ps.filter(function (p) { return A.isSigned(p.status); }).reduce(function (s, p) { return s + (+p.total || 0); }, 0);
+        var ps = S.projects.filter(function (p) { return p.planner_id === c.id || p.contact_id === c.id; }), rev = ps.filter(function (p) { return A.isSigned(p.status); }).reduce(function (s, p) { return s + (+p.total || 0); }, 0);
         return '<a class="row" href="#/contacts/' + c.id + '"><span class="d">' + esc(KINDS[c.kind] || "") + '</span><span class="t">' + esc(c.name) + "<small>" + esc([c.company, c.email, c.phone].filter(Boolean).join(" · ")) + "</small></span><span class=\"pl\">" + (ps.length ? ps.length + " project" + (ps.length > 1 ? "s" : "") + (rev ? " · " + eur(rev) : "") : "") + "</span>" + (c.follow_up ? '<span class="pill quote">To follow up</span>' : "") + tagPill(c.tag) + "</a>";
       }).join("") : '<p class="empty">No contact yet. Add your wedding planners and favourite venues here.</p>') + "</section>");
     $("#ctKind").onchange = function (e) { CF.kind = e.target.value; views.contacts(); };
@@ -48,7 +48,7 @@
 
   function contactForm(c) {
     if (!c) { location.hash = "#/contacts"; return; }
-    var isNew = !c.id, ps = isNew ? [] : S.projects.filter(function (p) { return p.planner_id === c.id; });
+    var isNew = !c.id, ps = isNew ? [] : S.projects.filter(function (p) { return p.planner_id === c.id || p.contact_id === c.id; });
     var inp = function (n, l, t, v) { return '<label class="fld"><span>' + l + '</span><input name="' + n + '" type="' + (t || "text") + '" value="' + esc(v == null ? (c[n] == null ? "" : c[n]) : v) + '"' + (n === "name" ? " required" : "") + "></label>"; };
     var sel = function (n, l, obj) { return '<label class="fld"><span>' + l + '</span><select name="' + n + '">' + Object.keys(obj).map(function (k) { return '<option value="' + k + '"' + ((c[n] || (n === "kind" ? "planner" : "interesting")) === k ? " selected" : "") + ">" + obj[k] + "</option>"; }).join("") + "</select></label>"; };
     shell("contacts", '<header class="top"><h1>' + (isNew ? "New contact" : esc(c.name)) + "</h1>" + (isNew ? "" : tagPill(c.tag)) + '</header><form id="cf" class="cr-card"><div class="grid2">' +
@@ -117,7 +117,8 @@
   };
 
   /* =================== settings =================== */
-  var EMAIL_TPLS = [["email_tpl_followup", "Quote follow-up (automatic, if the quote is not answered)"], ["email_tpl_before", "Countdown (automatic, 90 / 60 / 30 days before the wedding)"], ["email_tpl_thanks", "Thank-you (automatic, the day after the wedding)"]];
+  var BANKS = [["bank_details", "EUR account (default)"], ["bank_details_chf", "CHF account"], ["bank_details_usd", "USD account"]];
+  var EMAIL_TPLS = [["email_tpl_followup", "Quote follow-up (automatic, if the quote is not answered)"], ["email_tpl_before", "Countdown (automatic, 90 / 60 / 30 days before the wedding)"]];
   views.settings = function () {
     var tpl = S.settings.contract_template || C.DEFAULT_TEMPLATE, mfa = S.mfa || { factors: [] };
     var mfaHTML = !api.mfa || !api.mfa.available ? '<p class="hint">Available once the database is connected (docs/crm/SETUP.md).</p>' :
@@ -127,7 +128,14 @@
       '<p class="hint" style="margin-top:12px"><strong>Safety net:</strong> scan the same QR code on two devices (or keep the secret key in a safe place). If you ever lose access, tell Claude in this project and it will give you the one-line reset (<code>docs/crm/disable-2fa.sql</code>).</p>';
     shell("settings", '<header class="top"><h1>Settings</h1></header>' +
       '<section class="cr-card"><h2>Two-factor authentication</h2>' + mfaHTML + "</section>" +
-      '<section class="cr-card"><h2>Bank details</h2><p class="hint">Printed in clause 13 of every contract and in payment reminders. Kept in the private database, never in the public site files.</p><label class="fld"><textarea id="sBank" rows="6" placeholder="Account holder: ...&#10;IBAN: ...&#10;Swift/BIC: ...&#10;Address: ...">' + esc(S.settings.bank_details || "") + '</textarea></label></section>' +
+      '<section class="cr-card"><h2>Quotation page and online signing</h2><p class="hint">Quotes sent from the website appear by themselves (calendar option, contact card, project), but a couple can never sign on their own: you review the quote in its project and press <strong>Validate the quote</strong>. Only then does the signing button appear on their proposal page, and the agreement is built from the contract template below. The database re-computes every price itself.</p>' +
+      (api.kind === "supabase" ? '<label class="auto"><input type="checkbox" id="sOnline"' + (S.settings.online_signing === "0" ? "" : " checked") + '> Allow online signing for quotes I have validated (untick to switch it off completely)</label>' +
+        '<ul class="chk"><li class="' + (S.settings.quote_prices ? "ok" : "no") + '">' + (S.settings.quote_prices ? "Price list is up to date in the database" : "Price list not stored yet: reload this page once") + "</li>" +
+        '<li class="' + (S.settings.bank_details ? "ok" : "no") + '">' + (S.settings.bank_details ? "EUR bank details are set" : "EUR bank details missing: online signing stays closed until you add them below") + "</li>" +
+        '<li class="' + (S.settings.studio_signature ? "ok" : "no") + '">' + (S.settings.studio_signature ? "Studio signature is set" : "Studio signature missing (optional, but better on a contract)") + "</li></ul>"
+        : '<p class="hint">Available once the database is connected.</p>') + "</section>" +
+      '<section class="cr-card"><h2>Bank details</h2><p class="hint">Three accounts. In each project you choose which one to give the couple: it is printed in clause 13 of the contract and in the payment reminders. Kept in the private database, never in the public site files.</p>' +
+      BANKS.map(function (b) { return '<label class="fld" style="margin-top:12px"><span>' + b[1] + '</span><textarea data-bank="' + b[0] + '" rows="5" placeholder="Account holder: ...&#10;IBAN: ...&#10;Swift/BIC: ...&#10;Bank address: ...">' + esc(S.settings[b[0]] || "") + "</textarea></label>"; }).join("") + "</section>" +
       '<section class="cr-card"><h2>Studio signature</h2><p class="hint">Drawn once, then added to every contract you send. Draw it with the mouse or your finger.</p><div class="sigset">' + (S.settings.studio_signature ? '<img alt="Current signature" src="' + esc(S.settings.studio_signature) + '">' : "") +
       '<canvas id="sPad" class="sg-pad" aria-label="Draw the studio signature"></canvas></div><div class="acts"><button class="btn ghost" id="sClear" type="button">Clear drawing</button><button class="btn ghost" id="sRemove" type="button">Remove saved signature</button></div></section>' +
       '<section class="cr-card"><h2>Production checklist</h2><p class="hint">One step per line. It is the list of the Tracker page and of each project.</p><label class="fld"><textarea id="sCheck" rows="9">' + esc(S.settings.checklist || T.DEFAULT_CHECKLIST) + "</textarea></label></section>" +
@@ -142,8 +150,9 @@
     $("#sRemove").onclick = function () { cleared = true; var i = $(".sigset img"); if (i) i.remove(); toast("Will be removed when you save"); };
     $("#sReset").onclick = function () { if (confirm("Replace the text below with the default template?")) $("#sTpl").value = C.DEFAULT_TEMPLATE; };
     $("#sSave").onclick = function () {
-      var o = { bank_details: $("#sBank").value.trim(), contract_template: $("#sTpl").value === C.DEFAULT_TEMPLATE ? "" : $("#sTpl").value,
+      var o = { online_signing: $("#sOnline") && !$("#sOnline").checked ? "0" : "1", contract_template: $("#sTpl").value === C.DEFAULT_TEMPLATE ? "" : $("#sTpl").value,
         checklist: $("#sCheck").value.trim() === T.DEFAULT_CHECKLIST ? "" : $("#sCheck").value.trim() };
+      $$("[data-bank]").forEach(function (t) { o[t.getAttribute("data-bank")] = t.value.trim(); });
       $$("[data-tpl]").forEach(function (t) { var k = t.getAttribute("data-tpl"); o[k] = t.value.trim() === T.DEFAULT_EMAILS[k] ? "" : t.value.trim(); });
       if (!pad.isEmpty()) o.studio_signature = pad.png(); else if (cleared) o.studio_signature = "";
       api.saveSettings(o).then(A.reload).then(function () { toast("Settings saved"); views.settings(); }).catch(fail);

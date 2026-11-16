@@ -61,6 +61,8 @@
       cur = Math.max(0, Math.min(d.cur | 0, STEPS.length - 1));
       maxStep = Math.max(cur, d.maxStep | 0);
       sent = !!d.sent;
+      if (A.nonce && A.nonce.length < 10) A.nonce = "";
+      if (A.role !== "planner") A.role = "couple";
     }
   } catch (e) {}
   var save = function () { try { sessionStorage.setItem(KEY, JSON.stringify({ A: A, cur: cur, maxStep: maxStep, sent: sent })); } catch (e) {} };
@@ -73,7 +75,8 @@
   var dateOK = function () { return Q.ISO.test(A.date || "") && A.date >= Q.todayISO(); };
   var detailsOK = function () {
     return A.names.trim().length >= 2 && validEmail(A.email) && dateOK() &&
-           A.place.trim().length >= 2 && A.venue.trim().length >= 2;
+           A.place.trim().length >= 2 && A.venue.trim().length >= 2 &&
+           (A.role !== "planner" || A.planner.trim().length >= 2);
   };
 
   function priceLabel(step, o) {
@@ -159,9 +162,14 @@
         return '<div class="fld"><label for="qx_' + id + '">' + label + ' <span class="req" aria-hidden="true">*</span></label><input id="qx_' + id + '" type="' + type + '" placeholder="' + ph + '" value="' + esc(val) + '" required aria-required="true" ' + (extra || "") + ">" +
                (id === "email" ? '<div class="hint">Please enter a valid email so we can reach you.</div>' : "") + "</div>";
       };
+      var pl = A.role === "planner";
       html = '<div class="kicker">' + esc(step.chapter) + '</div><div class="question">' + esc(step.q) + '</div><div class="fields">' +
-        f("names", "Names", "text", "Emma &amp; James", A.names, 'autocomplete="name" maxlength="80"') +
-        f("email", "Email", "email", "you@email.com", A.email, 'autocomplete="email" maxlength="120"') +
+        '<div class="roles" role="radiogroup" aria-label="You are">' +
+          '<button type="button" role="radio" aria-checked="' + !pl + '" class="' + (pl ? "" : "on") + '" data-role="couple">We are the couple</button>' +
+          '<button type="button" role="radio" aria-checked="' + pl + '" class="' + (pl ? "on" : "") + '" data-role="planner">I am a wedding planner</button></div>' +
+        (pl ? f("planner", "Your name and company", "text", "Anna, Perfect Events", A.planner, 'autocomplete="organization" maxlength="100"') : "") +
+        f("names", pl ? "Couple&#39;s names" : "Names", "text", "Emma &amp; James", A.names, 'autocomplete="' + (pl ? "off" : "name") + '" maxlength="80"') +
+        f("email", pl ? "Your email" : "Email", "email", "you@email.com", A.email, 'autocomplete="email" maxlength="120"') +
         f("date", "Wedding date", "date", "", A.date, 'min="' + Q.todayISO() + '"') +
         f("place", "Location", "text", "Cap d&#39;Antibes, France", A.place, 'autocomplete="off" maxlength="100"') +
         f("venue", "Venue", "text", "Villa Ephrussi de Rothschild", A.venue, 'autocomplete="off" maxlength="100"') +
@@ -243,8 +251,12 @@
   function bind(step) {
     if (step.type === "single" || step.type === "multi") bindChoices(step);
     if (step.type === "details") {
-      [["names", "names"], ["email", "email"], ["date", "date"], ["place", "place"], ["venue", "venue"]].forEach(function (p) {
+      $$(".roles button", mid).forEach(function (b) {
+        b.addEventListener("click", function () { A.role = b.getAttribute("data-role") === "planner" ? "planner" : "couple"; save(); render(false); });
+      });
+      [["names", "names"], ["email", "email"], ["date", "date"], ["place", "place"], ["venue", "venue"], ["planner", "planner"]].forEach(function (p) {
         var el = $("#qx_" + p[0]);
+        if (!el) return;
         el.addEventListener("input", function () {
           A[p[1]] = el.value; cont.disabled = !detailsOK(); save();
           if (p[0] === "email") el.removeAttribute("aria-invalid");
@@ -340,12 +352,15 @@
     fd.append("_subject", "Quotation request · " + A.names + " · " + eur(tot));
     fd.append("_template", "table"); fd.append("_captcha", "false");
     fd.append("name", A.names); fd.append("email", A.email);
+    if (A.role === "planner") fd.append("Sent by wedding planner", A.planner);
     fd.append("Wedding date", Q.fmtDate(A.date) || "Not given"); fd.append("Location", A.place || "Not given"); fd.append("Venue", A.venue || "Not given");
     fd.append("Total investment", eur(tot));
     fd.append("Selections", Q.recapText(A));
     fd.append("Proposal page", url);
     var cal = Q.calendarLink(A, url);
     if (cal) fd.append("Add the date to Google Calendar", cal);
+    /* Also drop the quote into the studio's back office (calendar option, contact card, project). Never blocks the email. */
+    if (window.CQLink && window.CQLink.enabled) window.CQLink.submit(A, url).catch(function () {});
     fetch("https://formsubmit.co/ajax/" + Q.EMAIL, { method: "POST", headers: { Accept: "application/json" }, body: fd })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (x) {
@@ -354,7 +369,7 @@
       })
       .catch(function () {
         btn.disabled = false; btn.textContent = label;
-        var body = "Hello Chromata Films,\n\nHere is my selection:\n\n" + Q.recapText(A) + "\n\nNames: " + A.names + "\nWedding date: " + Q.fmtDate(A.date) + "\nLocation: " + A.place + "\nVenue: " + A.venue + "\n\nMy proposal: " + url;
+        var body = "Hello Chromata Films,\n\nHere is my selection:\n\n" + Q.recapText(A) + "\n\nNames: " + A.names + (A.role === "planner" ? "\nWedding planner: " + A.planner : "") + "\nWedding date: " + Q.fmtDate(A.date) + "\nLocation: " + A.place + "\nVenue: " + A.venue + "\n\nMy proposal: " + url;
         msg.innerHTML = '<p class="sentmsg err"><span class="big">That didn’t go through</span>Something went wrong sending your selection. <a href="mailto:' + Q.EMAIL + "?subject=" + encodeURIComponent("Quotation request · " + A.names) + "&body=" + encodeURIComponent(body) + '">Send it from your own email</a> and we’ll take it from there.</p>';
       });
   }

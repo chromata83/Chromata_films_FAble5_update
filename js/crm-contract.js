@@ -100,7 +100,12 @@
 
   function fill(tpl, v) { return String(tpl).replace(/\{\{(\w+)\}\}/g, function (m, k) { return v[k] != null ? v[k] : m; }); }
 
-  /* settings = { contract_template, bank_details } (from the database; both optional) */
+  /* The studio has three bank accounts (Settings): EUR (default), CHF and USD. Each project says which one to give. */
+  var BANK_KEYS = { EUR: "bank_details", CHF: "bank_details_chf", USD: "bank_details_usd" };
+  function bankKey(account) { return BANK_KEYS[account] || BANK_KEYS.EUR; }
+  function bankFor(settings, account) { var t = (settings || {})[bankKey(account)]; return t && t.trim() ? t.trim() : ""; }
+
+  /* settings = { contract_template, bank_details, bank_details_chf, bank_details_usd } (from the database; all optional) */
   function build(p, amount, settings) {
     settings = settings || {};
     var fee = +amount || +p.total || 0, dep = Math.round(fee * 50) / 100, bal = Math.round((fee - dep) * 100) / 100;
@@ -109,7 +114,7 @@
     var body = fill(settings.contract_template && settings.contract_template.trim() ? settings.contract_template : DEFAULT_TEMPLATE, {
       couple: p.couple_names || "[couple names]", collection: p.collection || "[collection]", date: fmtDate(p.wedding_date), venue: p.venue || "[venue]", location: p.location || "",
       total: fee ? money(fee) : "[amount]", deposit: fee ? money(dep) : "[amount]", balance: fee ? money(bal) : "[amount]", balance_due: due,
-      bank_details: settings.bank_details && settings.bank_details.trim() ? settings.bank_details.trim() : "[Bank details: add them in the back office, Settings]"
+      bank_details: bankFor(settings, p.bank_account) || "[Bank details: add them in the back office, Settings]"
     });
     return { title: "Wedding film agreement · " + (p.couple_names || "Clients"), body: body };
   }
@@ -161,5 +166,5 @@
     };
   }
 
-  w.CRMContract = { DEFAULT_TEMPLATE: DEFAULT_TEMPLATE, build: build, render: render, esc: esc, eur: eur, money: money, fmtDate: fmtDate, countries: countries, signaturePad: signaturePad };
+  w.CRMContract = { DEFAULT_TEMPLATE: DEFAULT_TEMPLATE, bankKey: bankKey, bankFor: bankFor, build: build, render: render, esc: esc, eur: eur, money: money, fmtDate: fmtDate, countries: countries, signaturePad: signaturePad };
 })(window);

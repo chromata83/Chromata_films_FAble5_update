@@ -12,6 +12,22 @@
       (c.studio_signature ? '<img class="sg-sigimg" alt="Chromata Films signature" src="' + C.esc(c.studio_signature) + '">' : '<div class="sg-sigimg sg-blank"></div>') + "</div></div>";
   }
 
+  /* A short email to the studio the moment an agreement is signed (same relay as the quotation page).
+     Names, amount and date only: the address and the signature stay in the private database. */
+  function notifyStudio(i, c) {
+    if (api.kind !== "supabase") return;
+    try {
+      var fd = new FormData();
+      fd.append("_subject", "Agreement signed · " + i.names.trim() + (c.wedding_date ? " · " + C.fmtDate(c.wedding_date) : ""));
+      fd.append("_template", "table"); fd.append("_captcha", "false");
+      fd.append("name", i.names.trim()); fd.append("email", i.email.trim());
+      fd.append("Agreement", c.title || ""); fd.append("Amount", c.amount ? C.money(c.amount) : "");
+      fd.append("Wedding date", C.fmtDate(c.wedding_date)); fd.append("Venue", [c.venue, c.location].filter(Boolean).join(", "));
+      fd.append("Next step", "Open the back office (crm.html). The project is now Awaiting payment and the payment schedule has been created.");
+      fetch("https://formsubmit.co/ajax/contact@chromatafilms.com", { method: "POST", headers: { Accept: "application/json" }, body: fd, keepalive: true }).catch(function () {});
+    } catch (e) {}
+  }
+
   if (!tk || tk.length < 16) { msg("Link not valid", "This signing link is incomplete. Please use the link from your email, or write to us."); return; }
 
   api.publicContract(tk).then(function (c) {
@@ -58,7 +74,8 @@
     $("sgForm").addEventListener("submit", function (e) {
       e.preventDefault(); if (go.disabled) return;
       go.disabled = true; go.textContent = "Signing…"; err.textContent = "";
-      api.sign(tk, info(), pad.png(), navigator.userAgent).then(function () { location.reload(); })
+      var who = info();
+      api.sign(tk, who, pad.png(), navigator.userAgent).then(function () { notifyStudio(who, c); location.reload(); })
         .catch(function (x) { err.textContent = "We could not record your signature: " + x.message + ". Please try again or write to us."; go.textContent = "Sign the agreement"; check(); });
     });
     check();

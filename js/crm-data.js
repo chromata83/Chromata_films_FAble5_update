@@ -8,14 +8,14 @@
   var DEMO_KEY = "crm-demo-v3";
   var F = {
     projects: ["status", "couple_names", "couple_email", "couple_phone", "wedding_date", "venue", "location", "collection", "total", "planner_id",
-      "planner_name", "planner_company", "planner_email", "planner_phone", "proposal_url", "notes", "quote_sent_at", "auto_emails", "tracker", "films"],
+      "planner_name", "planner_company", "planner_email", "planner_phone", "contact_id", "travel_fees", "bank_account", "quote_validated_at", "proposal_url", "notes", "quote_sent_at", "auto_emails", "tracker", "films"],
     contracts: ["project_id", "title", "body", "amount", "status", "sent_at", "studio_signature"],
     payments: ["paid_at", "remind"],
     contacts: ["kind", "name", "company", "email", "phone", "website", "tag", "follow_up", "next_step_date", "notes"],
     expenses: ["spent_on", "label", "category", "amount", "receipt_url", "project_id"]
   };
   var DEFAULTS = {
-    projects: function () { return { status: "lead", films: [], tracker: {}, auto_emails: true }; },
+    projects: function () { return { status: "lead", films: [], tracker: {}, auto_emails: true, bank_account: "EUR" }; },
     contacts: function () { return { kind: "planner", tag: "interesting", follow_up: false }; },
     expenses: function () { return {}; }
   };

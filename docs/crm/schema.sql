@@ -8,6 +8,8 @@
 --    second factor: a session that only typed the password cannot read anything.
 --  * Clients are NOT logged in. They open a private signing link; the page calls two narrow functions
 --    (get_contract / sign_contract) that can only see the single contract matching the secret token.
+--  * The website quotation page calls two more narrow functions (submit_quote / accept_quote, bottom of this file):
+--    they can only ADD a quote (never read anything) and every price is recomputed by the database.
 --  * Bank details, templates, the calendar secret and the studio signature live in `settings`,
 --    readable only by the studio (they are NOT in the public website files).
 
@@ -70,7 +72,7 @@ create table if not exists public.projects (
   proposal_url  text,
   notes         text,
   quote_sent_at timestamptz,                         -- when the status became "quote" (drives follow-ups)
-  auto_emails   boolean not null default true,       -- automatic emails to the couple (follow-up, thanks, countdown)
+  auto_emails   boolean not null default true,       -- automatic emails to the couple (follow-up, countdown)
   tracker       jsonb not null default '{}'::jsonb,  -- checklist state: {"Music chosen": {"s": "done", "n": "note"}}
   films         jsonb not null default '[]'::jsonb   -- v2: delivery links (streaming / download)
 );
@@ -150,7 +152,7 @@ create index if not exists expenses_date_idx on public.expenses (spent_on);
 create table if not exists public.email_log (
   id         uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects (id) on delete cascade,
-  kind       text not null,      -- followup1, followup2, thanks, before90, before60, before30
+  kind       text not null,      -- followup1, followup2, before90, before60, before30
   sent_at    timestamptz not null default now(),
   unique (project_id, kind)
 );
@@ -244,3 +246,207 @@ end $$;
 
 revoke all on function public.get_contract(text), public.sign_contract(text, text, text, text, text, text, text) from public;
 grant execute on function public.get_contract(text), public.sign_contract(text, text, text, text, text, text, text) to anon, authenticated;
+
+-- =====================================================================================================
+-- LINK WITH THE WEBSITE QUOTATION PAGE
+--  submit_quote : a couple or a wedding planner sends a quote -> a contact card + a project "Quote sent" (the date
+--                 shows on the calendar as an option) are created automatically.
+--  accept_quote : ONLY after the studio has validated the quote in the back office (projects.quote_validated_at), the couple can accept
+--                 the proposal -> the contract is created from your template and a private signing link is returned.
+--                 When they sign, the project moves to "Awaiting payment" with its payment schedule.
+--  quote_status : tells the proposal page whether the signing button may be shown, and the final total once the studio has
+--                 filled in the travel / accommodation fees (projects.travel_fees, already included in projects.total).
+-- =====================================================================================================
+alter table public.contacts drop constraint if exists contacts_kind_check;
+alter table public.contacts add constraint contacts_kind_check check (kind in ('planner', 'venue', 'supplier', 'client', 'other'));
+alter table public.projects add column if not exists contact_id uuid references public.contacts (id) on delete set null;
+alter table public.projects add column if not exists quote_ref text;                 -- private reference of a quote made on the website
+alter table public.projects add column if not exists quote_synced_at timestamptz;    -- last time the website wrote to this project
+alter table public.projects add column if not exists quote_verified boolean not null default false;   -- total recomputed by the database
+alter table public.projects add column if not exists quote_validated_at timestamptz;  -- the studio validated the quote: only then can the couple sign online
+alter table public.projects add column if not exists bank_account text not null default 'EUR';   -- which bank details go in the contract: EUR, CHF or USD
+alter table public.projects add column if not exists travel_fees numeric;   -- travel / accommodation fees filled in by the studio; already included in `total`
+alter table public.projects drop constraint if exists projects_bank_account_check;
+alter table public.projects add constraint projects_bank_account_check check (bank_account in ('EUR', 'CHF', 'USD'));
+create unique index if not exists projects_quote_ref_idx on public.projects (quote_ref) where quote_ref is not null;
+
+-- "14,500 EUR" (same look as the back office)
+create or replace function public.fmt_money(n numeric) returns text language sql immutable as $$
+  select regexp_replace(regexp_replace(to_char(round(n, 2), 'FM999,999,999,990.00'), '\.00$', ''), '(\.\d)0$', '\1') || ' EUR';
+$$;
+
+-- total of a quote, recomputed from the choices and the price list that the back office keeps in settings.quote_prices
+create or replace function public.quote_total(sel jsonb, tbl jsonb) returns numeric
+language plpgsql immutable as $$
+declare t numeric := 0; k text; q int; o jsonb;
+begin
+  t := t + coalesce((tbl -> 'c' ->> (sel ->> 'c'))::numeric, 0);
+  t := t + coalesce((tbl -> 'w' ->> (sel ->> 'w'))::numeric, 0);
+  t := t + coalesce((tbl -> 'b' ->> (sel ->> 'b'))::numeric, 0);
+  t := t + coalesce((tbl -> 'k' ->> (sel ->> 'k'))::numeric, 0);
+  t := t + coalesce((tbl -> 'p' ->> (sel ->> 'p'))::numeric, 0);
+  if jsonb_typeof(sel -> 'x') = 'array' then
+    for k in select distinct jsonb_array_elements_text(sel -> 'x') loop
+      t := t + coalesce((tbl -> 'x' ->> k)::numeric, 0);
+    end loop;
+  end if;
+  if jsonb_typeof(sel -> 'o') = 'object' then
+    for k in select jsonb_object_keys(sel -> 'o') loop
+      o := tbl -> 'o' -> k;
+      q := coalesce((sel -> 'o' ->> k)::int, 0);
+      if o is not null and q > 0 then
+        t := t + (o ->> 'p')::numeric * least(q, coalesce((o ->> 'm')::int, 1));
+      end if;
+    end loop;
+  end if;
+  return t;
+end $$;
+
+create or replace function public.submit_quote(
+  p_ref text, p_names text, p_email text, p_date text, p_place text, p_venue text,
+  p_role text, p_planner text, p_sel jsonb, p_total numeric, p_recap text, p_url text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare
+  tbl jsonb; d date; tot numeric; coll text; sc text; cid uuid; pr public.projects;
+  planner boolean; names text; v_email text; place text; v_venue text; cname text; url text; recap text; note text; verified boolean := false;
+begin
+  if coalesce(p_ref, '') !~ '^[a-z0-9]{10,16}$' then raise exception 'Invalid reference'; end if;
+  names := left(trim(coalesce(p_names, '')), 160);
+  v_email := left(trim(coalesce(p_email, '')), 160);
+  place := left(trim(coalesce(p_place, '')), 160);
+  v_venue := left(trim(coalesce(p_venue, '')), 160);
+  if length(names) < 2 then raise exception 'Name required'; end if;
+  if v_email !~ '^[^@\s]+@[^@\s]+\.[^@\s]{2,}$' then raise exception 'A valid email is required'; end if;
+  planner := (p_role = 'planner');
+  cname := case when planner then left(trim(coalesce(p_planner, '')), 160) else names end;
+  if length(cname) < 2 then raise exception 'Planner name required'; end if;
+  if coalesce(p_date, '') ~ '^\d{4}-\d{2}-\d{2}$' then
+    begin d := p_date::date; exception when others then d := null; end;
+  end if;
+  url := case when coalesce(p_url, '') ~ '^https?://' then left(p_url, 2000) else null end;
+  recap := left(coalesce(p_recap, ''), 3000);
+  if jsonb_typeof(p_sel) is distinct from 'object' then raise exception 'Invalid selection'; end if;
+
+  select * into pr from public.projects where quote_ref = p_ref for update;
+  if not found and (select count(*) from public.projects where quote_ref is not null and created_at > now() - interval '1 hour') >= 60 then
+    raise exception 'Too many requests, please try again later';
+  end if;
+
+  -- the price: recomputed here from the choices (the browser's own total is only used until the price list is stored)
+  select value::jsonb into tbl from public.settings where key = 'quote_prices' and value <> '';
+  sc := p_sel ->> 'c';
+  if tbl is not null then
+    if coalesce(tbl -> 'c' ->> sc, '') = '' then raise exception 'Invalid selection'; end if;
+    tot := public.quote_total(p_sel, tbl); coll := tbl -> 'n' ->> sc; verified := true;
+  else
+    tot := least(greatest(coalesce(p_total, 0), 0), 500000); coll := initcap(coalesce(sc, '')) || ' collection';
+  end if;
+
+  note := 'Website quotation ' || p_ref || ' · ' || to_char(now() at time zone 'UTC', 'DD Mon YYYY') || E'\n' ||
+          case when planner then 'Sent by wedding planner: ' || cname || E'\n' else '' end ||
+          'Couple: ' || names || E'\n' ||
+          'Wedding date: ' || coalesce(to_char(d, 'DD Mon YYYY'), 'not given') || E'\n' ||
+          'Venue: ' || v_venue || ', ' || place || E'\n' ||
+          'Collection: ' || coll || E'\n' ||
+          'Total: ' || public.fmt_money(tot) || E' (starting prices, travel and accommodation to be confirmed)\n\n' || recap ||
+          case when url is not null then E'\n\nProposal: ' || url else '' end;
+
+  -- contact card (a planner, or the couple); one per email address, each new quote is added to its notes
+  select id into cid from public.contacts
+    where kind = case when planner then 'planner' else 'client' end and lower(email) = lower(v_email) order by created_at limit 1;
+  if cid is null then
+    insert into public.contacts (kind, name, email, tag, follow_up, next_step_date, notes)
+      values (case when planner then 'planner' else 'client' end, cname, v_email, 'interesting', true, current_date + 5, note)
+      returning id into cid;
+  else
+    update public.contacts set follow_up = true, next_step_date = coalesce(next_step_date, current_date + 5),
+      notes = case when position(p_ref in coalesce(notes, '')) > 0 then notes
+                   else coalesce(notes || E'\n\n— — —\n', '') || note end
+      where id = cid;
+  end if;
+
+  if pr.id is null then
+    insert into public.projects (status, couple_names, couple_email, wedding_date, venue, location, collection, total,
+        planner_id, planner_name, planner_email, contact_id, proposal_url, notes, quote_sent_at, quote_ref, quote_synced_at, quote_verified, auto_emails)
+      values ('quote', names, v_email, d, nullif(v_venue, ''), nullif(place, ''), coll, tot,
+        case when planner then cid end, case when planner then cname end, case when planner then v_email end, cid, url, note, now(), p_ref, now(), verified, true);
+  elsif pr.status in ('lead', 'quote') and abs(extract(epoch from (pr.updated_at - coalesce(pr.quote_synced_at, pr.created_at)))) < 2 then
+    -- the studio has not touched this project yet: the couple's latest choices replace the previous ones
+    update public.projects set couple_names = names, couple_email = v_email, wedding_date = d, venue = nullif(v_venue, ''), location = nullif(place, ''),
+        collection = coll, total = tot, proposal_url = url, notes = note, quote_synced_at = now(), quote_verified = verified,
+        planner_id = case when planner then cid end, planner_name = case when planner then cname end, planner_email = case when planner then v_email end, contact_id = cid
+      where id = pr.id;
+  end if;
+  return jsonb_build_object('ok', true);
+end $$;
+
+create or replace function public.accept_quote(p_ref text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare pr public.projects; c public.contracts; s jsonb; tpl text; bank text; bank_key text; fee numeric; dep numeric; due text; v_body text; ctitle text;
+begin
+  if coalesce(p_ref, '') !~ '^[a-z0-9]{10,16}$' then raise exception 'Invalid reference'; end if;
+  select * into pr from public.projects where quote_ref = p_ref for update;
+  if not found then raise exception 'We could not find this proposal. Please reply to us by email.'; end if;
+
+  select * into c from public.contracts where project_id = pr.id and status = 'signed' limit 1;
+  if found then return jsonb_build_object('signed', true); end if;
+  select * into c from public.contracts where project_id = pr.id and status = 'sent' order by created_at desc limit 1;
+  if found then return jsonb_build_object('token', c.token); end if;
+
+  -- nothing can be signed before the studio has reviewed and validated the quote in the back office
+  if pr.quote_validated_at is null then
+    raise exception 'Your proposal is being reviewed by our team. We will come back to you personally very soon, and you will then be able to sign online.';
+  end if;
+  if pr.status not in ('lead', 'quote', 'signature') then raise exception 'This proposal is not open for online signing. Please write to us.'; end if;
+  select coalesce(jsonb_object_agg(key, value), '{}'::jsonb) into s from public.settings
+    where key in ('online_signing', 'bank_details', 'bank_details_chf', 'bank_details_usd', 'contract_template', 'contract_template_default', 'studio_signature');
+  if coalesce(s ->> 'online_signing', '1') = '0' then raise exception 'Online signing is not open for this proposal yet. Please reply to us by email and we will send you the agreement.'; end if;
+  bank_key := case pr.bank_account when 'CHF' then 'bank_details_chf' when 'USD' then 'bank_details_usd' else 'bank_details' end;
+  bank := trim(coalesce(s ->> bank_key, ''));
+  tpl := case when trim(coalesce(s ->> 'contract_template', '')) <> '' then s ->> 'contract_template' else s ->> 'contract_template_default' end;
+  if bank = '' or coalesce(tpl, '') = '' or not pr.quote_verified or coalesce(pr.total, 0) <= 0 then
+    raise exception 'Online signing is not ready yet. Please reply to us by email and we will send you the agreement.';
+  end if;
+  if pr.wedding_date is null or pr.wedding_date < current_date then
+    raise exception 'Please write to us so we can confirm the date of your wedding.';
+  end if;
+
+  -- same wording and tags as the contract builder of the back office (js/crm-contract.js)
+  fee := pr.total; dep := round(fee / 2, 2);
+  due := ' (due ' || to_char(pr.wedding_date - 42, 'FMDD FMMonth YYYY') || ')';
+  v_body := tpl;
+  v_body := replace(v_body, '{{couple}}', coalesce(pr.couple_names, '[couple names]'));
+  v_body := replace(v_body, '{{collection}}', coalesce(pr.collection, '[collection]'));
+  v_body := replace(v_body, '{{date}}', to_char(pr.wedding_date, 'FMDD FMMonth YYYY'));
+  v_body := replace(v_body, '{{venue}}', coalesce(pr.venue, '[venue]'));
+  v_body := replace(v_body, '{{location}}', coalesce(pr.location, ''));
+  v_body := replace(v_body, '{{total}}', public.fmt_money(fee));
+  v_body := replace(v_body, '{{deposit}}', public.fmt_money(dep));
+  v_body := replace(v_body, '{{balance}}', public.fmt_money(fee - dep));
+  v_body := replace(v_body, '{{balance_due}}', due);
+  v_body := replace(v_body, '{{bank_details}}', bank);
+  ctitle := 'Wedding film agreement · ' || coalesce(pr.couple_names, 'Clients');
+
+  insert into public.contracts (project_id, title, body, amount, status, sent_at, studio_signature)
+    values (pr.id, ctitle, v_body, fee, 'sent', now(), nullif(s ->> 'studio_signature', ''))
+    returning * into c;
+  update public.projects set status = 'signature' where id = pr.id and status in ('lead', 'quote');
+  return jsonb_build_object('token', c.token);
+end $$;
+
+-- lets the proposal page know whether the studio has validated the quote (only then it shows the signing button)
+create or replace function public.quote_status(p_ref text) returns jsonb
+language sql stable security definer set search_path = public as $$
+  select coalesce((
+    select jsonb_build_object('found', true,
+      'signed', exists (select 1 from public.contracts c where c.project_id = p.id and c.status = 'signed'),
+      'travel_fees', p.travel_fees, 'total', p.total,
+      'validated', coalesce((select value from public.settings where key = 'online_signing'), '1') <> '0'
+        and (p.quote_validated_at is not null or exists (select 1 from public.contracts c where c.project_id = p.id and c.status = 'sent')))
+    from public.projects p where p_ref ~ '^[a-z0-9]{10,16}$' and p.quote_ref = p_ref
+  ), jsonb_build_object('found', false));
+$$;
+
+revoke all on function public.fmt_money(numeric), public.quote_total(jsonb, jsonb) from public, anon, authenticated;
+revoke all on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text) from public;
+grant execute on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text) to anon, authenticated;
