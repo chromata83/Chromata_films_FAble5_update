@@ -68,19 +68,15 @@
     { v: "C", label: "Nothing at all, keep it private", price: 3000 }
   ];
 
-  /* Travel & accommodation is added to the quote automatically from where the wedding is. */
-  var REGIONS = [
-    { v: "fr", label: "France", price: 2000, line: "Travel & accommodation · France" },
-    { v: "eu", label: "Elsewhere in Europe", price: 3500, line: "Travel & accommodation · Europe" },
-    { v: "ow", label: "Outside Europe", tbc: true, line: "Travel / accommodation · TBC as outside Europe" }
-  ];
+  /* Travel & accommodation is never priced here: it is always confirmed in the personal quote. */
+  var TRAVEL_TBC = "TBC depending on location and number of days to cover";
 
   var by = function (arr, v) { for (var i = 0; i < arr.length; i++) if (arr[i].v === v) return arr[i]; return null; };
 
   /* ---------- the couple's answers ---------- */
   function blank() {
     return { welcome: null, wedding: null, team: [], brunch: null, options: {}, creator: null, privacy: "A",
-             names: "", email: "", date: "", place: "", venue: "", region: null, nonce: "" };
+             names: "", email: "", date: "", place: "", venue: "", nonce: "" };
   }
 
   /* Turns answers into priced lines. Order follows the on-screen recap. */
@@ -88,7 +84,7 @@
     var L = [], x;
     if ((x = by(COLLECTIONS, a.wedding))) L.push({ key: "wedding", label: "Wedding day · " + x.name, price: x.price, from: true });
     (a.team || []).forEach(function (id) { var t = by(TEAM, id); if (t) L.push({ key: "team", label: t.name + (t.sub ? " · " + t.sub : ""), price: t.price }); });
-    if ((x = by(REGIONS, a.region))) L.push({ key: "travel", label: x.line, price: x.price || 0, tbc: !!x.tbc });
+    L.push({ key: "travel", label: "Travel / accommodation \u00B7 " + TRAVEL_TBC, price: 0, tbc: true });
     if ((x = by(EVENT_HOURS, a.welcome)) && x.price) L.push({ key: "welcome", label: "Welcome event · " + x.short, price: x.price });
     if ((x = by(EVENT_HOURS, a.brunch)) && x.price) L.push({ key: "brunch", label: "Brunch / farewell party · " + x.short, price: x.price });
     OPTIONS.forEach(function (o) {
@@ -106,7 +102,7 @@
   /* Plain-text recap (used in the email to the team). */
   function recapText(a) {
     var t = lines(a).map(function (l) { return "- " + l.label + ": " + (l.tbc ? "TBC" : eur(l.price)) + (l.from ? " (from)" : ""); });
-    t.push("", "TOTAL INVESTMENT: " + eur(total(a)) + (a.region === "ow" ? " (collections are starting prices; travel / accommodation to be confirmed as outside Europe)" : " (collections are starting prices; travel and accommodation included)"));
+    t.push("", "TOTAL INVESTMENT: " + eur(total(a)) + " (collections are starting prices; travel / accommodation " + TRAVEL_TBC + ")");
     return t.join("\n");
   }
 
@@ -131,10 +127,9 @@
     var nx = new Date(a.date + "T12:00:00"); nx.setDate(nx.getDate() + 1);
     var pad = function (n) { return (n < 10 ? "0" : "") + n; };
     var end = nx.getFullYear() + pad(nx.getMonth() + 1) + pad(nx.getDate());
-    var r = by(REGIONS, a.region);
     var details = [
       "Quote request from " + a.names, "Email: " + a.email,
-      "Total: " + eur(total(a)) + (r && r.tbc ? " (travel / accommodation TBC, outside Europe)" : ""),
+      "Total: " + eur(total(a)) + " (travel / accommodation " + TRAVEL_TBC + ")",
       "Venue: " + a.venue + ", " + a.place, "", "Proposal: " + proposalUrl
     ].join("\n");
     var q = function (k, v) { return k + "=" + encodeURIComponent(v); };
@@ -149,9 +144,7 @@
 
   /* One sentence under every total about travel, depending on the wedding's location. */
   function travelNote(a) {
-    return a.region === "ow"
-      ? "Collections are priced from the amounts shown. Travel and accommodation outside Europe are to be confirmed with your quote."
-      : "Collections are priced from the amounts shown. Travel and accommodation are included in your quote.";
+    return "Collections are priced from the amounts shown. Travel and accommodation: " + TRAVEL_TBC + ".";
   }
 
   /* ---------- the proposal link ----------
@@ -186,7 +179,7 @@
     var n = a.nonce || (a.nonce = nonce());
     var p = { v: 1, pv: PRICE_VERSION, id: n, ts: Date.now(),
       n: clip(a.names, 80), e: clip(a.email, 120), d: clip(a.date, 60), l: clip(a.place, 100), u: clip(a.venue, 100),
-      w: a.welcome, c: a.wedding, r: a.region, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy,
+      w: a.welcome, c: a.wedding, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy,
       t: total(a) };
     var base = new URL("proposal.html", w.location.href);
     base.search = ""; base.hash = "";
@@ -204,7 +197,6 @@
       if (!raw || raw.v !== 1) return null;
       var a = blank();
       a.names = clip(raw.n, 80); a.email = clip(raw.e, 120); a.date = clip(raw.d, 60); a.place = clip(raw.l, 100); a.venue = clip(raw.u, 100);
-      a.region = by(REGIONS, raw.r) ? raw.r : null;
       a.welcome = by(EVENT_HOURS, raw.w) ? raw.w : null;
       a.wedding = by(COLLECTIONS, raw.c) ? raw.c : null;
       a.team = (Array.isArray(raw.x) ? raw.x : []).filter(function (v, i, r) { return by(TEAM, v) && r.indexOf(v) === i; });
@@ -360,7 +352,7 @@
   w.CQ = {
     EMAIL: EMAIL, WHATSAPP: WHATSAPP,
     eur: eur, esc: esc, clip: clip,
-    fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, REGIONS: REGIONS, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
+    fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
     by: by, blank: blank, lines: lines, total: total, recapText: recapText,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

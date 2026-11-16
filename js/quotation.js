@@ -25,7 +25,7 @@
       q: "How long should we stay for your welcome event?", opts: Q.EVENT_HOURS },
     { type: "single", key: "wedding", chapter: "Your wedding day", img: Q.STEP_IMG.wedding, theme: "night",
       cut: cut("q-swan", { l: "45%", b: "-3vh", h: "36vh", rot: "-7deg", ml: "20vw", mt: "5vh", mrot: "-5deg" }),
-      q: "Which collection will tell your wedding day?", note: "Starting prices. Travel and accommodation are added automatically from your location, at the last step.", opts: Q.COLLECTIONS },
+      q: "Which collection will tell your wedding day?", note: "Starting prices. Travel and accommodation are always confirmed in your personal quote.", opts: Q.COLLECTIONS },
     { type: "multi", key: "team", chapter: "Your wedding day", img: Q.STEP_IMG.team, theme: "lemon",
       cut: cut("q-shades", { l: "45%", t: "9vh", h: "34vh", rot: "-9deg", ml: "22vw", mt: "5vh", mrot: "-8deg" }),
       q: "Would you like extra hands around you?", note: "Select as many as you like, or none at all.", opts: Q.TEAM },
@@ -73,7 +73,7 @@
   var dateOK = function () { return Q.ISO.test(A.date || "") && A.date >= Q.todayISO(); };
   var detailsOK = function () {
     return A.names.trim().length >= 2 && validEmail(A.email) && dateOK() &&
-           A.place.trim().length >= 2 && A.venue.trim().length >= 2 && !!Q.by(Q.REGIONS, A.region);
+           A.place.trim().length >= 2 && A.venue.trim().length >= 2;
   };
 
   function priceLabel(step, o) {
@@ -121,21 +121,6 @@
     return '<img class="qx-cut" alt="" aria-hidden="true" draggable="false" src="' + c.src + '" style="' + st.join(";") + '">';
   }
 
-  /* Where the wedding is decides the travel line, which is added to the quote automatically. */
-  function regionHint() {
-    var r = Q.by(Q.REGIONS, A.region);
-    if (!r) return "Travel and accommodation are included in your quote and added automatically from your location.";
-    return r.tbc ? "Travel / accommodation to be confirmed (TBC), as your wedding is outside Europe."
-                 : "Travel and accommodation: " + eur(r.price) + ", added to your quote automatically.";
-  }
-  function regionHTML() {
-    var h = '<div class="region" role="radiogroup" aria-label="Where will your wedding take place?"><div class="lbl">Where will you celebrate?</div><div class="pills">';
-    Q.REGIONS.forEach(function (r) {
-      var sel = A.region === r.v;
-      h += '<button type="button" class="pill' + (sel ? " sel" : "") + '" role="radio" aria-checked="' + sel + '" data-r="' + r.v + '">' + esc(r.label) + "</button>";
-    });
-    return h + '</div><p class="rhint" id="qxRegionHint">' + regionHint() + "</p></div>";
-  }
 
   /* ---------- render ---------- */
   function render(animate) {
@@ -180,7 +165,7 @@
         f("date", "Wedding date", "date", "", A.date, 'min="' + Q.todayISO() + '"') +
         f("place", "Location", "text", "Cap d&#39;Antibes, France", A.place, 'autocomplete="off" maxlength="100"') +
         f("venue", "Venue", "text", "Villa Ephrussi de Rothschild", A.venue, 'autocomplete="off" maxlength="100"') +
-        regionHTML() + '<p class="fhint">All fields are required so we can prepare your proposal.</p></div>';
+        '<p class="fhint">All fields are required so we can prepare your proposal.</p></div>';
       cont.textContent = "See my experience";
       cont.disabled = !detailsOK();
     } else if (step.type === "summary") {
@@ -271,14 +256,6 @@
       var dEl = $("#qx_date");   /* the calendar opens on any click, and also reacts to "change" */
       dEl.addEventListener("change", function () { A.date = dEl.value; cont.disabled = !detailsOK(); save(); });
       dEl.addEventListener("click", function () { try { if (dEl.showPicker) dEl.showPicker(); } catch (e) {} });
-      $$(".region .pill").forEach(function (b) {
-        b.addEventListener("click", function () {
-          A.region = b.getAttribute("data-r");
-          $$(".region .pill").forEach(function (x) { var on = x === b; x.classList.toggle("sel", on); x.setAttribute("aria-checked", on); });
-          $("#qxRegionHint").textContent = regionHint();
-          cont.disabled = !detailsOK(); chrome(); save();
-        });
-      });
     }
     if (step.type === "intro") $("#qxBegin").addEventListener("click", next);
     if (step.type === "summary") {
@@ -331,8 +308,7 @@
     if (maxStep > STEP_OF.options) { var n = Object.keys(A.options).length; add("options", "Options", n ? n + " selected" : "None", n ? eur(sum(of("option"))) : "—"); }
     if (A.creator != null) add("creator", "Content creator", A.creator === "1" ? "At your side" : "Not now", A.creator === "1" ? eur(Q.CREATOR[1].price) : "—");
     if (maxStep > STEP_OF.privacy) { var p = by(Q.PRIVACY, A.privacy); add("privacy", "Privacy", p.label, p.price ? "+" + eur(p.price) : "Included"); }
-    var rg = by(Q.REGIONS, A.region);
-    if (rg) add("travel", "Travel & accommodation", rg.label, rg.tbc ? "TBC" : eur(rg.price));
+    add("travel", "Travel & accommodation", Q.TRAVEL_TBC, "TBC");
     $("#qxLedList").innerHTML = rows.join("") || '<div class="led-empty">Your choices appear here as you go. You can return to any of them at any time.</div>';
     $$(".led-row", $("#qxLedList")).forEach(function (r) {
       r.addEventListener("click", function () { cur = +r.getAttribute("data-goto"); closeLedger(); render(); });
@@ -365,7 +341,6 @@
     fd.append("_template", "table"); fd.append("_captcha", "false");
     fd.append("name", A.names); fd.append("email", A.email);
     fd.append("Wedding date", Q.fmtDate(A.date) || "Not given"); fd.append("Location", A.place || "Not given"); fd.append("Venue", A.venue || "Not given");
-    fd.append("Travel region", (Q.by(Q.REGIONS, A.region) || {}).label || "Not given");
     fd.append("Total investment", eur(tot));
     fd.append("Selections", Q.recapText(A));
     fd.append("Proposal page", url);
