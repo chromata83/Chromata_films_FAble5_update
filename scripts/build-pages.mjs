@@ -3237,7 +3237,7 @@ const QX_HEAD = (title, desc) => `<meta charset="UTF-8" />
 <title>${title}</title>
 <meta name="description" content="${desc}" />
 <meta name="robots" content="noindex, nofollow, noarchive, noimageindex" />
-<meta name="referrer" content="no-referrer" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <link rel="icon" type="image/png" href="assets/img/logo-mark.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -3314,7 +3314,7 @@ ${QX_MENU}
     <div id="qxStack"></div>
   </section>
 </main>
-<script src="js/quote-core.js?v=6"></script>
+<script src="js/quote-core.js?v=7"></script>
 <script src="js/quotation.js?v=6" defer></script>
 </body>
 </html>
@@ -3335,7 +3335,7 @@ ${QX_MENU}
   <div class="frame" id="qxLbFrame"></div>
   <button class="nav next" id="qxLbNext" type="button" aria-label="Next" hidden>&#8250;</button>
 </div>
-<script src="js/quote-core.js?v=6"></script>
+<script src="js/quote-core.js?v=7"></script>
 <script src="js/proposal.js?v=5" defer></script>
 </body>
 </html>

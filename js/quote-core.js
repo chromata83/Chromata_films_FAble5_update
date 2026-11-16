@@ -226,7 +226,7 @@
   var IMG = "assets/img/";
   var STEP_IMG = {
     intro: IMG + "carousel/c-37.jpg",
-    proposal: IMG + "daria/dl-12.jpg",
+    proposal: IMG + "wed-europe/we-50.jpg",
     welcome: IMG + "carousel/c-06.jpg",
     wedding: IMG + "carousel/c-04.jpg",
     team: IMG + "katya-joey/kj-07.jpg",
@@ -288,7 +288,7 @@
       return '<article class="film-layer film-layer--' + (i % 2 ? "b" : "a") + '" style="z-index:' + (i + 1) + '">' +
         '<div class="film-layer__in"><header><span class="num">' + String(i + 1).padStart(2, "0") + " / " + String(FILMS.length).padStart(2, "0") + "</span>" +
         "<h3>" + esc(f.t) + "</h3><p>" + esc(f.p) + "</p></header>" +
-        '<div class="film-layer__frame"><iframe src="' + filmSrc(f) + '" title="' + esc(f.t) + '" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe></div>' +
+        '<div class="film-layer__frame"><iframe src="' + filmSrc(f) + '" title="' + esc(f.t) + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe></div>' +
         "</div></article>";
     }).join("") + "</div>";
   }
