@@ -139,13 +139,64 @@
       return (S.filter === "all" || groups[S.filter](p)) && (!q || [p.couple_names, p.venue, p.location, p.planner_name, p.planner_company].join(" ").toLowerCase().indexOf(q) > -1);
     }).sort(function (a, b) { return (a.wedding_date || "9999") < (b.wedding_date || "9999") ? -1 : 1; });
     var tabs = [["all", "All"], ["open", "Leads & quotes"], ["signed", "Signed"], ["declined", "Declined"]].map(function (t) { return '<button type="button" data-f="' + t[0] + '" class="' + (S.filter === t[0] ? "on" : "") + '">' + t[1] + "</button>"; }).join("");
+    /* the ticked projects (kept while you search or change tab); forget the ones that no longer exist */
+    S.sel = S.sel || {};
+    Object.keys(S.sel).forEach(function (id) { if (!byId(S.projects, id)) delete S.sel[id]; });
     shell("projects", '<header class="top"><h1>Projects</h1><a class="btn" href="#/new">New project</a></header><div class="bar"><div class="tabs">' + tabs +
       '</div><input id="q" type="search" placeholder="Search couple, venue, planner…" value="' + esc(S.q) + '"></div><section class="cr-card tbl">' +
-      (rows.length ? rows.map(function (p) {
-        return '<a class="row" href="#/project/' + p.id + '"><span class="d">' + esc(p.wedding_date ? C.fmtDate(p.wedding_date) : "No date") + '</span><span class="t">' + esc(p.couple_names) + "<small>" + esc([p.venue, p.location].filter(Boolean).join(", ") + (p.quote_ref ? " · from the website" : "")) + "</small></span><span class=\"pl\">" + esc(p.planner_name || "") + "</span><span class=\"am\">" + (p.total ? eur(p.total) : "") + "</span>" + pill(p.status) + "</a>";
+      (rows.length ? '<div class="selbar" id="selbar"></div>' + rows.map(function (p) {
+        return '<div class="row' + (S.sel[p.id] ? " sel" : "") + '" data-id="' + p.id + '"><input class="pk" type="checkbox" aria-label="Select ' + esc(p.couple_names) + '"' + (S.sel[p.id] ? " checked" : "") + '>' +
+          '<a class="rl" href="#/project/' + p.id + '"><span class="d">' + esc(p.wedding_date ? C.fmtDate(p.wedding_date) : "No date") + '</span><span class="t">' + esc(p.couple_names) + "<small>" + esc([p.venue, p.location].filter(Boolean).join(", ") + (p.quote_ref ? " · from the website" : "")) + "</small></span><span class=\"pl\">" + esc(p.planner_name || "") + "</span><span class=\"am\">" + (p.total ? eur(p.total) : "") + "</span>" + pill(p.status) + "</a></div>";
       }).join("") : '<p class="empty">No project matches. Create one with “New project”.</p>') + "</section>");
     $$(".tabs button").forEach(function (b) { b.onclick = function () { S.filter = b.getAttribute("data-f"); projects(); }; });
     $("#q").oninput = function (e) { S.q = e.target.value; var pos = e.target.selectionStart; projects(); var el = $("#q"); el.focus(); el.setSelectionRange(pos, pos); };
+
+    /* ---- tick boxes + actions on the selection ---- */
+    var selIds = function () { return Object.keys(S.sel); };
+    function bar() {
+      var el = $("#selbar"); if (!el) return;
+      var n = selIds().length, inView = rows.filter(function (r) { return S.sel[r.id]; }).length;
+      el.innerHTML = '<label class="auto"><input type="checkbox" id="selAll"> ' + (n ? "<strong>" + n + " selected</strong>" : "Select all") + "</label>" +
+        (n ? '<select id="bulkStatus" aria-label="Change status"><option value="">Change status to…</option>' + Object.keys(ST).map(function (k) { return '<option value="' + k + '">' + ST[k].label + "</option>"; }).join("") + "</select>" +
+             '<button class="btn danger sm" id="bulkDel" type="button">Delete ' + n + "…</button><button class=\"btn ghost sm\" id=\"bulkClear\" type=\"button\">Clear</button>" : "");
+      var all = $("#selAll"); all.checked = rows.length > 0 && inView === rows.length; all.indeterminate = inView > 0 && inView < rows.length;
+      all.onchange = function () { rows.forEach(function (r) { if (all.checked) S.sel[r.id] = true; else delete S.sel[r.id]; }); $$(".row[data-id]").forEach(function (row) { var on = !!S.sel[row.getAttribute("data-id")]; row.classList.toggle("sel", on); $(".pk", row).checked = on; }); bar(); };
+      var st = $("#bulkStatus"), del = $("#bulkDel"), clr = $("#bulkClear");
+      if (clr) clr.onclick = function () { S.sel = {}; projects(); };
+      if (st) st.onchange = function () { if (st.value) bulkStatus(st.value); };
+      if (del) del.onclick = bulkDelete;
+    }
+    $$(".row[data-id] .pk").forEach(function (cb) {
+      cb.onchange = function () {
+        var row = cb.closest(".row"), id = row.getAttribute("data-id");
+        if (cb.checked) S.sel[id] = true; else delete S.sel[id];
+        row.classList.toggle("sel", cb.checked); bar();
+      };
+    });
+    function done(msg) { S.sel = {}; return reload().then(function () { toast(msg); projects(); }); }
+    function bulkStatus(status) {
+      var ids = selIds();
+      if (!confirm("Set " + ids.length + " project" + (ids.length > 1 ? "s" : "") + " to “" + ST[status].label + "”?")) { projects(); return; }
+      Promise.all(ids.map(function (id) {
+        var p = byId(S.projects, id), row = { id: id, status: status };
+        if (status === "quote" && p && !p.quote_sent_at) row.quote_sent_at = new Date().toISOString();
+        return api.saveProject(row);
+      })).then(function () { return done(ids.length + " project" + (ids.length > 1 ? "s" : "") + " updated"); }).catch(function (e) { fail(e); reload().then(projects); });
+    }
+    /* Deleting a project removes it from the calendar too (the calendar, the .ics file and your Google / Apple subscription are all built from the projects),
+       together with its contracts, payments and automatic-email history. Contact cards are kept. */
+    function bulkDelete() {
+      var ids = selIds(), n = ids.length, names = ids.slice(0, 6).map(function (id) { return "• " + (byId(S.projects, id) || {}).couple_names; }).join("\n") + (n > 6 ? "\n• … and " + (n - 6) + " more" : "");
+      var cs = S.contracts.filter(function (c) { return S.sel[c.project_id]; }), signed = cs.filter(function (c) { return c.status === "signed"; }).length;
+      var paid = S.payments.filter(function (x) { return S.sel[x.project_id] && x.paid_at; }).length;
+      var msg = "Delete " + n + " project" + (n > 1 ? "s" : "") + " for good?\n\n" + names + "\n\nThey disappear from the calendar too, with their " + cs.length + " contract" + (cs.length === 1 ? "" : "s") + " and their payments. This cannot be undone." +
+        (signed ? "\n\nWARNING: " + signed + " SIGNED contract" + (signed > 1 ? "s" : "") + " will be deleted permanently" + (paid ? ", with " + paid + " payment" + (paid > 1 ? "s" : "") + " already received" : "") + "." : "");
+      if (signed) { if (prompt(msg + "\n\nType DELETE to confirm.") !== "DELETE") return; }
+      else if (!confirm(msg)) return;
+      Promise.all(ids.map(function (id) { return api.deleteProject(id); })).then(function () { return done(n + " project" + (n > 1 ? "s" : "") + " deleted"); })
+        .catch(function (e) { fail(e); S.sel = {}; reload().then(projects); });
+    }
+    bar();
   }
 
   /* ---------------- all contracts ---------------- */

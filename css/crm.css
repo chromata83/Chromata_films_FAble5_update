@@ -254,3 +254,11 @@ body.sg { background: var(--night); }
 .qe-priv strong { display: block; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--bad); margin-bottom: 4px; }
 .qe-priv b { color: var(--ink); }
 @media (max-width: 860px) { .qe-grid { grid-template-columns: 1fr; } .qe-prev { position: static; } }
+
+/* ---- tick boxes on the projects list ---- */
+.row .pk { width: 18px; height: 18px; flex: none; margin-left: 4px; accent-color: var(--coral); cursor: pointer; }
+.row .rl { flex: 1; display: flex; align-items: center; gap: 14px; min-width: 0; color: inherit; text-decoration: none; }
+.row.sel { background: rgba(233,68,55,.07); }
+.selbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 4px; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 3; background: var(--paper); min-height: 52px; }
+.selbar .auto { font-size: 13px; }
+.selbar select { width: auto; padding: 7px 10px; font-size: 12.5px; }
