@@ -589,5 +589,18 @@ qcut bcc5890e q-bust       # bust + bird of paradise
 qcut contact-cutout-src q-lobster
 qcut a9e6b0bd q-peacock    # peacock + nautilus
 
+# ---------- quotation / proposal: photographs from public/quotation ----------
+# (web sizes of the originals: the sources are 4 to 39 MB each)
+for pair in \
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (1134 sur 1864).jpg|n-alexa-1134" \
+  "Alexa & Wilton _ Wedding day _ 30.6.24 _ by Maddy Christina (216 sur 1864).jpg|n-alexa-216" \
+  "J&G _ DAY 2 -2 _ Bridgerton 70_s _ 13.6.25 _ By Maddy Christina (272 sur 885).jpg|n-jg-272" \
+  "christophe_serrano_wedding_462464813_18460474255013660_4244737489071972566_n.jpg|n-serrano" \
+  "magnific_create-a-top-camera-flash_4Rm8oLf9Aa.png|n-flash" \
+  "magnific_high-fashion-photography-campaign-in-villa-erba-bedroom_XmybA8ZBfo.png|n-villa-erba" ; do
+  jpg "$PUB/quotation/${pair%%|*}" "$OUT/img/quote/${pair##*|}.jpg" 1800
+done
+jpg "$PUB/quotation/magnific__closeup-high-fashion-mario-testino-style-photograp__43581.png" "$OUT/img/quote/n-kevin.jpg" 1400
+
 echo "ASSET PIPELINE DONE"
 du -sm "$OUT"/*

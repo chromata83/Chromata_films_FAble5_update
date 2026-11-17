@@ -39,10 +39,36 @@
     { v: "classic", name: "Classic collection", short: "Classic", price: 14500, from: true,
       sub: "10 hours of presence · 2 shooters · drone operator · all shot by one of our team" },
     { v: "premium", name: "Premium collection", short: "Premium", price: 18500, from: true,
-      sub: "10 hours of presence · 3 shooters · drone operator · with one of Chromata’s founders in the team, shooting" },
+      sub: "10 hours of presence · 3 shooters · drone operator, also on the extra days for the entire event · with one of Chromata’s founders in the team, shooting" },
     { v: "ultimate", name: "Ultimate collection", short: "Ultimate", price: 24500, from: true,
-      sub: "12 hours of presence · 3 shooters · drone operator · with one of Chromata’s founders in the team, shooting · an extra separate film of the full speeches and the full ceremony · an editorial session offered the morning of the welcome event, in the surroundings" }
+      sub: "12 hours of presence · 3 shooters · drone operator, also on the extra days for the entire event · with one of Chromata’s founders in the team, shooting · an extra separate film of the full speeches and the full ceremony · an editorial session offered the morning of the welcome event, in the surroundings" }
   ];
+
+  /* The three collections side by side (columns: Classic, Premium, Ultimate). k = the row's name, v = the value shown in the table,
+     t = the phrase shown in a card, on = [1, 0, ...] a tick where it is included. Shown on the configurators' last screen and on the proposal page. */
+  var COMPARE = [
+    { k: "Hours of presence", v: ["10 h", "10 h", "12 h"], t: ["10 hours of presence", "10 hours of presence", "12 hours of presence"] },
+    { k: "Shooters", v: ["2", "3", "3"], t: ["2 shooters", "3 shooters", "3 shooters"] },
+    { k: "A drone operator on the wedding day", on: [1, 1, 1] },
+    { k: "The drone operator also on the extra days, for the entire event", on: [0, 1, 1] },
+    { k: "One of Chromata’s founders in the team, shooting", on: [0, 1, 1] },
+    { k: "An extra separate film of the full speeches and the full ceremony", on: [0, 0, 1] },
+    { k: "An editorial session, offered the morning of the welcome event", on: [0, 0, 1] }
+  ];
+  /* The table version (compact, for the configurators). The chosen collection's column is yellow, the others white. */
+  function compareTable(a) {
+    var chosen = a && a.wedding, col = function (i) { return COLLECTIONS[i].v === chosen ? " is-chosen" : ""; };
+    var head = '<div class="qx-cmp__row qx-cmp__head"><span class="k"></span>' + COLLECTIONS.map(function (c, i) {
+      return '<span class="c' + col(i) + '">' + esc(c.short) + (COLLECTIONS[i].v === chosen ? "<em>Your choice</em>" : "") + "</span>";
+    }).join("") + "</div>";
+    var rows = COMPARE.map(function (r) {
+      return '<div class="qx-cmp__row"><span class="k">' + esc(r.k) + "</span>" + COLLECTIONS.map(function (c, i) {
+        var on = r.on ? !!r.on[i] : true;
+        return '<span class="c' + col(i) + (on ? " on" : " off") + '">' + (r.v ? esc(r.v[i]) : '<i class="bx" aria-hidden="true"></i><b class="sr-only">' + (on ? "Included" : "Not included") + "</b>") + "</span>";
+      }).join("") + "</div>";
+    }).join("");
+    return '<div class="qx-cmp" role="table" aria-label="What each collection includes">' + head + rows + "</div>";
+  }
 
   var TEAM = [
     { v: "shooter", name: "Extra shooter", sub: "", price: 2290, plus: true },
@@ -304,14 +330,14 @@
   var STEP_IMG = {
     intro: IMG + "carousel/c-37.jpg",
     proposal: IMG + "wed-europe/we-50.jpg",
-    welcome: IMG + "carousel/c-06.jpg",
+    welcome: IMG + "quote/n-flash.jpg",
     wedding: IMG + "carousel/c-04.jpg",
     team: IMG + "katya-joey/kj-07.jpg",
-    brunch: IMG + "four-seasons/fsb-06.jpg",
-    options: IMG + "jasmiina/jt-04.jpg",
-    creator: IMG + "daria/dl-05.jpg",
+    brunch: IMG + "quote/n-alexa-216.jpg",
+    options: IMG + "quote/n-alexa-1134.jpg",
+    creator: IMG + "quote/n-serrano.jpg",
     privacy: IMG + "westbrook/rw-14.jpg",
-    details: IMG + "jasmiina/jt-12.jpg",
+    details: IMG + "quote/n-villa-erba.jpg",
     summary: IMG + "contact/contact-side.jpg"
   };
 
@@ -340,17 +366,17 @@
     { src: IMG + "carousel/c-52.jpg", alt: "A couple laughing, black and white", ar: 0.667 }
   ];
   var PHOTOS = [
-    ["carousel/c-05.jpg", "A bride among white and lilac flowers"],
+    ["quote/n-villa-erba.jpg", "A bride in a lace veil in a gilded room"],
     ["daria/dl-12.jpg", "A couple under a floral arch above the Mediterranean"],
-    ["carousel/c-12.jpg", "A bride on a stone balustrade"],
+    ["quote/n-flash.jpg", "A couple walking hand in hand through a villa garden at dusk"],
     ["westbrook/rw-05.jpg", "A couple in white on a yacht off Portofino"],
     ["carousel/c-20.jpg", "An aerial view of a Riva boat on turquoise water"],
     ["katya-joey/kj-07.jpg", "A bride walking a long aisle toward Lake Como"],
-    ["carousel/c-24.jpg", "A bride in a tulle gown on stone steps"],
-    ["jasmiina/jt-12.jpg", "A black and white bride at a mirror"],
+    ["quote/n-alexa-1134.jpg", "Two aerial dancers on giant white flowers above the ceremony"],
+    ["quote/n-jg-272.jpg", "A couple in pink and powder-blue period costume at a long table"],
     ["carousel/c-46.jpg", "A bride on a pair of red lips"],
-    ["amalfi-zagara/az-04.jpg", "A bride and groom among palm leaves"],
-    ["carousel/c-52.jpg", "A couple laughing, black and white"],
+    ["quote/n-alexa-216.jpg", "A bride and groom among their bridesmaids"],
+    ["quote/n-serrano.jpg", "A guest in a white powdered wig and a gold embroidered coat"],
     ["carousel/c-31.jpg", "A pink celebration by the pool"]
   ].map(function (p) { return { src: IMG + p[0], alt: p[1] }; });
 
@@ -439,7 +465,7 @@
     eur: eur, esc: esc, clip: clip,
     fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
-    up: up, MARKUP: MARKUP, evWaived: evWaived,
+    up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareTable: compareTable,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

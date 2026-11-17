@@ -10,10 +10,11 @@
   var ADDRESS = "Chromata Films SARL · 27 Rue de Montchoisy, 1207 Geneva, Switzerland";
   var PHONE = "+33 7 68 53 39 91";
 
-  /* "About": one paragraph drawn from the Studio page (The Philosophy, The Inspiration, The VFX Pedigree) and its film posters. Same for couples and planners. */
+  /* "About": one paragraph from the Studio page (The Philosophy, The Inspiration, and the VFX pedigree of Kevin Lopez, co-founder), with Kevin's portrait and the posters
+     of the films he worked on. Same for couples and planners. */
   var ABOUT = "Chromata Films makes visual narratives, not documentation: authentic storytelling, created with premium vendors and French-inspired sophistication, in a relaxed atmosphere where you can simply be yourselves. " +
     "Our muses are Salvador Dalí and Elsa Schiaparelli, who proved that the unexpected can also be the most desirable thing in the room, so we look for the surreal detail hidden inside a real day and frame it with a couturier’s eye. " +
-    "And before weddings, our team helped craft images for some of the biggest films ever made — Star Wars, Beauty and the Beast, The Great Gatsby, Avengers — which is exactly what we bring to your wedding day: the same standards, the same tools, and a far better leading couple.";
+    "And before weddings, our co-founder and film director Kevin Lopez spent a decade in visual effects for major studios, helping craft images for some of the biggest films ever made — Star Wars, Beauty and the Beast, The Great Gatsby, Avengers — which is exactly what he brings to your wedding day: the same standards, the same tools, and a far better leading couple.";
   var POSTERS = [["star-wars", "Star Wars: The Last Jedi"], ["beauty-beast", "Beauty and the Beast"], ["gatsby", "The Great Gatsby"], ["avengers", "Avengers: Infinity War"], ["fantastic-four", "Fantastic Four"], ["still", "Solo: A Star Wars Story"]];
 
   var P = Q.parseProposal(location.hash);
@@ -65,6 +66,20 @@
       : "Valid for " + Q.VALID_DAYS + " days · until " + Q.fmtDate(validity.until) + ".";
   }
 
+  /* The three collections side by side, with a tick where something is included. The collection the couple (or the planner) chose is
+     yellow, the others white. Same content for the couple's page and the planner's page. Wording follows Q.COLLECTIONS. */
+  function compareHTML() {
+    var cols = Q.COLLECTIONS.map(function (c, i) {
+      var chosen = A.wedding === c.v;
+      return '<article class="px-col' + (chosen ? " is-chosen" : "") + '"><header><span class="px-col__tag">' + (chosen ? "Your choice" : "&nbsp;") + "</span><h3>" + esc(c.short) + "<small>collection</small></h3></header><ul>" +
+        Q.COMPARE.map(function (r) {
+          var on = r.on ? !!r.on[i] : true, text = r.t ? r.t[i] : r.k;
+          return '<li class="' + (on ? "on" : "off") + '"><span class="bx" aria-hidden="true"></span><span>' + esc(text) + (on ? "" : '<em class="sr-only"> (not included)</em>') + "</span></li>";
+        }).join("") + "</ul></article>";
+    }).join("");
+    return '<section class="px-compare" id="collection"><div class="px-wrap px-wrap--col"><p class="kicker">Your collection</p><h2 class="px-h2">What each collection <em>includes</em></h2></div><div class="px-cols">' + cols + "</div></section>";
+  }
+
   var photos = Q.PHOTOS.map(function (p, i) {
     return '<button class="px-tile" type="button" data-i="' + i + '" aria-label="View photograph ' + (i + 1) + '"><img src="' + p.src + '" alt="' + esc(p.alt) + '" loading="lazy"></button>';
   }).join("");
@@ -92,6 +107,8 @@
       cutHTML("q-intro", { l: "43.5%", b: "-5vh", h: "54vh", rot: "-5deg", ml: "3vw", mt: "2vh", mh: "24vh", mrot: "-4deg" }) +
     "</section>" +
 
+    compareHTML() +
+
     '<section class="px-sel" id="selections">' +
       cutHTML("q-swan", { l: "3vw", b: "-5vh", h: "28vh", rot: "-8deg", ml: "62vw", mt: "-4vh", mh: "14vh", mrot: "-6deg" }) +
       '<div class="px-wrap">' +
@@ -104,14 +121,14 @@
 
     '<section class="px-photos" id="photographs">' +
       cutHTML("q-collage", { rt: "5vw", t: "-3vh", h: "23vh", rot: "6deg", hm: true }) +
-      '<div class="px-wrap px-wrap--col"><p class="kicker">— A selection of our photographs</p><h2 class="px-h2">Moments we <em>kept</em></h2></div>' +
+      '<div class="px-wrap px-wrap--col"><p class="kicker">— A selection of our frames</p><h2 class="px-h2">Moments we <em>witnessed</em></h2></div>' +
       '<div class="px-masonry">' + photos + "</div>" +
     "</section>" +
 
     '<section class="px-about" id="about">' +
-      '<div class="px-wrap px-about__head"><div><p class="kicker">— About Chromata</p><h2 class="px-h2">Visual narratives, not <em>documentation</em></h2></div>' +
-      '<p class="px-about__p">' + esc(ABOUT) + "</p>" +
-      '<img class="px-about__art" alt="" aria-hidden="true" draggable="false" loading="lazy" src="assets/img/landing/art-lobster-sun.webp"></div>' +
+      '<div class="px-wrap px-about__head"><div><p class="kicker">— About Chromata</p><h2 class="px-h2">Visual narratives, not <em>documentation</em></h2>' +
+      '<p class="px-about__p">' + esc(ABOUT) + "</p></div>" +
+      '<figure class="px-about__who"><img src="assets/img/quote/n-kevin.jpg" alt="Kevin and Laura Lopez, co-founders of Chromata Films, at the RSVP Awards gala night" loading="lazy" width="1400" height="1866"><figcaption>Kevin &amp; Laura Lopez<small>Co-founders · RSVP Awards gala night</small></figcaption></figure></div>' +
       '<div class="px-posters">' + POSTERS.map(function (p) { return '<figure><img src="assets/img/blockbusters/' + p[0] + '.jpg" alt="' + esc(p[1]) + ' — poster" loading="lazy"></figure>'; }).join("") + "</div>" +
     "</section>" +
 
