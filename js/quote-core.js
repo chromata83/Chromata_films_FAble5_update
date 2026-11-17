@@ -80,6 +80,12 @@
       (o.pick ? "Change your collection <em>at will</em>" : "What each collection <em>includes</em>") + '</h2></div><div class="px-cols">' + cols + "</div></section>";
   }
 
+  /* "Moments we witnessed": the same mosaic of photographs as on the proposal page (Q.PHOTOS). On the configurators the tiles are plain pictures. */
+  function photosSection() {
+    return '<section class="px-photos px-photos--cfg" id="qxPhotos"><div class="px-wrap px-wrap--col"><p class="kicker">— A selection of our frames</p><h2 class="px-h2">Moments we <em>witnessed</em></h2></div>' +
+      '<div class="px-masonry">' + PHOTOS.map(function (p) { return '<div class="px-tile"><img src="' + p.src + '" alt="' + esc(p.alt) + '" loading="lazy"></div>'; }).join("") + "</div></section>";
+  }
+
   /* "About": one paragraph from the Studio page (The Philosophy, The Inspiration, and the VFX pedigree of Kevin Lopez, co-founder), with Kevin and Laura's portrait
      and the posters of the films Kevin worked on. Same on the configurators' last screen and on the proposal page, for couples and planners. */
   var ABOUT = "Chromata Films makes visual narratives, not documentation: authentic storytelling, created with premium vendors and French-inspired sophistication, in a relaxed atmosphere where you can simply be yourselves. " +
@@ -491,7 +497,7 @@
     eur: eur, esc: esc, clip: clip,
     fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
-    up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection,
+    up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection, photosSection: photosSection,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

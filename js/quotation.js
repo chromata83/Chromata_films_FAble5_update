@@ -189,7 +189,7 @@
       var st = $("#qxStage"); window.scrollTo({ top: st.getBoundingClientRect().top + window.scrollY, behavior: "smooth" });
     }
     $("#qxFilms").hidden = step.type !== "summary";
-    cmpWrap.hidden = aboutWrap.hidden = step.type !== "summary";
+    cmpWrap.hidden = photosWrap.hidden = aboutWrap.hidden = step.type !== "summary";
     if (step.type === "summary") paintCompare();
     bind(step);
     chrome();
@@ -379,11 +379,11 @@
   }
 
   /* ---------- under the last screen: the three collections (click one to change yours, the total follows), then About ---------- */
-  var cmpWrap = document.createElement("div"), aboutWrap = document.createElement("div");
-  cmpWrap.hidden = aboutWrap.hidden = true;
+  var cmpWrap = document.createElement("div"), photosWrap = document.createElement("div"), aboutWrap = document.createElement("div");
+  cmpWrap.hidden = photosWrap.hidden = aboutWrap.hidden = true;
+  photosWrap.innerHTML = Q.photosSection();
   aboutWrap.innerHTML = Q.aboutSection();
-  $("#qxFilms").parentNode.insertBefore(cmpWrap, $("#qxFilms"));
-  $("#qxFilms").parentNode.insertBefore(aboutWrap, $("#qxFilms"));
+  [cmpWrap, photosWrap, aboutWrap].forEach(function (w) { $("#qxFilms").parentNode.insertBefore(w, $("#qxFilms")); });
   function paintCompare() {
     cmpWrap.innerHTML = Q.compareSection(A, { pick: true, id: "qxCompare" });
     $$(".px-col.is-pick", cmpWrap).forEach(function (el) {
@@ -398,7 +398,7 @@
   }
 
   /* ---------- our latest work: four frames, then the films one by one ---------- */
-  $("#qxRow").innerHTML = '<div class="qx-films__rowwrap">' + Q.rowHTML() + "</div>";
+  $("#qxRow").remove();   // the four frames that used to open "Our latest work" are replaced by the full mosaic above
   $("#qxStack").innerHTML = Q.stackHTML();
   Q.lazyFrames();
 
