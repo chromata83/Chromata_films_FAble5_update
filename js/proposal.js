@@ -10,6 +10,12 @@
   var ADDRESS = "Chromata Films SARL · 27 Rue de Montchoisy, 1207 Geneva, Switzerland";
   var PHONE = "+33 7 68 53 39 91";
 
+  /* "About": one paragraph drawn from the Studio page (The Philosophy, The Inspiration, The VFX Pedigree) and its film posters. Same for couples and planners. */
+  var ABOUT = "Chromata Films makes visual narratives, not documentation: authentic storytelling, created with premium vendors and French-inspired sophistication, in a relaxed atmosphere where you can simply be yourselves. " +
+    "Our muses are Salvador Dalí and Elsa Schiaparelli, who proved that the unexpected can also be the most desirable thing in the room, so we look for the surreal detail hidden inside a real day and frame it with a couturier’s eye. " +
+    "And before weddings, our team helped craft images for some of the biggest films ever made — Star Wars, Beauty and the Beast, The Great Gatsby, Avengers — which is exactly what we bring to your wedding day: the same standards, the same tools, and a far better leading couple.";
+  var POSTERS = [["star-wars", "Star Wars: The Last Jedi"], ["beauty-beast", "Beauty and the Beast"], ["gatsby", "The Great Gatsby"], ["avengers", "Avengers: Infinity War"], ["fantastic-four", "Fantastic Four"], ["still", "Solo: A Star Wars Story"]];
+
   var P = Q.parseProposal(location.hash);
   Q.initMenu();
   Q.lightbox.init();
@@ -100,6 +106,13 @@
       cutHTML("q-collage", { rt: "5vw", t: "-3vh", h: "23vh", rot: "6deg", hm: true }) +
       '<div class="px-wrap px-wrap--col"><p class="kicker">— A selection of our photographs</p><h2 class="px-h2">Moments we <em>kept</em></h2></div>' +
       '<div class="px-masonry">' + photos + "</div>" +
+    "</section>" +
+
+    '<section class="px-about" id="about">' +
+      '<div class="px-wrap px-about__head"><div><p class="kicker">— About Chromata</p><h2 class="px-h2">Visual narratives, not <em>documentation</em></h2></div>' +
+      '<p class="px-about__p">' + esc(ABOUT) + "</p>" +
+      '<img class="px-about__art" alt="" aria-hidden="true" draggable="false" loading="lazy" src="assets/img/landing/art-lobster-sun.webp"></div>' +
+      '<div class="px-posters">' + POSTERS.map(function (p) { return '<figure><img src="assets/img/blockbusters/' + p[0] + '.jpg" alt="' + esc(p[1]) + ' — poster" loading="lazy"></figure>'; }).join("") + "</div>" +
     "</section>" +
 
     '<section class="px-films" id="films">' +
