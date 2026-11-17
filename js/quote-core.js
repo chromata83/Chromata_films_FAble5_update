@@ -37,11 +37,11 @@
 
   var COLLECTIONS = [
     { v: "classic", name: "Classic collection", short: "Classic", price: 14500, from: true,
-      sub: "10 hours of presence · 2 shooters · drone operator · all shot by one of our team" },
+      sub: "10 hours of presence · 2 shooters · drone operator · all shot by one of our team · one highlight film 3/4 min · one feature film around 18 min" },
     { v: "premium", name: "Premium collection", short: "Premium", price: 18500, from: true,
-      sub: "10 hours of presence · 3 shooters · drone operator, also on the extra days for the entire event · with one of Chromata’s founders in the team, shooting" },
+      sub: "10 hours of presence · 3 shooters · drone operator, also on the extra days for the entire event · with one of Chromata’s founders in the team, shooting · one highlight film 4/5 min · one feature film around 25 min · one 1 min IG reel" },
     { v: "ultimate", name: "Ultimate collection", short: "Ultimate", price: 24500, from: true,
-      sub: "12 hours of presence · 3 shooters · drone operator, also on the extra days for the entire event · with one of Chromata’s founders in the team, shooting · an extra separate film of the full speeches and the full ceremony · an editorial session offered the morning of the welcome event, in the surroundings" }
+      sub: "12 hours of presence · 3 shooters · drone operator, also on the extra days for the entire event · with one of Chromata’s founders in the team, shooting · one highlight film 4/5 min · one feature film around 25 min · three 1 min IG reels · one little surprise on the wedding day · an extra separate film of the full speeches and the full ceremony · an editorial session offered the morning of the welcome event, in the surroundings" }
   ];
 
   /* The three collections side by side (columns: Classic, Premium, Ultimate). k = the row's name, v = the value shown in the table,
@@ -49,9 +49,13 @@
   var COMPARE = [
     { k: "Hours of presence", v: ["10 h", "10 h", "12 h"], t: ["10 hours of presence", "10 hours of presence", "12 hours of presence"] },
     { k: "Shooters", v: ["2", "3", "3"], t: ["2 shooters", "3 shooters", "3 shooters"] },
+    { k: "Highlight film", v: ["3/4 min", "4/5 min", "4/5 min"], t: ["One highlight film, 3/4 min", "One highlight film, 4/5 min", "One highlight film, 4/5 min"] },
+    { k: "Feature film", v: ["~18 min", "~25 min", "~25 min"], t: ["One feature film, around 18 min", "One feature film, around 25 min", "One feature film, around 25 min"] },
+    { k: "1 min Instagram reel", on: [0, 1, 1], v: ["", "× 1", "× 3"], t: ["One 1 min IG reel", "One 1 min IG reel", "One 1 min IG reel × 3"] },
     { k: "A drone operator on the wedding day", on: [1, 1, 1] },
     { k: "The drone operator also on the extra days, for the entire event", on: [0, 1, 1] },
     { k: "One of Chromata’s founders in the team, shooting", on: [0, 1, 1] },
+    { k: "One little surprise on the wedding day", on: [0, 0, 1] },
     { k: "An extra separate film of the full speeches and the full ceremony", on: [0, 0, 1] },
     { k: "An editorial session, offered the morning of the welcome event", on: [0, 0, 1] }
   ];
@@ -64,7 +68,7 @@
     var rows = COMPARE.map(function (r) {
       return '<div class="qx-cmp__row"><span class="k">' + esc(r.k) + "</span>" + COLLECTIONS.map(function (c, i) {
         var on = r.on ? !!r.on[i] : true;
-        return '<span class="c' + col(i) + (on ? " on" : " off") + '">' + (r.v ? esc(r.v[i]) : '<i class="bx" aria-hidden="true"></i><b class="sr-only">' + (on ? "Included" : "Not included") + "</b>") + "</span>";
+        return '<span class="c' + col(i) + (on ? " on" : " off") + '">' + (r.v && on ? esc(r.v[i]) : '<i class="bx" aria-hidden="true"></i><b class="sr-only">' + (on ? "Included" : "Not included") + "</b>") + "</span>";
       }).join("") + "</div>";
     }).join("");
     return '<div class="qx-cmp" role="table" aria-label="What each collection includes">' + head + rows + "</div>";

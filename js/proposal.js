@@ -126,6 +126,7 @@
     "</section>" +
 
     '<section class="px-about" id="about">' +
+      '<img class="px-about__art" alt="" aria-hidden="true" draggable="false" loading="lazy" src="assets/img/quote/q-lobster.webp">' +
       '<div class="px-wrap px-about__head"><div><p class="kicker">— About Chromata</p><h2 class="px-h2">Visual narratives, not <em>documentation</em></h2>' +
       '<p class="px-about__p">' + esc(ABOUT) + "</p></div>" +
       '<figure class="px-about__who"><img src="assets/img/quote/n-kevin.jpg" alt="Kevin and Laura Lopez, co-founders of Chromata Films, at the RSVP Awards gala night" loading="lazy" width="1400" height="1866"><figcaption>Kevin &amp; Laura Lopez<small>Co-founders · RSVP Awards gala night</small></figcaption></figure></div>' +

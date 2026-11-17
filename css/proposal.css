@@ -87,7 +87,9 @@
 .px-tile:hover img { transform: scale(1.03); }
 
 /* About: Kevin Lopez and the blockbusters, in the design system's citrus orange (like the Studio page's VFX section) */
-.px-about { position: relative; background: var(--citrus); color: var(--ink); padding: 16vh 6vw 14vh; overflow: hidden; }
+.px-about { position: relative; background: var(--citrus); color: var(--ink); padding: 18vh 6vw 14vh; }
+/* the collage illustration straddles the line between the photographs and About */
+.px-about__art { position: absolute; left: 50%; top: -17vh; height: 34vh; width: auto; transform: translateX(-50%) rotate(-7deg); filter: drop-shadow(0 22px 34px rgba(22,19,15,.32)); pointer-events: none; z-index: 4; }
 .px-about__head { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: 6vw; align-items: center; }
 .px-about .kicker { color: var(--ink); }
 .px-about .px-h2 { color: var(--ink); font-size: clamp(30px, 4.2vw, 68px); }
@@ -127,7 +129,8 @@
   .px-films { padding: 10vh 0 0; }
   .px-compare { padding: 11vh 22px 3vh; }
   .px-cols { grid-template-columns: 1fr; }
-  .px-about { padding: 11vh 22px 9vh; }
+  .px-about { padding: 13vh 22px 9vh; }
+  .px-about__art { height: 20vh; top: -10vh; }
   .px-about__head { grid-template-columns: 1fr; gap: 4vh; }
   .px-about__who { justify-self: center; max-width: min(72vw, 320px); }
   .px-posters { grid-template-columns: repeat(3, 1fr); margin-top: 7vh; }
