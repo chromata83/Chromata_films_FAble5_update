@@ -85,7 +85,15 @@
 
   /* the price a planner pays for one choice (planner rates), same rule as js/quote-core.js */
   var MKEY = { welcome: "w", wedding: "c", brunch: "b", options: "o", creator: "k", privacy: "p" };
-  var unitPrice = function (step, o) { return o.nomk ? o.price : Q.up(o.price, MKEY[step.key], A); };
+  var unitPrice = function (step, o) {
+    if (o.nomk) return o.price;
+    /* welcome event / brunch: with the Premium or Ultimate collection and both extra days, the +10% is waived (see Q.evWaived) */
+    if ((step.key === "welcome" || step.key === "brunch") && o.price) {
+      var what = {}; what[step.key] = o.v;
+      if (Q.evWaived(Object.assign({}, A, what))) return o.price;
+    }
+    return Q.up(o.price, MKEY[step.key], A);
+  };
 
   function priceLabel(step, o) {
     if (o.skip) return '<span class="cprice incl">Skip</span>';

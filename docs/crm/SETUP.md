@@ -95,6 +95,8 @@ Re-run the whole `docs/crm/schema.sql` in the SQL Editor once (it is safe to re-
   role is always "planner" and the prices carry the planner rates: **+10%** on the wedding day collection, the welcome event and the brunch / farewell party,
   **+5%** on the options (except extra hours), the content creator and the privacy level, **no change** on extra shooter, extra drone operator and extra hours.
   Everything else is the same chain as the couple's page: project "Quote sent", contact card (planner), proposal link (it shows the planner prices), validation, editor, PDF, contract.
+  **Exception:** with the Premium or Ultimate collection, if the couple takes BOTH the welcome event and the brunch, the +10% is waived on those two lines
+  (they go back to the standard price and the quote says "(−10% · Premium collection)" next to each).
   The project note says "Wedding planner rates applied". The percentages are in `js/quote-core.js` (`MARKUP`, `nomk`); the database gets them through the price list
   the back office stores each time you sign in. **After updating: re-run `schema.sql`, then open the back office once** (until then a planner quote is kept but not marked as verified).
 * A quote you create yourself in the CRM has a button **Email me this quote** (an email to the studio address with all the details).

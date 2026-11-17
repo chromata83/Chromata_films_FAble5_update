@@ -290,11 +290,15 @@ $$;
 create or replace function public.quote_total(sel jsonb, tbl jsonb) returns numeric
 language plpgsql immutable as $$
 declare t numeric := 0; k text; q int; o jsonb; mk jsonb := case when sel ->> 'm' = 'wp' then tbl -> 'mk' end;
+  wp_w numeric := coalesce((tbl -> 'w' ->> (sel ->> 'w'))::numeric, 0);
+  wp_b numeric := coalesce((tbl -> 'b' ->> (sel ->> 'b'))::numeric, 0);
+  -- with the Premium or Ultimate collection AND both extra days (welcome event + brunch) the planner's +10% is waived on those two lines
+  waive boolean := coalesce(mk -> 'ev' @> to_jsonb(sel ->> 'c'), false) and wp_w > 0 and wp_b > 0;
 begin
   -- +10% wedding day, welcome event, brunch; +5% options (not extra hours), content creator, privacy; extra team and extra hours: no change
   t := t + public.qt_up(coalesce((tbl -> 'c' ->> (sel ->> 'c'))::numeric, 0), mk, 'c');
-  t := t + public.qt_up(coalesce((tbl -> 'w' ->> (sel ->> 'w'))::numeric, 0), mk, 'w');
-  t := t + public.qt_up(coalesce((tbl -> 'b' ->> (sel ->> 'b'))::numeric, 0), mk, 'b');
+  t := t + public.qt_up(wp_w, case when waive then null else mk end, 'w');
+  t := t + public.qt_up(wp_b, case when waive then null else mk end, 'b');
   t := t + public.qt_up(coalesce((tbl -> 'k' ->> (sel ->> 'k'))::numeric, 0), mk, 'k');
   t := t + public.qt_up(coalesce((tbl -> 'p' ->> (sel ->> 'p'))::numeric, 0), mk, 'p');
   if jsonb_typeof(sel -> 'x') = 'array' then
@@ -350,7 +354,7 @@ begin
   if tbl is not null then
     if coalesce(tbl -> 'c' ->> sc, '') = '' then raise exception 'Invalid selection'; end if;
     coll := tbl -> 'n' ->> sc;
-    if p_sel ->> 'm' = 'wp' and tbl -> 'mk' is null then
+    if p_sel ->> 'm' = 'wp' and (tbl -> 'mk' is null or tbl -> 'mk' -> 'ev' is null) then
       -- planner quote but the stored price list does not know the planner rates yet (open the back office once): keep the browser's total, unverified
       tot := least(greatest(coalesce(p_total, 0), 0), 500000);
     else

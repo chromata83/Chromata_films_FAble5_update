@@ -82,6 +82,13 @@
        +0%   extra shooter, extra drone operator, extra hours
      (the keys are the same letters as in the selection and in the database price table). The couple's page never sets mk. */
   var MARKUP = { c: 10, w: 10, b: 10, o: 5, k: 5, p: 5 };
+  /* With one of these collections AND both extra days (welcome event + brunch), the planner's +10% is waived on those two lines. */
+  var EV_WAIVE = ["premium", "ultimate"];
+  function evWaived(a) {
+    if (!a || a.mk !== "wp" || EV_WAIVE.indexOf(a.wedding) < 0) return false;
+    var w = by(EVENT_HOURS, a.welcome), b = by(EVENT_HOURS, a.brunch);
+    return !!(w && w.price && b && b.price);
+  }
   /* price after the planner rate, in whole euros; integer maths so it equals the database to the euro */
   function up(price, key, a) {
     return a && a.mk === "wp" && MARKUP[key] ? Math.round(price * (100 + MARKUP[key]) / 100) : price;
@@ -99,8 +106,10 @@
     if ((x = by(COLLECTIONS, a.wedding))) L.push({ key: "wedding", label: "Wedding day · " + x.name, price: up(x.price, "c", a), from: true });
     (a.team || []).forEach(function (id) { var t = by(TEAM, id); if (t) L.push({ key: "team", label: t.name + (t.sub ? " · " + t.sub : ""), price: t.price }); });
     L.push({ key: "travel", label: "Travel / accommodation \u00B7 " + TRAVEL_TBC, price: 0, tbc: true });
-    if ((x = by(EVENT_HOURS, a.welcome)) && x.price) L.push({ key: "welcome", label: "Welcome event · " + x.short, price: up(x.price, "w", a) });
-    if ((x = by(EVENT_HOURS, a.brunch)) && x.price) L.push({ key: "brunch", label: "Brunch / farewell party · " + x.short, price: up(x.price, "b", a) });
+    /* No percentage is ever written on a line: planners often forward their quote to the couple. */
+    var waived = evWaived(a);
+    if ((x = by(EVENT_HOURS, a.welcome)) && x.price) L.push({ key: "welcome", label: "Welcome event · " + x.short, price: waived ? x.price : up(x.price, "w", a) });
+    if ((x = by(EVENT_HOURS, a.brunch)) && x.price) L.push({ key: "brunch", label: "Brunch / farewell party · " + x.short, price: waived ? x.price : up(x.price, "b", a) });
     OPTIONS.forEach(function (o) {
       var q = a.options && a.options[o.v];
       if (!q) return;
@@ -171,7 +180,7 @@
      contract can never carry a price edited in the browser. The back office keeps a copy (Settings table) each time
      it is opened, so changing a number in this file is all it takes. */
   function priceTable() {
-    var t = { w: {}, b: {}, c: {}, n: {}, x: {}, o: {}, k: {}, p: {}, mk: MARKUP };   // mk = planner rates (percent per key)
+    var t = { w: {}, b: {}, c: {}, n: {}, x: {}, o: {}, k: {}, p: {}, mk: Object.assign({}, MARKUP, { ev: EV_WAIVE }) };   // mk = planner rates (percent per key)
     EVENT_HOURS.forEach(function (e) { t.w[e.v] = e.price || 0; t.b[e.v] = e.price || 0; });
     COLLECTIONS.forEach(function (c) { t.c[c.v] = c.price; t.n[c.v] = c.name; });
     TEAM.forEach(function (x) { t.x[x.v] = x.price; });
@@ -185,7 +194,8 @@
   function recapText(a) {
     var t = lines(a).map(function (l) { return "- " + l.label + ": " + (l.tbc ? "TBC" : eur(l.price)) + (l.from ? " (from)" : ""); });
     t.push("", "TOTAL INVESTMENT: " + eur(total(a)) + " (collections are starting prices; travel / accommodation " + TRAVEL_TBC + ")", validityNote());
-    if (a.mk === "wp") t.push("Wedding planner rates applied (+10% wedding day, welcome event, brunch; +5% options, content creator, privacy).");
+    /* (no percentage in this text either: it can end up in an email the planner writes, or forwards) */
+    if (a.mk === "wp") t.push("Wedding planner rates applied." + (evWaived(a) ? " Welcome event and brunch at the standard rate with the " + by(COLLECTIONS, a.wedding).name + "." : ""));
     return t.join("\n");
   }
 
@@ -429,7 +439,7 @@
     eur: eur, esc: esc, clip: clip,
     fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
-    up: up, MARKUP: MARKUP,
+    up: up, MARKUP: MARKUP, evWaived: evWaived,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,
