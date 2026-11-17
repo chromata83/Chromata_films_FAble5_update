@@ -26,35 +26,40 @@
   /* planner commission, shown back as an amount in euros */
   function startCommission(p) { return p.quote_commission == null ? "" : String(p.quote_commission); }
 
-  function opts(list, cur, skipLabel) {
+  /* planner rates: a quote made on the planner page (quotation-WP) keeps its +10% / +5% prices when the studio edits it */
+  var MK = "";
+  var pr = function (price, key) { return Q.up(price, key, { mk: MK }); };
+
+  function opts(list, cur, skipLabel, key) {
     return (skipLabel ? '<option value="">' + skipLabel + "</option>" : "") + list.map(function (x) {
-      return '<option value="' + x.v + '"' + (String(cur) === x.v ? " selected" : "") + ">" + esc(x.label || x.name) + (x.price ? " · " + eur(x.price) : "") + "</option>";
+      return '<option value="' + x.v + '"' + (String(cur) === x.v ? " selected" : "") + ">" + esc(x.label || x.name) + (x.price ? " · " + eur(pr(x.price, key)) : "") + "</option>";
     }).join("");
   }
 
   function html(p) {
-    var a = startAnswers(p), linked = !!p.quote_ref;
+    var a = startAnswers(p), linked = !!p.quote_ref; MK = a.mk || "";
     var team = Q.TEAM.map(function (t) {
       return '<label class="qe-chk"><input type="checkbox" data-team="' + t.v + '"' + (a.team.indexOf(t.v) > -1 ? " checked" : "") + "> " + esc(t.name) + " · " + eur(t.price) + "</label>";
     }).join("");
     var optRows = Q.OPTIONS.map(function (o) {
       var q = a.options[o.v] || 0;
-      return '<div class="qe-opt"><label class="qe-chk"><input type="checkbox" data-opt="' + o.v + '"' + (q ? " checked" : "") + "> " + esc(o.name) + " · " + eur(o.price) + (o.unit ? " / " + o.unit : "") + "</label>" +
+      return '<div class="qe-opt"><label class="qe-chk"><input type="checkbox" data-opt="' + o.v + '"' + (q ? " checked" : "") + "> " + esc(o.name) + " · " + eur(o.nomk ? o.price : pr(o.price, "o")) + (o.unit ? " / " + o.unit : "") + "</label>" +
         (o.max ? '<input class="qe-qty" type="number" min="1" max="' + o.max + '" data-qty="' + o.v + '" value="' + (q || 1) + '" aria-label="Quantity"' + (q ? "" : " disabled") + ">" : "") + "</div>";
     }).join("");
-    var hours = function (id, cur) { return '<select id="' + id + '">' + Q.EVENT_HOURS.map(function (h) { return '<option value="' + h.v + '"' + ((cur || "0") === h.v ? " selected" : "") + ">" + esc(h.label) + (h.price ? " · " + eur(h.price) : "") + "</option>"; }).join("") + "</select>"; };
+    var hours = function (id, cur) { return '<select id="' + id + '">' + Q.EVENT_HOURS.map(function (h) { return '<option value="' + h.v + '"' + ((cur || "0") === h.v ? " selected" : "") + ">" + esc(h.label) + (h.price ? " · " + eur(pr(h.price, id === "qeWelcome" ? "w" : "b")) : "") + "</option>"; }).join("") + "</select>"; };
     var cmt = startCommission(p), until = untilISO(p);
     return '<section class="cr-card" id="qe"><div class="sh"><h2>Quote editor</h2><span class="pill ' + (linked ? "signed" : "quote") + '">' + (linked ? "Linked to the couple’s page" : "No couple page yet") + "</span></div>" +
       '<p class="hint">' + (linked
         ? "Change anything here, then save: <strong>the couple’s link updates by itself</strong>, there is nothing to resend."
         : "Build the quote here. Saving also creates the couple’s private link (the wedding date and the couple’s email must be filled in below and saved first).") + "</p>" +
+      (MK ? '<p class="hint"><strong>Wedding planner rates</strong> (quote made on the planner page): +10% on the wedding day, welcome event and brunch, +5% on options, content creator and privacy. The prices below already include them.</p>' : "") +
       '<div class="qe-grid"><div class="qe-form">' +
-        '<label class="fld"><span>Wedding day collection</span><select id="qeColl">' + opts(Q.COLLECTIONS, a.wedding || "", "Choose a collection") + "</select></label>" +
+        '<label class="fld"><span>Wedding day collection</span><select id="qeColl">' + opts(Q.COLLECTIONS, a.wedding || "", "Choose a collection", "c") + "</select></label>" +
         '<div class="fld"><span>Team</span>' + team + "</div>" +
         '<div class="grid2"><label class="fld"><span>Welcome event</span>' + hours("qeWelcome", a.welcome) + '</label><label class="fld"><span>Brunch / farewell party</span>' + hours("qeBrunch", a.brunch) + "</label></div>" +
         '<div class="fld"><span>Options</span>' + optRows + "</div>" +
-        '<label class="qe-chk"><input type="checkbox" id="qeCreator"' + (a.creator === "1" ? " checked" : "") + "> Content creator, same day edit · " + eur(Q.CREATOR[1].price) + "</label>" +
-        '<label class="fld"><span>Privacy</span><select id="qePrivacy">' + opts(Q.PRIVACY, a.privacy || "A") + "</select></label>" +
+        '<label class="qe-chk"><input type="checkbox" id="qeCreator"' + (a.creator === "1" ? " checked" : "") + "> Content creator, same day edit · " + eur(pr(Q.CREATOR[1].price, "k")) + "</label>" +
+        '<label class="fld"><span>Privacy</span><select id="qePrivacy">' + opts(Q.PRIVACY, a.privacy || "A", "", "p") + "</select></label>" +
         '<div class="grid2"><label class="fld"><span>Travel / accommodation (€)</span><input id="qeTravel" type="number" min="0" step="any" value="' + (p.travel_fees == null ? "" : esc(p.travel_fees)) + '" placeholder="Empty = still to be confirmed"></label>' +
         '<div class="fld"><span>Planner commission <small>(private)</small></span><div class="inl"><input id="qeCmt" type="number" min="0" step="any" value="' + esc(cmt) + '" placeholder="0" aria-label="Planner commission"><select id="qeCmtU" aria-label="Commission unit" style="max-width:72px"><option value="eur">€</option><option value="pct">%</option></select></div></div></div>' +
         '<p class="hint" style="margin:-4px 0 0">Travel: once filled, the couple reads “Included” and the total contains it. Commission: added into the prices the couple sees, never shown as a line. A % applies to the quote including travel.</p>' +
@@ -62,12 +67,13 @@
         '<p class="hint" id="qeValid" style="margin:-4px 0 0"></p>' +
       '</div><aside class="qe-prev" aria-live="polite"><h3>What the couple sees</h3><div id="qePrev"></div><div id="qePriv"></div></aside></div>' +
       '<div class="acts"><button class="btn" id="qeSave" type="button">Save the quote' + (linked ? " and update the link" : " and create the link") + "</button>" +
-      (linked && p.proposal_url ? '<a class="btn ghost" target="_blank" rel="noopener" href="' + esc(p.proposal_url) + '">View the couple’s page</a>' : "") + "</div></section>";
+      (linked && p.proposal_url ? '<a class="btn ghost" target="_blank" rel="noopener" href="' + esc(p.proposal_url) + '">View the couple’s page</a>' +
+        '<a class="btn ghost" target="_blank" rel="noopener" title="Opens the page and starts the PDF (choose Save as PDF)" href="' + esc(p.proposal_url.replace("#", "?pdf=1#")) + '">PDF for the planner</a>' : "") + "</div></section>";
   }
 
   /* what the form says right now */
   function read() {
-    var a = Q.blank();
+    var a = Q.blank(); a.mk = MK;
     a.wedding = $("#qeColl").value || null;
     a.team = $$("#qe [data-team]").filter(function (c) { return c.checked; }).map(function (c) { return c.getAttribute("data-team"); });
     a.welcome = $("#qeWelcome").value; a.brunch = $("#qeBrunch").value;

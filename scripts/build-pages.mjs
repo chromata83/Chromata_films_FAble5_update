@@ -3322,11 +3322,19 @@ ${QX_MENU}
 </html>
 `;
 
+/* quotation-WP.html = the same configurator for WEDDING PLANNERS (planner rates: +10% wedding day / welcome / brunch,
+   +5% options, content creator, privacy; see js/quote-core.js). A copy of the page above that loads js/quotation-wp.js. */
+pages["quotation-WP.html"] = pages["quotation.html"]
+  .replace("<title>Your experience · Chromata Films</title>", "<title>Wedding planners · Chromata Films</title>")
+  .replace("Compose your coverage with Chromata Films, step by step.", "Compose a couple's coverage with Chromata Films, step by step, at wedding planner rates.")
+  .replace("js/quote-core.js?v=11", "js/quote-core.js?v=12")
+  .replace("js/quotation.js?v=10", "js/quotation-wp.js?v=1");
+
 pages["proposal.html"] = `<!DOCTYPE html>
 <html lang="en">
 <head>
 ${QX_HEAD("Your proposal · Chromata Films", "A private proposal from Chromata Films.")}
-<link rel="stylesheet" href="css/proposal.css?v=7" />
+<link rel="stylesheet" href="css/proposal.css?v=8" />
 </head>
 <body data-page="proposal" class="qx px">
 ${QX_MENU}
@@ -3338,9 +3346,10 @@ ${QX_MENU}
   <button class="nav next" id="qxLbNext" type="button" aria-label="Next" hidden>&#8250;</button>
 </div>
 <script src="js/crm-config.js?v=2"></script>
-<script src="js/quote-core.js?v=11"></script>
+<script src="js/quote-core.js?v=12"></script>
 <script src="js/quote-link.js?v=2"></script>
-<script src="js/proposal.js?v=11" defer></script>
+<script src="js/proposal-pdf.js?v=1" defer></script>
+<script src="js/proposal.js?v=12" defer></script>
 </body>
 </html>
 `;
@@ -4689,7 +4698,7 @@ for (const [file, html] of Object.entries(pages)) {
    robots.txt is public, so it would advertise a page that should only be
    reachable by its link. */
 const NOINDEX_FILES = new Set(["gettoknowusmore.html"]);
-const HIDDEN_FILES = new Set(["press-room.html", "quotation.html", "proposal.html", "investment.html"]);
+const HIDDEN_FILES = new Set(["press-room.html", "quotation.html", "quotation-WP.html", "proposal.html", "investment.html"]);
 const sitemapFiles = ["index.html", ...Object.keys(pages).filter((f) => !NOINDEX_FILES.has(f) && !HIDDEN_FILES.has(f))];
 const today = new Date().toISOString().slice(0, 10);
 const isoSeconds = (d) => {

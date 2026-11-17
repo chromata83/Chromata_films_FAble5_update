@@ -16,11 +16,11 @@
 # Unlisted pages: keep them out of every search index even if someone links
 # to them. Sent as a header as well as the page's robots meta tag.
 <IfModule mod_headers.c>
-  <FilesMatch "^(press-room|quotation|proposal|investment|crm|sign)\.html$">
+  <FilesMatch "^(press-room|quotation|quotation-WP|proposal|investment|crm|sign)\.html$">
     Header set X-Robots-Tag "noindex, nofollow, noarchive, noimageindex"
   </FilesMatch>
   # Film embeds (YouTube error 153) need the site origin as referrer; never send the full private link.
-  <FilesMatch "^(quotation|proposal)\.html$">
+  <FilesMatch "^(quotation|quotation-WP|proposal)\.html$">
     Header set Referrer-Policy "strict-origin-when-cross-origin"
   </FilesMatch>
   # CRM pages: never cache, never leak the secret signing link as a referrer.

@@ -52,7 +52,7 @@
   var OPTIONS = [
     { v: "feature", name: "Extra long feature film", sub: "45 minutes to 1 hour", price: 5990 },
     { v: "priority", name: "Editing priority for the feature film", sub: "Delivery time around 1 month", price: 5490 },
-    { v: "hour", name: "Extra hour", sub: "", price: 1200, unit: "hour", max: 8 },
+    { v: "hour", name: "Extra hour", sub: "", price: 1200, unit: "hour", max: 8, nomk: true },
     { v: "redcarpet", name: "The Red Carpet experience", sub: "A video booth for extra slow-mo portraits, cinema camera at 800 frames per second, with operator", price: 6990, unit: "day", max: 5 },
     { v: "vintage", name: "The 8mm or 16mm vintage camera", sub: "With operator, to create a special short film on the side", price: 7490, unit: "day", max: 5 },
     { v: "music", name: "Unique music for your highlight film", sub: "Created by a film musician", price: 3200 },
@@ -75,35 +75,49 @@
 
   var by = function (arr, v) { for (var i = 0; i < arr.length; i++) if (arr[i].v === v) return arr[i]; return null; };
 
+  /* ---------- wedding planner rates (quotation-WP.html only) ----------
+     A quote made on the planner page carries mk = "wp". Then, in percent:
+       +10%  the wedding day collection, the welcome event, the brunch / farewell party
+       +5%   the options (except extra hours), the content creator, the privacy level
+       +0%   extra shooter, extra drone operator, extra hours
+     (the keys are the same letters as in the selection and in the database price table). The couple's page never sets mk. */
+  var MARKUP = { c: 10, w: 10, b: 10, o: 5, k: 5, p: 5 };
+  /* price after the planner rate, in whole euros; integer maths so it equals the database to the euro */
+  function up(price, key, a) {
+    return a && a.mk === "wp" && MARKUP[key] ? Math.round(price * (100 + MARKUP[key]) / 100) : price;
+  }
+
   /* ---------- the couple's answers ---------- */
   function blank() {
     return { welcome: null, wedding: null, team: [], brunch: null, options: {}, creator: null, privacy: "A",
-             names: "", email: "", date: "", place: "", venue: "", role: "couple", planner: "", nonce: "" };
+             names: "", email: "", date: "", place: "", venue: "", role: "couple", planner: "", nonce: "", mk: "" };
   }
 
   /* Turns answers into priced lines. Order follows the on-screen recap. */
   function lines(a) {
     var L = [], x;
-    if ((x = by(COLLECTIONS, a.wedding))) L.push({ key: "wedding", label: "Wedding day · " + x.name, price: x.price, from: true });
+    if ((x = by(COLLECTIONS, a.wedding))) L.push({ key: "wedding", label: "Wedding day · " + x.name, price: up(x.price, "c", a), from: true });
     (a.team || []).forEach(function (id) { var t = by(TEAM, id); if (t) L.push({ key: "team", label: t.name + (t.sub ? " · " + t.sub : ""), price: t.price }); });
     L.push({ key: "travel", label: "Travel / accommodation \u00B7 " + TRAVEL_TBC, price: 0, tbc: true });
-    if ((x = by(EVENT_HOURS, a.welcome)) && x.price) L.push({ key: "welcome", label: "Welcome event · " + x.short, price: x.price });
-    if ((x = by(EVENT_HOURS, a.brunch)) && x.price) L.push({ key: "brunch", label: "Brunch / farewell party · " + x.short, price: x.price });
+    if ((x = by(EVENT_HOURS, a.welcome)) && x.price) L.push({ key: "welcome", label: "Welcome event · " + x.short, price: up(x.price, "w", a) });
+    if ((x = by(EVENT_HOURS, a.brunch)) && x.price) L.push({ key: "brunch", label: "Brunch / farewell party · " + x.short, price: up(x.price, "b", a) });
     OPTIONS.forEach(function (o) {
       var q = a.options && a.options[o.v];
       if (!q) return;
       var n = Math.max(1, Math.min(o.max || 1, q | 0));
-      L.push({ key: "option", label: o.name + (o.unit && n > 1 ? " × " + n + " " + o.unit + "s" : ""), price: o.price * n });
+      L.push({ key: "option", label: o.name + (o.unit && n > 1 ? " × " + n + " " + o.unit + "s" : ""), price: (o.nomk ? o.price : up(o.price, "o", a)) * n });
     });
-    if (a.creator === "1") L.push({ key: "creator", label: "Content creator, same day edit", price: CREATOR[1].price });
-    if ((x = by(PRIVACY, a.privacy)) && x.price) L.push({ key: "privacy", label: x.label, price: x.price });
+    if (a.creator === "1") L.push({ key: "creator", label: "Content creator, same day edit", price: up(CREATOR[1].price, "k", a) });
+    if ((x = by(PRIVACY, a.privacy)) && x.price) L.push({ key: "privacy", label: x.label, price: up(x.price, "p", a) });
     return L;
   }
   var total = function (a) { return lines(a).reduce(function (s, l) { return s + l.price; }, 0); };
 
   /* The choices only (codes, never prices): what the proposal link and the back office receive. */
   function selection(a) {
-    return { w: a.welcome, c: a.wedding, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy };
+    var s = { w: a.welcome, c: a.wedding, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy };
+    if (a.mk === "wp") s.m = "wp";   // planner rates: the database applies the same percentages
+    return s;
   }
   /* The other way round: a stored selection (or a link's content) back into answers. Only real options survive. */
   function fromSel(raw) {
@@ -119,6 +133,7 @@
     });
     a.creator = raw.k === "1" ? "1" : (raw.k === "0" ? "0" : null);
     a.privacy = by(PRIVACY, raw.p) ? raw.p : "A";
+    a.mk = raw.m === "wp" ? "wp" : "";
     return a;
   }
 
@@ -156,11 +171,11 @@
      contract can never carry a price edited in the browser. The back office keeps a copy (Settings table) each time
      it is opened, so changing a number in this file is all it takes. */
   function priceTable() {
-    var t = { w: {}, b: {}, c: {}, n: {}, x: {}, o: {}, k: {}, p: {} };
+    var t = { w: {}, b: {}, c: {}, n: {}, x: {}, o: {}, k: {}, p: {}, mk: MARKUP };   // mk = planner rates (percent per key)
     EVENT_HOURS.forEach(function (e) { t.w[e.v] = e.price || 0; t.b[e.v] = e.price || 0; });
     COLLECTIONS.forEach(function (c) { t.c[c.v] = c.price; t.n[c.v] = c.name; });
     TEAM.forEach(function (x) { t.x[x.v] = x.price; });
-    OPTIONS.forEach(function (o) { t.o[o.v] = { p: o.price, m: o.max || 1 }; });
+    OPTIONS.forEach(function (o) { t.o[o.v] = { p: o.price, m: o.max || 1, x: o.nomk ? 1 : 0 }; });
     CREATOR.forEach(function (c) { t.k[c.v] = c.price || 0; });
     PRIVACY.forEach(function (p) { t.p[p.v] = p.price || 0; });
     return t;
@@ -170,6 +185,7 @@
   function recapText(a) {
     var t = lines(a).map(function (l) { return "- " + l.label + ": " + (l.tbc ? "TBC" : eur(l.price)) + (l.from ? " (from)" : ""); });
     t.push("", "TOTAL INVESTMENT: " + eur(total(a)) + " (collections are starting prices; travel / accommodation " + TRAVEL_TBC + ")", validityNote());
+    if (a.mk === "wp") t.push("Wedding planner rates applied (+10% wedding day, welcome event, brunch; +5% options, content creator, privacy).");
     return t.join("\n");
   }
 
@@ -246,7 +262,7 @@
     var n = a.nonce || (a.nonce = nonce());
     var p = { v: 1, pv: PRICE_VERSION, id: n, ts: ts || Date.now(),
       n: clip(a.names, 80), e: clip(a.email, 120), d: clip(a.date, 60), l: clip(a.place, 100), u: clip(a.venue, 100),
-      r: a.role === "planner" ? "planner" : "couple", pn: clip(a.planner, 100),
+      r: a.role === "planner" ? "planner" : "couple", pn: clip(a.planner, 100), m: a.mk === "wp" ? "wp" : undefined,
       w: a.welcome, c: a.wedding, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy,
       t: total(a) };
     var base = new URL("proposal.html", w.location.href);
@@ -413,6 +429,7 @@
     eur: eur, esc: esc, clip: clip,
     fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
+    up: up, MARKUP: MARKUP,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

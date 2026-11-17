@@ -123,7 +123,9 @@
     b.addEventListener("click", function () { Q.lightbox.photo(Q.PHOTOS, +b.getAttribute("data-i"), b); });
   });
   Q.lazyFrames();
-  document.getElementById("pxPrint").addEventListener("click", function () { window.print(); });
+  var pb = document.getElementById("pxPrint");
+  pb.textContent = "Save as PDF";
+  pb.addEventListener("click", function () { if (window.CQPdf) window.CQPdf.save(pb); else window.print(); });
 
   var sb = document.getElementById("pxSign");
   var set = function (id, t) { var e = document.getElementById(id); if (e) e.textContent = t; };

@@ -91,6 +91,12 @@ Re-run the whole `docs/crm/schema.sql` in the SQL Editor once (it is safe to re-
   A project made by hand gets its couple's link the first time you save it there (wedding date and couple's email must be filled in).
 * **Validity:** every quote is valid **14 days from its issue date** (shown on the couple's page, in the quotation recap and in the editor). After that the couple can no longer sign
   online; **Issue again today** in the editor reopens it. (Re-run `schema.sql` once to get the editor's database columns and the validity check.)
+* **Wedding planners have their own page: `quotation-WP.html`** (hidden like the others; the capitals matter in the address). It is a copy of the quotation page where the
+  role is always "planner" and the prices carry the planner rates: **+10%** on the wedding day collection, the welcome event and the brunch / farewell party,
+  **+5%** on the options (except extra hours), the content creator and the privacy level, **no change** on extra shooter, extra drone operator and extra hours.
+  Everything else is the same chain as the couple's page: project "Quote sent", contact card (planner), proposal link (it shows the planner prices), validation, editor, PDF, contract.
+  The project note says "Wedding planner rates applied". The percentages are in `js/quote-core.js` (`MARKUP`, `nomk`); the database gets them through the price list
+  the back office stores each time you sign in. **After updating: re-run `schema.sql`, then open the back office once** (until then a planner quote is kept but not marked as verified).
 * A quote you create yourself in the CRM has a button **Email me this quote** (an email to the studio address with all the details).
 * Prices are never trusted from the browser: the database recomputes every total from the choices. Online signing stays closed until
   the bank details of the chosen account are saved, and can be switched off in Settings > Quotation page and online signing.

@@ -281,15 +281,22 @@ create or replace function public.fmt_money(n numeric) returns text language sql
 $$;
 
 -- total of a quote, recomputed from the choices and the price list that the back office keeps in settings.quote_prices
+-- wedding planner rates (quotation-WP page: the selection carries "m":"wp"): price + percent, to the whole euro, exactly like js/quote-core.js up()
+create or replace function public.qt_up(base numeric, mk jsonb, k text) returns numeric
+language sql immutable as $$
+  select case when mk is null then base else round(base * (100 + coalesce((mk ->> k)::numeric, 0)) / 100) end;
+$$;
+
 create or replace function public.quote_total(sel jsonb, tbl jsonb) returns numeric
 language plpgsql immutable as $$
-declare t numeric := 0; k text; q int; o jsonb;
+declare t numeric := 0; k text; q int; o jsonb; mk jsonb := case when sel ->> 'm' = 'wp' then tbl -> 'mk' end;
 begin
-  t := t + coalesce((tbl -> 'c' ->> (sel ->> 'c'))::numeric, 0);
-  t := t + coalesce((tbl -> 'w' ->> (sel ->> 'w'))::numeric, 0);
-  t := t + coalesce((tbl -> 'b' ->> (sel ->> 'b'))::numeric, 0);
-  t := t + coalesce((tbl -> 'k' ->> (sel ->> 'k'))::numeric, 0);
-  t := t + coalesce((tbl -> 'p' ->> (sel ->> 'p'))::numeric, 0);
+  -- +10% wedding day, welcome event, brunch; +5% options (not extra hours), content creator, privacy; extra team and extra hours: no change
+  t := t + public.qt_up(coalesce((tbl -> 'c' ->> (sel ->> 'c'))::numeric, 0), mk, 'c');
+  t := t + public.qt_up(coalesce((tbl -> 'w' ->> (sel ->> 'w'))::numeric, 0), mk, 'w');
+  t := t + public.qt_up(coalesce((tbl -> 'b' ->> (sel ->> 'b'))::numeric, 0), mk, 'b');
+  t := t + public.qt_up(coalesce((tbl -> 'k' ->> (sel ->> 'k'))::numeric, 0), mk, 'k');
+  t := t + public.qt_up(coalesce((tbl -> 'p' ->> (sel ->> 'p'))::numeric, 0), mk, 'p');
   if jsonb_typeof(sel -> 'x') = 'array' then
     for k in select distinct jsonb_array_elements_text(sel -> 'x') loop
       t := t + coalesce((tbl -> 'x' ->> k)::numeric, 0);
@@ -300,7 +307,7 @@ begin
       o := tbl -> 'o' -> k;
       q := coalesce((sel -> 'o' ->> k)::int, 0);
       if o is not null and q > 0 then
-        t := t + (o ->> 'p')::numeric * least(q, coalesce((o ->> 'm')::int, 1));
+        t := t + public.qt_up((o ->> 'p')::numeric, case when o ->> 'x' = '1' then null else mk end, 'o') * least(q, coalesce((o ->> 'm')::int, 1));
       end if;
     end loop;
   end if;
@@ -342,7 +349,13 @@ begin
   sc := p_sel ->> 'c';
   if tbl is not null then
     if coalesce(tbl -> 'c' ->> sc, '') = '' then raise exception 'Invalid selection'; end if;
-    tot := public.quote_total(p_sel, tbl); coll := tbl -> 'n' ->> sc; verified := true;
+    coll := tbl -> 'n' ->> sc;
+    if p_sel ->> 'm' = 'wp' and tbl -> 'mk' is null then
+      -- planner quote but the stored price list does not know the planner rates yet (open the back office once): keep the browser's total, unverified
+      tot := least(greatest(coalesce(p_total, 0), 0), 500000);
+    else
+      tot := public.quote_total(p_sel, tbl); verified := true;
+    end if;
   else
     tot := least(greatest(coalesce(p_total, 0), 0), 500000); coll := initcap(coalesce(sc, '')) || ' collection';
   end if;
@@ -353,6 +366,7 @@ begin
           'Wedding date: ' || coalesce(to_char(d, 'DD Mon YYYY'), 'not given') || E'\n' ||
           'Venue: ' || v_venue || ', ' || place || E'\n' ||
           'Collection: ' || coll || E'\n' ||
+          case when p_sel ->> 'm' = 'wp' then E'Wedding planner rates applied (+10% wedding day, welcome event, brunch; +5% options, content creator, privacy)\n' else '' end ||
           'Total: ' || public.fmt_money(tot) || E' (starting prices, travel and accommodation to be confirmed)\n\n' || recap ||
           case when url is not null then E'\n\nProposal: ' || url else '' end;
 
@@ -464,6 +478,6 @@ language sql stable security definer set search_path = public as $$
   ), jsonb_build_object('found', false));
 $$;
 
-revoke all on function public.fmt_money(numeric), public.quote_total(jsonb, jsonb) from public, anon, authenticated;
+revoke all on function public.fmt_money(numeric), public.quote_total(jsonb, jsonb), public.qt_up(numeric, jsonb, text) from public, anon, authenticated;
 revoke all on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text) from public;
 grant execute on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text) to anon, authenticated;

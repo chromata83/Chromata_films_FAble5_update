@@ -113,3 +113,15 @@
   .px-foot { border-color: #ddd; color: var(--ink-soft); margin-top: 10mm; }
 }
 .px-hero__cta [hidden], .px-signnote[hidden] { display: none !important; }
+
+/* PDF: the photo mosaic as 4 fixed columns (same look as the CSS columns on screen) */
+html.px-pdf .px-masonry { columns: auto !important; display: flex; align-items: flex-start; column-gap: 0; gap: 1.1vw; }
+html.px-pdf .px-mcol { flex: 1 1 0; min-width: 0; }
+/* the PDF version replaces the video players by a list of links (js/proposal-pdf.js) */
+.px-flist { list-style: none; margin: 0 auto; padding: 0 5vw 12vh; max-width: 1500px; }
+.px-flist a { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; align-items: baseline; gap: 20px; padding: 26px 0; border-top: 1px solid var(--line); text-decoration: none; color: var(--cream); }
+.px-flist li:last-child a { border-bottom: 1px solid var(--line); }
+.px-flist .n { font-family: var(--font-display); font-size: 14px; letter-spacing: .1em; color: var(--accent); }
+.px-flist .t { font-family: var(--font-display); font-size: clamp(22px, 2.6vw, 40px); line-height: 1.05; }
+.px-flist .t small { display: block; margin-top: 8px; font-family: inherit; font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: var(--dim); }
+.px-flist .w { font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
