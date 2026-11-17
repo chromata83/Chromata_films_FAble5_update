@@ -84,6 +84,13 @@ Re-run the whole `docs/crm/schema.sql` in the SQL Editor once (it is safe to re-
   check the details, fill in **Travel / accommodation fees** (the total updates by itself and the couple's proposal then reads "all travel and accommodation fees included", no extra line), pick the **bank account** to give them (EUR, CHF or USD, filled in Settings), then press **Validate the quote**.
   Only then does **Accept and sign online** appear on their proposal page; use "Email the proposal to the couple" to answer them. When they sign,
   the project becomes "Awaiting payment", the 50% / 50% payments are created, and you get an email. You can also withdraw the validation.
+* **Quote editor** (top of each project): change the collection, team, options, **travel / accommodation**, the **planner commission** and the issue date,
+  with a live preview of "what the couple sees". Press **Save the quote and update the link**: the couple's link shows the new version by itself, nothing to resend.
+  The commission is private: it is spread inside the prices the couple sees (no commission line, never returned by the public database functions); the box on the right
+  shows you the commission and what is left for the studio. Enter it in € or in % of the quote.
+  A project made by hand gets its couple's link the first time you save it there (wedding date and couple's email must be filled in).
+* **Validity:** every quote is valid **14 days from its issue date** (shown on the couple's page, in the quotation recap and in the editor). After that the couple can no longer sign
+  online; **Issue again today** in the editor reopens it. (Re-run `schema.sql` once to get the editor's database columns and the validity check.)
 * A quote you create yourself in the CRM has a button **Email me this quote** (an email to the studio address with all the details).
 * Prices are never trusted from the browser: the database recomputes every total from the choices. Online signing stays closed until
   the bank details of the chosen account are saved, and can be switched off in Settings > Quotation page and online signing.

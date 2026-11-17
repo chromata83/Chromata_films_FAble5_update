@@ -15,6 +15,8 @@
   var EMAIL = "contact@chromatafilms.com";
   var WHATSAPP = "33768533991";
   var PRICE_VERSION = 1;
+  /* A quotation is valid for 14 days after the day it was issued. The same number is in docs/crm/schema.sql. */
+  var VALID_DAYS = 14;
 
   /* ---------- helpers ---------- */
   var eur = function (n) { return "€" + Math.round(n).toLocaleString("en-US"); };
@@ -103,6 +105,53 @@
   function selection(a) {
     return { w: a.welcome, c: a.wedding, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy };
   }
+  /* The other way round: a stored selection (or a link's content) back into answers. Only real options survive. */
+  function fromSel(raw) {
+    var a = blank(); raw = raw || {};
+    a.welcome = by(EVENT_HOURS, raw.w) ? raw.w : null;
+    a.wedding = by(COLLECTIONS, raw.c) ? raw.c : null;
+    a.team = (Array.isArray(raw.x) ? raw.x : []).filter(function (v, i, r) { return by(TEAM, v) && r.indexOf(v) === i; });
+    a.brunch = by(EVENT_HOURS, raw.b) ? raw.b : null;
+    a.options = {};
+    OPTIONS.forEach(function (o) {
+      var q = raw.o && raw.o[o.v] | 0;
+      if (q > 0) a.options[o.v] = Math.min(o.max || 1, q);
+    });
+    a.creator = raw.k === "1" ? "1" : (raw.k === "0" ? "0" : null);
+    a.privacy = by(PRIVACY, raw.p) ? raw.p : "A";
+    return a;
+  }
+
+  /* The quote as the STUDIO finalises it in the back office. Same priced lines as the configurator, plus:
+     - travel / accommodation: a number once confirmed (the couple then reads "Included" and the total contains it),
+       or empty while it is still to be confirmed;
+     - the wedding planner's commission: a private amount. It is spread over the priced lines in proportion, so the
+       couple only ever sees ordinary prices that add up to the total. There is never a commission line.
+     Returns { rows: [{ l: label, p: price, t: "" | "tbc" | "inc" }], total, base, commission, travel }. */
+  function studioQuote(a, ex) {
+    ex = ex || {};
+    var travel = (ex.travel === null || ex.travel === undefined || ex.travel === "" || isNaN(+ex.travel)) ? null : Math.max(0, Math.round(+ex.travel));
+    var L = lines(a), base = 0;
+    L.forEach(function (l) { if (l.key !== "travel") base += l.price; });
+    var comm = base > 0 ? Math.max(0, Math.round(+ex.commission || 0)) : 0;
+    var f = base > 0 ? (base + comm) / base : 1, big = -1, sum = 0;
+    var rows = L.map(function (l, i) {
+      if (l.key === "travel") return travel === null ? { l: l.label, p: 0, t: "tbc" } : { l: "Travel / accommodation", p: travel, t: "inc" };
+      var p = Math.round(l.price * f);
+      sum += p;
+      if (l.price > 0 && (big < 0 || l.price > L[big].price)) big = i;
+      return { l: l.label, p: p, t: "" };
+    });
+    if (big > -1) rows[big].p += (base + comm) - sum;   // rounding leftovers go to the biggest line, so the lines add up exactly
+    return { rows: rows, total: base + comm + (travel || 0), base: base, commission: comm, travel: travel };
+  }
+
+  /* ---------- validity: 14 days from the day of issue ---------- */
+  var pad2 = function (n) { return (n < 10 ? "0" : "") + n; };
+  function isoOf(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+  function addDaysISO(iso, n) { var d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return isoOf(d); }
+  function validUntil(issuedISO) { return ISO.test(issuedISO || "") ? addDaysISO(issuedISO, VALID_DAYS) : ""; }
+  function validityNote() { return "This quotation is valid for " + VALID_DAYS + " days from the date of issue."; }
   /* The price list in a form the back office database can use to RE-COMPUTE every total itself, so a quote or a
      contract can never carry a price edited in the browser. The back office keeps a copy (Settings table) each time
      it is opened, so changing a number in this file is all it takes. */
@@ -120,7 +169,7 @@
   /* Plain-text recap (used in the email to the team). */
   function recapText(a) {
     var t = lines(a).map(function (l) { return "- " + l.label + ": " + (l.tbc ? "TBC" : eur(l.price)) + (l.from ? " (from)" : ""); });
-    t.push("", "TOTAL INVESTMENT: " + eur(total(a)) + " (collections are starting prices; travel / accommodation " + TRAVEL_TBC + ")");
+    t.push("", "TOTAL INVESTMENT: " + eur(total(a)) + " (collections are starting prices; travel / accommodation " + TRAVEL_TBC + ")", validityNote());
     return t.join("\n");
   }
 
@@ -193,9 +242,9 @@
     return s;
   };
 
-  function proposalUrl(a) {
+  function proposalUrl(a, ts) {
     var n = a.nonce || (a.nonce = nonce());
-    var p = { v: 1, pv: PRICE_VERSION, id: n, ts: Date.now(),
+    var p = { v: 1, pv: PRICE_VERSION, id: n, ts: ts || Date.now(),
       n: clip(a.names, 80), e: clip(a.email, 120), d: clip(a.date, 60), l: clip(a.place, 100), u: clip(a.venue, 100),
       r: a.role === "planner" ? "planner" : "couple", pn: clip(a.planner, 100),
       w: a.welcome, c: a.wedding, x: a.team || [], b: a.brunch, o: a.options || {}, k: a.creator, p: a.privacy,
@@ -214,21 +263,10 @@
       if (dot < 1) return null;
       var raw = JSON.parse(b64uDec(h.slice(dot + 1)));
       if (!raw || raw.v !== 1) return null;
-      var a = blank();
+      var a = fromSel(raw);
       a.names = clip(raw.n, 80); a.email = clip(raw.e, 120); a.date = clip(raw.d, 60); a.place = clip(raw.l, 100); a.venue = clip(raw.u, 100);
       a.role = raw.r === "planner" ? "planner" : "couple"; a.planner = clip(raw.pn, 100);
       a.nonce = clip(raw.id, 16).toLowerCase().replace(/[^a-z0-9]/g, "");
-      a.welcome = by(EVENT_HOURS, raw.w) ? raw.w : null;
-      a.wedding = by(COLLECTIONS, raw.c) ? raw.c : null;
-      a.team = (Array.isArray(raw.x) ? raw.x : []).filter(function (v, i, r) { return by(TEAM, v) && r.indexOf(v) === i; });
-      a.brunch = by(EVENT_HOURS, raw.b) ? raw.b : null;
-      a.options = {};
-      OPTIONS.forEach(function (o) {
-        var q = raw.o && raw.o[o.v] | 0;
-        if (q > 0) a.options[o.v] = Math.min(o.max || 1, q);
-      });
-      a.creator = raw.k === "1" ? "1" : (raw.k === "0" ? "0" : null);
-      a.privacy = by(PRIVACY, raw.p) ? raw.p : "A";
       if (!a.wedding) return null;
       if (!a.names) a.names = "Your experience";
       return { answers: a, id: clip(raw.id, 12).toUpperCase(), ts: +raw.ts || 0 };
@@ -374,7 +412,8 @@
     EMAIL: EMAIL, WHATSAPP: WHATSAPP,
     eur: eur, esc: esc, clip: clip,
     fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
-    by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, priceTable: priceTable,
+    by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
+    studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,
     initMenu: initMenu, lazyFrames: lazyFrames, lightbox: lightbox

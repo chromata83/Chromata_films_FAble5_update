@@ -25,6 +25,11 @@
 .px-total { margin-top: 34px; }
 .px-total .tl { display: block; font-size: 9px; letter-spacing: .28em; text-transform: uppercase; color: var(--dim); }
 .px-total .tv { display: block; font-size: clamp(28px, 3vw, 40px); font-weight: 600; color: var(--accent); margin-top: 4px; letter-spacing: .01em; }
+.px-valid { margin-top: 10px; font-size: 12.5px; line-height: 1.6; color: var(--dim); max-width: 380px; }
+.px-valid:empty, .px-note--valid:empty { display: none; }
+.px-note--valid { margin-top: 16px; max-width: none; text-align: right; }
+/* the studio's latest version of the prices is being fetched: nothing outdated flashes on screen */
+.px-wait .px-total .tv, .px-wait #pxSum { visibility: hidden; }
 .px-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
 .px-hero__cta .btn-main, .px-hero__cta .btn-ghost { display: inline-block; text-decoration: none; }
 .px-hero__cta button.btn-main, .px-hero__cta button.btn-ghost { cursor: pointer; font-family: inherit; }

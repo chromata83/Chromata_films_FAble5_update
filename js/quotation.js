@@ -208,7 +208,7 @@
     }
     return '<div class="kicker">Your bespoke quote</div><div class="question">' + esc(A.names || "Your experience") + '</div>' +
       '<div class="sumcard">' + rows + "</div>" +
-      '<p class="snote">' + esc(Q.travelNote(A)) + '</p>' +
+      '<p class="snote">' + esc(Q.travelNote(A)) + " " + esc(Q.validityNote()) + '</p>' +
       actions + '<div id="qxMsg" role="status"></div>' +
       '<a class="sumlink" href="#qxFilms" id="qxToFilms">Our latest work ↓</a>';
   }

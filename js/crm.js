@@ -165,7 +165,13 @@
     if (f[0] === "total") return p.total == null ? "" : Math.round((+p.total - (+p.travel_fees || 0)) * 100) / 100;
     return p[f[0]] == null ? "" : p[f[0]];
   }
-  function fld(f, p) { return '<label class="fld"><span>' + f[1] + '</span><input name="' + f[0] + '" type="' + f[2] + '" value="' + esc(fieldValue(f, p)) + '"' + (f[3] ? " required" : "") + (f[2] === "number" ? ' step="any" min="0"' : "") + "></label>"; }
+  var QE = function () { return window.CRMApp && window.CRMApp.quoteEditor; };   // js/crm-quote.js
+  /* once the quote is built in the quote editor, its total and travel fees are managed there (they would otherwise drift apart) */
+  function fld(f, p) {
+    var managed = p.quote_lines && (f[0] === "total" || f[0] === "travel_fees");
+    return '<label class="fld"><span>' + f[1] + '</span><input name="' + f[0] + '" type="' + f[2] + '" value="' + esc(fieldValue(f, p)) + '"' + (f[3] ? " required" : "") + (f[2] === "number" ? ' step="any" min="0"' : "") +
+      (managed ? ' readonly title="Managed in the quote editor above"' : "") + "></label>";
+  }
 
   function readForm(form) {
     var o = {};
@@ -216,6 +222,7 @@
     shell("projects", '<header class="top"><h1>' + (isNew ? "New project" : esc(p.couple_names)) + '</h1>' + (isNew ? "" : pill(p.status)) + "</header>" +
       (isNew ? '<section class="cr-card"><h2>Start from a quotation</h2><p class="hint">Paste the “See my proposal” link of a couple: their names, date, venue and total are filled in for you.</p><div class="inl"><input id="imp" type="url" placeholder="https://www.chromatafilms.com/proposal.html#…"><button class="btn ghost" id="impGo" type="button">Fill from link</button></div></section>' : "") +
       (p.quote_ref ? validationPanel(p) : "") +
+      (isNew || !QE() ? "" : QE().html(p)) +
       '<form id="pf" class="cr-card"><h2>Wedding</h2><div class="grid2">' + F.map(function (f) { return fld(f, p); }).join("") + '<label class="fld"><span>Status</span><select name="status">' +
       Object.keys(ST).map(function (k) { return '<option value="' + k + '"' + ((p.status || "lead") === k ? " selected" : "") + ">" + ST[k].label + "</option>"; }).join("") + "</select></label>" +
       '<label class="fld"><span>Bank account to give the couple</span><select name="bank_account">' + ["EUR", "CHF", "USD"].map(function (a) { return '<option value="' + a + '"' + ((p.bank_account || "EUR") === a ? " selected" : "") + ">" + a + " account" + (C.bankFor(S.settings, a) ? "" : " (not filled in Settings)") + "</option>"; }).join("") + "</select></label></div>" +
@@ -259,7 +266,7 @@
     var del = $("#del"); if (del) del.onclick = function () {
       if (confirm("Delete this project and its contracts? This cannot be undone.")) api.deleteProject(p.id).then(reload).then(function () { location.hash = "#/projects"; }).catch(fail);
     };
-    if (!isNew) { wireContracts(p); wirePayments(p); wireChecklist(p); }
+    if (!isNew) { wireContracts(p); wirePayments(p); wireChecklist(p); if (QE()) QE().wire(p); }
     wireValidation(p);
   }
 
@@ -282,7 +289,8 @@
     return '<section class="cr-card" id="qv"><div class="sh"><h2>Website quote · ' + (v ? "validated" : "to validate") + '</h2><span class="pill ' + (v ? "signed" : "quote") + '">' + (v ? "Validated" : "Not validated") + "</span></div>" +
       '<p class="hint">Created automatically from the website quotation (ref <strong>' + ref + "</strong>)." + (p.contact_id && byId(S.contacts, p.contact_id) ? ' <a href="#/contacts/' + p.contact_id + '">Open the contact card</a>.' : "") + "</p>" +
       (v ? '<p class="hint"><strong>Validated on ' + esc(C.fmtDate(v.slice(0, 10))) + ".</strong> The signing button now shows on their proposal page. Email them the proposal, or create and send the contract yourself below.</p>"
-         : '<p class="hint"><strong>The couple cannot sign yet.</strong> Check the details and the total (add travel or accommodation if needed, then Save), pick the bank account, and validate. Only then does the signing button appear on their proposal page.</p>') +
+         : '<p class="hint"><strong>The couple cannot sign yet.</strong> Check the quote in the editor below (add travel or accommodation, the planner commission, then save), pick the bank account, and validate. Only then does the signing button appear on their proposal page.</p>') +
+      (QE() ? QE().validityLine(p) : "") +
       (p.quote_verified === false ? '<p class="hint" style="color:var(--bad)">The database could not re-check the total of this quote yet (open the back office once after updating it), so online signing stays closed for it.</p>' : "") +
       '<div class="acts">' + (v ? '<a class="btn" href="' + esc(proposalMail(p)) + '">Email the proposal to the couple</a><button class="btn ghost" id="qWithdraw" type="button">Withdraw validation</button>' : '<button class="btn" id="qValidate" type="button">Validate the quote</button>') +
       (p.proposal_url ? '<button class="btn ghost" id="qCopy" type="button">Copy proposal link</button>' : "") + "</div></section>";

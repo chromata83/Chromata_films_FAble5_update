@@ -266,6 +266,11 @@ alter table public.projects add column if not exists quote_verified boolean not 
 alter table public.projects add column if not exists quote_validated_at timestamptz;  -- the studio validated the quote: only then can the couple sign online
 alter table public.projects add column if not exists bank_account text not null default 'EUR';   -- which bank details go in the contract: EUR, CHF or USD
 alter table public.projects add column if not exists travel_fees numeric;   -- travel / accommodation fees filled in by the studio; already included in `total`
+-- quote editor (back office): the studio's own version of the quote, shown on the couple's link in place of the one they sent
+alter table public.projects add column if not exists quote_sel jsonb;                -- the choices (collection, team, options...) currently in the quote
+alter table public.projects add column if not exists quote_lines jsonb;              -- the lines the couple sees [{l,p,t}], planner commission already spread inside the prices
+alter table public.projects add column if not exists quote_commission numeric;       -- PRIVATE: wedding planner commission, included in `total`, never sent to the couple
+alter table public.projects add column if not exists quote_issued_at timestamptz;    -- issue date: a quote is valid 14 days from it
 alter table public.projects drop constraint if exists projects_bank_account_check;
 alter table public.projects add constraint projects_bank_account_check check (bank_account in ('EUR', 'CHF', 'USD'));
 create unique index if not exists projects_quote_ref_idx on public.projects (quote_ref) where quote_ref is not null;
@@ -367,12 +372,15 @@ begin
 
   if pr.id is null then
     insert into public.projects (status, couple_names, couple_email, wedding_date, venue, location, collection, total,
-        planner_id, planner_name, planner_email, contact_id, proposal_url, notes, quote_sent_at, quote_ref, quote_synced_at, quote_verified, auto_emails)
+        planner_id, planner_name, planner_email, contact_id, proposal_url, notes, quote_sent_at, quote_ref, quote_synced_at, quote_verified, auto_emails,
+        quote_sel, quote_issued_at)
       values ('quote', names, v_email, d, nullif(v_venue, ''), nullif(place, ''), coll, tot,
-        case when planner then cid end, case when planner then cname end, case when planner then v_email end, cid, url, note, now(), p_ref, now(), verified, true);
+        case when planner then cid end, case when planner then cname end, case when planner then v_email end, cid, url, note, now(), p_ref, now(), verified, true,
+        p_sel, now());
   elsif pr.status in ('lead', 'quote') and abs(extract(epoch from (pr.updated_at - coalesce(pr.quote_synced_at, pr.created_at)))) < 2 then
-    -- the studio has not touched this project yet: the couple's latest choices replace the previous ones
+    -- the studio has not touched this project yet: the couple's latest choices replace the previous ones (and the 14 days start again)
     update public.projects set couple_names = names, couple_email = v_email, wedding_date = d, venue = nullif(v_venue, ''), location = nullif(place, ''),
+        quote_sel = p_sel, quote_issued_at = now(), quote_lines = null,
         collection = coll, total = tot, proposal_url = url, notes = note, quote_synced_at = now(), quote_verified = verified,
         planner_id = case when planner then cid end, planner_name = case when planner then cname end, planner_email = case when planner then v_email end, contact_id = cid
       where id = pr.id;
@@ -398,6 +406,10 @@ begin
     raise exception 'Your proposal is being reviewed by our team. We will come back to you personally very soon, and you will then be able to sign online.';
   end if;
   if pr.status not in ('lead', 'quote', 'signature') then raise exception 'This proposal is not open for online signing. Please write to us.'; end if;
+  -- a quote is valid 14 days from its issue date (the studio can issue it again from the back office)
+  if current_date > (coalesce(pr.quote_issued_at, pr.quote_sent_at, pr.created_at) at time zone 'UTC')::date + 14 then
+    raise exception 'This proposal is no longer valid (our quotations are valid for 14 days). Please write to us and we will refresh it right away.';
+  end if;
   select coalesce(jsonb_object_agg(key, value), '{}'::jsonb) into s from public.settings
     where key in ('online_signing', 'bank_details', 'bank_details_chf', 'bank_details_usd', 'contract_template', 'contract_template_default', 'studio_signature');
   if coalesce(s ->> 'online_signing', '1') = '0' then raise exception 'Online signing is not open for this proposal yet. Please reply to us by email and we will send you the agreement.'; end if;
@@ -434,16 +446,21 @@ begin
   return jsonb_build_object('token', c.token);
 end $$;
 
--- lets the proposal page know whether the studio has validated the quote (only then it shows the signing button)
+-- What the couple's proposal page asks for each time it opens: is signing open, the studio's current version of the
+-- quote (lines + total, so every change made in the back office shows up on the same link by itself), and the validity.
+-- The planner commission (quote_commission) is NEVER returned: it is already spread inside the prices of `lines`.
 create or replace function public.quote_status(p_ref text) returns jsonb
 language sql stable security definer set search_path = public as $$
   select coalesce((
     select jsonb_build_object('found', true,
       'signed', exists (select 1 from public.contracts c where c.project_id = p.id and c.status = 'signed'),
-      'travel_fees', p.travel_fees, 'total', p.total,
+      'travel_fees', p.travel_fees, 'total', p.total, 'lines', p.quote_lines,
+      'issued', to_char(d.issued, 'YYYY-MM-DD'), 'valid_until', to_char(d.issued + 14, 'YYYY-MM-DD'), 'expired', current_date > d.issued + 14,
       'validated', coalesce((select value from public.settings where key = 'online_signing'), '1') <> '0'
         and (p.quote_validated_at is not null or exists (select 1 from public.contracts c where c.project_id = p.id and c.status = 'sent')))
-    from public.projects p where p_ref ~ '^[a-z0-9]{10,16}$' and p.quote_ref = p_ref
+    from public.projects p
+    cross join lateral (select (coalesce(p.quote_issued_at, p.quote_sent_at, p.created_at) at time zone 'UTC')::date as issued) d
+    where p_ref ~ '^[a-z0-9]{10,16}$' and p.quote_ref = p_ref
   ), jsonb_build_object('found', false));
 $$;
 

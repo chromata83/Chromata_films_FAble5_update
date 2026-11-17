@@ -8,7 +8,8 @@
   var DEMO_KEY = "crm-demo-v3";
   var F = {
     projects: ["status", "couple_names", "couple_email", "couple_phone", "wedding_date", "venue", "location", "collection", "total", "planner_id",
-      "planner_name", "planner_company", "planner_email", "planner_phone", "contact_id", "travel_fees", "bank_account", "quote_validated_at", "proposal_url", "notes", "quote_sent_at", "auto_emails", "tracker", "films"],
+      "planner_name", "planner_company", "planner_email", "planner_phone", "contact_id", "travel_fees", "bank_account", "quote_validated_at", "proposal_url", "notes", "quote_sent_at", "auto_emails", "tracker", "films",
+      "quote_ref", "quote_verified", "quote_sel", "quote_lines", "quote_commission", "quote_issued_at"],
     contracts: ["project_id", "title", "body", "amount", "status", "sent_at", "studio_signature"],
     payments: ["paid_at", "remind"],
     contacts: ["kind", "name", "company", "email", "phone", "website", "tag", "follow_up", "next_step_date", "notes"],
