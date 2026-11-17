@@ -3243,7 +3243,7 @@ const QX_HEAD = (title, desc) => `<meta charset="UTF-8" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/quotation.css?v=10" />`;
+<link rel="stylesheet" href="css/quotation.css?v=11" />`;
 
 const QX_MENU = `<a class="qx-crest" href="index.html" aria-label="Chromata Films, home"><img src="assets/img/logo-mark.png" alt="" width="32" height="64" /></a>
 <button class="qx-menu" id="qxMenu" type="button" aria-expanded="false" aria-controls="qxDrawer"><span>Menu</span><span class="l" aria-hidden="true"><i></i><i></i></span></button>
@@ -3315,9 +3315,9 @@ ${QX_MENU}
   </section>
 </main>
 <script src="js/crm-config.js?v=2"></script>
-<script src="js/quote-core.js?v=17"></script>
+<script src="js/quote-core.js?v=18"></script>
 <script src="js/quote-link.js?v=2"></script>
-<script src="js/quotation.js?v=11" defer></script>
+<script src="js/quotation.js?v=12" defer></script>
 </body>
 </html>
 `;
@@ -3327,13 +3327,13 @@ ${QX_MENU}
 pages["quotation-WP.html"] = pages["quotation.html"]
   .replace("<title>Your experience · Chromata Films</title>", "<title>Wedding planners · Chromata Films</title>")
   .replace("Compose your coverage with Chromata Films, step by step.", "Compose a couple's coverage with Chromata Films, step by step, at wedding planner rates.")
-  .replace("js/quotation.js?v=11", "js/quotation-wp.js?v=3");
+  .replace("js/quotation.js?v=12", "js/quotation-wp.js?v=4");
 
 pages["proposal.html"] = `<!DOCTYPE html>
 <html lang="en">
 <head>
 ${QX_HEAD("Your proposal · Chromata Films", "A private proposal from Chromata Films.")}
-<link rel="stylesheet" href="css/proposal.css?v=12" />
+<link rel="stylesheet" href="css/proposal.css?v=13" />
 </head>
 <body data-page="proposal" class="qx px">
 ${QX_MENU}
@@ -3345,10 +3345,10 @@ ${QX_MENU}
   <button class="nav next" id="qxLbNext" type="button" aria-label="Next" hidden>&#8250;</button>
 </div>
 <script src="js/crm-config.js?v=2"></script>
-<script src="js/quote-core.js?v=17"></script>
+<script src="js/quote-core.js?v=18"></script>
 <script src="js/quote-link.js?v=2"></script>
 <script src="js/proposal-pdf.js?v=1" defer></script>
-<script src="js/proposal.js?v=18" defer></script>
+<script src="js/proposal.js?v=19" defer></script>
 </body>
 </html>
 `;

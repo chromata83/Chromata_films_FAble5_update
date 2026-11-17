@@ -189,6 +189,8 @@
       var st = $("#qxStage"); window.scrollTo({ top: st.getBoundingClientRect().top + window.scrollY, behavior: "smooth" });
     }
     $("#qxFilms").hidden = step.type !== "summary";
+    cmpWrap.hidden = aboutWrap.hidden = step.type !== "summary";
+    if (step.type === "summary") paintCompare();
     bind(step);
     chrome();
     save();
@@ -209,7 +211,7 @@
     return '<div class="kicker">Your bespoke quote</div><div class="question">' + esc(A.names || "Your experience") + '</div>' +
       '<div class="sumcard">' + rows + "</div>" +
       '<p class="snote">' + esc(Q.travelNote(A)) + " " + esc(Q.validityNote()) + '</p>' +
-      '<div class="qx-cmp-wrap"><p class="qx-cmp__title">What each collection includes</p>' + Q.compareTable(A) + "</div>" +
+      '<p class="qx-cmp-link"><a class="sumlink" href="#qxCompare" id="qxToCompare">Compare the collections and change yours ↓</a></p>' +
       actions + '<div id="qxMsg" role="status"></div>' +
       '<a class="sumlink" href="#qxFilms" id="qxToFilms">Our latest work ↓</a>';
   }
@@ -276,6 +278,7 @@
       $("#qxRestart").addEventListener("click", restart);
       var s = $("#qxSend"); if (s) s.addEventListener("click", send);
       $("#qxToFilms").addEventListener("click", function (e) { e.preventDefault(); $("#qxFilms").scrollIntoView({ behavior: "smooth" }); });
+      $("#qxToCompare").addEventListener("click", function (e) { e.preventDefault(); cmpWrap.scrollIntoView({ behavior: "smooth" }); });
     }
   }
 
@@ -373,6 +376,25 @@
         var body = "Hello Chromata Films,\n\nHere is my selection:\n\n" + Q.recapText(A) + "\n\nNames: " + A.names + (A.role === "planner" ? "\nWedding planner: " + A.planner : "") + "\nWedding date: " + Q.fmtDate(A.date) + "\nLocation: " + A.place + "\nVenue: " + A.venue + "\n\nMy proposal: " + url;
         msg.innerHTML = '<p class="sentmsg err"><span class="big">That didn’t go through</span>Something went wrong sending your selection. <a href="mailto:' + Q.EMAIL + "?subject=" + encodeURIComponent("Quotation request · " + A.names) + "&body=" + encodeURIComponent(body) + '">Send it from your own email</a> and we’ll take it from there.</p>';
       });
+  }
+
+  /* ---------- under the last screen: the three collections (click one to change yours, the total follows), then About ---------- */
+  var cmpWrap = document.createElement("div"), aboutWrap = document.createElement("div");
+  cmpWrap.hidden = aboutWrap.hidden = true;
+  aboutWrap.innerHTML = Q.aboutSection();
+  $("#qxFilms").parentNode.insertBefore(cmpWrap, $("#qxFilms"));
+  $("#qxFilms").parentNode.insertBefore(aboutWrap, $("#qxFilms"));
+  function paintCompare() {
+    cmpWrap.innerHTML = Q.compareSection(A, { pick: true, id: "qxCompare" });
+    $$(".px-col.is-pick", cmpWrap).forEach(function (el) {
+      var choose = function () {
+        var v = el.getAttribute("data-v"); if (A.wedding === v) return;
+        A.wedding = v; sent = false; save();   // a change after sending means sending again
+        var y = window.scrollY; render(false); window.scrollTo(0, y);
+      };
+      el.addEventListener("click", choose);
+      el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(); } });
+    });
   }
 
   /* ---------- our latest work: four frames, then the films one by one ---------- */

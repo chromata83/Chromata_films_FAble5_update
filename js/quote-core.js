@@ -59,19 +59,41 @@
     { k: "An extra separate film of the full speeches and the full ceremony", on: [0, 0, 1] },
     { k: "An editorial session, offered the morning of the welcome event", on: [0, 0, 1] }
   ];
-  /* The table version (compact, for the configurators). The chosen collection's column is yellow, the others white. */
-  function compareTable(a) {
-    var chosen = a && a.wedding, col = function (i) { return COLLECTIONS[i].v === chosen ? " is-chosen" : ""; };
-    var head = '<div class="qx-cmp__row qx-cmp__head"><span class="k"></span>' + COLLECTIONS.map(function (c, i) {
-      return '<span class="c' + col(i) + '">' + esc(c.short) + (COLLECTIONS[i].v === chosen ? "<em>Your choice</em>" : "") + "</span>";
-    }).join("") + "</div>";
-    var rows = COMPARE.map(function (r) {
-      return '<div class="qx-cmp__row"><span class="k">' + esc(r.k) + "</span>" + COLLECTIONS.map(function (c, i) {
-        var on = r.on ? !!r.on[i] : true;
-        return '<span class="c' + col(i) + (on ? " on" : " off") + '">' + (r.v && on ? esc(r.v[i]) : '<i class="bx" aria-hidden="true"></i><b class="sr-only">' + (on ? "Included" : "Not included") + "</b>") + "</span>";
-      }).join("") + "</div>";
+  /* The three collections as three columns (cards). On the proposal page they are a static summary; on the configurators (pick: true) a card is a
+     button: choosing it changes the collection and the total follows. The chosen collection is yellow, the others white. */
+  function compareSection(a, o) {
+    o = o || {};
+    var chosen = a && a.wedding, base = o.pick ? total(a) : 0;
+    var cols = COLLECTIONS.map(function (c, i) {
+      var is = chosen === c.v, price = "";
+      if (o.pick) {
+        var t = total(Object.assign({}, a, { wedding: c.v })), d = t - base;
+        price = '<p class="px-col__price">Your total <strong>' + eur(t) + "</strong>" + (is ? "" : "<span>" + (d > 0 ? "+" : "−") + eur(Math.abs(d)) + "</span>") + "</p>";
+      }
+      return '<article class="px-col' + (is ? " is-chosen" : "") + (o.pick ? " is-pick" : "") + '"' + (o.pick ? ' data-v="' + c.v + '" tabindex="0" role="button" aria-pressed="' + is + '" aria-label="' + (is ? "Your choice: " : "Choose ") + esc(c.name) + '"' : "") + '><header><span class="px-col__tag">' + (is ? "Your choice" : (o.pick ? "Choose this one" : "&nbsp;")) + "</span><h3>" + esc(c.short) + "<small>collection</small></h3>" + price + "</header><ul>" +
+        COMPARE.map(function (r) {
+          var on = r.on ? !!r.on[i] : true, text = r.t ? r.t[i] : r.k;
+          return '<li class="' + (on ? "on" : "off") + '"><span class="bx" aria-hidden="true"></span><span>' + esc(text) + (on ? "" : '<em class="sr-only"> (not included)</em>') + "</span></li>";
+        }).join("") + "</ul></article>";
     }).join("");
-    return '<div class="qx-cmp" role="table" aria-label="What each collection includes">' + head + rows + "</div>";
+    return '<section class="px-compare' + (o.pick ? " px-compare--cfg" : "") + '"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">' + (o.pick ? "Compare and choose" : "Your collection") + '</p><h2 class="px-h2">' +
+      (o.pick ? "Change your collection <em>at will</em>" : "What each collection <em>includes</em>") + '</h2></div><div class="px-cols">' + cols + "</div></section>";
+  }
+
+  /* "About": one paragraph from the Studio page (The Philosophy, The Inspiration, and the VFX pedigree of Kevin Lopez, co-founder), with Kevin and Laura's portrait
+     and the posters of the films Kevin worked on. Same on the configurators' last screen and on the proposal page, for couples and planners. */
+  var ABOUT = "Chromata Films makes visual narratives, not documentation: authentic storytelling, created with premium vendors and French-inspired sophistication, in a relaxed atmosphere where you can simply be yourselves. " +
+    "Our muses are Salvador Dalí and Elsa Schiaparelli, who proved that the unexpected can also be the most desirable thing in the room, so we look for the surreal detail hidden inside a real day and frame it with a couturier’s eye. " +
+    "And before weddings, our co-founder and film director Kevin Lopez spent a decade in visual effects for major studios, helping craft images for some of the biggest films ever made — Star Wars, Beauty and the Beast, The Great Gatsby, Avengers — which is exactly what he brings to your wedding day: the same standards, the same tools, and a far better leading couple.";
+  var POSTERS = [["star-wars", "Star Wars: The Last Jedi"], ["beauty-beast", "Beauty and the Beast"], ["gatsby", "The Great Gatsby"], ["avengers", "Avengers: Infinity War"], ["fantastic-four", "Fantastic Four"], ["still", "Solo: A Star Wars Story"]];
+  function aboutSection() {
+    return '<section class="px-about" id="about">' +
+      '<img class="px-about__art" alt="" aria-hidden="true" draggable="false" loading="lazy" src="assets/img/quote/q-lobster.webp">' +
+      '<div class="px-wrap px-about__head"><div><p class="kicker">— About Chromata</p><h2 class="px-h2">Visual narratives, not <em>documentation</em></h2>' +
+      '<p class="px-about__p">' + esc(ABOUT) + "</p></div>" +
+      '<figure class="px-about__who"><img src="assets/img/quote/n-kevin.jpg" alt="Kevin and Laura Lopez, co-founders of Chromata Films, at the RSVP Awards gala night" loading="lazy" width="1400" height="1866"><figcaption>Kevin &amp; Laura Lopez<small>Co-founders · RSVP Awards gala night</small></figcaption></figure></div>' +
+      '<div class="px-posters">' + POSTERS.map(function (p) { return '<figure><img src="assets/img/blockbusters/' + p[0] + '.jpg" alt="' + esc(p[1]) + ' — poster" loading="lazy"></figure>'; }).join("") + "</div>" +
+    "</section>";
   }
 
   var TEAM = [
@@ -469,7 +491,7 @@
     eur: eur, esc: esc, clip: clip,
     fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
-    up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareTable: compareTable,
+    up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,
