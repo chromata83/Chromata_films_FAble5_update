@@ -39,7 +39,7 @@
   function start(P, C, st0) {
     var A = P.answers;
     /* a custom quote starts from the studio's saved definition, the website quotation from the couple's own choices */
-    var cq = C ? Q.customQuote(C, { travel: st0 && st0.travel_fees }) : null;
+    var cq = C ? Q.customQuote(C) : null;
     var L = cq ? [] : Q.lines(A), tot = cq ? cq.total : Q.total(A);
     var ref = "CF-" + (P.id ? P.id.slice(0, 6) : "PROPOSAL");
     var issued = P.ts ? new Date(P.ts).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "";
@@ -49,7 +49,7 @@
     var subject = "Proposal " + ref + " · " + A.names;
     /* the reply email quotes what the page shows right now (the studio's version once it exists) */
     function mailHref() {
-      var recap = model.rows.map(function (r) { return "- " + r.l + ": " + (r.t === "tbc" ? "TBC" : r.t === "inc" ? "Included" : eur(r.p)); }).join("\n") + "\n\nTOTAL INVESTMENT: " + eur(model.total) + (model.inc ? " (all travel and accommodation fees included)" : "");
+      var recap = model.rows.map(function (r) { return "- " + r.l + ": " + (r.t === "tbc" ? "TBC" : r.t === "inc" ? "Included" : r.t === "opt" ? "Video upgrade, not in the total: " + eur(r.p) : eur(r.p)); }).join("\n") + "\n\nTOTAL INVESTMENT: " + eur(model.total) + (model.inc ? " (all travel and accommodation fees included)" : "");
       return "mailto:" + Q.EMAIL + "?subject=" + encodeURIComponent(subject) +
         "&body=" + encodeURIComponent("Hello Chromata Films,\n\nWe have seen our proposal (" + ref + ") and would love to talk about it.\n\n" + recap + "\n\nNames: " + A.names + "\n");
     }
@@ -65,7 +65,7 @@
       : { rows: L.map(function (l) { return { l: l.label, p: l.price, t: l.tbc ? "tbc" : "" }; }), total: tot, inc: false };
     function sumHTML(m) {
       return m.rows.map(function (r) {
-        return '<div class="srow"><span class="sl">' + esc(r.l) + (r.s ? "<small>" + esc(r.s) + "</small>" : "") + '</span><span class="sr">' + (r.t === "tbc" ? "TBC" : r.t === "inc" ? "Included" : eur(r.p)) + "</span></div>";
+        return '<div class="srow"><span class="sl">' + esc(r.l) + (r.s ? "<small>" + esc(r.s) + "</small>" : "") + '</span><span class="sr">' + (r.t === "tbc" ? "TBC" : r.t === "inc" ? "Included" : r.t === "opt" ? "<em>Video upgrade</em> " + eur(r.p) : eur(r.p)) + "</span></div>";
       }).join("") + '<div class="srow grand"><span class="sl">Total investment' + (m.inc ? " · all travel and accommodation fees included" : "") + '</span><span class="sr">' + eur(m.total) + "</span></div>";
     }
 
@@ -106,7 +106,7 @@
         cutHTML("q-intro", { l: "43.5%", b: "-5vh", h: "54vh", rot: "-5deg", ml: "3vw", mt: "2vh", mh: "24vh", mrot: "-4deg" }) +
       "</section>" +
 
-      (C ? Q.customCompare(C, { id: "collection" }) : Q.compareSection(A, { id: "collection" })) +
+      (C ? Q.customCompare(C, { id: "collection" }) + Q.customUpgrades(C, { id: "upgrades" }) : Q.compareSection(A, { id: "collection" })) +
 
       '<section class="px-sel" id="selections">' +
         cutHTML("q-swan", { l: "3vw", b: "-5vh", h: "28vh", rot: "-8deg", ml: "62vw", mt: "-4vh", mh: "14vh", mrot: "-6deg" }) +
@@ -168,7 +168,7 @@
       if (!st || !st.found) return;
       if (st.valid_until) { validity.until = st.valid_until; validity.expired = !!st.expired; }
       if (Array.isArray(st.lines) && st.lines.length && st.total != null) {
-        model = { rows: st.lines.map(function (r) { return { l: String(r.l || ""), p: +r.p || 0, t: r.t === "tbc" || r.t === "inc" ? r.t : "", s: r.s ? String(r.s) : "" }; }), total: +st.total, inc: st.lines.some(function (r) { return r.t === "inc"; }) };
+        model = { rows: st.lines.map(function (r) { return { l: String(r.l || ""), p: +r.p || 0, t: r.t === "tbc" || r.t === "inc" || r.t === "opt" ? r.t : "", s: r.s ? String(r.s) : "" }; }), total: +st.total, inc: st.lines.some(function (r) { return r.t === "inc"; }) };
       } else if (st.travel_fees != null && st.total != null) {
         model = { rows: model.rows.map(function (r) { return r.t === "tbc" ? { l: "Travel / accommodation", p: 0, t: "inc" } : r; }), total: +st.total, inc: true };
       }

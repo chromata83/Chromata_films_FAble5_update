@@ -115,32 +115,41 @@
         { k: "Highlight film", on: on([1, 1, 1]), d: ["2 min", "3 min", "4 min"] },
         { k: "Drone footage", on: on([0, 1, 1]), d: ["", "", ""] },
         { k: "A short film made for social media", on: on([0, 0, 1]), d: ["", "", ""] }],
-      lines: [], travel: { show: true }, note: "", about: { on: true, text: "" }, films: true, photos: [] };
+      lines: [], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: true, photos: [] };
   }
+  /* a text that may keep its line breaks (the description of a video upgrade) */
+  var clipML = function (s, n) { return String(s == null ? "" : s).replace(/\r/g, "").replace(/[\u0000-\u0009\u000b-\u001f]/g, " ").replace(/\n{3,}/g, "\n\n").trim().slice(0, n); };
+  var qtyLabel = function (l) { return l.qty > 1 ? " × " + l.qty + (l.unit ? " " + l.unit + (/s$/i.test(l.unit) ? "" : "s") : "") : ""; };
   /* Whatever comes in (the builder's form, or the database) comes out as a safe, complete definition: bounded lengths, numbers, known pictures only. */
   function customClean(raw) {
     var r = raw && typeof raw === "object" ? raw : {}, d = {};
     d.v = 1;
-    d.kind = clip(r.kind, 60); d.word = clip(r.word, 20) || "package"; d.lead = clip(r.lead, 600);
+    d.kind = clip(r.kind, 60); d.word = clip(r.word, 20) || "package"; d.lead = clip(r.lead, 1500);
     d.hero = safeImg(r.hero); d.photosTitle = clip(r.photosTitle, 60) || "Moments we witnessed"; d.note = clip(r.note, 300);
     var seen = {};
     d.packages = (Array.isArray(r.packages) ? r.packages : []).slice(0, 4).map(function (p, i) {
       p = p || {}; var id = String(p.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 12) || "p" + (i + 1);
       while (seen[id]) id += "x"; seen[id] = 1;
-      return { id: id, name: clip(p.name, 60) || "Package " + (i + 1), sub: clip(p.sub, 400), price: num(p.price, 0, 10000000) };
+      return { id: id, name: clip(p.name, 60) || "Package " + (i + 1), sub: clip(p.sub, 2000), price: num(p.price, 0, 10000000) };
     });
     if (!d.packages.length) d.packages = [{ id: "a", name: "Package", sub: "", price: 0 }];
     var n = d.packages.length;
     d.chosen = pkgById(d.packages, String(r.chosen || "")) ? String(r.chosen) : d.packages[0].id;
     d.features = (Array.isArray(r.features) ? r.features : []).slice(0, 16).map(function (f) {
       f = f || {}; var on = [], dd = [];
-      for (var i = 0; i < n; i++) { on.push(f.on && f.on[i] ? 1 : 0); dd.push(clip(f.d && f.d[i], 60)); }
-      return { k: clip(f.k, 120), on: on, d: dd };
+      for (var i = 0; i < n; i++) { on.push(f.on && f.on[i] ? 1 : 0); dd.push(clip(f.d && f.d[i], 120)); }
+      return { k: clip(f.k, 200), on: on, d: dd };
     }).filter(function (f) { return f.k; });
     d.lines = (Array.isArray(r.lines) ? r.lines : []).slice(0, 24).map(function (l) {
       l = l || {};
-      return { name: clip(l.name, 120), sub: clip(l.sub, 300), price: num(l.price, -10000000, 10000000), qty: Math.max(1, Math.min(99, Math.round(+l.qty) || 1)), unit: clip(l.unit, 20) };
+      return { name: clip(l.name, 200), sub: clipML(l.sub, 1500), price: num(l.price, -10000000, 10000000), qty: Math.max(1, Math.min(99, Math.round(+l.qty) || 1)), unit: clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
+        card: l.card === true || l.card === 1,   // shown as a clickable card in the "Video upgrades" section of the quote
+        inc: (Array.isArray(l.inc) ? l.inc : []).slice(0, 12).map(function (x) { return clip(x, 120); }).filter(Boolean) };   // what the upgrade includes
     }).filter(function (l) { return l.name; });
+    /* a price per package for something every package pays differently (shown under the comparison, added to the quote by itself) */
+    var ex = r.extra && typeof r.extra === "object" ? r.extra : {};
+    d.extra = { on: ex.on === true || ex.on === 1, label: clip(ex.label, 160), sub: clip(ex.sub, 300), prices: d.packages.map(function (p, i) { return num(Array.isArray(ex.prices) ? ex.prices[i] : 0, 0, 10000000); }) };
+    if (!d.extra.label) d.extra.on = false;
     d.travel = { show: !(r.travel && r.travel.show === false) };
     d.about = { on: !(r.about && r.about.on === false), text: clip(r.about && r.about.text, 1500) };
     d.films = r.films !== false;
@@ -153,15 +162,17 @@
   function customLines(d) {
     var L = [], p = pkgById(d.packages, d.chosen) || d.packages[0];
     if (p) L.push({ key: "package", label: (d.kind ? d.kind + " · " : "") + p.name, sub: p.sub, price: p.price });
+    var xi = d.packages.indexOf(p), xp = d.extra && d.extra.on && xi > -1 ? d.extra.prices[xi] : 0;
+    if (xp > 0) L.push({ key: "line", label: d.extra.label, sub: d.extra.sub, price: xp });   // the package-dependent extra is added by itself
     d.lines.forEach(function (l) {
-      var q = l.qty > 1 ? " × " + l.qty + (l.unit ? " " + l.unit + (/s$/i.test(l.unit) ? "" : "s") : "") : "";
-      L.push({ key: "line", label: l.name + q, sub: l.sub, price: Math.round(l.price * l.qty * 100) / 100 });
+      /* a featured upgrade has its description on its card: the summary row stays short */
+      L.push({ key: l.on ? "line" : "optional", label: l.name + qtyLabel(l), sub: l.card ? "" : l.sub, price: Math.round(l.price * l.qty * 100) / 100 });
     });
-    if (d.travel.show) L.push({ key: "travel", label: "Travel / accommodation · " + TRAVEL_TBC, price: 0, tbc: true });
+    if (d.travel.show) L.push({ key: "travel", label: "Travel / accommodation", price: 0 });
     return L;
   }
-  /* rows the client reads + total, same shape as studioQuote (no commission in custom quotes) */
-  function customQuote(d, ex) { var r = spread(customLines(d), { travel: ex && ex.travel }); r.total = Math.max(0, r.total); return r; }
+  /* rows the client reads + total, same shape as studioQuote (no commission in custom quotes); travel / accommodation is always a line that reads "Included" */
+  function customQuote(d) { var r = spread(customLines(d), { travel: 0 }); r.total = Math.max(0, r.total); return r; }
   function customCompare(d, o) {
     o = o || {};
     var word = d.word || "package", one = d.packages.length === 1;
@@ -169,7 +180,29 @@
     var rows = d.features.map(function (f) { return { k: f.k, on: f.on, t: f.on.map(function (x, i) { return f.d[i] ? f.k + " · " + f.d[i] : f.k; }) }; });
     var html = cardsHTML(cols, rows, d.chosen, { word: word }, function (c) { return c.price > 0 ? '<p class="px-col__price px-col__price--base"><strong>' + eur(c.price) + "</strong></p>" : ""; });
     return '<section class="px-compare"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">' + (one ? "What is included" : "Your " + esc(word)) + '</p><h2 class="px-h2">' +
-      (one ? "Everything that is <em>included</em>" : "What each " + esc(word) + " <em>includes</em>") + '</h2></div><div class="px-cols px-cols--' + cols.length + '">' + html + "</div></section>";
+      (one ? "Everything that is <em>included</em>" : "What each " + esc(word) + " <em>includes</em>") + '</h2></div><div class="px-cols px-cols--' + cols.length + '">' + html + "</div>" + customExtraBand(d) + "</section>";
+  }
+  /* the line under the comparison: "Extra as per ..." with what each package pays on top, the chosen one in yellow */
+  function customExtraBand(d) {
+    var x = d.extra;
+    if (!x || !x.on || !x.label || !x.prices.some(function (p) { return p > 0; })) return "";
+    return '<div class="px-xtra"><div class="px-xtra__t"><strong>' + esc(x.label) + "</strong>" + (x.sub ? "<span>" + esc(x.sub) + "</span>" : "") + "</div>" +
+      '<div class="px-cols px-cols--' + d.packages.length + ' px-xtra__cols">' + d.packages.map(function (p, i) {
+        var v = x.prices[i];
+        return '<div class="px-xcell' + (p.id === d.chosen ? " is-chosen" : "") + '"><span class="px-xcell__n">' + esc(p.name) + '</span><strong class="px-xcell__p">' + (v > 0 ? "+ " + eur(v) : "Included") + "</strong></div>";
+      }).join("") + "</div></div>";
+  }
+  /* "Video upgrades": the lines the studio chose to feature, each a clickable card that opens on its description and what it includes */
+  function customUpgrades(d, o) {
+    var ups = d.lines.filter(function (l) { return l.card; });
+    if (!ups.length) return "";
+    return '<section class="px-ups"' + (o && o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">Video upgrades</p><h2 class="px-h2">Take it <em>further</em></h2></div><div class="px-ups__list">' +
+      ups.map(function (l) {
+        var price = Math.round(l.price * l.qty * 100) / 100, paras = String(l.sub || "").split(/\n+/).filter(Boolean);
+        return '<details class="px-up' + (l.on ? " is-on" : "") + '"><summary><span class="px-up__t">' + esc(l.name + qtyLabel(l)) + '</span><span class="px-up__p">' + (price < 0 ? "− " : "+ ") + eur(Math.abs(price)) + '</span><span class="px-up__s">' + (l.on ? "Added to your total" : "Optional upgrade") + '</span><i class="px-up__chev" aria-hidden="true"></i></summary>' +
+          '<div class="px-up__body">' + paras.map(function (t) { return "<p>" + esc(t) + "</p>"; }).join("") +
+          (l.inc.length ? '<p class="px-up__h">What is included</p><ul>' + l.inc.map(function (t) { return '<li><span class="bx" aria-hidden="true"></span><span>' + esc(t) + "</span></li>"; }).join("") + "</ul>" : "") + "</div></details>";
+      }).join("") + "</div></section>";
   }
   var customLink = function (ref, names) { return "proposal.html#" + slug(names) + "-" + ref; };
   /* proposal.html#<slug>-<ref> (no dot, no token): the page fetches everything from the database by the reference */
@@ -314,11 +347,13 @@
     ex = ex || {};
     var travel = (ex.travel === null || ex.travel === undefined || ex.travel === "" || isNaN(+ex.travel)) ? null : Math.max(0, Math.round(+ex.travel));
     var base = 0;
-    L.forEach(function (l) { if (l.key !== "travel") base += l.price; });
+    L.forEach(function (l) { if (l.key !== "travel" && l.key !== "optional") base += l.price; });
     var comm = base > 0 ? Math.max(0, Math.round(+ex.commission || 0)) : 0;
     var f = base > 0 ? (base + comm) / base : 1, big = -1, sum = 0;
     var rows = L.map(function (l, i) {
       if (l.key === "travel") return travel === null ? { l: l.label, p: 0, t: "tbc" } : { l: "Travel / accommodation", p: travel, t: "inc" };
+      /* an option the client has not validated yet: listed with its price, but not counted anywhere */
+      if (l.key === "optional") return l.sub ? { l: l.label, p: l.price, t: "opt", s: l.sub } : { l: l.label, p: l.price, t: "opt" };
       var p = Math.round(l.price * f);
       sum += p;
       if (l.price > 0 && (big < 0 || l.price > L[big].price)) big = i;
@@ -599,7 +634,7 @@
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
     up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection, photosSection: photosSection,
     ABOUT: ABOUT, ABOUT_GENERIC: ABOUT_GENERIC, safeImg: safeImg, emLast: emLast, customBlank: customBlank, customClean: customClean, customLines: customLines, customQuote: customQuote,
-    customCompare: customCompare, customLink: customLink, parseCustomLink: parseCustomLink,
+    customCompare: customCompare, customUpgrades: customUpgrades, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

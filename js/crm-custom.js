@@ -1,7 +1,7 @@
 /* Chromata CRM — Tools: the custom quote builder. Loaded after crm.js and BEFORE crm-views.js (which starts the app).
 
    For events that are not weddings (a Christmas party, a Bar Mitzvah, a brand film...) the studio composes a quote of its own in the same look as the
-   website quotation: its own packages (names, prices, descriptions), a comparison table that reads them, extra lines, travel, and the pictures it wants.
+   website quotation: its own packages (names, prices, descriptions), a comparison table that reads them, video upgrades, travel, and the pictures it wants.
    Saving creates (or updates) a project with a private link, proposal.html#<slug>-<ref>. The page behind that link reads everything from the database
    (quote_status), so a change saved here shows on the same link by itself. Nothing in the link carries a price. */
 (function () {
@@ -35,7 +35,7 @@
     shell("tools", '<header class="top"><h1>Tools</h1></header>' +
       '<section class="cr-card"><div class="sh"><h2>Custom quote</h2><a class="btn" href="#/tools/quote/new">New custom quote</a></div>' +
       '<p class="hint">Make a quote of your own, in the same look as the website quotation, for events that are not weddings (Christmas party, Bar Mitzvah, a brand film…). ' +
-      "You choose the names of the packages, their prices and descriptions, what each one includes (the comparison follows), extra lines, and the pictures. " +
+      "You choose the names of the packages, their prices and descriptions, what each one includes (the comparison follows), video upgrades, and the pictures. " +
       "It becomes a project with a private link, exactly like a quote from the website.</p>" +
       (rows || '<p class="empty">No custom quote yet.</p>') + "</section>");
   }
@@ -43,19 +43,18 @@
   /* ---------------- the working copy ---------------- */
   function fromDef(d, p) {
     return { id: p.id || "", ref: p.quote_ref || "", url: p.proposal_url || "", names: p.couple_names || "", email: p.couple_email || "", date: p.wedding_date || "", venue: p.venue || "", place: p.location || "",
-      kind: d.kind, word: d.word, lead: d.lead, hero: d.hero, photosTitle: d.photosTitle, chosen: d.chosen, packages: copy(d.packages), features: copy(d.features), lines: copy(d.lines), photos: copy(d.photos),
-      travelShow: d.travel.show, travelAmt: p.travel_fees == null ? "" : String(p.travel_fees), note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films,
+      kind: d.kind, word: d.word, lead: d.lead, hero: d.hero, photosTitle: d.photosTitle, chosen: d.chosen, packages: copy(d.packages), features: copy(d.features), lines: d.lines.map(function (l) { var c = copy(l); c.incText = l.inc.join("\n"); return c; }), extra: copy(d.extra), photos: copy(d.photos),
+      travelShow: d.travel.show, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films,
       issued: p.id ? issuedOf(p) : iso(new Date()), status: p.status || "" };
   }
   function fresh() { var w = fromDef(Q.customClean(Q.customBlank()), {}); w.note = DEFAULT_NOTE; return w; }
   /* the form -> a clean definition (what is stored with the project) */
   function toDef() {
-    var d = Q.customClean({ kind: W.kind, word: W.word, lead: W.lead, hero: W.hero, photosTitle: W.photosTitle, chosen: W.chosen, packages: W.packages, features: W.features, lines: W.lines, photos: W.photos,
+    var d = Q.customClean({ kind: W.kind, word: W.word, lead: W.lead, hero: W.hero, photosTitle: W.photosTitle, chosen: W.chosen, packages: W.packages, features: W.features, lines: W.lines.map(function (l) { return Object.assign({}, l, { inc: String(l.incText || "").split("\n") }); }), extra: W.extra, photos: W.photos,
       travel: { show: W.travelShow }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films });
     delete d.names; delete d.date; delete d.place; delete d.venue; delete d.planner;   // who it is for lives in the project columns
     return d;
   }
-  var travelNum = function () { return W.travelShow && String(W.travelAmt).trim() !== "" && isFinite(+W.travelAmt) ? Math.max(0, +W.travelAmt) : null; };
   function pkgById(id) { for (var i = 0; i < W.packages.length; i++) if (W.packages[i].id === id) return W.packages[i]; return null; }
   function newPkgId() { var n = "abcdefghijklmnopqrstuvwxyz"; for (var i = 0; i < n.length; i++) if (!pkgById(n[i])) return n[i]; return "p" + Date.now(); }
 
@@ -71,7 +70,7 @@
     var p = null;
     if (!id || id === "new") W = fresh();
     else if (id.indexOf("copy-") === 0 && (p = byId(S.projects, id.slice(5))) && p.quote_custom) {
-      W = fromDef(Q.customClean(p.quote_custom), Object.assign({}, p, { id: "", quote_ref: "", proposal_url: "", travel_fees: p.travel_fees }));
+      W = fromDef(Q.customClean(p.quote_custom), Object.assign({}, p, { id: "", quote_ref: "", proposal_url: "" }));
       W.names = p.couple_names + " (copy)"; W.id = ""; W.ref = ""; W.url = ""; W.date = ""; W.issued = iso(new Date());
     } else if ((p = byId(S.projects, id)) && p.quote_custom) W = fromDef(Q.customClean(p.quote_custom), p);
     else { location.hash = "#/tools"; return; }
@@ -88,7 +87,7 @@
       return '<div class="qb-pkg' + (W.chosen === p.id ? " on" : "") + '"><label class="qe-chk"><input type="radio" name="qbChosen" data-chosen="' + i + '"' + (W.chosen === p.id ? " checked" : "") + "> <strong>For this client</strong> <small>(the one in the quote, shown in yellow)</small></label>" +
         '<div class="grid2"><label class="fld"><span>Name</span><input type="text"' + tr("packages." + i + ".name") + ' maxlength="60" value="' + esc(p.name) + '"></label>' +
         '<label class="fld"><span>Price (€)</span><input type="number" min="0" step="any"' + tr("packages." + i + ".price") + ' value="' + (p.price || "") + '" placeholder="0"></label></div>' +
-        '<label class="fld"><span>Description <small>(under the name, in the comparison and on the quote line)</small></span><textarea rows="2" maxlength="400"' + tr("packages." + i + ".sub") + ">" + esc(p.sub) + "</textarea></label>" +
+        '<label class="fld"><span>Description <small>(as long as you like, up to 2000 characters: under the name, in the comparison and on the quote line)</small></span><textarea rows="5" maxlength="2000"' + tr("packages." + i + ".sub") + ">" + esc(p.sub) + "</textarea></label>" +
         '<div class="qb-act">' + (i > 0 ? '<button class="btn ghost sm" type="button" data-act="pkg-left" data-i="' + i + '" aria-label="Move left">&larr; Left</button>' : "") +
         (i < n - 1 ? '<button class="btn ghost sm" type="button" data-act="pkg-right" data-i="' + i + '" aria-label="Move right">Right &rarr;</button>' : "") +
         (n > 1 ? '<button class="btn danger sm" type="button" data-act="pkg-del" data-i="' + i + '">Remove</button>' : "") + "</div></div>";
@@ -97,9 +96,9 @@
   function featuresHTML() {
     var head = '<tr><th scope="col">What is included</th>' + W.packages.map(function (p, i) { return '<th scope="col" data-th="' + i + '">' + esc(p.name) + "</th>"; }).join("") + "<th></th></tr>";
     var body = W.features.map(function (f, j) {
-      return "<tr><td><input type=\"text\"" + tr("features." + j + ".k") + ' maxlength="120" value="' + esc(f.k) + '" placeholder="e.g. Drone footage" aria-label="Row label"></td>' +
+      return "<tr><td><input type=\"text\"" + tr("features." + j + ".k") + ' maxlength="200" value="' + esc(f.k) + '" placeholder="e.g. Drone footage" aria-label="Row label"></td>' +
         W.packages.map(function (p, i) {
-          return '<td><div class="qb-cell"><input type="checkbox"' + tr("features." + j + ".on." + i) + (f.on[i] ? " checked" : "") + ' aria-label="Included in ' + esc(p.name) + '"><input type="text"' + tr("features." + j + ".d." + i) + ' maxlength="60" value="' + esc(f.d[i] || "") + '" placeholder="detail" aria-label="Detail for ' + esc(p.name) + '"></div></td>';
+          return '<td><div class="qb-cell"><input type="checkbox"' + tr("features." + j + ".on." + i) + (f.on[i] ? " checked" : "") + ' aria-label="Included in ' + esc(p.name) + '"><input type="text"' + tr("features." + j + ".d." + i) + ' maxlength="120" value="' + esc(f.d[i] || "") + '" placeholder="detail" aria-label="Detail for ' + esc(p.name) + '"></div></td>';
         }).join("") +
         '<td class="qb-rowact"><button class="btn ghost sm" type="button" data-act="row-up" data-j="' + j + '" aria-label="Move up"' + (j === 0 ? " disabled" : "") + '>&uarr;</button><button class="btn ghost sm" type="button" data-act="row-down" data-j="' + j + '" aria-label="Move down"' + (j === W.features.length - 1 ? " disabled" : "") + '>&darr;</button><button class="btn danger sm" type="button" data-act="row-del" data-j="' + j + '" aria-label="Remove the row">&times;</button></td></tr>';
     }).join("");
@@ -107,31 +106,48 @@
   }
   function linesHTML() {
     return W.lines.map(function (l, j) {
-      return '<div class="qb-line"><div class="qb-line__a"><label class="fld"><span>Line</span><input type="text"' + tr("lines." + j + ".name") + ' maxlength="120" value="' + esc(l.name) + '" placeholder="e.g. Extra hour of filming"></label>' +
+      return '<div class="qb-line' + (l.on ? " on" : "") + '"><label class="qe-chk qb-ok"><input type="checkbox"' + tr("lines." + j + ".on") + (l.on ? " checked" : "") + '> <strong>Validated by the client</strong> <small>(ticked: counts in the total · unticked: only listed as a video upgrade, the total does not move)</small></label><div class="qb-line__a"><label class="fld"><span>Line</span><input type="text"' + tr("lines." + j + ".name") + ' maxlength="200" value="' + esc(l.name) + '" placeholder="e.g. Extra hour of filming"></label>' +
         '<label class="fld"><span>Price (€)</span><input type="number" step="any"' + tr("lines." + j + ".price") + ' value="' + (l.price === 0 ? "" : l.price) + '" placeholder="0"></label>' +
         '<label class="fld"><span>Qty</span><input type="number" min="1" max="99" step="1"' + tr("lines." + j + ".qty") + ' value="' + (l.qty || 1) + '"></label>' +
         '<label class="fld"><span>Unit <small>(optional)</small></span><input type="text"' + tr("lines." + j + ".unit") + ' maxlength="20" value="' + esc(l.unit) + '" placeholder="hour"></label></div>' +
-        '<label class="fld"><span>Description <small>(optional, shown under the line)</small></span><input type="text"' + tr("lines." + j + ".sub") + ' maxlength="300" value="' + esc(l.sub) + '"></label>' +
+        '<label class="fld"><span>Description <small>(optional · a blank line starts a new paragraph)</small></span><textarea rows="' + (l.card ? 7 : 3) + '" maxlength="1500"' + tr("lines." + j + ".sub") + '>' + esc(l.sub) + '</textarea></label>' +
+        '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".card") + (l.card ? " checked" : "") + '> <strong>Show as a clickable card</strong> <small>(in the “Video upgrades” section of the quote: the client opens it to read the description and what is included)</small></label>' +
+        (l.card ? '<label class="fld"><span>What is included <small>(one item per line, 12 at most)</small></span><textarea rows="5" maxlength="1500"' + tr("lines." + j + ".incText") + '>' + esc(l.incText || "") + '</textarea></label>' : "") +
         '<div class="qb-act"><button class="btn ghost sm" type="button" data-act="line-up" data-j="' + j + '"' + (j === 0 ? " disabled" : "") + '>&uarr; Up</button><button class="btn ghost sm" type="button" data-act="line-down" data-j="' + j + '"' + (j === W.lines.length - 1 ? " disabled" : "") + '>&darr; Down</button><button class="btn danger sm" type="button" data-act="line-del" data-j="' + j + '">Remove</button></div></div>';
     }).join("");
+  }
+  /* the "Extra as per ..." line: a price for every package, added to the quote by itself for the package chosen */
+  function extraHTML() {
+    var x = W.extra;
+    return '<section class="cr-card"><h2>Extra under the comparison</h2><p class="hint">A clearly visible line under the comparison for something that costs more depending on the package (for example “Extra as per Christmas day coverage”). The amount of the package chosen for this client is added to the quote by itself.</p>' +
+      '<label class="qe-chk"><input type="checkbox"' + tr("extra.on") + (x.on ? " checked" : "") + "> Show this extra</label>" +
+      (x.on ? '<label class="fld" style="margin-top:10px"><span>Text of the line</span><input type="text"' + tr("extra.label") + ' maxlength="160" value="' + esc(x.label) + '" placeholder="Extra as per Christmas day coverage"></label>' +
+        '<label class="fld"><span>Small text <small>(optional)</small></span><input type="text"' + tr("extra.sub") + ' maxlength="300" value="' + esc(x.sub) + '" placeholder="Added to the quote for the package you choose"></label>' +
+        '<div class="grid2">' + W.packages.map(function (p, i) { return '<label class="fld"><span>Extra for ' + esc(p.name) + ' (€)</span><input type="number" min="0" step="any"' + tr("extra.prices." + i) + ' value="' + (x.prices[i] || "") + '" placeholder="0"></label>'; }).join("") + "</div>" : "") + "</section>";
+  }
+  /* the film director upgrade, ready to use (price and wording can be edited afterwards) */
+  function directorLine() {
+    return { name: "Film director", price: 14000, qty: 1, unit: "", on: false, card: true,
+      sub: "Choose the luxury of having a film director on your event. Receiving the live streams of every camera on site, they direct the crews in real time from what they see on screen, so that every shot is the strongest and the best optimised one, planned around the other cameras and the needs of the edit, right on set.\n\nWe no longer simply cover an event: we direct it visually, the way a true production would.",
+      incText: "Film director\nStreaming gear\nStreaming console\nDay-after edit (1 min)" };
   }
   function photosHTML() {
     return W.photos.map(function (p, i) {
       return '<figure class="qb-ph">' + thumb(p.src) + '<input type="text"' + tr("photos." + i + ".alt") + ' maxlength="140" value="' + esc(p.alt) + '" placeholder="Description (optional)" aria-label="Description of picture ' + (i + 1) + '">' +
-        '<div class="qb-act"><button class="btn ghost sm" type="button" data-act="ph-left" data-i="' + i + '" aria-label="Move earlier"' + (i === 0 ? " disabled" : "") + '>&larr;</button><button class="btn ghost sm" type="button" data-act="ph-right" data-i="' + i + '" aria-label="Move later"' + (i === W.photos.length - 1 ? " disabled" : "") + '>&rarr;</button><button class="btn danger sm" type="button" data-act="ph-del" data-i="' + i + '" aria-label="Remove">&times;</button></div></figure>';
+        '<div class="qb-act"><button class="btn ghost sm" type="button" data-act="ph-cover" data-i="' + i + '" title="Use as cover photo">Cover</button><button class="btn ghost sm" type="button" data-act="ph-left" data-i="' + i + '" aria-label="Move earlier"' + (i === 0 ? " disabled" : "") + '>&larr;</button><button class="btn ghost sm" type="button" data-act="ph-right" data-i="' + i + '" aria-label="Move later"' + (i === W.photos.length - 1 ? " disabled" : "") + '>&rarr;</button><button class="btn danger sm" type="button" data-act="ph-del" data-i="' + i + '" aria-label="Remove">&times;</button></div></figure>';
     }).join("");
   }
   function libraryHTML() {
     var lib = window.CQ_LIBRARY; if (!lib || !libTarget) return "";
     var folders = Object.keys(lib), cur = W._folder && lib[W._folder] ? W._folder : folders[0];
-    return '<div class="qb-lib"><div class="sh"><h3>' + (libTarget === "hero" ? "Pick the top picture" : "Pick pictures for the mosaic") + '</h3><button class="btn ghost sm" type="button" data-act="lib-close">Done</button></div>' +
+    return '<div class="qb-lib"><div class="sh"><h3>' + (libTarget === "hero" ? "Pick the cover photo" : "Pick pictures for the mosaic") + '</h3><button class="btn ghost sm" type="button" data-act="lib-close">Done</button></div>' +
       '<label class="fld"><span>Folder of the site</span><select id="qbFolder">' + folders.map(function (f) { return '<option value="' + f + '"' + (f === cur ? " selected" : "") + ">" + esc(f) + " (" + lib[f].length + ")</option>"; }).join("") + "</select></label>" +
       '<div class="qb-libgrid">' + lib[cur].map(function (f) { var src = "assets/img/" + cur + "/" + f; return '<button type="button" class="qb-lt" data-act="lib-pick" data-src="' + esc(src) + '" title="' + esc(f) + '"><img loading="lazy" alt="' + esc(f) + '" src="' + esc(src) + '"></button>'; }).join("") + "</div></div>";
   }
 
   function formHTML() {
     var kinds = KINDS.map(function (k) { return '<option value="' + esc(k) + '"></option>'; }).join("");
-    var heroBlock = W.hero ? '<div class="qb-hero">' + thumb(W.hero) + '<button class="btn danger sm" type="button" data-act="hero-del">Remove</button></div>' : '<p class="hint">No picture chosen: the standard photograph of the quotation is used.</p>';
+    var heroBlock = W.hero ? '<div class="qb-hero">' + thumb(W.hero) + '<button class="btn danger sm" type="button" data-act="hero-del">Remove</button></div>' : '<p class="hint">No cover photo chosen: the standard photograph of the quotation is used.</p>';
     return '<div class="qb-main">' +
       '<section class="cr-card"><h2>The event</h2><div class="grid2">' +
         '<label class="fld"><span>Kind of event <small>(shown under the title)</small></span><input type="text" list="qbKinds"' + tr("kind") + ' maxlength="60" value="' + esc(W.kind) + '" placeholder="Christmas party, Bar Mitzvah…"><datalist id="qbKinds">' + kinds + "</datalist></label>" +
@@ -140,7 +156,7 @@
         '<label class="fld"><span>Date of the event</span><input type="date"' + tr("date") + ' value="' + esc(W.date) + '"></label>' +
         '<label class="fld"><span>Venue</span><input type="text"' + tr("venue") + ' value="' + esc(W.venue) + '"></label>' +
         '<label class="fld"><span>Location</span><input type="text"' + tr("place") + ' value="' + esc(W.place) + '"></label></div>' +
-      '<label class="fld" style="margin-top:14px"><span>Introduction <small>(under the title; empty = the usual thank-you sentence)</small></span><textarea rows="3" maxlength="600"' + tr("lead") + ">" + esc(W.lead) + "</textarea></label></section>" +
+      '<label class="fld" style="margin-top:14px"><span>Introduction <small>(under the title; empty = the usual thank-you sentence)</small></span><textarea rows="3" maxlength="1500"' + tr("lead") + ">" + esc(W.lead) + "</textarea></label></section>" +
 
       '<section class="cr-card"><h2>Packages</h2><p class="hint">Up to ' + MAX_PKG + ". Each one has a name, a price and a description. The package marked <strong>For this client</strong> is the one that is charged in this quote; it is shown in yellow in the comparison, the others in white.</p>" +
       '<label class="fld" style="max-width:340px;margin-bottom:14px"><span>What do you call them? <small>(package, collection, formula, option…)</small></span><input type="text"' + tr("word") + ' maxlength="20" value="' + esc(W.word) + '"></label>' +
@@ -149,16 +165,17 @@
       '<section class="cr-card"><h2>Comparison</h2><p class="hint">One row per thing included. Tick it in each package that has it; the small text next to the tick adds a detail (“3 h”, “× 3”…). The cards of the quote are built from these rows.</p>' +
       featuresHTML() + '<div class="acts"><button class="btn ghost" type="button" data-act="row-add"' + (W.features.length >= MAX_ROWS ? " disabled" : "") + ">Add a row</button></div></section>" +
 
-      '<section class="cr-card"><h2>Extra lines</h2><p class="hint">Anything added to the chosen package: extra hours, a second shooter, a drone, a discount (use a negative price)… Each line is price × quantity.</p>' +
-      (linesHTML() || '<p class="empty">No extra line yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="line-add"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add a line</button></div></section>" +
+      extraHTML() +
 
-      '<section class="cr-card"><h2>Travel and accommodation</h2><label class="qe-chk"><input type="checkbox"' + tr("travelShow") + (W.travelShow ? " checked" : "") + "> Show a travel / accommodation line</label>" +
-      '<div class="grid2" style="margin-top:10px"><label class="fld"><span>Amount (€)</span><input type="number" min="0" step="any"' + tr("travelAmt") + ' value="' + esc(W.travelAmt) + '" placeholder="Empty = still to be confirmed"></label>' +
-      '<label class="fld"><span>Note under the title of the lines</span><textarea rows="2" maxlength="300"' + tr("note") + ">" + esc(W.note) + "</textarea></label></div>" +
-      '<p class="hint" style="margin:8px 0 0">Once an amount is filled in, the client reads “Included” and the total contains it.</p></section>' +
+      '<section class="cr-card"><h2>Video upgrades</h2><p class="hint">Everything the client can add to the chosen package: extra hours, a second shooter, a drone, a discount (negative price)… Each line is price × quantity. A new line is only <strong>listed as an option</strong>: tick <strong>Validated by the client</strong> once they have agreed, and only then does it count in the total.</p>' +
+      (linesHTML() || '<p class="empty">No video upgrade yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="line-add"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add a video upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-director"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add the Film director upgrade</button></div></section>" +
+
+      '<section class="cr-card"><h2>Travel and accommodation</h2><label class="qe-chk"><input type="checkbox"' + tr("travelShow") + (W.travelShow ? " checked" : "") + "> Show a line saying travel / accommodation is included</label>" +
+      '<label class="fld" style="margin-top:10px"><span>Note under the title of the lines</span><textarea rows="2" maxlength="300"' + tr("note") + ">" + esc(W.note) + "</textarea></label>" +
+      '<p class="hint" style="margin:8px 0 0">No cost: the quote simply shows a line “Travel / accommodation · Included”.</p></section>' +
 
       '<section class="cr-card"><h2>Pictures</h2><div id="qbUp" class="hint" role="status"></div>' +
-      '<h3 class="qb-h3">Top picture</h3>' + heroBlock +
+      '<h3 class="qb-h3">Cover photo <small>(the big picture at the top of the quote)</small></h3>' + heroBlock +
       '<div class="qb-add"><label class="btn ghost sm qb-file">Upload from my computer<input type="file" accept="image/jpeg,image/png,image/webp" data-up="hero" hidden></label>' + (window.CQ_LIBRARY ? '<button class="btn ghost sm" type="button" data-act="lib-hero">Pick from the site</button>' : "") + "</div>" +
       '<h3 class="qb-h3">Mosaic of pictures</h3><label class="fld" style="max-width:420px;margin-bottom:12px"><span>Title of the mosaic</span><input type="text"' + tr("photosTitle") + ' maxlength="60" value="' + esc(W.photosTitle) + '"></label>' +
       '<div class="qb-phs">' + photosHTML() + "</div>" + (W.photos.length ? "" : '<p class="empty">No picture: the mosaic is not shown on the quote.</p>') +
@@ -193,9 +210,9 @@
   /* the live summary: the client's lines and total, and the validity */
   function paintPrev() {
     var el = $("#qbPrev"); if (!el) return;
-    var d = toDef(), q = Q.customQuote(d, { travel: travelNum() }), pk = (d.packages.filter(function (x) { return x.id === d.chosen; })[0]) || {};
-    el.innerHTML = '<div class="sumcard">' + q.rows.map(function (x) { return '<div class="srow"><span class="sl">' + esc(x.l) + (x.s ? "<small>" + esc(x.s) + "</small>" : "") + '</span><span class="sr">' + (x.t === "tbc" ? "TBC" : x.t === "inc" ? "Included" : eur(x.p)) + "</span></div>"; }).join("") +
-      '<div class="srow grand"><span class="sl">Total' + (q.travel !== null ? " · travel included" : "") + '</span><span class="sr">' + eur(q.total) + "</span></div></div>" +
+    var d = toDef(), q = Q.customQuote(d), pk = (d.packages.filter(function (x) { return x.id === d.chosen; })[0]) || {};
+    el.innerHTML = '<div class="sumcard">' + q.rows.map(function (x) { return '<div class="srow"><span class="sl">' + esc(x.l) + (x.s ? "<small>" + esc(x.s) + "</small>" : "") + '</span><span class="sr">' + (x.t === "tbc" ? "TBC" : x.t === "inc" ? "Included" : x.t === "opt" ? "Video upgrade · " + eur(x.p) : eur(x.p)) + "</span></div>"; }).join("") +
+      '<div class="srow grand"><span class="sl">Total' + (d.travel.show ? " · travel included" : "") + '</span><span class="sr">' + eur(q.total) + "</span></div></div>" +
       '<p class="hint" style="margin:10px 0 0">' + esc(d.word) + " in this quote: <strong>" + esc(pk.name || "—") + "</strong></p>";
     var v = $("#qbValid"), until = Q.validUntil(W.issued);
     if (v) v.textContent = until ? "Valid for " + Q.VALID_DAYS + " days: until " + C.fmtDate(until) + (until < iso(new Date()) ? " (already expired: the client cannot sign online until you issue it again)" : ".") : "";
@@ -256,7 +273,8 @@
     var path = t.getAttribute("data-b"); if (!path) return;
     var v = t.type === "checkbox" ? t.checked : t.value;
     if (t.type === "checkbox" && /\.on\.\d+$/.test(path)) v = t.checked ? 1 : 0;
-    if (/\.(price|qty)$/.test(path) && t.type === "number") v = t.value === "" ? 0 : +t.value;
+    if ((/\.(price|qty)$/.test(path) || /^extra\.prices\.\d+$/.test(path)) && t.type === "number") v = t.value === "" ? 0 : +t.value;
+    if (/\.card$/.test(path) || path === "extra.on") { setPath(path, v); draw(); return; }
     setPath(path, v);
     var m = /^packages\.(\d+)\.name$/.exec(path);
     if (m) { var th = $('[data-th="' + m[1] + '"]'); if (th) th.textContent = v; }
@@ -268,21 +286,23 @@
     var act = b.getAttribute("data-act"), i = +b.getAttribute("data-i"), j = +b.getAttribute("data-j");
     var P = W.packages, F = W.features;
     switch (act) {
-      case "pkg-add": if (P.length >= MAX_PKG) return; P.push({ id: newPkgId(), name: "Package " + (P.length + 1), sub: "", price: 0 }); F.forEach(function (f) { f.on.push(0); f.d.push(""); }); break;
+      case "pkg-add": if (P.length >= MAX_PKG) return; P.push({ id: newPkgId(), name: "Package " + (P.length + 1), sub: "", price: 0 }); W.extra.prices.push(0); F.forEach(function (f) { f.on.push(0); f.d.push(""); }); break;
       case "pkg-del":
         if (P.length < 2) return;
         if (!confirm("Remove the package “" + P[i].name + "”? Its column disappears from the comparison.")) return;
         if (W.chosen === P[i].id) W.chosen = P[i === 0 ? 1 : 0].id;
-        P.splice(i, 1); F.forEach(function (f) { f.on.splice(i, 1); f.d.splice(i, 1); }); break;
-      case "pkg-left": case "pkg-right": var dd = act === "pkg-left" ? -1 : 1; move(P, i, dd); F.forEach(function (f) { move(f.on, i, dd); move(f.d, i, dd); }); break;
+        P.splice(i, 1); W.extra.prices.splice(i, 1); F.forEach(function (f) { f.on.splice(i, 1); f.d.splice(i, 1); }); break;
+      case "pkg-left": case "pkg-right": var dd = act === "pkg-left" ? -1 : 1; move(P, i, dd); move(W.extra.prices, i, dd); F.forEach(function (f) { move(f.on, i, dd); move(f.d, i, dd); }); break;
       case "row-add": if (F.length >= MAX_ROWS) return; F.push({ k: "", on: P.map(function () { return 1; }), d: P.map(function () { return ""; }) }); break;
       case "row-del": F.splice(j, 1); break;
       case "row-up": move(F, j, -1); break;
       case "row-down": move(F, j, 1); break;
-      case "line-add": if (W.lines.length >= MAX_LINES) return; W.lines.push({ name: "", sub: "", price: 0, qty: 1, unit: "" }); break;
+      case "line-director": if (W.lines.length >= MAX_LINES) return; W.lines.push(directorLine()); break;
+      case "line-add": if (W.lines.length >= MAX_LINES) return; W.lines.push({ name: "", sub: "", price: 0, qty: 1, unit: "", on: false }); break;
       case "line-del": W.lines.splice(j, 1); break;
       case "line-up": move(W.lines, j, -1); break;
       case "line-down": move(W.lines, j, 1); break;
+      case "ph-cover": W.hero = W.photos[i].src; break;
       case "ph-left": move(W.photos, i, -1); break;
       case "ph-right": move(W.photos, i, 1); break;
       case "ph-del": W.photos.splice(i, 1); break;
@@ -320,7 +340,7 @@
   function save() {
     var names = String(W.names).trim();
     if (names.length < 2) { toast("Fill in “Prepared for” (the name shown at the top)", true); return; }
-    var d = toDef(), q = Q.customQuote(d, { travel: travelNum() }), pk = d.packages.filter(function (x) { return x.id === d.chosen; })[0];
+    var d = toDef(), q = Q.customQuote(d), pk = d.packages.filter(function (x) { return x.id === d.chosen; })[0];
     if (!(q.total > 0)) { toast("Enter a price for the package of this client", true); return; }
     if (W.email && !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(W.email.trim())) { toast("The client’s email does not look right", true); return; }
     var p = W.id ? byId(S.projects, W.id) : null;

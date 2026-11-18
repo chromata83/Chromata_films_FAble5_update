@@ -58,6 +58,7 @@
   function prepare(doc, onlineUrl) {
     var root = doc.documentElement;
     ["#qxMenu", "#qxDrawer", "#qxLb", "#pxPrint"].forEach(function (s) { var e = doc.querySelector(s); if (e) e.remove(); });
+    Array.prototype.forEach.call(doc.querySelectorAll("details"), function (e) { e.setAttribute("open", ""); });   // the video upgrades are read in full on paper
 
     /* the videos: no players, a clickable list of the films instead */
     var films = doc.querySelector(".px-films");
