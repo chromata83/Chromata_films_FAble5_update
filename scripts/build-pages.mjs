@@ -3333,7 +3333,7 @@ pages["proposal.html"] = `<!DOCTYPE html>
 <html lang="en">
 <head>
 ${QX_HEAD("Your proposal · Chromata Films", "A private proposal from Chromata Films.")}
-<link rel="stylesheet" href="css/proposal.css?v=14" />
+<link rel="stylesheet" href="css/proposal.css?v=15" />
 </head>
 <body data-page="proposal" class="qx px">
 ${QX_MENU}
@@ -3346,9 +3346,9 @@ ${QX_MENU}
 </div>
 <script src="js/crm-config.js?v=2"></script>
 <script src="js/quote-core.js?v=19"></script>
-<script src="js/quote-link.js?v=2"></script>
+<script src="js/quote-link.js?v=3"></script>
 <script src="js/proposal-pdf.js?v=1" defer></script>
-<script src="js/proposal.js?v=19" defer></script>
+<script src="js/proposal.js?v=20" defer></script>
 </body>
 </html>
 `;

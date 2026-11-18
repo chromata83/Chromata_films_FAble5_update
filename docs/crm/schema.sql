@@ -464,6 +464,40 @@ begin
   return jsonb_build_object('token', c.token);
 end $$;
 
+-- ---------- who opened a quote link (the proposal page asks each visitor for an email before showing the quote) ----------
+create table if not exists public.quote_views (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  project_id uuid not null references public.projects (id) on delete cascade,
+  quote_ref  text not null,
+  email      text not null,
+  agent      text
+);
+create index if not exists quote_views_project_idx on public.quote_views (project_id, created_at desc);
+alter table public.quote_views enable row level security;
+drop policy if exists studio_all on public.quote_views;
+create policy studio_all on public.quote_views for all to authenticated using (public.is_studio()) with check (public.is_studio());
+
+-- Called by the proposal page once the visitor has typed an email: logs the opening (shown in the project, in the back office).
+-- It can only ADD a row about an existing quote; nothing is ever read back except the number of openings and the project id (for the alert email's link).
+create or replace function public.quote_open(p_ref text, p_email text, p_agent text) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare pr public.projects; e text; n int;
+begin
+  if coalesce(p_ref, '') !~ '^[a-z0-9]{10,16}$' then raise exception 'Invalid reference'; end if;
+  e := lower(left(trim(coalesce(p_email, '')), 160));
+  if e !~ '^[^@\s]+@[^@\s]+\.[^@\s]{2,}$' then raise exception 'A valid email is required'; end if;
+  select * into pr from public.projects where quote_ref = p_ref;
+  if not found then return jsonb_build_object('ok', false); end if;
+  -- flood protection: at most 40 logged openings per quote and hour
+  if (select count(*) from public.quote_views where project_id = pr.id and created_at > now() - interval '1 hour') >= 40 then
+    return jsonb_build_object('ok', true, 'throttled', true);
+  end if;
+  insert into public.quote_views (project_id, quote_ref, email, agent) values (pr.id, p_ref, e, left(coalesce(p_agent, ''), 300));
+  select count(*) into n from public.quote_views where project_id = pr.id;
+  return jsonb_build_object('ok', true, 'opens', n, 'project', pr.id);
+end $$;
+
 -- What the couple's proposal page asks for each time it opens: is signing open, the studio's current version of the
 -- quote (lines + total, so every change made in the back office shows up on the same link by itself), and the validity.
 -- The planner commission (quote_commission) is NEVER returned: it is already spread inside the prices of `lines`.
@@ -474,6 +508,7 @@ language sql stable security definer set search_path = public as $$
       'signed', exists (select 1 from public.contracts c where c.project_id = p.id and c.status = 'signed'),
       'travel_fees', p.travel_fees, 'total', p.total, 'lines', p.quote_lines,
       'issued', to_char(d.issued, 'YYYY-MM-DD'), 'valid_until', to_char(d.issued + 14, 'YYYY-MM-DD'), 'expired', current_date > d.issued + 14,
+      'gate', coalesce((select value from public.settings where key = 'quote_gate'), '1') <> '0',
       'validated', coalesce((select value from public.settings where key = 'online_signing'), '1') <> '0'
         and (p.quote_validated_at is not null or exists (select 1 from public.contracts c where c.project_id = p.id and c.status = 'sent')))
     from public.projects p
@@ -483,5 +518,5 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 revoke all on function public.fmt_money(numeric), public.quote_total(jsonb, jsonb), public.qt_up(numeric, jsonb, text) from public, anon, authenticated;
-revoke all on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text) from public;
-grant execute on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text) to anon, authenticated;
+revoke all on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text), public.quote_open(text, text, text) from public;
+grant execute on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text), public.quote_open(text, text, text) to anon, authenticated;

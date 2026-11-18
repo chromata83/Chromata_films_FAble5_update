@@ -155,5 +155,14 @@
       : '<p class="hint">Issued ' + esc(C.fmtDate(issuedISO(p))) + " · valid until <strong>" + esc(C.fmtDate(until)) + "</strong> (" + Q.VALID_DAYS + " days).</p>";
   }
 
-  A.quoteEditor = { html: html, wire: wire, validityLine: validityLine, expired: expired };
+  /* who opened the couple's link (each visitor types an email first; the proposal page logs it, see docs/crm/schema.sql quote_open) */
+  function opensBlock(p) {
+    var list = (S.opens || []).filter(function (v) { return v.project_id === p.id; }).sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; });
+    var when = function (ts) { return new Date(ts).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" }); };
+    if (!list.length) return '<p class="hint">The link has not been opened yet.</p>';
+    return '<details class="opens"><summary><strong>Opened ' + list.length + (list.length === 1 ? " time" : " times") + "</strong> · last by " + esc(list[0].email) + " on " + esc(when(list[0].created_at)) + "</summary><ul>" +
+      list.slice(0, 20).map(function (v) { return "<li>" + esc(v.email) + " <small>" + esc(when(v.created_at)) + "</small></li>"; }).join("") + (list.length > 20 ? "<li><small>… and " + (list.length - 20) + " earlier</small></li>" : "") + "</ul></details>";
+  }
+
+  A.quoteEditor = { html: html, wire: wire, validityLine: validityLine, expired: expired, opensBlock: opensBlock };
 })();

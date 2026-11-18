@@ -92,6 +92,23 @@
 }
 .px-hero__cta [hidden], .px-signnote[hidden] { display: none !important; }
 
+/* the email gate: nothing of the proposal shows until the visitor has typed an email */
+html.px-gated-wait #app, html.px-gated-wait .qx-crest, html.px-gated-wait .qx-menu { visibility: hidden; }
+.px-gate { position: fixed; inset: 0; z-index: 300; background: var(--panel-deep); display: grid; place-items: center; padding: 24px; overflow: auto; }
+.px-gate__card { width: min(100%, 460px); text-align: left; }
+.px-gate__mark { display: block; height: 64px; width: auto; margin-bottom: 34px; }
+.px-gate__t { font-family: var(--font-display); font-weight: 400; font-size: clamp(32px, 6vw, 52px); line-height: 1; margin: 6px 0 20px; text-transform: uppercase; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.px-gate__t em { display: block; margin-top: 4px; font-family: var(--font-accent); font-style: italic; font-weight: 500; text-transform: none; color: var(--accent); }
+.px-gate__p { color: var(--muted); line-height: 1.75; font-size: 15px; margin-bottom: 26px; }
+.px-gate__f { display: block; margin-bottom: 8px; }
+.px-gate__f span { display: block; font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+.px-gate__f input { width: 100%; background: transparent; border: 0; border-bottom: 1.5px solid var(--line); color: var(--cream); font: inherit; font-size: 18px; padding: 10px 0; border-radius: 0; outline: none; }
+.px-gate__f input:focus { border-bottom-color: var(--accent); }
+.px-gate__f input[aria-invalid="true"] { border-bottom-color: var(--coral); }
+.px-gate__err { min-height: 1.5em; color: var(--coral); font-size: 13px; margin: 6px 0 14px; }
+.px-gate .btn-main { cursor: pointer; font-family: inherit; }
+.px-gate .btn-main:disabled { opacity: .6; cursor: wait; }
+
 /* PDF: the photo mosaic as 4 fixed columns (same look as the CSS columns on screen) */
 html.px-pdf .px-masonry { columns: auto !important; display: flex; align-items: flex-start; column-gap: 0; gap: 1.1vw; }
 html.px-pdf .px-mcol { flex: 1 1 0; min-width: 0; }

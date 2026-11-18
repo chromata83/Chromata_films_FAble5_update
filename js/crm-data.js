@@ -46,7 +46,7 @@
   }
 
   /* ---------------- demo backend ---------------- */
-  var TABLES = ["projects", "contracts", "payments", "contacts", "expenses", "email_log"];
+  var TABLES = ["projects", "contracts", "payments", "contacts", "expenses", "email_log", "quote_views"];
   function load() {
     var d; try { d = JSON.parse(localStorage.getItem(DEMO_KEY)) || {}; } catch (e) { d = {}; }
     TABLES.forEach(function (t) { d[t] = d[t] || []; }); d.settings = d.settings || {}; return d;
@@ -63,7 +63,7 @@
       },
       del: function (id) {
         var d = load(); d[name] = d[name].filter(function (x) { return x.id !== id; });
-        if (name === "projects") ["contracts", "payments", "email_log"].forEach(function (t) { d[t] = d[t].filter(function (x) { return x.project_id !== id; }); });
+        if (name === "projects") ["contracts", "payments", "email_log", "quote_views"].forEach(function (t) { d[t] = d[t].filter(function (x) { return x.project_id !== id; }); });
         store(d); return Promise.resolve();
       }
     };
@@ -81,6 +81,7 @@
     contacts: dContacts.list, saveContact: dContacts.save, deleteContact: dContacts.del,
     expenses: dExpenses.list, saveExpense: dExpenses.save, deleteExpense: dExpenses.del,
     emailLog: function () { return Promise.resolve(load().email_log); },
+    quoteViews: function () { return Promise.resolve(load().quote_views); },
     contracts: function () { return Promise.resolve(load().contracts); },
     saveContract: function (c) {
       var d = load(), row;
@@ -179,6 +180,8 @@
     contacts: sContacts.list, saveContact: sContacts.save, deleteContact: sContacts.del,
     expenses: sExpenses.list, saveExpense: sExpenses.save, deleteExpense: sExpenses.del,
     emailLog: function () { return client().from("email_log").select("*").order("sent_at", { ascending: false }).then(ck); },
+    /* who opened the quote links; an older database without the table just gives an empty list */
+    quoteViews: function () { return client().from("quote_views").select("*").order("created_at", { ascending: false }).then(ck).catch(function () { return []; }); },
     contracts: sContracts.list,
     saveContract: sContracts.save,
     deleteContract: sContracts.del,

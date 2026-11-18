@@ -28,8 +28,8 @@
   function daysAgo(ts) { return ts ? Math.floor((Date.now() - new Date(ts).getTime()) / 864e5) : 0; }
 
   function reload() {
-    return Promise.all([api.projects(), api.contracts(), api.payments(), api.settings(), api.contacts(), api.expenses()]).then(function (r) {
-      S.projects = r[0]; S.contracts = r[1]; S.payments = r[2]; S.settings = r[3] || {}; S.contacts = r[4]; S.expenses = r[5];
+    return Promise.all([api.projects(), api.contracts(), api.payments(), api.settings(), api.contacts(), api.expenses(), api.quoteViews ? api.quoteViews() : []]).then(function (r) {
+      S.projects = r[0]; S.contracts = r[1]; S.payments = r[2]; S.settings = r[3] || {}; S.contacts = r[4]; S.expenses = r[5]; S.opens = r[6] || [];
     });
   }
 
@@ -339,6 +339,7 @@
     var v = p.quote_validated_at, ref = esc(p.quote_ref.slice(0, 6).toUpperCase());
     return '<section class="cr-card" id="qv"><div class="sh"><h2>Website quote · ' + (v ? "validated" : "to validate") + '</h2><span class="pill ' + (v ? "signed" : "quote") + '">' + (v ? "Validated" : "Not validated") + "</span></div>" +
       '<p class="hint">Created automatically from the website quotation (ref <strong>' + ref + "</strong>)." + (p.contact_id && byId(S.contacts, p.contact_id) ? ' <a href="#/contacts/' + p.contact_id + '">Open the contact card</a>.' : "") + "</p>" +
+      (QE() ? QE().opensBlock(p) : "") +
       (v ? '<p class="hint"><strong>Validated on ' + esc(C.fmtDate(v.slice(0, 10))) + ".</strong> The signing button now shows on their proposal page. Email them the proposal, or create and send the contract yourself below.</p>"
          : '<p class="hint"><strong>The couple cannot sign yet.</strong> Check the quote in the editor below (add travel or accommodation, the planner commission, then save), pick the bank account, and validate. Only then does the signing button appear on their proposal page.</p>') +
       (QE() ? QE().validityLine(p) : "") +
@@ -470,6 +471,8 @@
   function boot() {
     api.session().then(function (u) {
       S.user = u;
+      /* the studio's own browser is never asked for an email on a proposal link (and never alerts the studio about itself) */
+      try { if (u) localStorage.setItem("cq-studio", "1"); else localStorage.removeItem("cq-studio"); } catch (e) {}
       if (!u) { loginView(); return; }
       var m = api.mfa && api.mfa.status ? api.mfa.status() : Promise.resolve({ enrolled: false, needsChallenge: false, factors: [] });
       return m.then(function (st) {

@@ -155,11 +155,65 @@
     paint();
   }
   var ready = function () { app.classList.remove("px-wait"); };
+
+  /* ---------- email gate ----------
+     When the studio has it switched on (back office > Settings, on by default), nothing of the proposal is shown until the visitor types an email.
+     The opening is logged in the back office and an alert email (who, when, how many times) is sent to the studio. This is a way to know who opens a link,
+     not a lock: the studio's own browser (signed in to the back office) and a tab that already passed the gate are let through. */
+  var GATE_KEY = "cq-open-" + (A.nonce || "x"), root = document.documentElement;
+  function passed() { try { return sessionStorage.getItem(GATE_KEY) === "1" || localStorage.getItem("cq-studio") === "1"; } catch (e) { return false; } }
+  var needsCheck = canAsk && !passed();
+  var release = function () { root.classList.remove("px-gated-wait"); };
+  var gaveUp = false;
+  if (needsCheck) { root.classList.add("px-gated-wait"); setTimeout(function () { if (!document.querySelector(".px-gate")) { gaveUp = true; release(); } }, 5000); }   // never lock a visitor out because the database is slow
+
+  function timeout(p, ms) { return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error("timeout")); }, ms); })]); }
+  function alertStudio(email, res) {
+    var fd = new FormData(), when = new Date().toLocaleString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", timeZoneName: "short" });
+    fd.append("_subject", "Proposal opened · " + A.names + " · " + email);
+    fd.append("_template", "table"); fd.append("_captcha", "false");
+    fd.append("name", email); fd.append("email", email);
+    fd.append("Opened by", email);
+    fd.append("Proposal", ref + " · " + A.names + (A.role === "planner" && A.planner ? " (sent by wedding planner " + A.planner + ")" : ""));
+    fd.append("Wedding date", Q.fmtDate(A.date) || "Not given");
+    fd.append("Opened on", when);
+    fd.append("Times opened", res && res.opens ? String(res.opens) : "unknown");
+    fd.append("Device", String(navigator.userAgent || "").slice(0, 160));
+    if (res && res.project) fd.append("Back office", location.origin + location.pathname.replace(/[^/]*$/, "") + "crm.html#/project/" + res.project);
+    return fetch("https://formsubmit.co/ajax/" + Q.EMAIL, { method: "POST", headers: { Accept: "application/json" }, body: fd });
+  }
+  function showGate() {
+    var saved = ""; try { saved = localStorage.getItem("cq-visitor-email") || ""; } catch (e) {}
+    var g = document.createElement("div"); g.className = "px-gate"; g.setAttribute("role", "dialog"); g.setAttribute("aria-modal", "true"); g.setAttribute("aria-labelledby", "pxGateT");
+    g.innerHTML = '<form class="px-gate__card" novalidate><img class="px-gate__mark" src="assets/img/logo-mark.png" alt="" width="34" height="68">' +
+      '<p class="kicker">Your private proposal</p><h1 class="px-gate__t" id="pxGateT">Prepared for <em>' + esc(A.names) + "</em></h1>" +
+      '<p class="px-gate__p">Please tell us who is opening this proposal. We only use your email to follow up with you personally.</p>' +
+      '<label class="px-gate__f"><span>Your email</span><input type="email" name="email" autocomplete="email" required placeholder="you@email.com" value="' + esc(saved) + '"></label>' +
+      '<p class="px-gate__err" role="alert"></p><button class="btn-main" type="submit">Open my proposal</button></form>';
+    document.body.appendChild(g);
+    var form = g.querySelector("form"), input = form.elements.email, err = g.querySelector(".px-gate__err"), btn = g.querySelector("button");
+    input.focus();
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var email = input.value.trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) { err.textContent = "Please enter a valid email address."; input.setAttribute("aria-invalid", "true"); input.focus(); return; }
+      err.textContent = ""; input.removeAttribute("aria-invalid"); btn.disabled = true; btn.textContent = "Opening…";
+      /* both the log and the alert are best effort: a slow network never keeps the visitor out once they have given their email */
+      timeout(window.CQLink.open(A, email), 5000).catch(function () { return null; }).then(function (res) {
+        return timeout(alertStudio(email, res), 5000).catch(function () {});
+      }).then(function () {
+        try { sessionStorage.setItem(GATE_KEY, "1"); localStorage.setItem("cq-visitor-email", email); } catch (x) {}
+        g.remove(); release(); window.scrollTo(0, 0);
+      });
+    });
+  }
+
   if (canAsk) {
     /* the prices stay hidden for a split second until the studio's latest version has been fetched (never longer than 3 s) */
     app.classList.add("px-wait"); setTimeout(ready, 3000);
   }
   if (canAsk) window.CQLink.status(A).then(function (st) {
+    if (needsCheck && !gaveUp) { if (st && st.found && st.gate) showGate(); else release(); }
     applyStatus(st); ready();
     if (st && st.signed) { document.getElementById("pxMsg").textContent = "This proposal has already been signed. Thank you, we are delighted!"; return; }
     if (st && st.expired) {
@@ -170,7 +224,7 @@
     sb.hidden = false; document.getElementById("pxNote").hidden = false;
     document.getElementById("pxReply").className = "btn-ghost";
     document.getElementById("pxLead").textContent = "Your proposal has been reviewed by our team. If you are happy with it, accept it and sign the agreement online, it takes about two minutes. Or tell us what you would change: we answer every message personally.";
-  }).catch(ready);
+  }).catch(function () { ready(); release(); });
   sb.addEventListener("click", function () {
     var msg = document.getElementById("pxMsg"), label = sb.textContent;
     sb.disabled = true; sb.textContent = "Preparing your agreement…"; msg.textContent = "";

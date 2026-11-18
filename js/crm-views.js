@@ -129,7 +129,8 @@
     shell("settings", '<header class="top"><h1>Settings</h1></header>' +
       '<section class="cr-card"><h2>Two-factor authentication</h2>' + mfaHTML + "</section>" +
       '<section class="cr-card"><h2>Quotation page and online signing</h2><p class="hint">Quotes sent from the website appear by themselves (calendar option, contact card, project), but a couple can never sign on their own: you review the quote in its project and press <strong>Validate the quote</strong>. Only then does the signing button appear on their proposal page, and the agreement is built from the contract template below. The database re-computes every price itself.</p>' +
-      (api.kind === "supabase" ? '<label class="auto"><input type="checkbox" id="sOnline"' + (S.settings.online_signing === "0" ? "" : " checked") + '> Allow online signing for quotes I have validated (untick to switch it off completely)</label>' +
+      (api.kind === "supabase" ? '<label class="auto"><input type="checkbox" id="sGate"' + (S.settings.quote_gate === "0" ? "" : " checked") + '> Ask every visitor of a quote link for their email first, and email me who opened it and when (untick to let links open freely)</label><br>' +
+        '<label class="auto" style="margin-top:8px"><input type="checkbox" id="sOnline"' + (S.settings.online_signing === "0" ? "" : " checked") + '> Allow online signing for quotes I have validated (untick to switch it off completely)</label>' +
         '<ul class="chk"><li class="' + (S.settings.quote_prices ? "ok" : "no") + '">' + (S.settings.quote_prices ? "Price list is up to date in the database" : "Price list not stored yet: reload this page once") + "</li>" +
         '<li class="' + (S.settings.bank_details ? "ok" : "no") + '">' + (S.settings.bank_details ? "EUR bank details are set" : "EUR bank details missing: online signing stays closed until you add them below") + "</li>" +
         '<li class="' + (S.settings.studio_signature ? "ok" : "no") + '">' + (S.settings.studio_signature ? "Studio signature is set" : "Studio signature missing (optional, but better on a contract)") + "</li></ul>"
@@ -152,6 +153,7 @@
     $("#sSave").onclick = function () {
       var o = { online_signing: $("#sOnline") && !$("#sOnline").checked ? "0" : "1", contract_template: $("#sTpl").value === C.DEFAULT_TEMPLATE ? "" : $("#sTpl").value,
         checklist: $("#sCheck").value.trim() === T.DEFAULT_CHECKLIST ? "" : $("#sCheck").value.trim() };
+      if ($("#sGate")) o.quote_gate = $("#sGate").checked ? "1" : "0";
       $$("[data-bank]").forEach(function (t) { o[t.getAttribute("data-bank")] = t.value.trim(); });
       $$("[data-tpl]").forEach(function (t) { var k = t.getAttribute("data-tpl"); o[k] = t.value.trim() === T.DEFAULT_EMAILS[k] ? "" : t.value.trim(); });
       if (!pad.isEmpty()) o.studio_signature = pad.png(); else if (cleared) o.studio_signature = "";

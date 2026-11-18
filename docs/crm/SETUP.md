@@ -89,6 +89,12 @@ Re-run the whole `docs/crm/schema.sql` in the SQL Editor once (it is safe to re-
   The commission is private: it is spread inside the prices the couple sees (no commission line, never returned by the public database functions); the box on the right
   shows you the commission and what is left for the studio. Enter it in € or in % of the quote.
   A project made by hand gets its couple's link the first time you save it there (wedding date and couple's email must be filled in).
+* **Who opened the link (email gate):** when someone opens a proposal link, nothing is shown until they type their email. The opening is logged
+  (project page > "Opened N times · last by …", with the full list) and **an alert email is sent to the studio** (who, which proposal, when, how many times,
+  a link to the project), through the same free form service that already delivers the quotation emails, so there is nothing more to deploy. Reply to that email
+  to write straight to the visitor. It is on by default; **Settings > Quotation page** has a box to switch it off. Re-run `schema.sql` once for the log table.
+  It is a way to know who looks at a link, not a lock: your own browser (signed in to the back office) is never asked and never alerts you,
+  a tab that already passed the gate is not asked again, and if the database is slow (more than 5 seconds) the proposal opens anyway so a couple is never locked out.
 * **Validity:** every quote is valid **14 days from its issue date** (shown on the couple's page, in the quotation recap and in the editor). After that the couple can no longer sign
   online; **Issue again today** in the editor reopens it. (Re-run `schema.sql` once to get the editor's database columns and the validity check.)
 * **Wedding planners have their own page: `quotation-WP.html`** (hidden like the others; the capitals matter in the address). It is a copy of the quotation page where the

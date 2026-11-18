@@ -48,5 +48,10 @@
     return rpc("accept_quote", { p_ref: A.nonce });
   }
 
-  w.CQLink = { enabled: enabled, submit: submit, status: status, accept: accept };
+  /* The visitor typed an email to open the proposal: log the opening in the back office (best effort). */
+  function open(A, email) {
+    return rpc("quote_open", { p_ref: A.nonce, p_email: email, p_agent: String(navigator.userAgent || "").slice(0, 280) });
+  }
+
+  w.CQLink = { enabled: enabled, submit: submit, status: status, accept: accept, open: open };
 })(window);
