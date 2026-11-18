@@ -271,6 +271,8 @@ alter table public.projects add column if not exists quote_sel jsonb;           
 alter table public.projects add column if not exists quote_lines jsonb;              -- the lines the couple sees [{l,p,t}], planner commission already spread inside the prices
 alter table public.projects add column if not exists quote_commission numeric;       -- PRIVATE: wedding planner commission, included in `total`, never sent to the couple
 alter table public.projects add column if not exists quote_issued_at timestamptz;    -- issue date: a quote is valid 14 days from it
+-- custom quote (back office > Tools): the studio's own packages, comparison rows, extra lines and pictures (a Christmas party, a Bar Mitzvah...). Null for website quotes.
+alter table public.projects add column if not exists quote_custom jsonb;
 alter table public.projects drop constraint if exists projects_bank_account_check;
 alter table public.projects add constraint projects_bank_account_check check (bank_account in ('EUR', 'CHF', 'USD'));
 create unique index if not exists projects_quote_ref_idx on public.projects (quote_ref) where quote_ref is not null;
@@ -438,7 +440,7 @@ begin
     raise exception 'Online signing is not ready yet. Please reply to us by email and we will send you the agreement.';
   end if;
   if pr.wedding_date is null or pr.wedding_date < current_date then
-    raise exception 'Please write to us so we can confirm the date of your wedding.';
+    raise exception 'Please write to us so we can confirm the date of your %.', case when pr.quote_custom is null then 'wedding' else 'event' end;
   end if;
 
   -- same wording and tags as the contract builder of the back office (js/crm-contract.js)
@@ -455,7 +457,9 @@ begin
   v_body := replace(v_body, '{{balance}}', public.fmt_money(fee - dep));
   v_body := replace(v_body, '{{balance_due}}', due);
   v_body := replace(v_body, '{{bank_details}}', bank);
-  ctitle := 'Wedding film agreement · ' || coalesce(pr.couple_names, 'Clients');
+  -- a custom quote names its own kind of event (Christmas party, Bar Mitzvah...); the template text is the studio's and can be edited in Settings
+  ctitle := case when pr.quote_custom is null or coalesce(trim(pr.quote_custom ->> 'kind'), '') = '' then 'Wedding film agreement' else left(trim(pr.quote_custom ->> 'kind'), 60) || ' film agreement' end
+            || ' · ' || coalesce(pr.couple_names, 'Clients');
 
   insert into public.contracts (project_id, title, body, amount, status, sent_at, studio_signature)
     values (pr.id, ctitle, v_body, fee, 'sent', now(), nullif(s ->> 'studio_signature', ''))
@@ -507,6 +511,8 @@ language sql stable security definer set search_path = public as $$
     select jsonb_build_object('found', true,
       'signed', exists (select 1 from public.contracts c where c.project_id = p.id and c.status = 'signed'),
       'travel_fees', p.travel_fees, 'total', p.total, 'lines', p.quote_lines,
+      -- custom quote: the studio's definition + who it is for (read from the project, so editing the project updates the page); null for website quotes
+      'custom', case when p.quote_custom is not null then p.quote_custom || jsonb_build_object('names', p.couple_names, 'date', p.wedding_date, 'place', p.location, 'venue', p.venue, 'planner', p.planner_name) end,
       'issued', to_char(d.issued, 'YYYY-MM-DD'), 'valid_until', to_char(d.issued + 14, 'YYYY-MM-DD'), 'expired', current_date > d.issued + 14,
       'gate', coalesce((select value from public.settings where key = 'quote_gate'), '1') <> '0',
       'validated', coalesce((select value from public.settings where key = 'online_signing'), '1') <> '0'
@@ -520,3 +526,20 @@ $$;
 revoke all on function public.fmt_money(numeric), public.quote_total(jsonb, jsonb), public.qt_up(numeric, jsonb, text) from public, anon, authenticated;
 revoke all on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text), public.quote_open(text, text, text) from public;
 grant execute on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text), public.quote_open(text, text, text) to anon, authenticated;
+
+-- ---------- pictures of custom quotes (back office > Tools) ----------
+-- A public bucket: the proposal page shows these pictures to anyone who has the quote link. Only the studio can add or remove files.
+-- (Skipped quietly on a database without Supabase Storage.)
+do $$
+begin
+  if to_regclass('storage.buckets') is not null and to_regclass('storage.objects') is not null then
+    insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+      values ('quote-photos', 'quote-photos', true, 8388608, array['image/jpeg', 'image/png', 'image/webp'])
+      on conflict (id) do update set public = true, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
+    drop policy if exists quote_photos_studio on storage.objects;
+    create policy quote_photos_studio on storage.objects for all to authenticated
+      using (bucket_id = 'quote-photos' and public.is_studio()) with check (bucket_id = 'quote-photos' and public.is_studio());
+  end if;
+exception when others then
+  raise notice 'Picture storage was not set up (%). Create a public bucket named quote-photos in Supabase > Storage instead.', sqlerrm;
+end $$;

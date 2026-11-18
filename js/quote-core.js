@@ -61,23 +61,121 @@
   ];
   /* The three collections as three columns (cards). On the proposal page they are a static summary; on the configurators (pick: true) a card is a
      button: choosing it changes the collection and the total follows. The chosen collection is yellow, the others white. */
-  function compareSection(a, o) {
-    o = o || {};
-    var chosen = a && a.wedding, base = o.pick ? total(a) : 0;
-    var cols = COLLECTIONS.map(function (c, i) {
-      var is = chosen === c.v, price = "";
-      if (o.pick) {
-        var t = total(Object.assign({}, a, { wedding: c.v })), d = t - base;
-        price = '<p class="px-col__price">Your total <strong>' + eur(t) + "</strong>" + (is ? "" : "<span>" + (d > 0 ? "+" : "−") + eur(Math.abs(d)) + "</span>") + "</p>";
-      }
-      return '<article class="px-col' + (is ? " is-chosen" : "") + (o.pick ? " is-pick" : "") + '"' + (o.pick ? ' data-v="' + c.v + '" tabindex="0" role="button" aria-pressed="' + is + '" aria-label="' + (is ? "Your choice: " : "Choose ") + esc(c.name) + '"' : "") + '><header><span class="px-col__tag">' + (is ? "Your choice" : (o.pick ? "Choose this one" : "&nbsp;")) + "</span><h3>" + esc(c.short) + "<small>collection</small></h3>" + price + "</header><ul>" +
-        COMPARE.map(function (r) {
+  /* The cards themselves, for any set of columns: cols = [{ v, short, name, sub, price }], rows = [{ k, on: [..], t: [..] }] (a row without `on` is included everywhere).
+     Used by the three collections above and by the studio's own packages (custom quotes). */
+  function cardsHTML(cols, rows, chosen, o, priceOf) {
+    return cols.map(function (c, i) {
+      var is = chosen === c.v;
+      return '<article class="px-col' + (is ? " is-chosen" : "") + (o.pick ? " is-pick" : "") + '"' + (o.pick ? ' data-v="' + c.v + '" tabindex="0" role="button" aria-pressed="' + is + '" aria-label="' + (is ? "Your choice: " : "Choose ") + esc(c.name) + '"' : "") + '><header><span class="px-col__tag">' + (is ? "Your choice" : (o.pick ? "Choose this one" : "&nbsp;")) + "</span><h3>" + esc(c.short) + "<small>" + esc(o.word || "collection") + "</small></h3>" +
+        (c.sub ? '<p class="px-col__sub">' + esc(c.sub) + "</p>" : "") + priceOf(c, i, is) + "</header><ul>" +
+        rows.map(function (r) {
           var on = r.on ? !!r.on[i] : true, text = r.t ? r.t[i] : r.k;
           return '<li class="' + (on ? "on" : "off") + '"><span class="bx" aria-hidden="true"></span><span>' + esc(text) + (on ? "" : '<em class="sr-only"> (not included)</em>') + "</span></li>";
         }).join("") + "</ul></article>";
     }).join("");
+  }
+  function compareSection(a, o) {
+    o = o || {};
+    var chosen = a && a.wedding, base = o.pick ? total(a) : 0;
+    var cols = cardsHTML(COLLECTIONS.map(function (c) { return { v: c.v, short: c.short, name: c.name }; }), COMPARE, chosen, o, function (c, i, is) {
+      if (!o.pick) return "";
+      var t = total(Object.assign({}, a, { wedding: c.v })), d = t - base;
+      return '<p class="px-col__price">Your total <strong>' + eur(t) + "</strong>" + (is ? "" : "<span>" + (d > 0 ? "+" : "−") + eur(Math.abs(d)) + "</span>") + "</p>";
+    });
     return '<section class="px-compare' + (o.pick ? " px-compare--cfg" : "") + '"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">' + (o.pick ? "Compare and choose" : "Your collection") + '</p><h2 class="px-h2">' +
       (o.pick ? "Change your collection <em>at will</em>" : "What each collection <em>includes</em>") + '</h2></div><div class="px-cols">' + cols + "</div></section>";
+  }
+
+  /* ---------- custom quotes (back office > Tools) ----------
+     The studio writes a quote of its own (a Christmas party, a Bar Mitzvah, a brand film...): its packages, their prices and descriptions, the comparison
+     rows, extra lines, pictures. It is stored with the project (projects.quote_custom) and shown by proposal.html from the link proposal.html#<slug>-<ref>.
+     Nothing in the link carries prices: the page asks the database (quote_status) for the definition and for the lines + total the studio saved. */
+  var safeImg = function (u) {
+    u = String(u == null ? "" : u).trim();
+    return /^(https:\/\/[^\s"'<>]+|assets\/[A-Za-z0-9_.\-\/ ]+|data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+)$/.test(u) && u.length < 2000000 ? u : "";
+  };
+  var pkgById = function (arr, id) { for (var i = 0; i < arr.length; i++) if (arr[i].id === id) return arr[i]; return null; };
+  var num = function (v, min, max) { v = +v; if (!isFinite(v)) v = 0; return Math.max(min, Math.min(max, Math.round(v * 100) / 100)); };
+  /* "Moments we witnessed" -> Moments we <em>witnessed</em> (the last word in the italic accent, like every title of the site) */
+  function emLast(s) {
+    s = String(s == null ? "" : s).trim();
+    var i = s.lastIndexOf(" ");
+    return i < 0 ? esc(s) : esc(s.slice(0, i)) + " <em>" + esc(s.slice(i + 1)) + "</em>";
+  }
+  var ABOUT_GENERIC = "Chromata Films makes visual narratives, not documentation: authentic storytelling, created with premium vendors and French-inspired sophistication, in a relaxed atmosphere where you can simply be yourselves. " +
+    "Our muses are Salvador Dalí and Elsa Schiaparelli, who proved that the unexpected can also be the most desirable thing in the room, so we look for the surreal detail hidden inside a real day and frame it with a couturier’s eye. " +
+    "And before our own films, our co-founder and film director Kevin Lopez spent a decade in visual effects for major studios, helping craft images for some of the biggest films ever made — Star Wars, Beauty and the Beast, The Great Gatsby, Avengers — and brings the same standards and the same tools to every story we film.";
+
+  function customBlank() {
+    var on = function (a) { return a; };
+    return { v: 1, kind: "", word: "package", lead: "", hero: "", photosTitle: "Moments we witnessed", chosen: "b",
+      packages: [{ id: "a", name: "Essential", sub: "", price: 0 }, { id: "b", name: "Signature", sub: "", price: 0 }, { id: "c", name: "Complete", sub: "", price: 0 }],
+      features: [
+        { k: "Hours of presence", on: on([1, 1, 1]), d: ["3 h", "5 h", "8 h"] },
+        { k: "Highlight film", on: on([1, 1, 1]), d: ["2 min", "3 min", "4 min"] },
+        { k: "Drone footage", on: on([0, 1, 1]), d: ["", "", ""] },
+        { k: "A short film made for social media", on: on([0, 0, 1]), d: ["", "", ""] }],
+      lines: [], travel: { show: true }, note: "", about: { on: true, text: "" }, films: true, photos: [] };
+  }
+  /* Whatever comes in (the builder's form, or the database) comes out as a safe, complete definition: bounded lengths, numbers, known pictures only. */
+  function customClean(raw) {
+    var r = raw && typeof raw === "object" ? raw : {}, d = {};
+    d.v = 1;
+    d.kind = clip(r.kind, 60); d.word = clip(r.word, 20) || "package"; d.lead = clip(r.lead, 600);
+    d.hero = safeImg(r.hero); d.photosTitle = clip(r.photosTitle, 60) || "Moments we witnessed"; d.note = clip(r.note, 300);
+    var seen = {};
+    d.packages = (Array.isArray(r.packages) ? r.packages : []).slice(0, 4).map(function (p, i) {
+      p = p || {}; var id = String(p.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 12) || "p" + (i + 1);
+      while (seen[id]) id += "x"; seen[id] = 1;
+      return { id: id, name: clip(p.name, 60) || "Package " + (i + 1), sub: clip(p.sub, 400), price: num(p.price, 0, 10000000) };
+    });
+    if (!d.packages.length) d.packages = [{ id: "a", name: "Package", sub: "", price: 0 }];
+    var n = d.packages.length;
+    d.chosen = pkgById(d.packages, String(r.chosen || "")) ? String(r.chosen) : d.packages[0].id;
+    d.features = (Array.isArray(r.features) ? r.features : []).slice(0, 16).map(function (f) {
+      f = f || {}; var on = [], dd = [];
+      for (var i = 0; i < n; i++) { on.push(f.on && f.on[i] ? 1 : 0); dd.push(clip(f.d && f.d[i], 60)); }
+      return { k: clip(f.k, 120), on: on, d: dd };
+    }).filter(function (f) { return f.k; });
+    d.lines = (Array.isArray(r.lines) ? r.lines : []).slice(0, 24).map(function (l) {
+      l = l || {};
+      return { name: clip(l.name, 120), sub: clip(l.sub, 300), price: num(l.price, -10000000, 10000000), qty: Math.max(1, Math.min(99, Math.round(+l.qty) || 1)), unit: clip(l.unit, 20) };
+    }).filter(function (l) { return l.name; });
+    d.travel = { show: !(r.travel && r.travel.show === false) };
+    d.about = { on: !(r.about && r.about.on === false), text: clip(r.about && r.about.text, 1500) };
+    d.films = r.films !== false;
+    d.photos = (Array.isArray(r.photos) ? r.photos : []).slice(0, 24).map(function (p) { return { src: safeImg(p && p.src), alt: clip(p && p.alt, 140) }; }).filter(function (p) { return p.src; });
+    /* who it is for (written by the database from the project, not by the form) */
+    d.names = clip(r.names, 160); d.date = ISO.test(r.date || "") ? r.date : ""; d.place = clip(r.place, 160); d.venue = clip(r.venue, 160); d.planner = clip(r.planner, 160);
+    return d;
+  }
+  /* priced lines of a custom quote: the chosen package, then the studio's extra lines, then travel */
+  function customLines(d) {
+    var L = [], p = pkgById(d.packages, d.chosen) || d.packages[0];
+    if (p) L.push({ key: "package", label: (d.kind ? d.kind + " · " : "") + p.name, sub: p.sub, price: p.price });
+    d.lines.forEach(function (l) {
+      var q = l.qty > 1 ? " × " + l.qty + (l.unit ? " " + l.unit + (/s$/i.test(l.unit) ? "" : "s") : "") : "";
+      L.push({ key: "line", label: l.name + q, sub: l.sub, price: Math.round(l.price * l.qty * 100) / 100 });
+    });
+    if (d.travel.show) L.push({ key: "travel", label: "Travel / accommodation · " + TRAVEL_TBC, price: 0, tbc: true });
+    return L;
+  }
+  /* rows the client reads + total, same shape as studioQuote (no commission in custom quotes) */
+  function customQuote(d, ex) { var r = spread(customLines(d), { travel: ex && ex.travel }); r.total = Math.max(0, r.total); return r; }
+  function customCompare(d, o) {
+    o = o || {};
+    var word = d.word || "package", one = d.packages.length === 1;
+    var cols = d.packages.map(function (p) { return { v: p.id, short: p.name, name: p.name, sub: p.sub, price: p.price }; });
+    var rows = d.features.map(function (f) { return { k: f.k, on: f.on, t: f.on.map(function (x, i) { return f.d[i] ? f.k + " · " + f.d[i] : f.k; }) }; });
+    var html = cardsHTML(cols, rows, d.chosen, { word: word }, function (c) { return c.price > 0 ? '<p class="px-col__price px-col__price--base"><strong>' + eur(c.price) + "</strong></p>" : ""; });
+    return '<section class="px-compare"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">' + (one ? "What is included" : "Your " + esc(word)) + '</p><h2 class="px-h2">' +
+      (one ? "Everything that is <em>included</em>" : "What each " + esc(word) + " <em>includes</em>") + '</h2></div><div class="px-cols px-cols--' + cols.length + '">' + html + "</div></section>";
+  }
+  var customLink = function (ref, names) { return "proposal.html#" + slug(names) + "-" + ref; };
+  /* proposal.html#<slug>-<ref> (no dot, no token): the page fetches everything from the database by the reference */
+  function parseCustomLink(hash) {
+    var m = /^#?(?:[a-z0-9-]*-)?([a-z0-9]{12})$/.exec(String(hash || ""));
+    return m ? { ref: m[1] } : null;
   }
 
   /* "Moments we witnessed": the same mosaic of photographs as on the proposal page (Q.PHOTOS). On the configurators the tiles are plain pictures. */
@@ -92,11 +190,11 @@
     "Our muses are Salvador Dalí and Elsa Schiaparelli, who proved that the unexpected can also be the most desirable thing in the room, so we look for the surreal detail hidden inside a real day and frame it with a couturier’s eye. " +
     "And before weddings, our co-founder and film director Kevin Lopez spent a decade in visual effects for major studios, helping craft images for some of the biggest films ever made — Star Wars, Beauty and the Beast, The Great Gatsby, Avengers — which is exactly what he brings to your wedding day: the same standards, the same tools, and a far better leading couple.";
   var POSTERS = [["star-wars", "Star Wars: The Last Jedi"], ["beauty-beast", "Beauty and the Beast"], ["gatsby", "The Great Gatsby"], ["avengers", "Avengers: Infinity War"], ["fantastic-four", "Fantastic Four"], ["still", "Solo: A Star Wars Story"]];
-  function aboutSection() {
+  function aboutSection(o) {
     return '<section class="px-about" id="about">' +
       '<img class="px-about__art" alt="" aria-hidden="true" draggable="false" loading="lazy" src="assets/img/quote/q-lobster.webp">' +
       '<div class="px-wrap px-about__head"><div><p class="kicker">— About Chromata</p><h2 class="px-h2">Visual narratives, not <em>documentation</em></h2>' +
-      '<p class="px-about__p">' + esc(ABOUT) + "</p></div>" +
+      '<p class="px-about__p">' + esc(o && o.text ? o.text : ABOUT) + "</p></div>" +
       '<figure class="px-about__who"><img src="assets/img/quote/n-kevin.jpg" alt="Kevin and Laura Lopez, co-founders of Chromata Films, at the RSVP Awards gala night" loading="lazy" width="1400" height="1866"><figcaption>Kevin &amp; Laura Lopez<small>Co-founders · RSVP Awards gala night</small></figcaption></figure></div>' +
       '<div class="px-posters">' + POSTERS.map(function (p) { return '<figure><img src="assets/img/blockbusters/' + p[0] + '.jpg" alt="' + esc(p[1]) + ' — poster" loading="lazy"></figure>'; }).join("") + "</div>" +
     "</section>";
@@ -210,10 +308,12 @@
      - the wedding planner's commission: a private amount. It is spread over the priced lines in proportion, so the
        couple only ever sees ordinary prices that add up to the total. There is never a commission line.
      Returns { rows: [{ l: label, p: price, t: "" | "tbc" | "inc" }], total, base, commission, travel }. */
-  function studioQuote(a, ex) {
+  function studioQuote(a, ex) { return spread(lines(a), ex); }
+  /* the shared maths: L = priced lines [{ key, label, price, sub? }]; a line with key "travel" is the travel / accommodation line */
+  function spread(L, ex) {
     ex = ex || {};
     var travel = (ex.travel === null || ex.travel === undefined || ex.travel === "" || isNaN(+ex.travel)) ? null : Math.max(0, Math.round(+ex.travel));
-    var L = lines(a), base = 0;
+    var base = 0;
     L.forEach(function (l) { if (l.key !== "travel") base += l.price; });
     var comm = base > 0 ? Math.max(0, Math.round(+ex.commission || 0)) : 0;
     var f = base > 0 ? (base + comm) / base : 1, big = -1, sum = 0;
@@ -222,7 +322,7 @@
       var p = Math.round(l.price * f);
       sum += p;
       if (l.price > 0 && (big < 0 || l.price > L[big].price)) big = i;
-      return { l: l.label, p: p, t: "" };
+      return l.sub ? { l: l.label, p: p, t: "", s: l.sub } : { l: l.label, p: p, t: "" };
     });
     if (big > -1) rows[big].p += (base + comm) - sum;   // rounding leftovers go to the biggest line, so the lines add up exactly
     return { rows: rows, total: base + comm + (travel || 0), base: base, commission: comm, travel: travel };
@@ -498,6 +598,8 @@
     fmtDate: fmtDate, calendarLink: calendarLink, todayISO: todayISO, ISO: ISO, EVENT_HOURS: EVENT_HOURS, TRAVEL_TBC: TRAVEL_TBC, travelNote: travelNote, COLLECTIONS: COLLECTIONS, TEAM: TEAM, OPTIONS: OPTIONS, CREATOR: CREATOR, PRIVACY: PRIVACY,
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
     up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection, photosSection: photosSection,
+    ABOUT: ABOUT, ABOUT_GENERIC: ABOUT_GENERIC, safeImg: safeImg, emLast: emLast, customBlank: customBlank, customClean: customClean, customLines: customLines, customQuote: customQuote,
+    customCompare: customCompare, customLink: customLink, parseCustomLink: parseCustomLink,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

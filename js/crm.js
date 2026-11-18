@@ -57,7 +57,7 @@
   }
 
   /* ---------------- shell ---------------- */
-  var NAV = [["dashboard", "Dashboard"], ["calendar", "Calendar"], ["projects", "Projects"], ["tracker", "Tracker"], ["contacts", "Contacts"], ["contracts", "Contracts"], ["accounting", "Accounting"], ["settings", "Settings"]];
+  var NAV = [["dashboard", "Dashboard"], ["calendar", "Calendar"], ["projects", "Projects"], ["tracker", "Tracker"], ["contacts", "Contacts"], ["contracts", "Contracts"], ["accounting", "Accounting"], ["tools", "Tools"], ["settings", "Settings"]];
   function shell(active, inner) {
     var nav = NAV.map(function (n) { return '<a href="#/' + n[0] + '" class="' + (active === n[0] ? "on" : "") + '">' + n[1] + "</a>"; }).join("");
     app.innerHTML = '<div class="cr-shell"><aside class="cr-side"><div class="brand"><img src="assets/img/logo-mark.png" alt="" width="22" height="44"><span>Chromata<br>back office</span></div><nav>' + nav +
@@ -81,7 +81,7 @@
     var fl = fu.length ? fu.map(function (p) { return row("#/project/" + p.id, daysAgo(p.quote_sent_at) + " days", p.couple_names, "Quote sent " + C.fmtDate(p.quote_sent_at.slice(0, 10)), '<span class="pill quote">Chase</span>'); }).join("") : '<p class="empty">No quote is waiting for an answer.</p>';
     var od = S.payments.filter(function (x) { return !x.paid_at && x.due_date < today; });
     var odl = od.length ? od.map(function (x) { var p = byId(S.projects, x.project_id) || {}; return row("#/project/" + x.project_id, "Due " + esc(C.fmtDate(x.due_date)), p.couple_names || "", x.label, '<span class="am">' + eur(x.amount) + '</span><span class="pill declined">Overdue</span>'); }).join("") : '<p class="empty">No overdue payment.</p>';
-    var web = P.filter(function (p) { return p.quote_ref && p.status === "quote" && daysAgo(p.created_at) <= 14; }).sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; });
+    var web = P.filter(function (p) { return p.quote_ref && !p.quote_custom && p.status === "quote" && daysAgo(p.created_at) <= 14; }).sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; });
     var wl2 = web.length ? web.map(function (p) { return row("#/project/" + p.id, daysAgo(p.created_at) === 0 ? "Today" : daysAgo(p.created_at) + " d ago", p.couple_names, [p.wedding_date ? C.fmtDate(p.wedding_date) : "No date", p.venue].filter(Boolean).join(" · "), '<span class="am">' + (p.total ? eur(p.total) : "") + '</span><span class="pill ' + (p.quote_validated_at ? "signed" : "quote") + '">' + (p.quote_validated_at ? "Validated" : "To validate") + "</span>"); }).join("") : '<p class="empty">No quote received from the website in the last two weeks.</p>';
     var rev = S.payments.filter(function (x) { return x.paid_at && x.paid_at.slice(0, 4) === year; }).reduce(function (s, x) { return s + (+x.amount || 0); }, 0);
     var exp = S.expenses.filter(function (x) { return (x.spent_on || "").slice(0, 4) === year; }).reduce(function (s, x) { return s + (+x.amount || 0); }, 0);
@@ -146,7 +146,7 @@
       '</div><input id="q" type="search" placeholder="Search couple, venue, planner…" value="' + esc(S.q) + '"></div><section class="cr-card tbl">' +
       (rows.length ? '<div class="selbar" id="selbar"></div>' + rows.map(function (p) {
         return '<div class="row' + (S.sel[p.id] ? " sel" : "") + '" data-id="' + p.id + '"><input class="pk" type="checkbox" aria-label="Select ' + esc(p.couple_names) + '"' + (S.sel[p.id] ? " checked" : "") + '>' +
-          '<a class="rl" href="#/project/' + p.id + '"><span class="d">' + esc(p.wedding_date ? C.fmtDate(p.wedding_date) : "No date") + '</span><span class="t">' + esc(p.couple_names) + "<small>" + esc([p.venue, p.location].filter(Boolean).join(", ") + (p.quote_ref ? " · from the website" : "")) + "</small></span><span class=\"pl\">" + esc(p.planner_name || "") + "</span><span class=\"am\">" + (p.total ? eur(p.total) : "") + "</span>" + pill(p.status) + "</a></div>";
+          '<a class="rl" href="#/project/' + p.id + '"><span class="d">' + esc(p.wedding_date ? C.fmtDate(p.wedding_date) : "No date") + '</span><span class="t">' + esc(p.couple_names) + "<small>" + esc([p.venue, p.location].filter(Boolean).join(", ") + (p.quote_custom ? " · custom quote" : p.quote_ref ? " · from the website" : "")) + "</small></span><span class=\"pl\">" + esc(p.planner_name || "") + "</span><span class=\"am\">" + (p.total ? eur(p.total) : "") + "</span>" + pill(p.status) + "</a></div>";
       }).join("") : '<p class="empty">No project matches. Create one with “New project”.</p>') + "</section>");
     $$(".tabs button").forEach(function (b) { b.onclick = function () { S.filter = b.getAttribute("data-f"); projects(); }; });
     $("#q").oninput = function (e) { S.q = e.target.value; var pos = e.target.selectionStart; projects(); var el = $("#q"); el.focus(); el.setSelectionRange(pos, pos); };
@@ -217,6 +217,12 @@
     return p[f[0]] == null ? "" : p[f[0]];
   }
   var QE = function () { return window.CRMApp && window.CRMApp.quoteEditor; };   // js/crm-quote.js
+  /* a custom quote (made in Tools) is edited in its own builder, not in the website-quote editor */
+  function customCard(p) {
+    return '<section class="cr-card" id="qe"><div class="sh"><h2>Custom quote</h2><span class="pill signed">Made in Tools</span></div><p class="hint">This quote was composed in <strong>Tools</strong> (its own packages, prices, descriptions and pictures). ' +
+      'Open the builder to change anything: the client’s link updates by itself once you save.</p><div class="acts"><a class="btn" href="#/tools/quote/' + p.id + '">Edit in the quote builder</a>' +
+      (p.proposal_url ? '<a class="btn ghost" target="_blank" rel="noopener" href="' + esc(p.proposal_url) + '">View the client’s page</a><a class="btn ghost" target="_blank" rel="noopener" title="Opens the page and starts the PDF (choose Save as PDF)" href="' + esc(p.proposal_url.replace("#", "?pdf=1#")) + '">PDF</a>' : "") + "</div></section>";
+  }
   /* once the quote is built in the quote editor, its total and travel fees are managed there (they would otherwise drift apart) */
   function fld(f, p) {
     var managed = p.quote_lines && (f[0] === "total" || f[0] === "travel_fees");
@@ -273,7 +279,7 @@
     shell("projects", '<header class="top"><h1>' + (isNew ? "New project" : esc(p.couple_names)) + '</h1>' + (isNew ? "" : pill(p.status)) + "</header>" +
       (isNew ? '<section class="cr-card"><h2>Start from a quotation</h2><p class="hint">Paste the “See my proposal” link of a couple: their names, date, venue and total are filled in for you.</p><div class="inl"><input id="imp" type="url" placeholder="https://www.chromatafilms.com/proposal.html#…"><button class="btn ghost" id="impGo" type="button">Fill from link</button></div></section>' : "") +
       (p.quote_ref ? validationPanel(p) : "") +
-      (isNew || !QE() ? "" : QE().html(p)) +
+      (isNew ? "" : p.quote_custom ? customCard(p) : !QE() ? "" : QE().html(p)) +
       '<form id="pf" class="cr-card"><h2>Wedding</h2><div class="grid2">' + F.map(function (f) { return fld(f, p); }).join("") + '<label class="fld"><span>Status</span><select name="status">' +
       Object.keys(ST).map(function (k) { return '<option value="' + k + '"' + ((p.status || "lead") === k ? " selected" : "") + ">" + ST[k].label + "</option>"; }).join("") + "</select></label>" +
       '<label class="fld"><span>Bank account to give the couple</span><select name="bank_account">' + ["EUR", "CHF", "USD"].map(function (a) { return '<option value="' + a + '"' + ((p.bank_account || "EUR") === a ? " selected" : "") + ">" + a + " account" + (C.bankFor(S.settings, a) ? "" : " (not filled in Settings)") + "</option>"; }).join("") + "</select></label></div>" +
@@ -317,7 +323,7 @@
     var del = $("#del"); if (del) del.onclick = function () {
       if (confirm("Delete this project and its contracts? This cannot be undone.")) api.deleteProject(p.id).then(reload).then(function () { location.hash = "#/projects"; }).catch(fail);
     };
-    if (!isNew) { wireContracts(p); wirePayments(p); wireChecklist(p); if (QE()) QE().wire(p); }
+    if (!isNew) { wireContracts(p); wirePayments(p); wireChecklist(p); if (QE() && !p.quote_custom) QE().wire(p); }
     wireValidation(p);
   }
 
@@ -338,7 +344,7 @@
   function validationPanel(p) {
     var v = p.quote_validated_at, ref = esc(p.quote_ref.slice(0, 6).toUpperCase());
     return '<section class="cr-card" id="qv"><div class="sh"><h2>Website quote · ' + (v ? "validated" : "to validate") + '</h2><span class="pill ' + (v ? "signed" : "quote") + '">' + (v ? "Validated" : "Not validated") + "</span></div>" +
-      '<p class="hint">Created automatically from the website quotation (ref <strong>' + ref + "</strong>)." + (p.contact_id && byId(S.contacts, p.contact_id) ? ' <a href="#/contacts/' + p.contact_id + '">Open the contact card</a>.' : "") + "</p>" +
+      '<p class="hint">' + (p.quote_custom ? "Custom quote made in Tools" : "Created automatically from the website quotation") + " (ref <strong>" + ref + "</strong>)." + (p.contact_id && byId(S.contacts, p.contact_id) ? ' <a href="#/contacts/' + p.contact_id + '">Open the contact card</a>.' : "") + "</p>" +
       (QE() ? QE().opensBlock(p) : "") +
       (v ? '<p class="hint"><strong>Validated on ' + esc(C.fmtDate(v.slice(0, 10))) + ".</strong> The signing button now shows on their proposal page. Email them the proposal, or create and send the contract yourself below.</p>"
          : '<p class="hint"><strong>The couple cannot sign yet.</strong> Check the quote in the editor below (add travel or accommodation, the planner commission, then save), pick the bank account, and validate. Only then does the signing button appear on their proposal page.</p>') +
@@ -454,7 +460,7 @@
       location.hash = "#/projects"; return;
     }
     if (parts[0] === "new") { projectForm({ status: "lead" }); return; }
-    (views[parts[0]] || dashboard)(parts[1]);
+    (views[parts[0]] || dashboard)(parts[1], parts[2]);
     window.scrollTo(0, 0);
   }
 
@@ -485,5 +491,5 @@
   window.addEventListener("hashchange", function () { if (S.user && !(S.mfa && S.mfa.needsChallenge)) { S.editingContract = null; render(); } });
 
   window.CRMApp = { S: S, api: api, C: C, T: T, D: D, esc: esc, eur: eur, $: $, $$: $$, iso: iso, byId: byId, toast: toast, fail: fail, pill: pill, ST: ST, isSigned: isSigned, shell: shell, reload: reload, render: render, boot: boot,
-    views: views, checklistItems: checklistItems, cellOf: cellOf, cycle: cycle, TS: TS, FOLLOWUP_DAYS: FOLLOWUP_DAYS };
+    views: views, customCard: customCard, checklistItems: checklistItems, cellOf: cellOf, cycle: cycle, TS: TS, FOLLOWUP_DAYS: FOLLOWUP_DAYS };
 })();

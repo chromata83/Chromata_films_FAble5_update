@@ -105,6 +105,16 @@ Re-run the whole `docs/crm/schema.sql` in the SQL Editor once (it is safe to re-
   (they go back to the standard price and the quote says "(−10% · Premium collection)" next to each).
   The project note says "Wedding planner rates applied". The percentages are in `js/quote-core.js` (`MARKUP`, `nomk`); the database gets them through the price list
   the back office stores each time you sign in. **After updating: re-run `schema.sql`, then open the back office once** (until then a planner quote is kept but not marked as verified).
+* **Tools > Custom quote** (for events that are not weddings: Christmas party, Bar Mitzvah, a brand film…): you compose a quote of your own in the same look as the website quotation.
+  You choose the kind of event, up to 4 **packages** (name, price, description; the one marked “For this client” is charged and shown in yellow), the **comparison rows**
+  (tick where each package has it, plus a small detail text: the cards are built from them), **extra lines** (price × quantity, descriptions, negative price = discount),
+  travel / accommodation, the **pictures** (top picture + a mosaic: upload from your computer, pick from the site's own photographs, or paste an https link) and whether to show
+  About / the wedding films. Saving creates a project with its private link (`proposal.html#<name>-<ref>`) that works like a website quote: email gate, validity of 14 days,
+  validation, online signing, PDF, project in the calendar. The page reads everything from the database, so **a change saved in the builder shows on the same link**.
+  Not in custom quotes: planner rates and the planner commission. The contract template (Settings) is worded for weddings: edit it before using online signing for another kind of event
+  (the contract title already takes the kind of event, e.g. “Bar Mitzvah film agreement”).
+  **Re-run `schema.sql` once**: it adds the column for custom quotes and creates a public Storage bucket `quote-photos` (only you can write to it) for the pictures you upload.
+  If your SQL Editor refuses the Storage part, create a public bucket named `quote-photos` in Supabase > Storage, and add a policy letting the studio account insert/delete objects in it.
 * A quote you create yourself in the CRM has a button **Email me this quote** (an email to the studio address with all the details).
 * Prices are never trusted from the browser: the database recomputes every total from the choices. Online signing stays closed until
   the bank details of the chosen account are saved, and can be switched off in Settings > Quotation page and online signing.

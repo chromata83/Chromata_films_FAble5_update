@@ -269,3 +269,50 @@ details.opens summary { cursor: pointer; }
 details.opens ul { margin: 8px 0 0 18px; padding: 0; }
 details.opens li { margin: 3px 0; }
 details.opens li small { color: var(--muted); margin-left: 6px; }
+
+/* ---- Tools: the custom quote builder ---- */
+.qb-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.qb-main { min-width: 0; }
+.qb-side { position: sticky; top: 16px; }
+.qb-side .srow { display: flex; justify-content: space-between; gap: 14px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.qb-side .srow .sl small { display: block; margin-top: 2px; font-size: 12px; color: var(--muted); }
+.qb-side .srow .sr { white-space: nowrap; font-weight: 500; }
+.qb-side .srow.grand { border-bottom: 0; border-top: 1.5px solid var(--coral); margin-top: 4px; padding-top: 12px; font-size: 16px; font-weight: 600; }
+.qb-links input { font-size: 12px; }
+.qb-pkgs { display: grid; gap: 14px; }
+.qb-pkg { border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.qb-pkg.on { border-color: var(--ink); background: rgba(246,213,78,.22); box-shadow: inset 4px 0 0 var(--lemon); }
+.qb-act { display: flex; gap: 8px; flex-wrap: wrap; }
+.qb-h3 { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin: 22px 0 10px; font-family: var(--ui); font-weight: 500; }
+.qb-h3:first-of-type { margin-top: 4px; }
+.qb-tblwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+.qb-tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.qb-tbl th { text-align: left; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 10px 8px; background: rgba(37,35,33,.04); white-space: nowrap; }
+.qb-tbl td { padding: 6px 8px; border-top: 1px solid var(--line); vertical-align: middle; }
+.qb-tbl td:first-child { min-width: 190px; }
+.qb-tbl input[type=text] { padding: 7px 9px; }
+.qb-cell { display: flex; align-items: center; gap: 6px; min-width: 120px; }
+.qb-cell input[type=checkbox], .qb-phs input[type=checkbox] { width: 18px; height: 18px; flex: none; accent-color: var(--coral); }
+.qb-cell input[type=text] { min-width: 70px; }
+.qb-rowact { white-space: nowrap; }
+.qb-rowact .btn { padding: 6px 9px; margin-left: 3px; }
+.qb-line { border: 1px solid var(--line); border-radius: 6px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+.qb-line__a { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) 72px minmax(0, 1fr); gap: 10px; }
+.qb-img { display: block; width: 100%; height: 130px; object-fit: cover; border-radius: 4px; background: #e7e0d6; }
+.qb-hero { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+.qb-hero .qb-img { width: 200px; height: 130px; }
+.qb-phs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 8px; }
+.qb-ph { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.qb-ph input[type=text] { padding: 6px 8px; font-size: 12.5px; }
+.qb-ph .btn { padding: 5px 9px; }
+.qb-add { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.qb-file { cursor: pointer; }
+.qb-url { display: inline-flex; gap: 8px; flex: 1 1 260px; }
+.qb-lib { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--cream); }
+.qb-lib h3 { font-size: 16px; }
+.qb-libgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin-top: 12px; max-height: 420px; overflow: auto; }
+.qb-lt { padding: 0; border: 2px solid transparent; border-radius: 4px; background: #e7e0d6; overflow: hidden; aspect-ratio: 1; }
+.qb-lt img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.qb-lt:hover { border-color: var(--coral); }
+.qb-lt.picked { border-color: var(--ok); opacity: .55; }
+@media (max-width: 960px) { .qb-grid { grid-template-columns: 1fr; } .qb-side { position: static; order: -1; } .qb-line__a { grid-template-columns: 1fr 1fr; } }

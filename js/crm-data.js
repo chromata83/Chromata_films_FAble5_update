@@ -9,7 +9,7 @@
   var F = {
     projects: ["status", "couple_names", "couple_email", "couple_phone", "wedding_date", "venue", "location", "collection", "total", "planner_id",
       "planner_name", "planner_company", "planner_email", "planner_phone", "contact_id", "travel_fees", "bank_account", "quote_validated_at", "proposal_url", "notes", "quote_sent_at", "auto_emails", "tracker", "films",
-      "quote_ref", "quote_verified", "quote_sel", "quote_lines", "quote_commission", "quote_issued_at"],
+      "quote_ref", "quote_verified", "quote_sel", "quote_lines", "quote_commission", "quote_issued_at", "quote_custom"],
     contracts: ["project_id", "title", "body", "amount", "status", "sent_at", "studio_signature"],
     payments: ["paid_at", "remind"],
     contacts: ["kind", "name", "company", "email", "phone", "website", "tag", "follow_up", "next_step_date", "notes"],
@@ -82,6 +82,10 @@
     expenses: dExpenses.list, saveExpense: dExpenses.save, deleteExpense: dExpenses.del,
     emailLog: function () { return Promise.resolve(load().email_log); },
     quoteViews: function () { return Promise.resolve(load().quote_views); },
+    /* demo mode keeps pictures inside the browser (small data addresses); the real database uses Supabase Storage */
+    uploadImage: function (blob) {
+      return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result)); }; r.onerror = function () { rej(new Error("Could not read the picture")); }; r.readAsDataURL(blob); });
+    },
     contracts: function () { return Promise.resolve(load().contracts); },
     saveContract: function (c) {
       var d = load(), row;
@@ -182,6 +186,14 @@
     emailLog: function () { return client().from("email_log").select("*").order("sent_at", { ascending: false }).then(ck); },
     /* who opened the quote links; an older database without the table just gives an empty list */
     quoteViews: function () { return client().from("quote_views").select("*").order("created_at", { ascending: false }).then(ck).catch(function () { return []; }); },
+    /* pictures of custom quotes: public bucket quote-photos (created by docs/crm/schema.sql), only the studio can write */
+    uploadImage: function (blob) {
+      var path = new Date().getFullYear() + "/" + token("").slice(0, 24) + (blob.type === "image/png" ? ".png" : blob.type === "image/webp" ? ".webp" : ".jpg");
+      return client().storage.from("quote-photos").upload(path, blob, { contentType: blob.type || "image/jpeg", cacheControl: "31536000", upsert: false }).then(function (r) {
+        if (r.error) throw new Error(/bucket|not found/i.test(r.error.message) ? "The picture storage is not set up yet: run the updated docs/crm/schema.sql in Supabase (or create a public bucket named quote-photos)." : r.error.message);
+        return client().storage.from("quote-photos").getPublicUrl(path).data.publicUrl;
+      });
+    },
     contracts: sContracts.list,
     saveContract: sContracts.save,
     deleteContract: sContracts.del,
