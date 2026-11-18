@@ -127,9 +127,7 @@
   }
   /* the film director upgrade, ready to use (price and wording can be edited afterwards) */
   function directorLine() {
-    return { name: "Film director", price: 14000, qty: 1, unit: "", on: false, card: true,
-      sub: "Choose the luxury of having a film director on your event. Receiving the live streams of every camera on site, they direct the crews in real time from what they see on screen, so that every shot is the strongest and the best optimised one, planned around the other cameras and the needs of the edit, right on set.\n\nWe no longer simply cover an event: we direct it visually, the way a true production would.",
-      incText: "Film director\nStreaming gear\nStreaming console\nDay-after edit (1 min)" };
+    var l = Q.directorLine(); l.incText = l.inc.join("\n"); return l;
   }
   function photosHTML() {
     return W.photos.map(function (p, i) {

@@ -3315,7 +3315,7 @@ ${QX_MENU}
   </section>
 </main>
 <script src="js/crm-config.js?v=2"></script>
-<script src="js/quote-core.js?v=23"></script>
+<script src="js/quote-core.js?v=24"></script>
 <script src="js/quote-link.js?v=2"></script>
 <script src="js/quotation.js?v=13" defer></script>
 </body>
@@ -3345,10 +3345,10 @@ ${QX_MENU}
   <button class="nav next" id="qxLbNext" type="button" aria-label="Next" hidden>&#8250;</button>
 </div>
 <script src="js/crm-config.js?v=2"></script>
-<script src="js/quote-core.js?v=23"></script>
+<script src="js/quote-core.js?v=24"></script>
 <script src="js/quote-link.js?v=4"></script>
 <script src="js/proposal-pdf.js?v=3" defer></script>
-<script src="js/proposal.js?v=25" defer></script>
+<script src="js/proposal.js?v=26" defer></script>
 </body>
 </html>
 `;

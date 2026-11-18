@@ -106,6 +106,12 @@
     "Our muses are Salvador Dalí and Elsa Schiaparelli, who proved that the unexpected can also be the most desirable thing in the room, so we look for the surreal detail hidden inside a real day and frame it with a couturier’s eye. " +
     "And before our own films, our co-founder and film director Kevin Lopez spent a decade in visual effects for major studios, helping craft images for some of the biggest films ever made — Star Wars, Beauty and the Beast, The Great Gatsby, Avengers — and brings the same standards and the same tools to every story we film.";
 
+  /* the Film director video upgrade: in every new custom quote, a card the client can select (the studio's price and wording can be edited) */
+  function directorLine() {
+    return { name: "Film director", price: 14000, qty: 1, unit: "", on: false, card: true,
+      sub: "Choose the luxury of having a film director on your event. Receiving the live streams of every camera on site, they direct the crews in real time from what they see on screen, so that every shot is the strongest and the best optimised one, planned around the other cameras and the needs of the edit, right on set.\n\nWe no longer simply cover an event: we direct it visually, the way a true production would.",
+      inc: ["Film director", "Streaming gear", "Streaming console", "Day-after edit (1 min)"] };
+  }
   function customBlank() {
     var on = function (a) { return a; };
     return { v: 1, kind: "", word: "package", lead: "", hero: "", photosTitle: "Moments we witnessed", chosen: "b",
@@ -115,7 +121,7 @@
         { k: "Highlight film", on: on([1, 1, 1]), d: ["2 min", "3 min", "4 min"] },
         { k: "Drone footage", on: on([0, 1, 1]), d: ["", "", ""] },
         { k: "A short film made for social media", on: on([0, 0, 1]), d: ["", "", ""] }],
-      lines: [], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: true, photos: [] };
+      lines: [directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: true, photos: [] };
   }
   /* a text that may keep its line breaks (the description of a video upgrade) */
   var clipML = function (s, n) { return String(s == null ? "" : s).replace(/\r/g, "").replace(/[\u0000-\u0009\u000b-\u001f]/g, " ").replace(/\n{3,}/g, "\n\n").trim().slice(0, n); };
@@ -654,7 +660,7 @@
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
     up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection, photosSection: photosSection,
     ABOUT: ABOUT, ABOUT_GENERIC: ABOUT_GENERIC, safeImg: safeImg, emLast: emLast, customBlank: customBlank, customClean: customClean, customLines: customLines, customQuote: customQuote,
-    customCompare: customCompare, customUpgrades: customUpgrades, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
+    customCompare: customCompare, customUpgrades: customUpgrades, directorLine: directorLine, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

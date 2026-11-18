@@ -113,7 +113,7 @@
         cutHTML("q-intro", { l: "43.5%", b: "-5vh", h: "54vh", rot: "-5deg", ml: "3vw", mt: "2vh", mh: "24vh", mrot: "-4deg" }) +
       "</section>" +
 
-      (C ? Q.customCompare(Q.customView(C, sel), { id: "collection", pick: true }) : Q.compareSection(A, { id: "collection" })) +
+      (C ? Q.customCompare(Q.customView(C, sel), { id: "collection", pick: true }) + Q.customUpgrades(C, { id: "upgrades", sel: sel }) : Q.compareSection(A, { id: "collection" })) +
 
       '<section class="px-sel" id="selections">' +
         cutHTML("q-swan", { l: "3vw", b: "-5vh", h: "28vh", rot: "-8deg", ml: "62vw", mt: "-4vh", mh: "14vh", mrot: "-6deg" }) +
@@ -126,8 +126,6 @@
           "</div>" +
         "</div>" +
       "</section>" +
-
-      (C ? Q.customUpgrades(C, { id: "upgrades", sel: sel }) : "") +
 
       (PH.length ? '<section class="px-photos" id="photographs">' +
         cutHTML("q-collage", { rt: "5vw", t: "-3vh", h: "23vh", rot: "6deg", hm: true }) +
