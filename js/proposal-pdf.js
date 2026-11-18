@@ -63,9 +63,15 @@
     /* the videos: no players, a clickable list of the films instead */
     var films = doc.querySelector(".px-films");
     if (films) {
+      /* the list of films is read from the players themselves (a custom quote has its own videos) */
+      var list = Array.prototype.slice.call(films.querySelectorAll(".film-layer")).map(function (l) {
+        var fr = l.querySelector("iframe"), src = fr ? (fr.getAttribute("data-src") || fr.getAttribute("src") || "") : "", m, h3 = l.querySelector("h3"), pp = l.querySelector("header p");
+        var url = (m = /embed\/([\w-]{11})/.exec(src)) ? "https://www.youtube.com/watch?v=" + m[1] : (m = /video\/(\d+)(?:\?.*?\bh=([a-f0-9]+))?/.exec(src)) ? "https://vimeo.com/" + m[1] + (m[2] ? "/" + m[2] : "") : "";
+        return { url: url, t: h3 ? h3.textContent : "", p: pp ? pp.textContent : "" };
+      });
       var stack = films.querySelector(".film-stack"); if (stack) stack.remove();
-      films.insertAdjacentHTML("beforeend", '<ul class="px-flist">' + Q.FILMS.map(function (f, i) {
-        return '<li><a href="' + Q.esc(filmUrl(f)) + '" target="_blank" rel="noopener"><span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="t">' + Q.esc(f.t) + "<small>" + Q.esc(f.p) + '</small></span><span class="w">Watch the film &#8599;</span></a></li>';
+      films.insertAdjacentHTML("beforeend", '<ul class="px-flist">' + list.map(function (f, i) {
+        return '<li><a href="' + Q.esc(f.url) + '" target="_blank" rel="noopener"><span class="n">' + String(i + 1).padStart(2, "0") + '</span><span class="t">' + Q.esc(f.t) + "<small>" + Q.esc(f.p) + '</small></span><span class="w">Watch the film &#8599;</span></a></li>';
       }).join("") + "</ul>");
     }
 

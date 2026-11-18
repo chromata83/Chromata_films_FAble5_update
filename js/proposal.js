@@ -135,10 +135,10 @@
 
       (!C ? Q.aboutSection() : C.about.on ? Q.aboutSection({ text: C.about.text || Q.ABOUT_GENERIC }) : "") +
 
-      (!C || C.films ? '<section class="px-films" id="films">' +
-        '<div class="px-wrap px-wrap--col px-films__head"><p class="kicker">— A selection of our films</p><h2 class="px-h2">Stories we <em>filmed</em></h2>' +
+      (!C || C.films || C.videos.length ? '<section class="px-films" id="films">' +
+        '<div class="px-wrap px-wrap--col px-films__head"><p class="kicker">— A selection of our films</p><h2 class="px-h2">' + (C && C.videos.length ? Q.emLast(C.videosTitle) : "Stories we <em>filmed</em>") + '</h2>' +
           cutHTML("q-camera", { rt: "4vw", t: "-6vh", h: "26vh", rot: "-5deg", ml: "66vw", mt: "-14vh", mh: "12vh", mrot: "-4deg" }) + '</div>' +
-        Q.stackHTML() +
+        Q.stackHTML(C && C.videos.length ? Q.customVideoList(C) : null) +
       "</section>" : "") +
 
       '<section class="px-close">' +
@@ -193,11 +193,11 @@
     }
     function drawCompare() { var h = document.getElementById("collection"); if (h) h.outerHTML = Q.customCompare(Q.customView(C, sel), { id: "collection", pick: true }); }
     function syncUps() {
-      Array.prototype.forEach.call(document.querySelectorAll(".px-up"), function (el) {
+      Array.prototype.forEach.call(document.querySelectorAll(".px-up, .px-dir"), function (el) {
         var i = +el.getAttribute("data-i"), on = sel.ups.indexOf(i) > -1, b = el.querySelector(".px-up__sel"), t = el.querySelector(".px-up__s");
         el.classList.toggle("is-sel", on);
         if (b) b.setAttribute("aria-checked", String(on));
-        if (t) t.textContent = on ? "Selected" : "Not selected";
+        if (t) t.textContent = el.classList.contains("px-dir") ? (on ? "Added to your quote" : "Add to my quote") : (on ? "Selected" : "Not selected");
       });
     }
     var SEND_LABEL = "Save and send for review to Chromata Films";

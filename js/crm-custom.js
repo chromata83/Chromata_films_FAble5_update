@@ -44,14 +44,14 @@
   function fromDef(d, p) {
     return { id: p.id || "", ref: p.quote_ref || "", url: p.proposal_url || "", names: p.couple_names || "", email: p.couple_email || "", date: p.wedding_date || "", venue: p.venue || "", place: p.location || "",
       kind: d.kind, word: d.word, lead: d.lead, hero: d.hero, photosTitle: d.photosTitle, chosen: d.chosen, packages: copy(d.packages), features: copy(d.features), lines: d.lines.map(function (l) { var c = copy(l); c.incText = l.inc.join("\n"); return c; }), extra: copy(d.extra), photos: copy(d.photos),
-      travelShow: d.travel.show, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films,
+      travelShow: d.travel.show, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films, videos: copy(d.videos), videosTitle: d.videosTitle,
       issued: p.id ? issuedOf(p) : iso(new Date()), status: p.status || "" };
   }
   function fresh() { var w = fromDef(Q.customClean(Q.customBlank()), {}); w.note = DEFAULT_NOTE; return w; }
   /* the form -> a clean definition (what is stored with the project) */
   function toDef() {
     var d = Q.customClean({ kind: W.kind, word: W.word, lead: W.lead, hero: W.hero, photosTitle: W.photosTitle, chosen: W.chosen, packages: W.packages, features: W.features, lines: W.lines.map(function (l) { return Object.assign({}, l, { inc: String(l.incText || "").split("\n") }); }), extra: W.extra, photos: W.photos,
-      travel: { show: W.travelShow }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films });
+      travel: { show: W.travelShow }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films, videos: W.videos, videosTitle: W.videosTitle });
     delete d.names; delete d.date; delete d.place; delete d.venue; delete d.planner;   // who it is for lives in the project columns
     return d;
   }
@@ -110,9 +110,10 @@
         '<label class="fld"><span>Price (€)</span><input type="number" step="any"' + tr("lines." + j + ".price") + ' value="' + (l.price === 0 ? "" : l.price) + '" placeholder="0"></label>' +
         '<label class="fld"><span>Qty</span><input type="number" min="1" max="99" step="1"' + tr("lines." + j + ".qty") + ' value="' + (l.qty || 1) + '"></label>' +
         '<label class="fld"><span>Unit <small>(optional)</small></span><input type="text"' + tr("lines." + j + ".unit") + ' maxlength="20" value="' + esc(l.unit) + '" placeholder="hour"></label></div>' +
-        '<label class="fld"><span>Description <small>(optional · a blank line starts a new paragraph)</small></span><textarea rows="' + (l.card ? 7 : 3) + '" maxlength="1500"' + tr("lines." + j + ".sub") + '>' + esc(l.sub) + '</textarea></label>' +
-        '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".card") + (l.card ? " checked" : "") + '> <strong>Show as a clickable card</strong> <small>(in the “Video upgrades” section of the quote: the client opens it to read the description and what is included)</small></label>' +
-        (l.card ? '<label class="fld"><span>What is included <small>(one item per line, 12 at most)</small></span><textarea rows="5" maxlength="1500"' + tr("lines." + j + ".incText") + '>' + esc(l.incText || "") + '</textarea></label>' : "") +
+        '<label class="fld"><span>Description <small>(optional · a blank line starts a new paragraph)</small></span><textarea rows="' + (l.card || l.band ? 7 : 3) + '" maxlength="1500"' + tr("lines." + j + ".sub") + '>' + esc(l.sub) + '</textarea></label>' +
+        '<label class="qe-chk" style="margin:4px 0 4px"><input type="checkbox"' + tr("lines." + j + ".band") + (l.band ? " checked" : "") + '> <strong>Show as a separate line under the comparison</strong> <small>(like the extra: the description and what is included are readable at once, with a box to add it to the quote)</small></label>' +
+        (l.band ? "" : '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".card") + (l.card ? " checked" : "") + '> <strong>Show as a clickable card</strong> <small>(in the “Video upgrades” section of the quote: the client opens it to read the description and what is included)</small></label>') +
+        (l.card || l.band ? '<label class="fld"><span>What is included <small>(one item per line, 12 at most)</small></span><textarea rows="5" maxlength="1500"' + tr("lines." + j + ".incText") + '>' + esc(l.incText || "") + '</textarea></label>' : "") +
         '<div class="qb-act"><button class="btn ghost sm" type="button" data-act="line-up" data-j="' + j + '"' + (j === 0 ? " disabled" : "") + '>&uarr; Up</button><button class="btn ghost sm" type="button" data-act="line-down" data-j="' + j + '"' + (j === W.lines.length - 1 ? " disabled" : "") + '>&darr; Down</button><button class="btn danger sm" type="button" data-act="line-del" data-j="' + j + '">Remove</button></div></div>';
     }).join("");
   }
@@ -128,6 +129,20 @@
   /* the film director upgrade, ready to use (price and wording can be edited afterwards) */
   function directorLine() {
     var l = Q.directorLine(); l.incText = l.inc.join("\n"); return l;
+  }
+  /* the videos of the quote: a box per YouTube / Vimeo link, they replace the wedding films */
+  function videoStatus(u) { var p = String(u || "").trim() ? Q.parseVideo(u) : null; return !String(u || "").trim() ? "" : p ? (p.yt ? "✓ YouTube video" : "✓ Vimeo video") : "✗ link not recognised (paste the address of a YouTube or Vimeo video)"; }
+  function videosHTML() {
+    var rows = W.videos.map(function (v, k) {
+      var st = videoStatus(v.url);
+      return '<div class="qb-vid"><label class="fld"><span>Link <small data-vs="' + k + '" class="' + (st.charAt(0) === "✗" ? "bad" : "good") + '">' + esc(st) + '</small></span><input type="url"' + tr("videos." + k + ".url") + ' maxlength="300" value="' + esc(v.url) + '" placeholder="https://vimeo.com/123456789 or https://youtu.be/…"></label>' +
+        '<div class="grid2"><label class="fld"><span>Title <small>(optional)</small></span><input type="text"' + tr("videos." + k + ".title") + ' maxlength="120" value="' + esc(v.title) + '" placeholder="e.g. Christmas 2025, Villa Ephrussi"></label>' +
+        '<label class="fld"><span>Small text <small>(optional)</small></span><input type="text"' + tr("videos." + k + ".sub") + ' maxlength="160" value="' + esc(v.sub) + '" placeholder="e.g. Highlight film"></label></div>' +
+        '<div class="qb-act"><button class="btn ghost sm" type="button" data-act="vid-up" data-j="' + k + '"' + (k === 0 ? " disabled" : "") + '>&uarr; Up</button><button class="btn ghost sm" type="button" data-act="vid-down" data-j="' + k + '"' + (k === W.videos.length - 1 ? " disabled" : "") + '>&darr; Down</button><button class="btn danger sm" type="button" data-act="vid-del" data-j="' + k + '">Remove</button></div></div>';
+    }).join("");
+    return '<section class="cr-card"><h2>Videos</h2><p class="hint">Paste a YouTube or Vimeo link in each box: the quote shows the films you chose, in this order, in place of the wedding films. No video, no section.</p>' +
+      '<label class="fld" style="max-width:420px;margin-bottom:12px"><span>Title of the section</span><input type="text"' + tr("videosTitle") + ' maxlength="60" value="' + esc(W.videosTitle) + '"></label>' +
+      (rows || '<p class="empty">No video yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="vid-add"' + (W.videos.length >= 8 ? " disabled" : "") + ">Add a video</button></div></section>";
   }
   function photosHTML() {
     return W.photos.map(function (p, i) {
@@ -183,7 +198,9 @@
 
       '<section class="cr-card"><h2>Other sections</h2><label class="qe-chk"><input type="checkbox"' + tr("aboutOn") + (W.aboutOn ? " checked" : "") + "> Show the “About Chromata” section (Kevin and Laura, the film posters)</label>" +
       '<label class="fld" style="margin:10px 0 14px"><span>Text of the About section</span><textarea rows="6" maxlength="1500"' + tr("aboutText") + ">" + esc(W.aboutText || Q.ABOUT_GENERIC) + "</textarea></label>" +
-      '<label class="qe-chk"><input type="checkbox"' + tr("films") + (W.films ? " checked" : "") + "> Show “Stories we filmed” (the selection of wedding films)</label></section>" +
+      '<label class="qe-chk"><input type="checkbox"' + tr("films") + (W.films ? " checked" : "") + "> Also show the wedding films “Stories we filmed” (only used when you have not added a video below)</label></section>" +
+
+      videosHTML() +
 
       '<section class="cr-card"><h2>Issue date</h2><div class="grid2"><label class="fld"><span>Issued on</span><input type="date" id="qbIssued"' + tr("issued") + ' value="' + esc(W.issued) + '"></label><div class="fld"><span>&nbsp;</span><button class="btn ghost" type="button" data-act="today">Issue again today</button></div></div>' +
       '<p class="hint" id="qbValid" style="margin:8px 0 0"></p></section></div>';
@@ -272,8 +289,10 @@
     var v = t.type === "checkbox" ? t.checked : t.value;
     if (t.type === "checkbox" && /\.on\.\d+$/.test(path)) v = t.checked ? 1 : 0;
     if ((/\.(price|qty)$/.test(path) || /^extra\.prices\.\d+$/.test(path)) && t.type === "number") v = t.value === "" ? 0 : +t.value;
-    if (/\.card$/.test(path) || path === "extra.on") { setPath(path, v); draw(); return; }
+    if (/\.(card|band)$/.test(path) || path === "extra.on") { setPath(path, v); draw(); return; }
     setPath(path, v);
+    var mv = /^videos\.(\d+)\.url$/.exec(path);
+    if (mv) { var vs = $('[data-vs="' + mv[1] + '"]'); if (vs) { var stt = videoStatus(v); vs.textContent = stt; vs.className = stt.charAt(0) === "✗" ? "bad" : "good"; } }
     var m = /^packages\.(\d+)\.name$/.exec(path);
     if (m) { var th = $('[data-th="' + m[1] + '"]'); if (th) th.textContent = v; }
     paintPrev();
@@ -296,6 +315,10 @@
       case "row-up": move(F, j, -1); break;
       case "row-down": move(F, j, 1); break;
       case "line-director": if (W.lines.length >= MAX_LINES) return; W.lines.push(directorLine()); break;
+      case "vid-add": if (W.videos.length >= 8) return; W.videos.push({ url: "", title: "", sub: "" }); break;
+      case "vid-del": W.videos.splice(j, 1); break;
+      case "vid-up": move(W.videos, j, -1); break;
+      case "vid-down": move(W.videos, j, 1); break;
       case "line-add": if (W.lines.length >= MAX_LINES) return; W.lines.push({ name: "", sub: "", price: 0, qty: 1, unit: "", on: false }); break;
       case "line-del": W.lines.splice(j, 1); break;
       case "line-up": move(W.lines, j, -1); break;

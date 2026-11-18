@@ -192,3 +192,32 @@ html.px-pdf .px-mcol { flex: 1 1 0; min-width: 0; }
 .px-locked .px-col.is-pick, .px-locked .px-up__sel { pointer-events: none; }
 .px-locked .px-send { display: none; }
 @media print { .px-ups, .px-xtra, .px-send { display: none !important; } }
+/* the Film director: its own line under the comparison, like the extra, with the description readable at once */
+.px-xtra--dir { margin-top: clamp(26px, 3vw, 44px); }
+.px-dir { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) auto; gap: 18px clamp(22px, 3vw, 48px); align-items: start; border: 1px dashed rgba(255,249,240,.55); border-radius: 4px; padding: clamp(20px, 2.4vw, 36px) clamp(18px, 2.4vw, 38px); color: #fff; transition: background .2s, color .2s; }
+.px-dir.is-sel { background: var(--pop); border: 1px solid var(--pop); color: var(--panel-deep); }
+.px-dir__txt p { margin: 0 0 14px; font-size: 15px; line-height: 1.75; color: rgba(255,249,240,.9); overflow-wrap: anywhere; text-wrap: pretty; }
+.px-dir.is-sel .px-dir__txt p { color: #2A2412; }
+.px-dir__inc .px-up__h { margin: 0 0 6px; font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); }
+.px-dir.is-sel .px-dir__inc .px-up__h { color: #6B5200; }
+.px-dir__inc ul { list-style: none; margin: 0; padding: 0; }
+.px-dir__inc li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-top: 1px solid rgba(255,249,240,.25); font-size: 14.5px; line-height: 1.5; overflow-wrap: anywhere; }
+.px-dir.is-sel .px-dir__inc li { border-top-color: rgba(14,12,10,.22); }
+.px-dir__inc li .bx { flex: none; width: 20px; height: 20px; margin-top: 1px; border-radius: 3px; background: #fff; position: relative; }
+.px-dir__inc li .bx::after { content: ""; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid var(--panel-deep); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.px-dir.is-sel .px-dir__inc li .bx { background: var(--panel-deep); }
+.px-dir.is-sel .px-dir__inc li .bx::after { border-color: var(--pop); }
+.px-dir__act { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; text-align: right; }
+.px-dir__p { font-size: clamp(22px, 2.2vw, 30px); font-weight: 600; white-space: nowrap; }
+.px-dir .px-up__sel { appearance: none; background: transparent; border: 0; padding: 6px; margin: -6px; cursor: pointer; color: inherit; line-height: 0; }
+.px-dir .px-up__sel .bx { display: block; width: 34px; height: 34px; border: 2px solid currentColor; border-radius: 4px; position: relative; }
+.px-dir.is-sel .px-up__sel .bx { background: var(--panel-deep); border-color: var(--panel-deep); }
+.px-dir.is-sel .px-up__sel .bx::after { content: ""; position: absolute; left: 11px; top: 3px; width: 8px; height: 17px; border: solid var(--pop); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+.px-dir .px-up__s { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; opacity: .85; }
+.px-dir .px-up__sel:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 900px) {
+  .px-dir { grid-template-columns: minmax(0, 1fr); }
+  .px-dir__act { flex-direction: row; align-items: center; justify-content: space-between; text-align: left; flex-wrap: wrap; }
+}
+.px-locked .px-dir .px-up__sel { pointer-events: none; }
+

@@ -108,9 +108,23 @@
 
   /* the Film director video upgrade: in every new custom quote, a card the client can select (the studio's price and wording can be edited) */
   function directorLine() {
-    return { name: "Film director", price: 14000, qty: 1, unit: "", on: false, card: true,
+    return { name: "Film director", price: 14000, qty: 1, unit: "", on: false, band: true,
       sub: "Choose the luxury of having a film director on your event. Receiving the live streams of every camera on site, they direct the crews in real time from what they see on screen, so that every shot is the strongest and the best optimised one, planned around the other cameras and the needs of the edit, right on set.\n\nWe no longer simply cover an event: we direct it visually, the way a true production would.",
       inc: ["Film director", "Streaming gear", "Streaming console", "Day-after edit (1 min)"] };
+  }
+  /* a YouTube or Vimeo link -> { yt } or { vm, h } (null when it is neither): the page then embeds the player */
+  function parseVideo(u) {
+    u = String(u == null ? "" : u).trim();
+    var m;
+    if (!/^https:\/\//i.test(u)) return null;
+    if ((m = /^https:\/\/(?:www\.|m\.)?youtube(?:-nocookie)?\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/)([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/i.exec(u)) || (m = /^https:\/\/youtu\.be\/([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/i.exec(u))) return { yt: m[1] };
+    if ((m = /^https:\/\/player\.vimeo\.com\/video\/(\d{6,12})(?:\?[^#]*?\bh=([a-f0-9]{8,12}))?/i.exec(u))) return { vm: m[1], h: m[2] || "" };
+    if ((m = /^https:\/\/(?:www\.)?vimeo\.com\/(?:[a-z]+\/)*?(\d{6,12})(?:\/([a-f0-9]{8,12}))?(?!\d)/i.exec(u))) return { vm: m[1], h: m[2] || (/[?&]h=([a-f0-9]{8,12})/i.exec(u) || [])[1] || "" };
+    return null;
+  }
+  /* the studio's videos as the list the film players are built from */
+  function customVideoList(d) {
+    return d.videos.map(function (v, i) { var p = parseVideo(v.url) || {}; return { t: v.title || "Film " + (i + 1), p: v.sub, yt: p.yt, vm: p.vm, h: p.h }; });
   }
   function customBlank() {
     var on = function (a) { return a; };
@@ -121,7 +135,7 @@
         { k: "Highlight film", on: on([1, 1, 1]), d: ["2 min", "3 min", "4 min"] },
         { k: "Drone footage", on: on([0, 1, 1]), d: ["", "", ""] },
         { k: "A short film made for social media", on: on([0, 0, 1]), d: ["", "", ""] }],
-      lines: [directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: true, photos: [] };
+      lines: [directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: false, videos: [], videosTitle: "Stories we filmed", photos: [] };
   }
   /* a text that may keep its line breaks (the description of a video upgrade) */
   var clipML = function (s, n) { return String(s == null ? "" : s).replace(/\r/g, "").replace(/[\u0000-\u0009\u000b-\u001f]/g, " ").replace(/\n{3,}/g, "\n\n").trim().slice(0, n); };
@@ -148,8 +162,10 @@
     }).filter(function (f) { return f.k; });
     d.lines = (Array.isArray(r.lines) ? r.lines : []).slice(0, 24).map(function (l) {
       l = l || {};
+      var isBand = l.band === true || l.band === 1 || (l.band === undefined && !!l.card && /^film director$/i.test(clip(l.name, 200)));
       return { name: clip(l.name, 200), sub: clipML(l.sub, 1500), price: num(l.price, -10000000, 10000000), qty: Math.max(1, Math.min(99, Math.round(+l.qty) || 1)), unit: clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
-        card: l.card === true || l.card === 1,   // shown as a clickable card in the "Video upgrades" section of the quote
+        band: isBand,   // a separate line under the comparison, its description readable at once (the Film director)
+        card: !isBand && (l.card === true || l.card === 1),   // shown as a clickable card in the "Video upgrades" section of the quote
         inc: (Array.isArray(l.inc) ? l.inc : []).slice(0, 12).map(function (x) { return clip(x, 120); }).filter(Boolean) };   // what the upgrade includes
     }).filter(function (l) { return l.name; });
     /* a price per package for something every package pays differently (shown under the comparison, added to the quote by itself) */
@@ -158,7 +174,12 @@
     if (!d.extra.label) d.extra.on = false;
     d.travel = { show: !(r.travel && r.travel.show === false) };
     d.about = { on: !(r.about && r.about.on === false), text: clip(r.about && r.about.text, 1500) };
-    d.films = r.films !== false;
+    d.films = r.films === true || r.films === 1;   // the wedding films (the studio's own videos below replace them)
+    d.videos = (Array.isArray(r.videos) ? r.videos : []).slice(0, 8).map(function (v) {
+      v = v || {}; var u = clip(v.url, 300);
+      return { url: parseVideo(u) ? u : "", title: clip(v.title, 120), sub: clip(v.sub, 160) };
+    }).filter(function (v) { return v.url; });
+    d.videosTitle = clip(r.videosTitle, 60) || "Stories we filmed";
     d.photos = (Array.isArray(r.photos) ? r.photos : []).slice(0, 24).map(function (p) { return { src: safeImg(p && p.src), alt: clip(p && p.alt, 140) }; }).filter(function (p) { return p.src; });
     /* who it is for (written by the database from the project, not by the form) */
     d.names = clip(r.names, 160); d.date = ISO.test(r.date || "") ? r.date : ""; d.place = clip(r.place, 160); d.venue = clip(r.venue, 160); d.planner = clip(r.planner, 160);
@@ -172,7 +193,7 @@
     if (xp > 0) L.push({ key: "line", label: d.extra.label, sub: d.extra.sub, price: xp });   // the package-dependent extra is added by itself
     d.lines.forEach(function (l) {
       /* a featured upgrade has its description on its card: the summary row stays short */
-      L.push({ key: l.on ? "line" : "optional", label: l.name + qtyLabel(l), sub: l.card ? "" : l.sub, price: Math.round(l.price * l.qty * 100) / 100 });
+      L.push({ key: l.on ? "line" : "optional", label: l.name + qtyLabel(l), sub: (l.card || l.band) ? "" : l.sub, price: Math.round(l.price * l.qty * 100) / 100 });
     });
     if (d.travel.show) L.push({ key: "travel", label: "Travel / accommodation", price: 0 });
     return L;
@@ -186,7 +207,7 @@
     var rows = d.features.map(function (f) { return { k: f.k, on: f.on, t: f.on.map(function (x, i) { return f.d[i] ? f.k + " · " + f.d[i] : f.k; }) }; });
     var html = cardsHTML(cols, rows, d.chosen, { word: word, pick: !!o.pick && !one }, function (c) { return c.price > 0 ? '<p class="px-col__price px-col__price--base"><strong>' + eur(c.price) + "</strong></p>" : ""; });
     return '<section class="px-compare"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">' + (one ? "What is included" : "Your " + esc(word)) + '</p><h2 class="px-h2">' +
-      (one ? "Everything that is <em>included</em>" : "What each " + esc(word) + " <em>includes</em>") + '</h2>' + (o.pick && !one ? '<p class="px-ups__p">Choose the ' + esc(word) + ' you prefer: your quote follows.</p>' : "") + '</div><div class="px-cols px-cols--' + cols.length + '">' + html + "</div>" + customExtraBand(d) + "</section>";
+      (one ? "Everything that is <em>included</em>" : "What each " + esc(word) + " <em>includes</em>") + '</h2>' + (o.pick && !one ? '<p class="px-ups__p">Choose the ' + esc(word) + ' you prefer: your quote follows.</p>' : "") + '</div><div class="px-cols px-cols--' + cols.length + '">' + html + "</div>" + customExtraBand(d) + customBands(d) + "</section>";
   }
   /* the line under the comparison: "Extra as per ..." with what each package pays on top, the chosen one in yellow */
   function customExtraBand(d) {
@@ -198,8 +219,20 @@
         return '<div class="px-xcell' + (p.id === d.chosen ? " is-chosen" : "") + '"><span class="px-xcell__n">' + esc(p.name) + '</span><strong class="px-xcell__p">' + (v > 0 ? "+ " + eur(v) : "Included") + "</strong></div>";
       }).join("") + "</div></div>";
   }
+  /* a video upgrade shown as its own line under the comparison, exactly like the extra, its description readable at once and a box to add it to the quote */
+  function customBands(d) {
+    return d.lines.map(function (l, i) {
+      if (!l.band) return "";
+      var price = Math.round(l.price * l.qty * 100) / 100, paras = String(l.sub || "").split(/\n+/).filter(Boolean);
+      return '<div class="px-xtra px-xtra--dir"><div class="px-xtra__t"><strong>' + esc(l.name + qtyLabel(l)) + "</strong><span>Video upgrade · optional</span></div>" +
+        '<div class="px-dir' + (l.on ? " is-sel" : "") + '" data-i="' + i + '"><div class="px-dir__txt">' + paras.map(function (t) { return "<p>" + esc(t) + "</p>"; }).join("") + "</div>" +
+        (l.inc.length ? '<div class="px-dir__inc"><p class="px-up__h">What is included</p><ul>' + l.inc.map(function (t) { return '<li><span class="bx" aria-hidden="true"></span><span>' + esc(t) + "</span></li>"; }).join("") + "</ul></div>" : "") +
+        '<div class="px-dir__act"><strong class="px-dir__p">' + (price < 0 ? "− " : "+ ") + eur(Math.abs(price)) + '</strong><button type="button" class="px-up__sel" role="checkbox" aria-checked="' + !!l.on + '" data-i="' + i + '" aria-label="Add ' + esc(l.name) + ' to my quote"><span class="bx" aria-hidden="true"></span></button>' +
+        '<span class="px-up__s">' + (l.on ? "Added to your quote" : "Add to my quote") + "</span></div></div></div>";
+    }).join("");
+  }
   /* the video upgrades: what the client can pick on the quote page = the featured cards and every line the studio has not validated (numbers in d.lines) */
-  function customUpIdx(d) { var r = []; d.lines.forEach(function (l, i) { if (l.card || !l.on) r.push(i); }); return r; }
+  function customUpIdx(d) { var r = []; d.lines.forEach(function (l, i) { if (l.card || l.band || !l.on) r.push(i); }); return r; }
   /* the selection the studio saved: its package and the upgrades that count in its total */
   function customSelOf(d) { return { chosen: d.chosen, ups: customUpIdx(d).filter(function (i) { return d.lines[i].on; }) }; }
   /* the definition as it reads with a client's selection { chosen, ups: [line numbers] } (without one, as the studio saved it) */
@@ -215,7 +248,7 @@
   /* "Video upgrades": a red section under the summary. Every upgrade is a card the client selects (the total follows) and can open to read what it is. */
   function customUpgrades(d, o) {
     o = o || {};
-    var idx = customUpIdx(d);
+    var idx = customUpIdx(d).filter(function (i) { return !d.lines[i].band; });   // (the separate lines under the comparison are not in the red section)
     if (!idx.length) return "";
     var sel = o.sel ? o.sel.ups : customSelOf(d).ups;
     return '<section class="px-ups"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">Video upgrades</p><h2 class="px-h2">Take it <em>further</em></h2>' +
@@ -579,10 +612,11 @@
       return '<figure style="--ar:' + p.ar + '"><img src="' + p.src + '" alt="' + esc(p.alt) + '" loading="lazy"></figure>';
     }).join("") + "</div>";
   }
-  function stackHTML() {
-    return '<div class="film-stack">' + FILMS.map(function (f, i) {
+  function stackHTML(list) {
+    list = list || FILMS;
+    return '<div class="film-stack">' + list.map(function (f, i) {
       return '<article class="film-layer film-layer--' + (i % 2 ? "b" : "a") + '" style="z-index:' + (i + 1) + '">' +
-        '<div class="film-layer__in"><header><span class="num">' + String(i + 1).padStart(2, "0") + " / " + String(FILMS.length).padStart(2, "0") + "</span>" +
+        '<div class="film-layer__in"><header><span class="num">' + String(i + 1).padStart(2, "0") + " / " + String(list.length).padStart(2, "0") + "</span>" +
         "<h3>" + esc(f.t) + "</h3><p>" + esc(f.p) + "</p></header>" +
         '<div class="film-layer__frame"><iframe data-src="' + filmSrc(f) + '" title="' + esc(f.t) + '" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe></div>' +
         "</div></article>";
@@ -660,7 +694,7 @@
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
     up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection, photosSection: photosSection,
     ABOUT: ABOUT, ABOUT_GENERIC: ABOUT_GENERIC, safeImg: safeImg, emLast: emLast, customBlank: customBlank, customClean: customClean, customLines: customLines, customQuote: customQuote,
-    customCompare: customCompare, customUpgrades: customUpgrades, directorLine: directorLine, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
+    customCompare: customCompare, customUpgrades: customUpgrades, parseVideo: parseVideo, customVideoList: customVideoList, directorLine: directorLine, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,
