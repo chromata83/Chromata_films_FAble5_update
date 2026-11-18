@@ -29,7 +29,7 @@
     var rows = list.map(function (p) {
       var d = p.quote_custom || {}, link = p.proposal_url || "";
       return '<div class="crow"><div class="ct"><strong>' + esc(p.couple_names) + "</strong><small>" + esc([d.kind, p.wedding_date ? C.fmtDate(p.wedding_date) : "No date", p.collection, p.total ? eur(p.total) : ""].filter(Boolean).join(" · ")) + "</small></div>" +
-        '<div class="ca">' + A.pill(p.status) + '<a class="btn sm" href="#/tools/quote/' + p.id + '">Edit</a><a class="btn ghost sm" href="#/tools/quote/copy-' + p.id + '">Duplicate</a>' +
+        '<div class="ca">' + A.pill(p.status) + (p.client_selection ? '<span class="pill quote">Selection to review</span>' : "") + '<a class="btn sm" href="#/tools/quote/' + p.id + '">Edit</a><a class="btn ghost sm" href="#/tools/quote/copy-' + p.id + '">Duplicate</a>' +
         (link ? '<a class="btn ghost sm" target="_blank" rel="noopener" href="' + esc(link) + '">Open the page</a>' : "") + '<a class="btn ghost sm" href="#/project/' + p.id + '">Project</a></div></div>';
     }).join("");
     shell("tools", '<header class="top"><h1>Tools</h1></header>' +
@@ -202,7 +202,7 @@
 
   function draw() {
     var y = window.scrollY;
-    shell("tools", '<header class="top"><h1>' + (W.id ? "Custom quote" : "New custom quote") + '</h1><a class="btn ghost" href="#/tools">Back to Tools</a></header><div class="qb-grid">' + formHTML() + asideHTML() + "</div>");
+    shell("tools", '<header class="top"><h1>' + (W.id ? "Custom quote" : "New custom quote") + '</h1><a class="btn ghost" href="#/tools">Back to Tools</a></header>' + (W.id ? selBox(byId(S.projects, W.id)) : "") + '<div class="qb-grid">' + formHTML() + asideHTML() + "</div>");
     wire(); paintPrev();
     window.scrollTo(0, y);
   }
@@ -337,6 +337,46 @@
     for (var i = 0; i < a.length; i++) s += "0123456789abcdefghijklmnopqrstuvwxyz"[a[i] % 36];
     return s;
   }
+  /* ---------------- what the client sent back for review (package + video upgrades picked on the quote page) ---------------- */
+  function selInfo(p) {
+    if (!p || !p.quote_custom || !p.client_selection || typeof p.client_selection !== "object") return null;
+    var d = Q.customClean(p.quote_custom), s = p.client_selection, ups = Array.isArray(s.ups) ? s.ups : [], idx = Q.customUpIdx(d);
+    var v = Q.customView(d, { chosen: s.chosen, ups: ups }), q = Q.customQuote(v), before = Q.customQuote(d);
+    var after = { chosen: v.chosen, ups: idx.filter(function (i) { return v.lines[i].on; }) };
+    return { d: d, v: v, q: q, before: before, same: Q.sameSel(Q.customSelOf(d), after),
+      pk: v.packages.filter(function (x) { return x.id === v.chosen; })[0] || {}, pk0: d.packages.filter(function (x) { return x.id === d.chosen; })[0] || {},
+      ups: after.ups.map(function (i) { return d.lines[i].name; }), ups0: Q.customSelOf(d).ups.map(function (i) { return d.lines[i].name; }) };
+  }
+  function selBox(p) {
+    var i = selInfo(p); if (!i) return "";
+    var when = p.client_selection_at ? new Date(p.client_selection_at).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "", who = p.client_selection.email ? " by " + esc(p.client_selection.email) : "";
+    return '<section class="cr-card qb-selbox"><div class="sh"><h2>The client sent a selection</h2><span class="pill quote">To review</span></div>' +
+      '<p class="hint">Sent' + (when ? " on " + esc(when) : "") + who + ". Nothing changes in the quote until you apply it.</p>" +
+      '<ul class="qb-sel"><li><span>' + esc(i.d.word || "Package") + '</span><strong>' + esc(i.pk.name || "") + "</strong>" + (i.pk.id !== i.pk0.id ? "<small>was " + esc(i.pk0.name || "") + "</small>" : "<small>unchanged</small>") + "</li>" +
+      "<li><span>Video upgrades</span><strong>" + (i.ups.length ? esc(i.ups.join(", ")) : "none") + "</strong><small>" + (JSON.stringify(i.ups) === JSON.stringify(i.ups0) ? "unchanged" : "was " + (i.ups0.length ? esc(i.ups0.join(", ")) : "none")) + "</small></li>" +
+      "<li><span>Total</span><strong>" + eur(i.q.total) + "</strong><small>" + (i.q.total === i.before.total ? "unchanged" : "was " + eur(i.before.total)) + "</small></li></ul>" +
+      '<div class="acts"><button class="btn" type="button" data-selact="apply" data-id="' + p.id + '">Apply to the quote</button><button class="btn ghost" type="button" data-selact="dismiss" data-id="' + p.id + '">Dismiss</button></div></section>';
+  }
+  function applySel(p, dismiss) {
+    var i = selInfo(p); if (!i) return;
+    var contracts = S.contracts.filter(function (c) { return c.project_id === p.id && (c.status === "sent" || c.status === "signed"); });
+    if (!dismiss && contracts.length && !confirm("A contract was already " + (contracts.some(function (c) { return c.status === "signed"; }) ? "signed" : "sent") + " for this project. It keeps its own amount (" + C.money(contracts[0].amount) + "); only the quote changes. Apply anyway?")) return;
+    if (dismiss && !confirm("Dismiss the client’s selection without applying it?")) return;
+    var row = { id: p.id, client_selection: null, client_selection_at: null };
+    if (!dismiss) {
+      var d = i.v; delete d.names; delete d.date; delete d.place; delete d.venue; delete d.planner;
+      row.quote_custom = d; row.total = i.q.total; row.travel_fees = i.q.travel; row.quote_lines = i.q.rows; row.collection = i.pk.name || null; row.quote_verified = true;
+    }
+    api.saveProject(row).then(function () {
+      return A.reload().then(function () { toast(dismiss ? "Selection dismissed" : "Selection applied: the client’s link shows it and they can now sign"); A.render(); });
+    }).catch(fail);
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-selact]"); if (!b) return;
+    var p = byId(S.projects, b.getAttribute("data-id")); if (p) applySel(p, b.getAttribute("data-selact") === "dismiss");
+  });
+  A.selBox = selBox;
+
   function save() {
     var names = String(W.names).trim();
     if (names.length < 2) { toast("Fill in “Prepared for” (the name shown at the top)", true); return; }

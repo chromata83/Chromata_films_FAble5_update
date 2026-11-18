@@ -273,6 +273,9 @@ alter table public.projects add column if not exists quote_commission numeric;  
 alter table public.projects add column if not exists quote_issued_at timestamptz;    -- issue date: a quote is valid 14 days from it
 -- custom quote (back office > Tools): the studio's own packages, comparison rows, extra lines and pictures (a Christmas party, a Bar Mitzvah...). Null for website quotes.
 alter table public.projects add column if not exists quote_custom jsonb;
+-- what the client chose on a custom quote's page (package + video upgrades) and sent back "for review"; the studio applies it (back office) and it is then cleared
+alter table public.projects add column if not exists client_selection jsonb;
+alter table public.projects add column if not exists client_selection_at timestamptz;
 alter table public.projects drop constraint if exists projects_bank_account_check;
 alter table public.projects add constraint projects_bank_account_check check (bank_account in ('EUR', 'CHF', 'USD'));
 create unique index if not exists projects_quote_ref_idx on public.projects (quote_ref) where quote_ref is not null;
@@ -502,6 +505,34 @@ begin
   return jsonb_build_object('ok', true, 'opens', n, 'project', pr.id);
 end $$;
 
+-- Called by a custom quote's page when the client presses "Save and send for review to Chromata Films": it stores the package and the video upgrades they picked.
+-- Nothing is trusted from the browser: only a known package id and line numbers are kept, the studio recomputes every amount from its own definition and applies
+-- the selection from the back office. Works only on a custom quote that is not signed and not expired.
+create or replace function public.submit_selection(p_ref text, p_sel jsonb) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare pr public.projects; chosen text; ups jsonb; n int; e text; issued date;
+begin
+  if coalesce(p_ref, '') !~ '^[a-z0-9]{10,16}$' then raise exception 'Invalid reference'; end if;
+  select * into pr from public.projects where quote_ref = p_ref and quote_custom is not null;
+  if not found then raise exception 'This proposal was not found'; end if;
+  if exists (select 1 from public.contracts c where c.project_id = pr.id and c.status = 'signed') then raise exception 'This proposal is already signed'; end if;
+  issued := (coalesce(pr.quote_issued_at, pr.quote_sent_at, pr.created_at) at time zone 'UTC')::date;
+  if current_date > issued + 14 then raise exception 'This proposal has expired. Write to us and we will refresh it right away.'; end if;
+  if pr.client_selection_at is not null and pr.client_selection_at > now() - interval '3 seconds' then raise exception 'Please wait a moment and try again'; end if;
+  if jsonb_typeof(p_sel) is distinct from 'object' then raise exception 'Invalid selection'; end if;
+  chosen := p_sel ->> 'chosen';
+  if not exists (select 1 from jsonb_array_elements(coalesce(pr.quote_custom -> 'packages', '[]'::jsonb)) k where k ->> 'id' = chosen) then raise exception 'Unknown package'; end if;
+  n := jsonb_array_length(coalesce(pr.quote_custom -> 'lines', '[]'::jsonb));
+  if jsonb_typeof(p_sel -> 'ups') = 'array' and jsonb_array_length(p_sel -> 'ups') <= 60 then
+    select coalesce(jsonb_agg(s.i order by s.i), '[]'::jsonb) into ups
+      from (select distinct (v #>> '{}')::int as i from jsonb_array_elements(p_sel -> 'ups') v where (v #>> '{}') ~ '^[0-9]{1,2}$') s where s.i < n;
+  else ups := '[]'::jsonb; end if;
+  e := lower(left(trim(coalesce(p_sel ->> 'email', '')), 160));
+  if e !~ '^[^@\s]+@[^@\s]+\.[^@\s]{2,}$' then e := ''; end if;
+  update public.projects set client_selection = jsonb_build_object('chosen', chosen, 'ups', ups, 'email', e), client_selection_at = now() where id = pr.id;
+  return jsonb_build_object('ok', true, 'project', pr.id);
+end $$;
+
 -- What the couple's proposal page asks for each time it opens: is signing open, the studio's current version of the
 -- quote (lines + total, so every change made in the back office shows up on the same link by itself), and the validity.
 -- The planner commission (quote_commission) is NEVER returned: it is already spread inside the prices of `lines`.
@@ -513,6 +544,8 @@ language sql stable security definer set search_path = public as $$
       'travel_fees', p.travel_fees, 'total', p.total, 'lines', p.quote_lines,
       -- custom quote: the studio's definition + who it is for (read from the project, so editing the project updates the page); null for website quotes
       'custom', case when p.quote_custom is not null then p.quote_custom || jsonb_build_object('names', p.couple_names, 'date', p.wedding_date, 'place', p.location, 'venue', p.venue, 'planner', p.planner_name) end,
+      -- the selection this client already sent for review (null once the studio applied it)
+      'selection', p.client_selection,
       'issued', to_char(d.issued, 'YYYY-MM-DD'), 'valid_until', to_char(d.issued + 14, 'YYYY-MM-DD'), 'expired', current_date > d.issued + 14,
       'gate', coalesce((select value from public.settings where key = 'quote_gate'), '1') <> '0',
       'validated', coalesce((select value from public.settings where key = 'online_signing'), '1') <> '0'
@@ -524,8 +557,8 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 revoke all on function public.fmt_money(numeric), public.quote_total(jsonb, jsonb), public.qt_up(numeric, jsonb, text) from public, anon, authenticated;
-revoke all on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text), public.quote_open(text, text, text) from public;
-grant execute on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text), public.quote_open(text, text, text) to anon, authenticated;
+revoke all on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text), public.quote_open(text, text, text), public.submit_selection(text, jsonb) from public;
+grant execute on function public.submit_quote(text, text, text, text, text, text, text, text, jsonb, numeric, text, text), public.accept_quote(text), public.quote_status(text), public.quote_open(text, text, text), public.submit_selection(text, jsonb) to anon, authenticated;
 
 -- ---------- pictures of custom quotes (back office > Tools) ----------
 -- A public bucket: the proposal page shows these pictures to anyone who has the quote link. Only the studio can add or remove files.

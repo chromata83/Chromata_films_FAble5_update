@@ -172,15 +172,15 @@
     return L;
   }
   /* rows the client reads + total, same shape as studioQuote (no commission in custom quotes); travel / accommodation is always a line that reads "Included" */
-  function customQuote(d) { var r = spread(customLines(d), { travel: 0 }); r.total = Math.max(0, r.total); return r; }
+  function customQuote(d, o) { var r = spread(customLines(d), { travel: 0 }); r.total = Math.max(0, r.total); if (o && o.client) r.rows = r.rows.filter(function (x) { return x.t !== "opt"; }); return r; }
   function customCompare(d, o) {
     o = o || {};
     var word = d.word || "package", one = d.packages.length === 1;
     var cols = d.packages.map(function (p) { return { v: p.id, short: p.name, name: p.name, sub: p.sub, price: p.price }; });
     var rows = d.features.map(function (f) { return { k: f.k, on: f.on, t: f.on.map(function (x, i) { return f.d[i] ? f.k + " · " + f.d[i] : f.k; }) }; });
-    var html = cardsHTML(cols, rows, d.chosen, { word: word }, function (c) { return c.price > 0 ? '<p class="px-col__price px-col__price--base"><strong>' + eur(c.price) + "</strong></p>" : ""; });
+    var html = cardsHTML(cols, rows, d.chosen, { word: word, pick: !!o.pick && !one }, function (c) { return c.price > 0 ? '<p class="px-col__price px-col__price--base"><strong>' + eur(c.price) + "</strong></p>" : ""; });
     return '<section class="px-compare"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">' + (one ? "What is included" : "Your " + esc(word)) + '</p><h2 class="px-h2">' +
-      (one ? "Everything that is <em>included</em>" : "What each " + esc(word) + " <em>includes</em>") + '</h2></div><div class="px-cols px-cols--' + cols.length + '">' + html + "</div>" + customExtraBand(d) + "</section>";
+      (one ? "Everything that is <em>included</em>" : "What each " + esc(word) + " <em>includes</em>") + '</h2>' + (o.pick && !one ? '<p class="px-ups__p">Choose the ' + esc(word) + ' you prefer: your quote follows.</p>' : "") + '</div><div class="px-cols px-cols--' + cols.length + '">' + html + "</div>" + customExtraBand(d) + "</section>";
   }
   /* the line under the comparison: "Extra as per ..." with what each package pays on top, the chosen one in yellow */
   function customExtraBand(d) {
@@ -192,16 +192,36 @@
         return '<div class="px-xcell' + (p.id === d.chosen ? " is-chosen" : "") + '"><span class="px-xcell__n">' + esc(p.name) + '</span><strong class="px-xcell__p">' + (v > 0 ? "+ " + eur(v) : "Included") + "</strong></div>";
       }).join("") + "</div></div>";
   }
-  /* "Video upgrades": the lines the studio chose to feature, each a clickable card that opens on its description and what it includes */
+  /* the video upgrades: what the client can pick on the quote page = the featured cards and every line the studio has not validated (numbers in d.lines) */
+  function customUpIdx(d) { var r = []; d.lines.forEach(function (l, i) { if (l.card || !l.on) r.push(i); }); return r; }
+  /* the selection the studio saved: its package and the upgrades that count in its total */
+  function customSelOf(d) { return { chosen: d.chosen, ups: customUpIdx(d).filter(function (i) { return d.lines[i].on; }) }; }
+  /* the definition as it reads with a client's selection { chosen, ups: [line numbers] } (without one, as the studio saved it) */
+  function customView(d, sel) {
+    var v = JSON.parse(JSON.stringify(d));
+    if (!sel) return v;
+    if (pkgById(v.packages, sel.chosen)) v.chosen = sel.chosen;
+    var ups = Array.isArray(sel.ups) ? sel.ups : [], idx = customUpIdx(d);
+    v.lines.forEach(function (l, i) { if (idx.indexOf(i) > -1) l.on = ups.indexOf(i) > -1; });
+    return v;
+  }
+  var sameSel = function (a, b) { return a.chosen === b.chosen && JSON.stringify(a.ups.slice().sort(function (x, y) { return x - y; })) === JSON.stringify(b.ups.slice().sort(function (x, y) { return x - y; })); };
+  /* "Video upgrades": a red section under the summary. Every upgrade is a card the client selects (the total follows) and can open to read what it is. */
   function customUpgrades(d, o) {
-    var ups = d.lines.filter(function (l) { return l.card; });
-    if (!ups.length) return "";
-    return '<section class="px-ups"' + (o && o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">Video upgrades</p><h2 class="px-h2">Take it <em>further</em></h2></div><div class="px-ups__list">' +
-      ups.map(function (l) {
-        var price = Math.round(l.price * l.qty * 100) / 100, paras = String(l.sub || "").split(/\n+/).filter(Boolean);
-        return '<details class="px-up' + (l.on ? " is-on" : "") + '"><summary><span class="px-up__t">' + esc(l.name + qtyLabel(l)) + '</span><span class="px-up__p">' + (price < 0 ? "− " : "+ ") + eur(Math.abs(price)) + '</span><span class="px-up__s">' + (l.on ? "Added to your total" : "Optional upgrade") + '</span><i class="px-up__chev" aria-hidden="true"></i></summary>' +
-          '<div class="px-up__body">' + paras.map(function (t) { return "<p>" + esc(t) + "</p>"; }).join("") +
-          (l.inc.length ? '<p class="px-up__h">What is included</p><ul>' + l.inc.map(function (t) { return '<li><span class="bx" aria-hidden="true"></span><span>' + esc(t) + "</span></li>"; }).join("") + "</ul>" : "") + "</div></details>";
+    o = o || {};
+    var idx = customUpIdx(d);
+    if (!idx.length) return "";
+    var sel = o.sel ? o.sel.ups : customSelOf(d).ups;
+    return '<section class="px-ups"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">Video upgrades</p><h2 class="px-h2">Take it <em>further</em></h2>' +
+      '<p class="px-ups__p">Select the upgrades you would like: your total updates by itself. Then save your selection and send it to us for review.</p></div><div class="px-ups__list">' +
+      idx.map(function (i) {
+        var l = d.lines[i], on = sel.indexOf(i) > -1, price = Math.round(l.price * l.qty * 100) / 100, paras = String(l.sub || "").split(/\n+/).filter(Boolean), has = paras.length || l.inc.length;
+        var head = '<button type="button" class="px-up__sel" role="checkbox" aria-checked="' + on + '" data-i="' + i + '" aria-label="Select ' + esc(l.name) + '"><span class="bx" aria-hidden="true"></span></button>' +
+          '<span class="px-up__t">' + esc(l.name + qtyLabel(l)) + '</span><span class="px-up__p">' + (price < 0 ? "− " : "+ ") + eur(Math.abs(price)) + '</span><span class="px-up__s">' + (on ? "Selected" : "Not selected") + "</span>" + (has ? '<i class="px-up__chev" aria-hidden="true"></i>' : "<i></i>");
+        var body = '<div class="px-up__body">' + paras.map(function (t) { return "<p>" + esc(t) + "</p>"; }).join("") +
+          (l.inc.length ? '<p class="px-up__h">What is included</p><ul>' + l.inc.map(function (t) { return '<li><span class="bx" aria-hidden="true"></span><span>' + esc(t) + "</span></li>"; }).join("") + "</ul>" : "") + "</div>";
+        return has ? '<details class="px-up' + (on ? " is-sel" : "") + '" data-i="' + i + '"><summary>' + head + "</summary>" + body + "</details>"
+          : '<div class="px-up' + (on ? " is-sel" : "") + '" data-i="' + i + '"><div class="px-up__sum">' + head + "</div></div>";
       }).join("") + "</div></section>";
   }
   var customLink = function (ref, names) { return "proposal.html#" + slug(names) + "-" + ref; };
@@ -634,7 +654,7 @@
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
     up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection, photosSection: photosSection,
     ABOUT: ABOUT, ABOUT_GENERIC: ABOUT_GENERIC, safeImg: safeImg, emLast: emLast, customBlank: customBlank, customClean: customClean, customLines: customLines, customQuote: customQuote,
-    customCompare: customCompare, customUpgrades: customUpgrades, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
+    customCompare: customCompare, customUpgrades: customUpgrades, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

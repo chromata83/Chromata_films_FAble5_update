@@ -320,3 +320,10 @@ details.opens li small { color: var(--muted); margin-left: 6px; }
 .qb-line:not(.on) { background: rgba(37,35,33,.03); }
 .qb-line.on { border-color: var(--ok); box-shadow: inset 4px 0 0 var(--ok); }
 .qb-line textarea { min-height: 70px; }
+/* the client sent a selection back for review */
+.qb-selbox { border-left: 4px solid var(--coral); background: #FFF3EE; }
+.qb-sel { list-style: none; margin: 10px 0 14px; padding: 0; }
+.qb-sel li { display: grid; grid-template-columns: 130px minmax(0, 1fr) auto; gap: 4px 14px; padding: 8px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.qb-sel li span { color: var(--muted); font-size: 13px; }
+.qb-sel li small { color: var(--muted); }
+@media (max-width: 600px) { .qb-sel li { grid-template-columns: 1fr; } }

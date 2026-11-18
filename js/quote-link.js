@@ -53,5 +53,10 @@
     return rpc("quote_open", { p_ref: A.nonce, p_email: email, p_agent: String(navigator.userAgent || "").slice(0, 280) });
   }
 
-  w.CQLink = { enabled: enabled, submit: submit, status: status, accept: accept, open: open };
+  /* A custom quote: the client sends back the package and the video upgrades they picked, for the studio to review. */
+  function selection(ref, sel) {
+    return rpc("submit_selection", { p_ref: ref, p_sel: sel });
+  }
+
+  w.CQLink = { enabled: enabled, submit: submit, status: status, accept: accept, open: open, selection: selection };
 })(window);

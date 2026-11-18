@@ -39,7 +39,14 @@
   function start(P, C, st0) {
     var A = P.answers;
     /* a custom quote starts from the studio's saved definition, the website quotation from the couple's own choices */
-    var cq = C ? Q.customQuote(C) : null;
+    /* a custom quote is interactive: the client picks a package and video upgrades, the total follows, and "Save and send for review" sends the choice to the studio */
+    var base = C ? Q.customSelOf(C) : null, sel = base ? { chosen: base.chosen, ups: base.ups.slice() } : null, sent = null, signOK = false, locked = false;
+    if (C && st0 && st0.selection && typeof st0.selection === "object") {
+      var ss = st0.selection, okUps = Q.customUpIdx(C);
+      var cs = { chosen: C.packages.some(function (p) { return p.id === ss.chosen; }) ? ss.chosen : base.chosen, ups: (Array.isArray(ss.ups) ? ss.ups : []).filter(function (i) { return okUps.indexOf(i) > -1; }) };
+      sent = cs; sel = { chosen: cs.chosen, ups: cs.ups.slice() };
+    }
+    var cq = C ? Q.customQuote(Q.customView(C, sel), { client: true }) : null;
     var L = cq ? [] : Q.lines(A), tot = cq ? cq.total : Q.total(A);
     var ref = "CF-" + (P.id ? P.id.slice(0, 6) : "PROPOSAL");
     var issued = P.ts ? new Date(P.ts).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "";
@@ -61,7 +68,7 @@
 
     /* What the page shows is a small model: priced rows + a total. It starts from the couple's own choices (the link), then,
        when the studio has built its own version of the quote in the back office, that version replaces it (see paint()). */
-    var model = cq ? { rows: cq.rows, total: cq.total, inc: cq.travel !== null }
+    var model = cq ? { rows: cq.rows, total: cq.total, inc: C ? C.travel.show : cq.travel !== null }
       : { rows: L.map(function (l) { return { l: l.label, p: l.price, t: l.tbc ? "tbc" : "" }; }), total: tot, inc: false };
     function sumHTML(m) {
       return m.rows.map(function (r) {
@@ -106,17 +113,21 @@
         cutHTML("q-intro", { l: "43.5%", b: "-5vh", h: "54vh", rot: "-5deg", ml: "3vw", mt: "2vh", mh: "24vh", mrot: "-4deg" }) +
       "</section>" +
 
-      (C ? Q.customCompare(C, { id: "collection" }) + Q.customUpgrades(C, { id: "upgrades" }) : Q.compareSection(A, { id: "collection" })) +
+      (C ? Q.customCompare(Q.customView(C, sel), { id: "collection", pick: true }) : Q.compareSection(A, { id: "collection" })) +
 
       '<section class="px-sel" id="selections">' +
         cutHTML("q-swan", { l: "3vw", b: "-5vh", h: "28vh", rot: "-8deg", ml: "62vw", mt: "-4vh", mh: "14vh", mrot: "-6deg" }) +
         '<div class="px-wrap">' +
           '<div><p class="kicker">Your selections</p><h2 class="px-h2">Your day, <em>composed</em></h2>' +
           '<p class="px-note" id="pxTravelNote">' + esc(C ? C.note : Q.travelNote(A)) + '</p></div>' +
-          '<div class="px-card"><div class="sumcard" id="pxSum">' + sumHTML(model) + '</div><p class="px-note px-note--valid" id="pxValid2">' + esc(validityText()) + "</p>" +
+          '<div class="px-card"><div class="sumcard" id="pxSum">' + sumHTML(model) + '</div>' +
+          (C && canAsk ? '<div class="px-send"><button class="btn-main" id="pxSend" type="button">Save and send for review to Chromata Films</button><p class="px-sendmsg" id="pxSendMsg" role="status"></p></div>' : "") +
+          '<p class="px-note px-note--valid" id="pxValid2">' + esc(validityText()) + "</p>" +
           "</div>" +
         "</div>" +
       "</section>" +
+
+      (C ? Q.customUpgrades(C, { id: "upgrades", sel: sel }) : "") +
 
       (PH.length ? '<section class="px-photos" id="photographs">' +
         cutHTML("q-collage", { rt: "5vw", t: "-3vh", h: "23vh", rot: "6deg", hm: true }) +
@@ -167,12 +178,95 @@
     function applyStatus(st) {
       if (!st || !st.found) return;
       if (st.valid_until) { validity.until = st.valid_until; validity.expired = !!st.expired; }
+      if (C) { paint(); return; }
       if (Array.isArray(st.lines) && st.lines.length && st.total != null) {
         model = { rows: st.lines.map(function (r) { return { l: String(r.l || ""), p: +r.p || 0, t: r.t === "tbc" || r.t === "inc" || r.t === "opt" ? r.t : "", s: r.s ? String(r.s) : "" }; }), total: +st.total, inc: st.lines.some(function (r) { return r.t === "inc"; }) };
       } else if (st.travel_fees != null && st.total != null) {
         model = { rows: model.rows.map(function (r) { return r.t === "tbc" ? { l: "Travel / accommodation", p: 0, t: "inc" } : r; }), total: +st.total, inc: true };
       }
       paint();
+    }
+    /* ---------- custom quote: pick a package and video upgrades, send the choice for review ---------- */
+    var sendBusy = false;
+    function refresh() {
+      var q = Q.customQuote(Q.customView(C, sel), { client: true });
+      model = { rows: q.rows, total: q.total, inc: C.travel.show };
+      paint(); sendUI(); setSign();
+    }
+    function drawCompare() { var h = document.getElementById("collection"); if (h) h.outerHTML = Q.customCompare(Q.customView(C, sel), { id: "collection", pick: true }); }
+    function syncUps() {
+      Array.prototype.forEach.call(document.querySelectorAll(".px-up"), function (el) {
+        var i = +el.getAttribute("data-i"), on = sel.ups.indexOf(i) > -1, b = el.querySelector(".px-up__sel"), t = el.querySelector(".px-up__s");
+        el.classList.toggle("is-sel", on);
+        if (b) b.setAttribute("aria-checked", String(on));
+        if (t) t.textContent = on ? "Selected" : "Not selected";
+      });
+    }
+    var SEND_LABEL = "Save and send for review to Chromata Films";
+    function sendUI() {
+      var btn = document.getElementById("pxSend"), msg = document.getElementById("pxSendMsg");
+      if (!C || !btn || !msg || sendBusy) return;
+      var isSent = !!sent && Q.sameSel(sel, sent), dirty = !Q.sameSel(sel, base);
+      btn.disabled = isSent || locked; btn.textContent = isSent ? "Sent for review" : SEND_LABEL;
+      msg.textContent = locked ? "" : isSent ? "Your selection was sent to Chromata Films. We will come back to you shortly, and you will then be able to accept and sign." : (dirty || sent) ? "Your changes are not sent yet: press the button to send them to us for review." : "";
+    }
+    /* the signing button is only there when the quote is validated, and (custom quote) when the client's selection is the one the studio holds */
+    function setSign() {
+      var show = signOK && !locked && (!C || (!sent && Q.sameSel(sel, base)));
+      sb.hidden = !show; var n = document.getElementById("pxNote"); if (n) n.hidden = !show;
+    }
+    function lockUI() { locked = true; app.classList.add("px-locked"); sendUI(); setSign(); }
+    function alertSelection(email, res) {
+      var fd = new FormData(), v = Q.customView(C, sel), pk = v.packages.filter(function (p) { return p.id === v.chosen; })[0];
+      var ups = Q.customUpIdx(C).filter(function (i) { return sel.ups.indexOf(i) > -1; }).map(function (i) { return C.lines[i].name; });
+      fd.append("_subject", "Selection sent for review · " + A.names); fd.append("_template", "table"); fd.append("_captcha", "false");
+      fd.append("name", email || A.names); if (email) fd.append("email", email);
+      fd.append("Proposal", ref + " · " + A.names);
+      fd.append("Package", pk ? pk.name : "");
+      fd.append("Video upgrades", ups.length ? ups.join(", ") : "None");
+      fd.append("Total", eur(model.total));
+      if (res && res.project) fd.append("Back office", location.origin + location.pathname.replace(/[^/]*$/, "") + "crm.html#/project/" + res.project);
+      return fetch("https://formsubmit.co/ajax/" + Q.EMAIL, { method: "POST", headers: { Accept: "application/json" }, body: fd });
+    }
+    if (C) {
+      app.addEventListener("click", function (e) {
+        if (locked || !e.target.closest) return;
+        var col = e.target.closest(".px-col.is-pick");
+        if (col) {
+          sel.chosen = col.getAttribute("data-v"); drawCompare(); refresh();
+          var nc = document.querySelector('.px-col[data-v="' + sel.chosen + '"]'); if (nc && nc.focus) nc.focus({ preventScroll: true });
+          return;
+        }
+        var ub = e.target.closest(".px-up__sel");
+        if (ub) {
+          e.preventDefault();
+          var i = +ub.getAttribute("data-i"), k = sel.ups.indexOf(i);
+          if (k > -1) sel.ups.splice(k, 1); else sel.ups.push(i);
+          syncUps(); refresh();
+        }
+      });
+      app.addEventListener("keydown", function (e) {
+        if (locked || (e.key !== "Enter" && e.key !== " ") || !e.target.closest) return;
+        var col = e.target.closest(".px-col.is-pick");
+        if (col && e.target === col) { e.preventDefault(); col.click(); }
+      });
+      var sendBtn = document.getElementById("pxSend");
+      if (sendBtn) sendBtn.addEventListener("click", function () {
+        if (locked || sendBusy) return;
+        sendBusy = true; sendBtn.disabled = true; sendBtn.textContent = "Sending…";
+        var msg = document.getElementById("pxSendMsg"); msg.textContent = "";
+        var email = ""; try { email = localStorage.getItem("cq-visitor-email") || ""; } catch (x) {}
+        var snap = { chosen: sel.chosen, ups: sel.ups.slice() };
+        window.CQLink.selection(A.nonce, { chosen: snap.chosen, ups: snap.ups, email: email }).then(function (res) {
+          sent = snap; sendBusy = false;
+          alertSelection(email, res).catch(function () {});
+          sendUI(); setSign();
+        }).catch(function (e) {
+          sendBusy = false; sendBtn.disabled = false; sendBtn.textContent = SEND_LABEL;
+          msg.textContent = e && e.message && !/fetch|network|load failed/i.test(e.message) ? e.message : "We could not send your selection just now. Please try again, or reply by email.";
+        });
+      });
+      sendUI();
     }
     var ready = function () { app.classList.remove("px-wait"); };
 
@@ -235,13 +329,15 @@
     if (canAsk) (st0 ? Promise.resolve(st0) : window.CQLink.status(A)).then(function (st) {
       if (needsCheck && !gaveUp) { if (st && st.found && st.gate) showGate(); else release(); }
       applyStatus(st); ready();
-      if (st && st.signed) { document.getElementById("pxMsg").textContent = "This proposal has already been signed. Thank you, we are delighted!"; return; }
+      if (C) { sendUI(); }
+      if (st && st.signed) { lockUI(); document.getElementById("pxMsg").textContent = "This proposal has already been signed. Thank you, we are delighted!"; return; }
       if (st && st.expired) {
+        lockUI();
         document.getElementById("pxMsg").textContent = validityText();
         return;
       }
       if (!(st && st.validated)) return;
-      sb.hidden = false; document.getElementById("pxNote").hidden = false;
+      signOK = true; setSign();
       document.getElementById("pxReply").className = "btn-ghost";
       document.getElementById("pxLead").textContent = "Your proposal has been reviewed by our team. If you are happy with it, accept it and sign the agreement online, it takes about two minutes. Or tell us what you would change: we answer every message personally.";
     }).catch(function () { ready(); release(); });
