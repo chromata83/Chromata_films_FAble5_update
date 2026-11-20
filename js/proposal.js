@@ -68,7 +68,7 @@
 
     /* What the page shows is a small model: priced rows + a total. It starts from the couple's own choices (the link), then,
        when the studio has built its own version of the quote in the back office, that version replaces it (see paint()). */
-    var model = cq ? { rows: cq.rows, total: cq.total, inc: C ? C.travel.show : cq.travel !== null }
+    var model = cq ? { rows: cq.rows, total: cq.total, inc: C ? C.travel.show && !C.travel.tbc : cq.travel !== null }
       : { rows: L.map(function (l) { return { l: l.label, p: l.price, t: l.tbc ? "tbc" : "" }; }), total: tot, inc: false };
     function sumHTML(m) {
       return m.rows.map(function (r) {
@@ -188,7 +188,7 @@
     var sendBusy = false;
     function refresh() {
       var q = Q.customQuote(Q.customView(C, sel), { client: true });
-      model = { rows: q.rows, total: q.total, inc: C.travel.show };
+      model = { rows: q.rows, total: q.total, inc: C.travel.show && !C.travel.tbc };
       paint(); sendUI(); setSign();
     }
     function drawCompare() { var h = document.getElementById("collection"); if (h) h.outerHTML = Q.customCompare(Q.customView(C, sel), { id: "collection", pick: true }); }

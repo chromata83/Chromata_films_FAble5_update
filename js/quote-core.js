@@ -164,7 +164,7 @@
         { k: "Highlight film", on: on([1, 1, 1]), d: ["2 min", "3 min", "4 min"] },
         { k: "Drone footage", on: on([0, 1, 1]), d: ["", "", ""] },
         { k: "A short film made for social media", on: on([0, 0, 1]), d: ["", "", ""] }],
-      lines: [super16ExtraLine(), super16Line(), directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: false, videos: [], videosTitle: "Stories we filmed", photos: [] };
+      lines: [super16ExtraLine(), super16Line(), directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true, tbc: true }, note: "", about: { on: true, text: "" }, films: false, videos: [], videosTitle: "Stories we filmed", photos: [] };
   }
   /* a text that may keep its line breaks (the description of a video upgrade) */
   var clipML = function (s, n) { return String(s == null ? "" : s).replace(/\r/g, "").replace(/[\u0000-\u0009\u000b-\u001f]/g, " ").replace(/\n{3,}/g, "\n\n").trim().slice(0, n); };
@@ -213,7 +213,7 @@
     var ex = r.extra && typeof r.extra === "object" ? r.extra : {};
     d.extra = { on: ex.on === true || ex.on === 1, label: clip(ex.label, 160), sub: clip(ex.sub, 300), prices: d.packages.map(function (p, i) { return num(Array.isArray(ex.prices) ? ex.prices[i] : 0, 0, 10000000); }) };
     if (!d.extra.label) d.extra.on = false;
-    d.travel = { show: !(r.travel && r.travel.show === false) };
+    d.travel = { show: !(r.travel && r.travel.show === false), tbc: !!(r.travel && (r.travel.tbc === true || r.travel.tbc === 1)) };   // tbc: the line reads "TBC" (not in the total) instead of "Included"
     d.about = { on: !(r.about && r.about.on === false), text: clip(r.about && r.about.text, 1500) };
     d.films = r.films === true || r.films === 1;   // the wedding films (the studio's own videos below replace them)
     d.videos = (Array.isArray(r.videos) ? r.videos : []).slice(0, 8).map(function (v) {
@@ -237,11 +237,11 @@
       var disc = l.days && l.days.off > 0 && l.qty >= l.days.from ? l.days.off + (l.days.extra ? "% discount on the extra days included" : "% multi-day discount included") : "";
       L.push({ key: l.on ? "line" : "optional", label: l.name + qtyLabel(l), sub: (l.card || l.band) ? disc : l.sub, price: lineAmt(l) });
     });
-    if (d.travel.show) L.push({ key: "travel", label: "Travel / accommodation", price: 0 });
+    if (d.travel.show) L.push(d.travel.tbc ? { key: "travel", label: "Travel fees and accommodation", sub: "To be confirmed, depending on the number of days and the dates", price: 0 } : { key: "travel", label: "Travel / accommodation", price: 0 });
     return L;
   }
-  /* rows the client reads + total, same shape as studioQuote (no commission in custom quotes); travel / accommodation is always a line that reads "Included" */
-  function customQuote(d, o) { var r = spread(customLines(d), { travel: 0 }); r.total = Math.max(0, r.total); if (o && o.client) r.rows = r.rows.filter(function (x) { return x.t !== "opt"; }); return r; }
+  /* rows the client reads + total, same shape as studioQuote (no commission in custom quotes); travel / accommodation is a line that reads "Included", or "TBC" (to be confirmed, not in the total) */
+  function customQuote(d, o) { var r = spread(customLines(d), { travel: d.travel.show && d.travel.tbc ? null : 0 }); r.total = Math.max(0, r.total); if (o && o.client) r.rows = r.rows.filter(function (x) { return x.t !== "opt"; }); return r; }
   function customCompare(d, o) {
     o = o || {};
     var word = d.word || "package", one = d.packages.length === 1;
@@ -477,7 +477,7 @@
     var comm = base > 0 ? Math.max(0, Math.round(+ex.commission || 0)) : 0;
     var f = base > 0 ? (base + comm) / base : 1, big = -1, sum = 0;
     var rows = L.map(function (l, i) {
-      if (l.key === "travel") return travel === null ? { l: l.label, p: 0, t: "tbc" } : { l: "Travel / accommodation", p: travel, t: "inc" };
+      if (l.key === "travel") return travel === null ? (l.sub ? { l: l.label, p: 0, t: "tbc", s: l.sub } : { l: l.label, p: 0, t: "tbc" }) : { l: "Travel / accommodation", p: travel, t: "inc" };
       /* an option the client has not validated yet: listed with its price, but not counted anywhere */
       if (l.key === "optional") return l.sub ? { l: l.label, p: l.price, t: "opt", s: l.sub } : { l: l.label, p: l.price, t: "opt" };
       var p = Math.round(l.price * f);

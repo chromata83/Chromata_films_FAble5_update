@@ -10,7 +10,7 @@
   var Q = window.CQ;
   var MAX_PHOTOS = 24, MAX_PKG = 4, MAX_ROWS = 16, MAX_LINES = 24;
   var KINDS = ["Wedding", "Christmas party", "Bar Mitzvah", "Bat Mitzvah", "Birthday", "Anniversary", "Baptism", "Corporate event", "Brand film"];
-  var DEFAULT_NOTE = "Travel and accommodation: " + Q.TRAVEL_TBC + ".";
+  var DEFAULT_NOTE = "Travel fees and accommodation are not included in this total: to be confirmed, depending on the number of days and the dates.";
 
   var W = null;            // the quote being built (what the form says)
   var libTarget = "";      // where a picture picked in the library goes: "hero" | "gallery" | "" (closed)
@@ -44,14 +44,14 @@
   function fromDef(d, p) {
     return { id: p.id || "", ref: p.quote_ref || "", url: p.proposal_url || "", names: p.couple_names || "", email: p.couple_email || "", date: p.wedding_date || "", venue: p.venue || "", place: p.location || "",
       kind: d.kind, word: d.word, lead: d.lead, hero: d.hero, photosTitle: d.photosTitle, chosen: d.chosen, packages: copy(d.packages), features: copy(d.features), lines: d.lines.map(function (l) { var c = copy(l); c.incText = l.inc.join("\n"); return c; }), extra: copy(d.extra), photos: copy(d.photos),
-      travelShow: d.travel.show, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films, videos: copy(d.videos), videosTitle: d.videosTitle,
+      travelShow: d.travel.show, travelTbc: d.travel.tbc, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films, videos: copy(d.videos), videosTitle: d.videosTitle,
       issued: p.id ? issuedOf(p) : iso(new Date()), status: p.status || "" };
   }
   function fresh() { var w = fromDef(Q.customClean(Q.customBlank()), {}); w.note = DEFAULT_NOTE; return w; }
   /* the form -> a clean definition (what is stored with the project) */
   function toDef() {
     var d = Q.customClean({ kind: W.kind, word: W.word, lead: W.lead, hero: W.hero, photosTitle: W.photosTitle, chosen: W.chosen, packages: W.packages, features: W.features, lines: W.lines.map(function (l) { return Object.assign({}, l, { inc: String(l.incText || "").split("\n") }); }), extra: W.extra, photos: W.photos,
-      travel: { show: W.travelShow }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films, videos: W.videos, videosTitle: W.videosTitle });
+      travel: { show: W.travelShow, tbc: W.travelTbc }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films, videos: W.videos, videosTitle: W.videosTitle });
     delete d.names; delete d.date; delete d.place; delete d.venue; delete d.planner;   // who it is for lives in the project columns
     return d;
   }
@@ -198,9 +198,11 @@
       '<section class="cr-card"><h2>Video upgrades</h2><p class="hint">Everything the client can add to the chosen package: extra hours, a second shooter, a drone, a discount (negative price)… Each line is price × quantity. A new line is only <strong>listed as an option</strong>: tick <strong>Validated by the client</strong> once they have agreed, and only then does it count in the total.</p>' +
       (linesHTML() || '<p class="empty">No video upgrade yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="line-add"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add a video upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-director"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add the Film director upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-super16"' + (W.lines.length >= MAX_LINES - 1 ? " disabled" : "") + ">Add the Super 16mm upgrade (+ Extra day)</button></div></section>" +
 
-      '<section class="cr-card"><h2>Travel and accommodation</h2><label class="qe-chk"><input type="checkbox"' + tr("travelShow") + (W.travelShow ? " checked" : "") + "> Show a line saying travel / accommodation is included</label>" +
+      '<section class="cr-card"><h2>Travel and accommodation</h2><label class="qe-chk"><input type="checkbox"' + tr("travelShow") + (W.travelShow ? " checked" : "") + "> Show a travel / accommodation line in the quote</label>" +
+      (W.travelShow ? '<div class="qb-trv" role="radiogroup" aria-label="Travel line" style="margin:10px 0 0"><label class="qe-chk"><input type="radio" name="qbTrv" data-trv="1"' + (W.travelTbc ? " checked" : "") + '> <strong>To be confirmed</strong> <small>(“Travel fees and accommodation · TBC”, to be confirmed depending on the number of days and the dates; not in the total)</small></label>' +
+        '<label class="qe-chk"><input type="radio" name="qbTrv" data-trv="0"' + (W.travelTbc ? "" : " checked") + '> <strong>Included</strong> <small>(“Travel / accommodation · Included”, no cost)</small></label></div>' : "") +
       '<label class="fld" style="margin-top:10px"><span>Note under the title of the lines</span><textarea rows="2" maxlength="300"' + tr("note") + ">" + esc(W.note) + "</textarea></label>" +
-      '<p class="hint" style="margin:8px 0 0">No cost: the quote simply shows a line “Travel / accommodation · Included”.</p></section>' +
+      '<p class="hint" style="margin:8px 0 0">Neither choice adds an amount to the total.</p></section>' +
 
       '<section class="cr-card"><h2>Pictures</h2><div id="qbUp" class="hint" role="status"></div>' +
       '<h3 class="qb-h3">Cover photo <small>(the big picture at the top of the quote)</small></h3>' + heroBlock +
@@ -242,7 +244,7 @@
     var el = $("#qbPrev"); if (!el) return;
     var d = toDef(), q = Q.customQuote(d), pk = (d.packages.filter(function (x) { return x.id === d.chosen; })[0]) || {};
     el.innerHTML = '<div class="sumcard">' + q.rows.map(function (x) { return '<div class="srow"><span class="sl">' + esc(x.l) + (x.s ? "<small>" + esc(x.s) + "</small>" : "") + '</span><span class="sr">' + (x.t === "tbc" ? "TBC" : x.t === "inc" ? "Included" : x.t === "opt" ? "Video upgrade · " + eur(x.p) : eur(x.p)) + "</span></div>"; }).join("") +
-      '<div class="srow grand"><span class="sl">Total' + (d.travel.show ? " · travel included" : "") + '</span><span class="sr">' + eur(q.total) + "</span></div></div>" +
+      '<div class="srow grand"><span class="sl">Total' + (d.travel.show ? (d.travel.tbc ? " · travel to be confirmed" : " · travel included") : "") + '</span><span class="sr">' + eur(q.total) + "</span></div></div>" +
       '<p class="hint" style="margin:10px 0 0">' + esc(d.word) + " in this quote: <strong>" + esc(pk.name || "—") + "</strong></p>";
     var v = $("#qbValid"), until = Q.validUntil(W.issued);
     if (v) v.textContent = until ? "Valid for " + Q.VALID_DAYS + " days: until " + C.fmtDate(until) + (until < iso(new Date()) ? " (already expired: the client cannot sign online until you issue it again)" : ".") : "";
@@ -300,6 +302,7 @@
   function onField(e) {
     var t = e.target;
     if (t.hasAttribute("data-chosen")) { W.packages.forEach(function (p, i) { if (i === +t.getAttribute("data-chosen")) W.chosen = p.id; }); $$(".qb-pkg").forEach(function (b, i) { b.classList.toggle("on", W.packages[i].id === W.chosen); }); paintPrev(); return; }
+    if (t.hasAttribute("data-trv")) { W.travelTbc = t.getAttribute("data-trv") === "1"; paintPrev(); return; }
     var path = t.getAttribute("data-b"); if (!path) return;
     var v = t.type === "checkbox" ? t.checked : t.value;
     if (t.type === "checkbox" && /\.on\.\d+$/.test(path)) v = t.checked ? 1 : 0;
@@ -308,7 +311,7 @@
     if (md) { W.lines[+md[1]].days = t.checked ? { from: 2, off: 20, max: Q.DAYS_MAX, extra: false } : null; if (t.checked) { W.lines[+md[1]].unit = "day"; W.lines[+md[1]].qty = Math.min(W.lines[+md[1]].qty || 1, Q.DAYS_MAX); } draw(); return; }
     var mm = /^lines\.(\d+)\.days\.max$/.exec(path);
     if (mm) { var ln = W.lines[+mm[1]]; ln.days.max = +t.value; ln.qty = Math.min(ln.qty || 1, ln.days.max); draw(); return; }
-    if (/\.(card|band)$/.test(path) || path === "extra.on") { setPath(path, v); draw(); return; }
+    if (/\.(card|band)$/.test(path) || path === "extra.on" || path === "travelShow") { setPath(path, v); draw(); return; }
     setPath(path, v);
     var mv = /^videos\.(\d+)\.url$/.exec(path);
     if (mv) { var vs = $('[data-vs="' + mv[1] + '"]'); if (vs) { var stt = videoStatus(v); vs.textContent = stt; vs.className = stt.charAt(0) === "✗" ? "bad" : "good"; } }
