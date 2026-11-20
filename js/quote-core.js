@@ -77,10 +77,14 @@
   function compareSection(a, o) {
     o = o || {};
     var chosen = a && a.wedding, base = o.pick ? total(a) : 0;
-    var cols = cardsHTML(COLLECTIONS.map(function (c) { return { v: c.v, short: c.short, name: c.name }; }), COMPARE, chosen, o, function (c, i, is) {
-      if (!o.pick) return "";
+    /* each collection: its name, what it is (description), its price, then what it includes; the configurators also say what the whole quote becomes with it */
+    var cols = cardsHTML(COLLECTIONS.map(function (c) { return { v: c.v, short: c.short, name: c.name, sub: c.sub, price: up(c.price, "c", a) }; }), COMPARE.map(function (r) {   // same wording as the proposal and the studio's packages: "Hours of presence · 10 h"
+      return { k: r.k, on: r.on, t: [0, 1, 2].map(function (i) { return r.v && r.v[i] ? r.k + " · " + r.v[i] : r.k; }) };
+    }), chosen, o, function (c, i, is) {
+      var base1 = '<p class="px-col__price px-col__price--base"><strong>' + eur(c.price) + "</strong></p>";
+      if (!o.pick) return base1;
       var t = total(Object.assign({}, a, { wedding: c.v })), d = t - base;
-      return '<p class="px-col__price">Your total <strong>' + eur(t) + "</strong>" + (is ? "" : "<span>" + (d > 0 ? "+" : "−") + eur(Math.abs(d)) + "</span>") + "</p>";
+      return base1 + '<p class="px-col__price">Your total <strong>' + eur(t) + "</strong>" + (is ? "" : "<span>" + (d > 0 ? "+" : "−") + eur(Math.abs(d)) + "</span>") + "</p>";
     });
     return '<section class="px-compare' + (o.pick ? " px-compare--cfg" : "") + '"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">' + (o.pick ? "Compare and choose" : "Your collection") + '</p><h2 class="px-h2">' +
       (o.pick ? "Change your collection <em>at will</em>" : "What each collection <em>includes</em>") + '</h2></div><div class="px-cols">' + cols + "</div></section>";
