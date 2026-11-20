@@ -119,9 +119,10 @@
       sub: "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. The grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nIn June, we accompany the family for a day of filming, in digital + 16mm film: unique memories, and a unique look to present on the evening of the Bat Mitzvah.",
       inc: ["Super 16mm film camera", "Dedicated camera operator", "Film development and scan", "A short film made on the side"] };
   }
-  /* "Super 16mm - Extra day": one more day of Super 16mm, 5 000 € with 20% off = 4 000 €. It comes with the Super 16mm card right below it (req "next"). */
+  /* "Super 16mm film camera - Extra Day": one more day of Super 16mm, 5 000 € with 20% off = 4 000 €. It comes with the Super 16mm card right below it (req "next"). */
+  var XTRA_NAME = "Super 16mm film camera - Extra Day";
   function super16ExtraLine() {
-    return { name: "Super 16mm - Extra day", price: 4000, qty: 1, unit: "", on: false, band: false, card: true, req: "next", days: null,
+    return { name: XTRA_NAME, price: 4000, qty: 1, unit: "", on: false, band: false, card: true, req: "next", days: null,
       sub: "One more day of Super 16mm filming with the same dedicated camera operator, on top of the first day.\n\n5,000 EUR with 20% off for this extra day: 4,000 EUR.",
       inc: ["Super 16mm film camera", "Dedicated camera operator", "Film development and scan"] };
   }
@@ -174,7 +175,7 @@
   /* Whatever comes in (the builder's form, or the database) comes out as a safe, complete definition: bounded lengths, numbers, known pictures only. */
   function customClean(raw) {
     var r = raw && typeof raw === "object" ? raw : {}, d = {};
-    d.v = 3;   // 3: the Film director and the Super 16mm options are cards of the red section (definitions saved as 1 or 2 are migrated below)
+    d.v = 4;   // 3: the Film director and the Super 16mm options are cards of the red section; 4: the extra day is named "Super 16mm film camera - Extra Day" (older definitions are migrated below)
     d.kind = clip(r.kind, 60); d.word = clip(r.word, 20) || "package"; d.lead = clip(r.lead, 1500);
     d.hero = safeImg(r.hero); d.photosTitle = clip(r.photosTitle, 60) || "Moments we witnessed"; d.note = clip(r.note, 300);
     var seen = {};
@@ -194,7 +195,8 @@
     var v1 = +r.v < 2, old = +r.v < 3;   // saved before the Film director moved to the red section (1), or before the Super 16mm options did too (2)
     d.lines = (Array.isArray(r.lines) ? r.lines : []).slice(0, 24).map(function (l) {
       l = l || {};
-      var nm = clip(l.name, 200), isDir = /^film director$/i.test(nm), isS16 = /super ?16 ?mm/i.test(nm), isXtra = isS16 && /extra day/i.test(nm);
+      var nm = clip(l.name, 200); if (+r.v < 4 && /^super 16mm - extra day$/i.test(nm)) nm = XTRA_NAME;   // (the preset's former name)
+      var isDir = /^film director$/i.test(nm), isS16 = /super ?16 ?mm/i.test(nm), isXtra = isS16 && /extra day/i.test(nm);
       var isBand = l.band === true || l.band === 1;
       if (v1 && isDir && isBand) isBand = false;   // the Film director is in the red section...
       if (old && isS16) isBand = false;            // ...and so are the Super 16mm options
