@@ -3315,7 +3315,7 @@ ${QX_MENU}
   </section>
 </main>
 <script src="js/crm-config.js?v=2"></script>
-<script src="js/quote-core.js?v=34"></script>
+<script src="js/quote-core.js?v=35"></script>
 <script src="js/quote-link.js?v=2"></script>
 <script src="js/quotation.js?v=13" defer></script>
 </body>
@@ -3333,7 +3333,7 @@ pages["proposal.html"] = `<!DOCTYPE html>
 <html lang="en">
 <head>
 ${QX_HEAD("Your proposal · Chromata Films", "A private proposal from Chromata Films.")}
-<link rel="stylesheet" href="css/proposal.css?v=22" />
+<link rel="stylesheet" href="css/proposal.css?v=23" />
 </head>
 <body data-page="proposal" class="qx px">
 ${QX_MENU}
@@ -3345,10 +3345,10 @@ ${QX_MENU}
   <button class="nav next" id="qxLbNext" type="button" aria-label="Next" hidden>&#8250;</button>
 </div>
 <script src="js/crm-config.js?v=2"></script>
-<script src="js/quote-core.js?v=34"></script>
+<script src="js/quote-core.js?v=35"></script>
 <script src="js/quote-link.js?v=4"></script>
 <script src="js/proposal-pdf.js?v=4" defer></script>
-<script src="js/proposal.js?v=32" defer></script>
+<script src="js/proposal.js?v=33" defer></script>
 </body>
 </html>
 `;

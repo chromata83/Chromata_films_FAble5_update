@@ -242,3 +242,30 @@ html.px-pdf .px-mcol { flex: 1 1 0; min-width: 0; }
 @media (max-width: 700px) { .px-days__sum { margin-left: 0; } }
 .px-locked .px-days__b { pointer-events: none; }
 
+
+/* ---- "Your options" rows: the options, extra hands, go further and privacy of a quote (light section, one row per option) ---- */
+.px-opts { background: #F8F5EE; color: #25211D; padding: 9vh 6vw 8vh; position: relative; }
+.px-opts .px-wrap { margin-bottom: 4vh; }
+.px-opts .kicker { color: #B3231C; }
+.px-opts .px-ups__p { color: #6B645B; }
+.px-opts__list { max-width: 1500px; margin: 0 auto; border-top: 1px solid rgba(37,33,29,.18); }
+.px-opt { border-bottom: 1px solid rgba(37,33,29,.18); }
+.px-opt__btn { appearance: none; width: 100%; background: transparent; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 22px; align-items: center; padding: clamp(14px, 1.6vw, 22px) 4px; margin: 0; line-height: normal; }
+.px-opt__btn:focus-visible { outline: 2px solid #B3231C; outline-offset: 2px; }
+.px-opt .bx { display: block; width: 36px; height: 36px; border: 1.5px solid rgba(37,33,29,.45); border-radius: 6px; position: relative; transition: background .15s, border-color .15s; }
+.px-opt__btn:hover .bx { border-color: #25211D; }
+.px-opt.is-sel .bx { background: #25211D; border-color: #25211D; }
+.px-opt.is-sel .bx::after { content: ""; position: absolute; left: 12px; top: 5px; width: 8px; height: 16px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+.px-opt__t { display: flex; flex-direction: column; gap: 4px; font-size: clamp(18px, 1.9vw, 26px); line-height: 1.2; overflow-wrap: anywhere; min-width: 0; }
+.px-opt__t small { font-size: 14px; line-height: 1.4; color: #6B645B; }
+.px-opt__p { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; white-space: nowrap; }
+.px-opt__p b { font-size: 19px; font-weight: 500; }
+.px-opt__p small { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: #8A8378; }
+.px-opt .px-days { border-top: 0; margin: 0 0 20px 58px; padding-top: 0; color: #25211D; }
+.px-opt:not(.is-sel) .px-days { display: none; }
+.px-opt .px-days__t { color: #6B645B; }
+.px-opt .px-days__b:hover { background: rgba(37,33,29,.08); }
+.px-opt .px-days__b.is-on { background: #25211D; border-color: #25211D; color: #fff; }
+.px-opt .px-days__sum { font-size: 14px; color: #6B645B; }
+.px-locked .px-opt__btn { pointer-events: none; }
+@media (max-width: 700px) { .px-opt__btn { grid-template-columns: auto minmax(0, 1fr); } .px-opt__p { grid-column: 2; align-items: flex-start; text-align: left; } .px-opt .px-days { margin-left: 0; } }

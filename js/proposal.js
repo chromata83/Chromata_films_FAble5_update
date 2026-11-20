@@ -32,12 +32,16 @@
       var started = false;
       var go = function (st) {
         if (started) return; started = true;
-        var d = st && st.found && st.custom ? Q.customClean(st.custom) : null;
-        if (!d) { start(P, null, st && st.found ? st : null); return; }
+        if (!(st && st.found)) { start(P, null, null); return; }   // (the database does not answer: the page the link itself describes)
+        var ts = st.issued ? new Date(st.issued + "T12:00:00").getTime() : P.ts;
+        /* no custom definition: the website quote is shown as its own list of choices (collections, extra hands, options, go further, privacy) the client can tick or untick,
+           built from the choices in the link and, once the studio has edited the quote, from its lines */
+        if (!st.custom) { start({ answers: A0, id: P.id, ts: ts }, Q.customClean(Q.webToCustom(A0, st.lines)), st); return; }
+        var d = Q.customClean(st.custom);
         var a = Q.blank();
         a.names = d.names || A0.names || "Your proposal"; a.date = d.date || A0.date; a.place = d.place; a.venue = d.venue; a.nonce = A0.nonce;
         a.role = d.planner ? "planner" : "couple"; a.planner = d.planner;
-        start({ answers: a, id: P.id, ts: st.issued ? new Date(st.issued + "T12:00:00").getTime() : P.ts }, d, st);
+        start({ answers: a, id: P.id, ts: ts }, d, st);
       };
       setTimeout(function () { go(null); }, 4000);
       window.CQLink.status(A0).then(go, function () { go(null); });
@@ -212,7 +216,7 @@
     }
     function drawCompare() { var h = document.getElementById("collection"); if (h) h.outerHTML = Q.customCompare(Q.customView(C, sel), { id: "collection", pick: true }); }
     function syncUps() {
-      Array.prototype.forEach.call(document.querySelectorAll(".px-up, .px-dir"), function (el) {
+      Array.prototype.forEach.call(document.querySelectorAll(".px-up, .px-dir, .px-opt"), function (el) {
         var i = +el.getAttribute("data-i"), on = sel.ups.indexOf(i) > -1, b = el.querySelector(".px-up__sel"), t = el.querySelector(".px-up__s");
         el.classList.toggle("is-sel", on);
         if (b) b.setAttribute("aria-checked", String(on));
@@ -220,10 +224,10 @@
         /* a line sold per day: the day buttons, the sentence under them and the price follow the number of days picked */
         var l = C.lines[i];
         if (l && l.days) {
-          var n = sel.days[i] || l.qty, info = Q.dayInfo(l, n), sum = el.querySelector(".px-days__sum"), pr = el.querySelector(".px-dir__p, .px-up__p");
+          var n = sel.days[i] || l.qty, info = Q.dayInfo(l, n), sum = el.querySelector(".px-days__sum"), pr = el.querySelector(".px-dir__p, .px-up__p, .px-opt__p b");
           Array.prototype.forEach.call(el.querySelectorAll(".px-days__b"), function (d) { var is = +d.getAttribute("data-n") === n; d.classList.toggle("is-on", is); d.setAttribute("aria-checked", String(is)); });
           if (sum) sum.textContent = info.sum;
-          if (pr) pr.textContent = (info.amount < 0 ? "− " : "+ ") + eur(Math.abs(info.amount));
+          if (pr) pr.textContent = (info.amount < 0 ? "− " : el.classList.contains("px-opt") ? "" : "+ ") + eur(Math.abs(info.amount));
         }
       });
     }

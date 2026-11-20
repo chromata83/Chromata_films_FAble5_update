@@ -121,7 +121,7 @@
           '<label class="fld"><span>At most</span><select' + tr("lines." + j + ".days.max") + ">" + [1, 2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === l.days.max ? " selected" : "") + ">" + n + (n > 1 ? " days" : " day") + "</option>"; }).join("") + "</select></label></div>" +
           "" : "") +
         '<label class="fld"><span>Comes with another upgrade <small>(for an extra day: the client can only pick it together with that upgrade)</small></span><select' + tr("lines." + j + ".req") + '>' + [["", "No, it can be picked alone"], ["next", "Yes: the upgrade just below it"], ["prev", "Yes: the upgrade just above it"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.req || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
-        '<label class="fld"><span>Listed in <small>(the section of the quote where the client finds it)</small></span><select' + tr("lines." + j + ".group") + '>' + [["", "Video upgrades (red section)"], ["options", "Your options"], ["further", "Go further"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.group || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
+        '<label class="fld"><span>Listed in <small>(the section of the quote where the client finds it)</small></span><select' + tr("lines." + j + ".group") + '>' + [["", "Video upgrades (red section)"], ["team", "Extra hands"], ["options", "Your options"], ["further", "Go further"], ["privacy", "About privacy"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.group || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
         '<label class="fld"><span>Description <small>(optional · a blank line starts a new paragraph)</small></span><textarea rows="' + (l.card || l.band ? 7 : 3) + '" maxlength="1500"' + tr("lines." + j + ".sub") + '>' + esc(l.sub) + '</textarea></label>' +
         '<label class="qe-chk" style="margin:4px 0 4px"><input type="checkbox"' + tr("lines." + j + ".band") + (l.band ? " checked" : "") + '> <strong>Show as a separate line under the comparison</strong> <small>(like the extra: the description and what is included are readable at once, with a box to add it to the quote)</small></label>' +
         (l.band ? "" : '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".card") + (l.card ? " checked" : "") + '> <strong>Show as a clickable card</strong> <small>(in the “Video upgrades” section of the quote: the client opens it to read the description and what is included)</small></label>') +
@@ -200,8 +200,8 @@
 
       extraHTML() +
 
-      '<section class="cr-card"><h2>Video upgrades</h2><p class="hint">Everything the client can add to the chosen package: extra hours, a second shooter, a drone, a discount (negative price)… Each line is price × quantity. A new line is <strong>included in the quote by itself</strong> (it counts in the total) and the client can untick it on their page. Untick <strong>Validated by the client</strong> to only offer it: it is then listed with its price, and counts once the client ticks it. Use <strong>Listed in</strong> to choose the section: video upgrades, “Your options” or “Go further”.</p>' +
-      (linesHTML() || '<p class="empty">No video upgrade yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="line-add"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add a video upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-director"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add the Film director upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-super16"' + (W.lines.length >= MAX_LINES - 1 ? " disabled" : "") + ">Add the Super 16mm upgrade (+ Extra day)</button></div></section>" +
+      '<section class="cr-card"><h2>Video upgrades</h2><p class="hint">Everything the client can add to the chosen package: extra hours, a second shooter, a drone, a discount (negative price)… Each line is price × quantity. A new line is <strong>included in the quote by itself</strong> (it counts in the total) and the client can untick it on their page. Untick <strong>Validated by the client</strong> to only offer it: it is then listed with its price, and counts once the client ticks it. Use <strong>Listed in</strong> to choose the section: video upgrades, extra hands, “Your options”, “Go further” or “About privacy”. <strong>Add the website options</strong> lists everything the website quotation offers (they stay editable and removable).</p>' +
+      (linesHTML() || '<p class="empty">No video upgrade yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="line-add"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add a video upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-director"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add the Film director upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-super16"' + (W.lines.length >= MAX_LINES - 1 ? " disabled" : "") + ">Add the Super 16mm upgrade (+ Extra day)</button>" + '<button class="btn ghost" type="button" data-act="line-web">Add the website options</button></div></section>' +
 
       '<section class="cr-card"><h2>Travel and accommodation</h2><label class="qe-chk"><input type="checkbox"' + tr("travelShow") + (W.travelShow ? " checked" : "") + "> Show a travel / accommodation line in the quote</label>" +
       (W.travelShow ? '<div class="qb-trv" role="radiogroup" aria-label="Travel line" style="margin:10px 0 0"><label class="qe-chk"><input type="radio" name="qbTrv" data-trv="1"' + (W.travelTbc ? " checked" : "") + '> <strong>To be confirmed</strong> <small>(“Travel fees and accommodation · TBC”, to be confirmed depending on the number of days and the dates; not in the total)</small></label>' +
@@ -342,6 +342,10 @@
       case "row-del": F.splice(j, 1); break;
       case "row-up": move(F, j, -1); break;
       case "row-down": move(F, j, 1); break;
+      case "line-web": {   // every option of the website quotation (extra hands, options, welcome event, brunch, creator, privacy), nothing ticked but "You can share everything"
+        var have = {}; W.lines.forEach(function (l) { have[l.name] = 1; });
+        Q.webToCustom(Q.blank()).lines.forEach(function (l) { if (!have[l.name] && W.lines.length < MAX_LINES) { l.incText = ""; W.lines.push(l); } });
+        break; }
       case "line-director": if (W.lines.length >= MAX_LINES) return; W.lines.push(directorLine()); break;
       case "line-super16": if (W.lines.length >= MAX_LINES - 1) return; W.lines.push(super16ExtraLine(), super16Line()); break;
       case "vid-add": if (W.videos.length >= 8) return; W.videos.push({ url: "", title: "", sub: "" }); break;
@@ -389,8 +393,10 @@
   }
   /* ---------------- what the client sent back for review (package + video upgrades picked on the quote page) ---------------- */
   function selInfo(p) {
-    if (!p || !p.quote_custom || !p.client_selection || typeof p.client_selection !== "object") return null;
-    var d = Q.customClean(p.quote_custom), s = Q.customSelNorm(d, p.client_selection), idx = Q.customUpIdx(d);
+    if (!p || !p.client_selection || typeof p.client_selection !== "object") return null;
+    /* a website quote has no stored definition: it is rebuilt from its choices (the same list the client ticked on their page) */
+    var def = p.quote_custom || (A.quoteEditor && A.quoteEditor.toCustom ? A.quoteEditor.toCustom(p) : null); if (!def) return null;
+    var d = Q.customClean(def), s = Q.customSelNorm(d, p.client_selection), idx = Q.customUpIdx(d);
     var v = Q.customView(d, s), q = Q.customQuote(v), before = Q.customQuote(d);
     var after = { chosen: v.chosen, ups: idx.filter(function (i) { return v.lines[i].on; }), days: s.days };
     /* an upgrade sold per day says its number of days */
@@ -412,6 +418,7 @@
   function applySel(p, dismiss) {
     var i = selInfo(p); if (!i) return;
     var contracts = S.contracts.filter(function (c) { return c.project_id === p.id && (c.status === "sent" || c.status === "signed"); });
+    if (!dismiss && !p.quote_custom && !confirm("Applying the client’s selection turns this website quote into a free quote (editable in the quote builder, with every option listed). Continue?")) return;
     if (!dismiss && contracts.length && !confirm("A contract was already " + (contracts.some(function (c) { return c.status === "signed"; }) ? "signed" : "sent") + " for this project. It keeps its own amount (" + C.money(contracts[0].amount) + "); only the quote changes. Apply anyway?")) return;
     if (dismiss && !confirm("Dismiss the client’s selection without applying it?")) return;
     var row = { id: p.id, client_selection: null, client_selection_at: null };

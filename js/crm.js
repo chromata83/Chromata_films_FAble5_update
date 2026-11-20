@@ -283,7 +283,7 @@
     shell("projects", '<header class="top"><h1>' + (isNew ? "New project" : esc(p.couple_names)) + '</h1>' + (isNew ? "" : pill(p.status)) + "</header>" +
       (isNew ? '<section class="cr-card"><h2>Start from a quotation</h2><p class="hint">Paste the “See my proposal” link of a couple: their names, date, venue and total are filled in for you.</p><div class="inl"><input id="imp" type="url" placeholder="https://www.chromatafilms.com/proposal.html#…"><button class="btn ghost" id="impGo" type="button">Fill from link</button></div></section>' : "") +
       (p.quote_ref ? validationPanel(p) : "") +
-      (isNew ? "" : p.quote_custom ? customCard(p) : !QE() ? "" : QE().html(p)) +
+      (isNew ? "" : p.quote_custom ? customCard(p) : (window.CRMApp && window.CRMApp.selBox ? window.CRMApp.selBox(p) : "") + (!QE() ? "" : QE().html(p))) +
       '<form id="pf" class="cr-card"><h2>Wedding</h2><div class="grid2">' + F.map(function (f) { return fld(f, p); }).join("") + '<label class="fld"><span>Status</span><select name="status">' +
       Object.keys(ST).map(function (k) { return '<option value="' + k + '"' + ((p.status || "lead") === k ? " selected" : "") + ">" + ST[k].label + "</option>"; }).join("") + "</select></label>" +
       '<label class="fld"><span>Bank account to give the couple</span><select name="bank_account">' + ["EUR", "CHF", "USD"].map(function (a) { return '<option value="' + a + '"' + ((p.bank_account || "EUR") === a ? " selected" : "") + ">" + a + " account" + (C.bankFor(S.settings, a) ? "" : " (not filled in Settings)") + "</option>"; }).join("") + "</select></label></div>" +

@@ -172,36 +172,8 @@
        - travel keeps its state (TBC, or its amount).
      Prices are the ones the couple reads now (planner rates and commission already inside); the total stays exactly the same. Nothing is saved here. */
   function toCustom(p) {
-    var a = startAnswers(p); MK = a.mk || "";
-    var rows = Array.isArray(p.quote_lines) && p.quote_lines.length ? p.quote_lines : Q.studioQuote(a, { travel: p.travel_fees, commission: +p.quote_commission || 0 }).rows;
-    var cur = Q.by(Q.COLLECTIONS, a.wedding), pi = -1, target = 0, travel = { show: true, tbc: true, amount: 0 };
-    rows.forEach(function (r, i) {
-      if (pi < 0 && /^Wedding day · /.test(String(r.l || ""))) pi = i;
-      if (r.t === "tbc") travel = { show: true, tbc: true, amount: 0 };
-      else if (r.t === "inc") travel = { show: true, tbc: false, amount: +r.p || 0 };
-      else if (r.t !== "opt") target += +r.p || 0;   // what the couple pays, without travel
-    });
-    /* planner commission is spread inside the prices the couple reads: the same factor is applied to everything offered, so the quote stays coherent */
-    var baseSum = Q.lines(a).reduce(function (s, l) { return l.key === "travel" ? s : s + l.price; }, 0), f = baseSum > 0 && target > 0 ? target / baseSum : 1;
-    var sc = function (n) { return Math.round(n * f); };
-    var pkgs = Q.COLLECTIONS.map(function (c, i) { return { id: c.v, name: c.name, sub: c.sub, price: sc(pr(c.price, "c")) }; });
-    var lines = [], add = function (l) { lines.push(Object.assign({ qty: 1, unit: "", on: false, card: true, req: "", inc: [], sub: "", days: null, group: "" }, l)); };
-    Q.OPTIONS.forEach(function (o) {
-      var q = a.options[o.v] || 0, many = o.max > 1;
-      add({ name: o.name, sub: o.sub, price: sc(o.nomk ? o.price : pr(o.price, "o")), on: q > 0, group: "options", qty: q || 1, days: many ? { from: 2, off: 0, max: o.max, extra: false, unit: o.unit } : null });
-    });
-    Q.TEAM.forEach(function (t) { add({ name: t.name, sub: t.sub, price: t.price, on: a.team.indexOf(t.v) > -1, group: "further" }); });
-    [["welcome", "Welcome event", "w"], ["brunch", "Brunch / farewell party", "b"]].forEach(function (e) {
-      Q.EVENT_HOURS.forEach(function (h) { if (h.price) add({ name: e[1] + " · " + h.short, price: sc(pr(h.price, e[2])), on: a[e[0]] === h.v, group: "further", xor: e[0] }); });
-    });
-    add({ name: "Content creator, same day edit", sub: Q.CREATOR[1].sub, price: sc(pr(Q.CREATOR[1].price, "k")), on: a.creator === "1", group: "further" });
-    Q.PRIVACY.forEach(function (x) { if (x.price) add({ name: "Privacy · " + x.label, price: sc(pr(x.price, "p")), on: a.privacy === x.v, group: "further", xor: "privacy" }); });
-    /* the package carries the rounding leftovers, so the total is exactly the one the couple has */
-    var chosen = cur ? cur.v : pkgs[0].id, pk = pkgs.filter(function (k) { return k.id === chosen; })[0];
-    var onSum = lines.reduce(function (s, l) { return l.on ? s + l.price * (l.days ? l.qty : 1) : s; }, 0);
-    pk.price = Math.max(0, target - onSum);
-    var feats = Q.COMPARE.map(function (r) { return { k: r.k, on: r.on || [1, 1, 1], d: r.v || ["", "", ""] }; });
-    return { v: 5, kind: "Wedding", word: "collection", chosen: chosen, packages: pkgs, features: feats, lines: lines, travel: travel, films: true, about: { on: true, text: "" } };
+    var a = startAnswers(p);
+    return Q.webToCustom(a, Array.isArray(p.quote_lines) && p.quote_lines.length ? p.quote_lines : Q.studioQuote(a, { travel: p.travel_fees, commission: +p.quote_commission || 0 }).rows);
   }
 
   A.quoteEditor = { toCustom: toCustom, html: html, wire: wire, validityLine: validityLine, expired: expired, opensBlock: opensBlock };

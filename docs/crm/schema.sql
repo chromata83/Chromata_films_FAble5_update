@@ -513,7 +513,7 @@ language plpgsql security definer set search_path = public as $$
 declare pr public.projects; chosen text; ups jsonb; dys jsonb; n int; e text; issued date;
 begin
   if coalesce(p_ref, '') !~ '^[a-z0-9]{10,16}$' then raise exception 'Invalid reference'; end if;
-  select * into pr from public.projects where quote_ref = p_ref and quote_custom is not null;
+  select * into pr from public.projects where quote_ref = p_ref;   -- a custom quote, or a website quote (shown to the client as its list of choices: its definition is rebuilt from the choices by the page and the back office)
   if not found then raise exception 'This proposal was not found'; end if;
   if exists (select 1 from public.contracts c where c.project_id = pr.id and c.status = 'signed') then raise exception 'This proposal is already signed'; end if;
   issued := (coalesce(pr.quote_issued_at, pr.quote_sent_at, pr.created_at) at time zone 'UTC')::date;
@@ -521,8 +521,13 @@ begin
   if pr.client_selection_at is not null and pr.client_selection_at > now() - interval '3 seconds' then raise exception 'Please wait a moment and try again'; end if;
   if jsonb_typeof(p_sel) is distinct from 'object' then raise exception 'Invalid selection'; end if;
   chosen := p_sel ->> 'chosen';
-  if not exists (select 1 from jsonb_array_elements(coalesce(pr.quote_custom -> 'packages', '[]'::jsonb)) k where k ->> 'id' = chosen) then raise exception 'Unknown package'; end if;
-  n := jsonb_array_length(coalesce(pr.quote_custom -> 'lines', '[]'::jsonb));
+  if pr.quote_custom is not null then
+    if not exists (select 1 from jsonb_array_elements(coalesce(pr.quote_custom -> 'packages', '[]'::jsonb)) k where k ->> 'id' = chosen) then raise exception 'Unknown package'; end if;
+    n := jsonb_array_length(coalesce(pr.quote_custom -> 'lines', '[]'::jsonb));
+  else
+    if chosen not in ('classic', 'premium', 'ultimate') then raise exception 'Unknown package'; end if;
+    n := 40;
+  end if;
   if jsonb_typeof(p_sel -> 'ups') = 'array' and jsonb_array_length(p_sel -> 'ups') <= 60 then
     select coalesce(jsonb_agg(s.i order by s.i), '[]'::jsonb) into ups
       from (select distinct (v #>> '{}')::int as i from jsonb_array_elements(p_sel -> 'ups') v where (v #>> '{}') ~ '^[0-9]{1,2}$') s where s.i < n;
