@@ -247,7 +247,7 @@
         if (db) {   // the number of days of a line sold per day (1 to 5): picking one also adds the upgrade to the quote
           e.preventDefault();
           var di = +db.getAttribute("data-i"); sel.days[di] = +db.getAttribute("data-n");
-          if (sel.ups.indexOf(di) < 0) sel.ups = Q.customToggle(C, sel.ups, di, true);   // (extra days also pick the line above)
+          if (sel.ups.indexOf(di) < 0) sel.ups = Q.customToggle(C, sel.ups, di, true);   // (an upgrade that comes with another one also picks it)
           syncUps(); refresh();
           var nb = document.querySelector('.px-days__b[data-i="' + di + '"][data-n="' + sel.days[di] + '"]'); if (nb && nb.focus) nb.focus({ preventScroll: true });
           return;

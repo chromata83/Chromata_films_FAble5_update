@@ -112,17 +112,17 @@
       sub: "Choose the luxury of having a film director on your event. Receiving the live streams of every camera on site, they direct the crews in real time from what they see on screen, so that every shot is the strongest and the best optimised one, planned around the other cameras and the needs of the edit, right on set.\n\nWe no longer simply cover an event: we direct it visually, the way a true production would.",
       inc: ["Film director", "Streaming gear", "Streaming console", "Day-after edit (1 min)"] };
   }
-  /* the Super 16mm video upgrade: its own line under the comparison, one day of filming with its dedicated camera operator */
+  /* the Super 16mm video upgrade: a card of the red "Video upgrades" section, already ticked (included in the quote, the client can untick it) */
   var DAYS_MAX = 5;
   function super16Line() {
-    return { name: "Super 16mm film camera with dedicated camera operator", price: 5000, qty: 1, unit: "", on: false, band: true, days: null,
-      sub: "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. A special film made on the side, with the grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nOne day of filming. Need more? Add extra days just below, each one at a reduced price.",
+    return { name: "Super 16mm film camera with dedicated camera operator", price: 5000, qty: 1, unit: "", on: true, band: false, card: true, req: "", days: null,
+      sub: "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. The grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nIn June, we accompany the family for a day of filming, in digital + 16mm film: unique memories, and a unique look to present on the evening of the Bat Mitzvah.",
       inc: ["Super 16mm film camera", "Dedicated camera operator", "Film development and scan", "A short film made on the side"] };
   }
-  /* "Super 16mm - Extra day": extra days of the line above (it needs it), the client picks 1 to 4 of them, 20% off each */
+  /* "Super 16mm - Extra day": one more day of Super 16mm, 5 000 € with 20% off = 4 000 €. It comes with the Super 16mm card right below it (req "next"). */
   function super16ExtraLine() {
-    return { name: "Super 16mm - Extra day", price: 5000, qty: 1, unit: "day", on: false, band: true, req: true, days: { from: 1, off: 20, max: DAYS_MAX - 1, extra: true },
-      sub: "More days of Super 16mm film with the same dedicated camera operator, on top of the first day. Choose how many extra days you would like: each one is 20% off.",
+    return { name: "Super 16mm - Extra day", price: 4000, qty: 1, unit: "", on: false, band: false, card: true, req: "next", days: null,
+      sub: "One more day of Super 16mm filming with the same dedicated camera operator, on top of the first day.\n\n5,000 EUR with 20% off for this extra day: 4,000 EUR.",
       inc: ["Super 16mm film camera", "Dedicated camera operator", "Film development and scan"] };
   }
   /* a line sold per day: its amount (price x days, minus the multi-day discount) and the sentences that explain it */
@@ -164,7 +164,7 @@
         { k: "Highlight film", on: on([1, 1, 1]), d: ["2 min", "3 min", "4 min"] },
         { k: "Drone footage", on: on([0, 1, 1]), d: ["", "", ""] },
         { k: "A short film made for social media", on: on([0, 0, 1]), d: ["", "", ""] }],
-      lines: [super16Line(), super16ExtraLine(), directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: false, videos: [], videosTitle: "Stories we filmed", photos: [] };
+      lines: [super16ExtraLine(), super16Line(), directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: false, videos: [], videosTitle: "Stories we filmed", photos: [] };
   }
   /* a text that may keep its line breaks (the description of a video upgrade) */
   var clipML = function (s, n) { return String(s == null ? "" : s).replace(/\r/g, "").replace(/[\u0000-\u0009\u000b-\u001f]/g, " ").replace(/\n{3,}/g, "\n\n").trim().slice(0, n); };
@@ -174,7 +174,7 @@
   /* Whatever comes in (the builder's form, or the database) comes out as a safe, complete definition: bounded lengths, numbers, known pictures only. */
   function customClean(raw) {
     var r = raw && typeof raw === "object" ? raw : {}, d = {};
-    d.v = 2;   // 2: the Film director is a card of the red section, the Super 16mm a line sold per day under the comparison (definitions saved as 1 are migrated below)
+    d.v = 3;   // 3: the Film director and the Super 16mm options are cards of the red section (definitions saved as 1 or 2 are migrated below)
     d.kind = clip(r.kind, 60); d.word = clip(r.word, 20) || "package"; d.lead = clip(r.lead, 1500);
     d.hero = safeImg(r.hero); d.photosTitle = clip(r.photosTitle, 60) || "Moments we witnessed"; d.note = clip(r.note, 300);
     var seen = {};
@@ -191,19 +191,21 @@
       for (var i = 0; i < n; i++) { on.push(f.on && f.on[i] ? 1 : 0); dd.push(clip(f.d && f.d[i], 120)); }
       return { k: clip(f.k, 200), on: on, d: dd };
     }).filter(function (f) { return f.k; });
-    var old = +r.v < 2;   // saved before the Film director moved to the red section and the Super 16mm was sold per day
+    var v1 = +r.v < 2, old = +r.v < 3;   // saved before the Film director moved to the red section (1), or before the Super 16mm options did too (2)
     d.lines = (Array.isArray(r.lines) ? r.lines : []).slice(0, 24).map(function (l) {
       l = l || {};
-      var nm = clip(l.name, 200), isDir = /^film director$/i.test(nm), isS16 = /super ?16 ?mm/i.test(nm);
-      var isBand = l.band === true || l.band === 1 || (l.band === undefined && !!l.card && isDir);
-      if (old && isDir && isBand) isBand = false;                       // the Film director is now in the red section...
-      if (old && isS16 && (l.card === true || l.card === 1 || isBand)) isBand = true;   // ...and the Super 16mm line under the comparison
-      var dy = l.days && typeof l.days === "object" ? l.days : (old && isS16 && isBand && l.days === undefined ? {} : null);   // a line sold per day: the client picks 1 to 5 days
+      var nm = clip(l.name, 200), isDir = /^film director$/i.test(nm), isS16 = /super ?16 ?mm/i.test(nm), isXtra = isS16 && /extra day/i.test(nm);
+      var isBand = l.band === true || l.band === 1;
+      if (v1 && isDir && isBand) isBand = false;   // the Film director is in the red section...
+      if (old && isS16) isBand = false;            // ...and so are the Super 16mm options
+      var dy = l.days && typeof l.days === "object" ? l.days : null;   // a line sold per day: the client picks 1 to 5 days
+      var price = num(l.price, -10000000, 10000000), qty = Math.round(+l.qty) || 1, req = l.req === "next" ? "next" : (l.req === true || l.req === 1 || l.req === "prev") ? "prev" : "";
+      if (old && isXtra && dy) { if (dy.off > 0 && (+dy.from || 2) <= 1) price = Math.round(price * (100 - Math.min(90, +dy.off)) / 100); dy = null; qty = 1; if (!req) req = "prev"; }   // the "Extra day" is now one single day at its discounted price
       var days = dy ? { from: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.from) || 2)), off: dy.off === undefined ? 20 : num(dy.off, 0, 90), max: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.max) || DAYS_MAX)), extra: dy.extra === true || dy.extra === 1 } : null;
-      return { name: nm, sub: clipML(l.sub, 1500), price: num(l.price, -10000000, 10000000), qty: Math.max(1, Math.min(days ? days.max : 99, Math.round(+l.qty) || 1)), unit: days ? "day" : clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
-        req: l.req === true || l.req === 1,   // extra days of the line above: it can only be picked together with it
-        band: isBand,   // a separate line under the comparison, its description readable at once (the Super 16mm)
-        card: !isBand && (l.card === true || l.card === 1 || (old && isDir && (l.band === true || l.band === 1))),   // shown as a clickable card in the "Video upgrades" section of the quote
+      return { name: nm, sub: clipML(l.sub, 1500), price: price, qty: Math.max(1, Math.min(days ? days.max : 99, qty)), unit: days ? "day" : clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
+        req: req,   // "prev" / "next": this upgrade can only be picked together with the one above / below it
+        band: isBand,   // a separate line under the comparison, its description readable at once
+        card: !isBand && (l.card === true || l.card === 1 || (v1 && isDir && (l.band === true || l.band === 1)) || (old && isS16)),   // shown as a clickable card in the "Video upgrades" section of the quote
         days: days,
         inc: (Array.isArray(l.inc) ? l.inc : []).slice(0, 12).map(function (x) { return clip(x, 120); }).filter(Boolean) };   // what the upgrade includes
     }).filter(function (l) { return l.name; });
@@ -283,14 +285,14 @@
     var base = customSelOf(d), s = sel && typeof sel === "object" ? sel : {}, okUps = customUpIdx(d), dy = s.days && typeof s.days === "object" ? s.days : {}, days = {};
     d.lines.forEach(function (l, i) { if (l.days) { var n = Math.round(+dy[i]); days[i] = n >= 1 && n <= daysMax(l) ? n : base.days[i]; } });
     var ups = (Array.isArray(s.ups) ? s.ups : []).filter(function (i) { return okUps.indexOf(i) > -1; });
-    ups = ups.filter(function (i) { return !d.lines[i].req || ups.indexOf(i - 1) > -1; });   // extra days only come with the line above
+    ups = ups.filter(function (i) { var r = d.lines[i].req; return !r || ups.indexOf(r === "next" ? i + 1 : i - 1) > -1; });   // an upgrade that needs the one above / below only comes with it
     return { chosen: pkgById(d.packages, s.chosen) ? s.chosen : base.chosen, ups: ups, days: days };
   }
-  /* ticks or unticks upgrade i in a list of picked upgrades: extra days of a line also pick that line, and unticking a line drops its extra days */
+  /* ticks or unticks upgrade i in a list of picked upgrades: an upgrade that needs another one (req) also picks it, and unticking that one drops it */
   function customToggle(d, ups, i, on) {
-    var u = ups.filter(function (x) { return x !== i; });
-    if (on) { u.push(i); if (d.lines[i] && d.lines[i].req && i > 0 && u.indexOf(i - 1) < 0) u.push(i - 1); }
-    else if (d.lines[i + 1] && d.lines[i + 1].req) u = u.filter(function (x) { return x !== i + 1; });
+    var u = ups.filter(function (x) { return x !== i; }), L = d.lines;
+    if (on) { u.push(i); var p = L[i] && L[i].req ? (L[i].req === "next" ? i + 1 : i - 1) : -1; if (p > -1 && L[p] && u.indexOf(p) < 0) u.push(p); }
+    else u = u.filter(function (k) { var r = L[k] && L[k].req; return !(r && (r === "next" ? k + 1 : k - 1) === i); });
     return u;
   }
   /* the definition as it reads with a client's selection { chosen, ups: [line numbers], days: { line number: 1..5 } } (without one, as the studio saved it) */

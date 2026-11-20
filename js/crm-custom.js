@@ -116,7 +116,8 @@
         (l.days ? '<div class="grid2"><label class="fld"><span>Discount (%)</span><input type="number" min="0" max="90" step="any"' + tr("lines." + j + ".days.off") + ' value="' + l.days.off + '"></label>' +
           '<label class="fld"><span>Discount from</span><select' + tr("lines." + j + ".days.from") + ">" + [1, 2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === l.days.from ? " selected" : "") + ">" + n + (n > 1 ? " days" : " day") + "</option>"; }).join("") + "</select></label>" +
           '<label class="fld"><span>At most</span><select' + tr("lines." + j + ".days.max") + ">" + [1, 2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === l.days.max ? " selected" : "") + ">" + n + (n > 1 ? " days" : " day") + "</option>"; }).join("") + "</select></label></div>" +
-          '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".days.extra") + (l.days.extra ? " checked" : "") + '> <strong>These are extra days of the line above</strong> <small>(the client can only pick them together with that line)</small></label>' : "") +
+          "" : "") +
+        '<label class="fld"><span>Comes with another upgrade <small>(for an extra day: the client can only pick it together with that upgrade)</small></span><select' + tr("lines." + j + ".req") + '>' + [["", "No, it can be picked alone"], ["next", "Yes: the upgrade just below it"], ["prev", "Yes: the upgrade just above it"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.req || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
         '<label class="fld"><span>Description <small>(optional · a blank line starts a new paragraph)</small></span><textarea rows="' + (l.card || l.band ? 7 : 3) + '" maxlength="1500"' + tr("lines." + j + ".sub") + '>' + esc(l.sub) + '</textarea></label>' +
         '<label class="qe-chk" style="margin:4px 0 4px"><input type="checkbox"' + tr("lines." + j + ".band") + (l.band ? " checked" : "") + '> <strong>Show as a separate line under the comparison</strong> <small>(like the extra: the description and what is included are readable at once, with a box to add it to the quote)</small></label>' +
         (l.band ? "" : '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".card") + (l.card ? " checked" : "") + '> <strong>Show as a clickable card</strong> <small>(in the “Video upgrades” section of the quote: the client opens it to read the description and what is included)</small></label>') +
@@ -137,7 +138,7 @@
   function directorLine() {
     var l = Q.directorLine(); l.incText = l.inc.join("\n"); return l;
   }
-  /* the Super 16mm film camera with its camera operator (one day, 5 000 €) and its "Extra day" option (1 to 4 extra days, 20% off each) */
+  /* the Super 16mm film camera with its camera operator (one day, 5 000 €, ticked) and its "Extra day" option (one more day, 5 000 € − 20% = 4 000 €), above it */
   function super16Line() {
     var l = Q.super16Line(); l.incText = l.inc.join("\n"); return l;
   }
@@ -304,9 +305,7 @@
     if (t.type === "checkbox" && /\.on\.\d+$/.test(path)) v = t.checked ? 1 : 0;
     if ((/\.(price|qty)$/.test(path) || /\.days\.(off|from|max)$/.test(path) || /^extra\.prices\.\d+$/.test(path)) && (t.type === "number" || t.type === "select-one")) v = t.value === "" ? 0 : +t.value;
     var md = /^lines\.(\d+)\.days$/.exec(path);
-    if (md) { W.lines[+md[1]].days = t.checked ? { from: 2, off: 20, max: Q.DAYS_MAX, extra: false } : null; W.lines[+md[1]].req = false; if (t.checked) { W.lines[+md[1]].unit = "day"; W.lines[+md[1]].qty = Math.min(W.lines[+md[1]].qty || 1, Q.DAYS_MAX); } draw(); return; }
-    var mx = /^lines\.(\d+)\.days\.extra$/.exec(path);
-    if (mx) { W.lines[+mx[1]].days.extra = t.checked; W.lines[+mx[1]].req = t.checked; draw(); return; }
+    if (md) { W.lines[+md[1]].days = t.checked ? { from: 2, off: 20, max: Q.DAYS_MAX, extra: false } : null; if (t.checked) { W.lines[+md[1]].unit = "day"; W.lines[+md[1]].qty = Math.min(W.lines[+md[1]].qty || 1, Q.DAYS_MAX); } draw(); return; }
     var mm = /^lines\.(\d+)\.days\.max$/.exec(path);
     if (mm) { var ln = W.lines[+mm[1]]; ln.days.max = +t.value; ln.qty = Math.min(ln.qty || 1, ln.days.max); draw(); return; }
     if (/\.(card|band)$/.test(path) || path === "extra.on") { setPath(path, v); draw(); return; }
@@ -335,7 +334,7 @@
       case "row-up": move(F, j, -1); break;
       case "row-down": move(F, j, 1); break;
       case "line-director": if (W.lines.length >= MAX_LINES) return; W.lines.push(directorLine()); break;
-      case "line-super16": if (W.lines.length >= MAX_LINES - 1) return; W.lines.push(super16Line(), super16ExtraLine()); break;
+      case "line-super16": if (W.lines.length >= MAX_LINES - 1) return; W.lines.push(super16ExtraLine(), super16Line()); break;
       case "vid-add": if (W.videos.length >= 8) return; W.videos.push({ url: "", title: "", sub: "" }); break;
       case "vid-del": W.videos.splice(j, 1); break;
       case "vid-up": move(W.videos, j, -1); break;
