@@ -163,13 +163,9 @@
   }
   function customBlank() {
     var on = function (a) { return a; };
-    return { v: 2, kind: "", word: "package", lead: "", hero: "", photosTitle: "Moments we witnessed", chosen: "b",
-      packages: [{ id: "a", name: "Essential", sub: "", price: 0 }, { id: "b", name: "Signature", sub: "", price: 0 }, { id: "c", name: "Complete", sub: "", price: 0 }],
-      features: [
-        { k: "Hours of presence", on: on([1, 1, 1]), d: ["3 h", "5 h", "8 h"] },
-        { k: "Highlight film", on: on([1, 1, 1]), d: ["2 min", "3 min", "4 min"] },
-        { k: "Drone footage", on: on([0, 1, 1]), d: ["", "", ""] },
-        { k: "A short film made for social media", on: on([0, 0, 1]), d: ["", "", ""] }],
+    return { v: 2, kind: "", word: "collection", lead: "", hero: "", photosTitle: "Moments we witnessed", chosen: "premium",   // the website's three collections (Classic, Premium, Ultimate), with their description, price and comparison: all editable in the builder
+      packages: COLLECTIONS.map(function (c) { return { id: c.v, name: c.name, sub: c.sub, price: c.price }; }),
+      features: COMPARE.map(function (r) { return { k: r.k, on: r.on || [1, 1, 1], d: r.v || ["", "", ""] }; }),
       lines: [super16ExtraLine(), super16Line(), directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true, tbc: true }, note: "", about: { on: true, text: "" }, films: false, videos: [], videosTitle: "Stories we filmed", photos: [] };
   }
   /* a text that may keep its line breaks (the description of a video upgrade) */
