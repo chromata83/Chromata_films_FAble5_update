@@ -115,15 +115,15 @@
   /* the Super 16mm video upgrade: a card of the red "Video upgrades" section, already ticked (included in the quote, the client can untick it) */
   var DAYS_MAX = 5;
   function super16Line() {
-    return { name: "Super 16mm film camera with dedicated camera operator", price: 5000, qty: 1, unit: "", on: true, band: false, card: true, req: "", days: null,
-      sub: "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. The grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nIn June, we accompany the family for a day of filming, in digital + 16mm film: unique memories, and a unique look to present on the evening of the Bat Mitzvah.",
+    return { name: "Super 16mm film camera with dedicated camera operator", price: 4200, qty: 1, unit: "", on: true, band: false, card: true, req: "", days: null,
+      sub: "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. The grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nIn June, we accompany the family for a day of filming, in digital + 16mm film: unique memories, and a unique look to present on the evening of the Bat Mitzvah.\n\nFilm rolls: 2,200 EUR (8 rolls), excl. taxes.",
       inc: ["Super 16mm film camera", "Dedicated camera operator", "Film development and scan", "A short film made on the side"] };
   }
-  /* "Super 16mm film camera - Extra Day": one more day of Super 16mm, 5 000 € with 20% off = 4 000 €. It comes with the Super 16mm card right below it (req "next"). */
+  /* "Super 16mm film camera - Extra Day": one more day of Super 16mm, 4 200 € like the first day (no discount). It comes with the Super 16mm card right below it (req "next"). */
   var XTRA_NAME = "Super 16mm film camera - Extra Day";
   function super16ExtraLine() {
-    return { name: XTRA_NAME, price: 4000, qty: 1, unit: "", on: false, band: false, card: true, req: "next", days: null,
-      sub: "One more day of Super 16mm filming with the same dedicated camera operator, on top of the first day.\n\n5,000 EUR with 20% off for this extra day: 4,000 EUR.",
+    return { name: XTRA_NAME, price: 4200, qty: 1, unit: "", on: false, band: false, card: true, req: "next", days: null,
+      sub: "One more day of Super 16mm filming with the same dedicated camera operator, on top of the first day.\n\nFilm rolls: 2,200 EUR (8 rolls), excl. taxes.",
       inc: ["Super 16mm film camera", "Dedicated camera operator", "Film development and scan"] };
   }
   /* a line sold per day: its amount (price x days, minus the multi-day discount) and the sentences that explain it */
@@ -175,7 +175,8 @@
   /* Whatever comes in (the builder's form, or the database) comes out as a safe, complete definition: bounded lengths, numbers, known pictures only. */
   function customClean(raw) {
     var r = raw && typeof raw === "object" ? raw : {}, d = {};
-    d.v = 4;   // 3: the Film director and the Super 16mm options are cards of the red section; 4: the extra day is named "Super 16mm film camera - Extra Day" (older definitions are migrated below)
+    d.v = 5;   // 5: both Super 16mm options cost 4 200 EUR, film rolls mentioned (the preset's former prices and wording are updated once)
+    ;   // 3: the Film director and the Super 16mm options are cards of the red section; 4: the extra day is named "Super 16mm film camera - Extra Day" (older definitions are migrated below)
     d.kind = clip(r.kind, 60); d.word = clip(r.word, 20) || "package"; d.lead = clip(r.lead, 1500);
     d.hero = safeImg(r.hero); d.photosTitle = clip(r.photosTitle, 60) || "Moments we witnessed"; d.note = clip(r.note, 300);
     var seen = {};
@@ -200,11 +201,17 @@
       var isBand = l.band === true || l.band === 1;
       if (v1 && isDir && isBand) isBand = false;   // the Film director is in the red section...
       if (old && isS16) isBand = false;            // ...and so are the Super 16mm options
+      var sub0 = clipML(l.sub, 1500);
+      if (+r.v < 5 && (isXtra || nm === "Super 16mm film camera with dedicated camera operator")) {   // the preset as it was: new price and wording; anything the studio edited is kept
+        if (sub0 === "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. The grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nIn June, we accompany the family for a day of filming, in digital + 16mm film: unique memories, and a unique look to present on the evening of the Bat Mitzvah.".replace(/\\n/g, "\n") || sub0 === "One more day of Super 16mm filming with the same dedicated camera operator, on top of the first day.\n\n5,000 EUR with 20% off for this extra day: 4,000 EUR.".replace(/\\n/g, "\n")) sub0 = sub0 + (isXtra ? "" : "\n\nFilm rolls: 2,200 EUR (8 rolls), excl. taxes.");
+        if (isXtra && /5,000 EUR with 20% off/.test(sub0)) sub0 = sub0.replace(/\n\n5,000 EUR with 20% off for this extra day: 4,000 EUR\./, "\n\nFilm rolls: 2,200 EUR (8 rolls), excl. taxes.");
+      }
       var dy = l.days && typeof l.days === "object" ? l.days : null;   // a line sold per day: the client picks 1 to 5 days
       var price = num(l.price, -10000000, 10000000), qty = Math.round(+l.qty) || 1, req = l.req === "next" ? "next" : (l.req === true || l.req === 1 || l.req === "prev") ? "prev" : "";
       if (old && isXtra && dy) { if (dy.off > 0 && (+dy.from || 2) <= 1) price = Math.round(price * (100 - Math.min(90, +dy.off)) / 100); dy = null; qty = 1; if (!req) req = "prev"; }   // the "Extra day" is now one single day at its discounted price
+      if (+r.v < 5 && (isXtra ? price === 4000 : nm === "Super 16mm film camera with dedicated camera operator" && price === 5000)) price = 4200;   // the untouched preset price: 4 200 EUR now, no 20% rule
       var days = dy ? { from: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.from) || 2)), off: dy.off === undefined ? 20 : num(dy.off, 0, 90), max: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.max) || DAYS_MAX)), extra: dy.extra === true || dy.extra === 1 } : null;
-      return { name: nm, sub: clipML(l.sub, 1500), price: price, qty: Math.max(1, Math.min(days ? days.max : 99, qty)), unit: days ? "day" : clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
+      return { name: nm, sub: sub0, price: price, qty: Math.max(1, Math.min(days ? days.max : 99, qty)), unit: days ? "day" : clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
         req: req,   // "prev" / "next": this upgrade can only be picked together with the one above / below it
         band: isBand,   // a separate line under the comparison, its description readable at once
         card: !isBand && (l.card === true || l.card === 1 || (v1 && isDir && (l.band === true || l.band === 1)) || (old && isS16)),   // shown as a clickable card in the "Video upgrades" section of the quote
