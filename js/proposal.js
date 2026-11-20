@@ -40,11 +40,11 @@
     var A = P.answers;
     /* a custom quote starts from the studio's saved definition, the website quotation from the couple's own choices */
     /* a custom quote is interactive: the client picks a package and video upgrades, the total follows, and "Save and send for review" sends the choice to the studio */
-    var base = C ? Q.customSelOf(C) : null, sel = base ? { chosen: base.chosen, ups: base.ups.slice() } : null, sent = null, signOK = false, locked = false;
+    var snapOf = function (s) { return { chosen: s.chosen, ups: s.ups.slice(), days: Object.assign({}, s.days) }; };   // chosen package, upgrades, and the number of days of the lines sold per day
+    var base = C ? Q.customSelOf(C) : null, sel = base ? snapOf(base) : null, sent = null, signOK = false, locked = false;
     if (C && st0 && st0.selection && typeof st0.selection === "object") {
-      var ss = st0.selection, okUps = Q.customUpIdx(C);
-      var cs = { chosen: C.packages.some(function (p) { return p.id === ss.chosen; }) ? ss.chosen : base.chosen, ups: (Array.isArray(ss.ups) ? ss.ups : []).filter(function (i) { return okUps.indexOf(i) > -1; }) };
-      sent = cs; sel = { chosen: cs.chosen, ups: cs.ups.slice() };
+      var cs = Q.customSelNorm(C, st0.selection);
+      sent = cs; sel = snapOf(cs);
     }
     var cq = C ? Q.customQuote(Q.customView(C, sel), { client: true }) : null;
     var L = cq ? [] : Q.lines(A), tot = cq ? cq.total : Q.total(A);
@@ -198,6 +198,14 @@
         el.classList.toggle("is-sel", on);
         if (b) b.setAttribute("aria-checked", String(on));
         if (t) t.textContent = el.classList.contains("px-dir") ? (on ? "Added to your quote" : "Add to my quote") : (on ? "Selected" : "Not selected");
+        /* a line sold per day: the day buttons, the sentence under them and the price follow the number of days picked */
+        var l = C.lines[i];
+        if (l && l.days) {
+          var n = sel.days[i] || l.qty, info = Q.dayInfo(l, n), sum = el.querySelector(".px-days__sum"), pr = el.querySelector(".px-dir__p, .px-up__p");
+          Array.prototype.forEach.call(el.querySelectorAll(".px-days__b"), function (d) { var is = +d.getAttribute("data-n") === n; d.classList.toggle("is-on", is); d.setAttribute("aria-checked", String(is)); });
+          if (sum) sum.textContent = info.sum;
+          if (pr) pr.textContent = (info.amount < 0 ? "− " : "+ ") + eur(Math.abs(info.amount));
+        }
       });
     }
     var SEND_LABEL = "Save and send for review to Chromata Films";
@@ -216,7 +224,7 @@
     function lockUI() { locked = true; app.classList.add("px-locked"); sendUI(); setSign(); }
     function alertSelection(email, res) {
       var fd = new FormData(), v = Q.customView(C, sel), pk = v.packages.filter(function (p) { return p.id === v.chosen; })[0];
-      var ups = Q.customUpIdx(C).filter(function (i) { return sel.ups.indexOf(i) > -1; }).map(function (i) { return C.lines[i].name; });
+      var ups = Q.customUpIdx(C).filter(function (i) { return sel.ups.indexOf(i) > -1; }).map(function (i) { var l = C.lines[i]; return l.days ? l.name + " × " + sel.days[i] + (sel.days[i] > 1 ? " days" : " day") : l.name; });
       fd.append("_subject", "Selection sent for review · " + A.names); fd.append("_template", "table"); fd.append("_captcha", "false");
       fd.append("name", email || A.names); if (email) fd.append("email", email);
       fd.append("Proposal", ref + " · " + A.names);
@@ -233,6 +241,15 @@
         if (col) {
           sel.chosen = col.getAttribute("data-v"); drawCompare(); refresh();
           var nc = document.querySelector('.px-col[data-v="' + sel.chosen + '"]'); if (nc && nc.focus) nc.focus({ preventScroll: true });
+          return;
+        }
+        var db = e.target.closest(".px-days__b");
+        if (db) {   // the number of days of a line sold per day (1 to 5): picking one also adds the upgrade to the quote
+          e.preventDefault();
+          var di = +db.getAttribute("data-i"); sel.days[di] = +db.getAttribute("data-n");
+          if (sel.ups.indexOf(di) < 0) sel.ups.push(di);
+          syncUps(); refresh();
+          var nb = document.querySelector('.px-days__b[data-i="' + di + '"][data-n="' + sel.days[di] + '"]'); if (nb && nb.focus) nb.focus({ preventScroll: true });
           return;
         }
         var ub = e.target.closest(".px-up__sel");
@@ -254,8 +271,8 @@
         sendBusy = true; sendBtn.disabled = true; sendBtn.textContent = "Sending…";
         var msg = document.getElementById("pxSendMsg"); msg.textContent = "";
         var email = ""; try { email = localStorage.getItem("cq-visitor-email") || ""; } catch (x) {}
-        var snap = { chosen: sel.chosen, ups: sel.ups.slice() };
-        window.CQLink.selection(A.nonce, { chosen: snap.chosen, ups: snap.ups, email: email }).then(function (res) {
+        var snap = snapOf(sel);
+        window.CQLink.selection(A.nonce, { chosen: snap.chosen, ups: snap.ups, days: snap.days, email: email }).then(function (res) {
           sent = snap; sendBusy = false;
           alertSelection(email, res).catch(function () {});
           sendUI(); setSign();

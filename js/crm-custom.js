@@ -107,9 +107,14 @@
   function linesHTML() {
     return W.lines.map(function (l, j) {
       return '<div class="qb-line' + (l.on ? " on" : "") + '"><label class="qe-chk qb-ok"><input type="checkbox"' + tr("lines." + j + ".on") + (l.on ? " checked" : "") + '> <strong>Validated by the client</strong> <small>(ticked: counts in the total · unticked: only listed as a video upgrade, the total does not move)</small></label><div class="qb-line__a"><label class="fld"><span>Line</span><input type="text"' + tr("lines." + j + ".name") + ' maxlength="200" value="' + esc(l.name) + '" placeholder="e.g. Extra hour of filming"></label>' +
-        '<label class="fld"><span>Price (€)</span><input type="number" step="any"' + tr("lines." + j + ".price") + ' value="' + (l.price === 0 ? "" : l.price) + '" placeholder="0"></label>' +
-        '<label class="fld"><span>Qty</span><input type="number" min="1" max="99" step="1"' + tr("lines." + j + ".qty") + ' value="' + (l.qty || 1) + '"></label>' +
-        '<label class="fld"><span>Unit <small>(optional)</small></span><input type="text"' + tr("lines." + j + ".unit") + ' maxlength="20" value="' + esc(l.unit) + '" placeholder="hour"></label></div>' +
+        '<label class="fld"><span>Price' + (l.days ? " per day" : "") + ' (€)</span><input type="number" step="any"' + tr("lines." + j + ".price") + ' value="' + (l.price === 0 ? "" : l.price) + '" placeholder="0"></label>' +
+        (l.days ? '<label class="fld"><span>Days <small>(the client changes it, 1 to ' + Q.DAYS_MAX + ')</small></span><select' + tr("lines." + j + ".qty") + ">" + [1, 2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === l.qty ? " selected" : "") + ">" + n + (n > 1 ? " days" : " day") + "</option>"; }).join("") + "</select></label>" +
+          '<div class="fld"><span>Unit</span><input type="text" value="day" disabled aria-label="Unit"></div></div>'
+        : '<label class="fld"><span>Qty</span><input type="number" min="1" max="99" step="1"' + tr("lines." + j + ".qty") + ' value="' + (l.qty || 1) + '"></label>' +
+          '<label class="fld"><span>Unit <small>(optional)</small></span><input type="text"' + tr("lines." + j + ".unit") + ' maxlength="20" value="' + esc(l.unit) + '" placeholder="hour"></label></div>') +
+        '<label class="qe-chk" style="margin:4px 0 4px"><input type="checkbox"' + tr("lines." + j + ".days") + (l.days ? " checked" : "") + '> <strong>Sold per day</strong> <small>(the price above is for one day: a row 1 to ' + Q.DAYS_MAX + ' lets the client choose the number of days, with a discount when they book several)</small></label>' +
+        (l.days ? '<div class="grid2"><label class="fld"><span>Discount (%)</span><input type="number" min="0" max="90" step="any"' + tr("lines." + j + ".days.off") + ' value="' + l.days.off + '"></label>' +
+          '<label class="fld"><span>From how many days</span><select' + tr("lines." + j + ".days.from") + ">" + [2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === l.days.from ? " selected" : "") + ">" + n + " days</option>"; }).join("") + "</select></label></div>" : "") +
         '<label class="fld"><span>Description <small>(optional · a blank line starts a new paragraph)</small></span><textarea rows="' + (l.card || l.band ? 7 : 3) + '" maxlength="1500"' + tr("lines." + j + ".sub") + '>' + esc(l.sub) + '</textarea></label>' +
         '<label class="qe-chk" style="margin:4px 0 4px"><input type="checkbox"' + tr("lines." + j + ".band") + (l.band ? " checked" : "") + '> <strong>Show as a separate line under the comparison</strong> <small>(like the extra: the description and what is included are readable at once, with a box to add it to the quote)</small></label>' +
         (l.band ? "" : '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".card") + (l.card ? " checked" : "") + '> <strong>Show as a clickable card</strong> <small>(in the “Video upgrades” section of the quote: the client opens it to read the description and what is included)</small></label>') +
@@ -129,6 +134,10 @@
   /* the film director upgrade, ready to use (price and wording can be edited afterwards) */
   function directorLine() {
     var l = Q.directorLine(); l.incText = l.inc.join("\n"); return l;
+  }
+  /* the Super 16mm film camera with its camera operator: sold per day (1 to 5), 20% off from 2 days, 5 000 € a day */
+  function super16Line() {
+    var l = Q.super16Line(); l.incText = l.inc.join("\n"); return l;
   }
   /* the videos of the quote: a box per YouTube / Vimeo link, they replace the wedding films */
   function videoStatus(u) { var p = String(u || "").trim() ? Q.parseVideo(u) : null; return !String(u || "").trim() ? "" : p ? (p.yt ? "✓ YouTube video" : "✓ Vimeo video") : "✗ link not recognised (paste the address of a YouTube or Vimeo video)"; }
@@ -181,7 +190,7 @@
       extraHTML() +
 
       '<section class="cr-card"><h2>Video upgrades</h2><p class="hint">Everything the client can add to the chosen package: extra hours, a second shooter, a drone, a discount (negative price)… Each line is price × quantity. A new line is only <strong>listed as an option</strong>: tick <strong>Validated by the client</strong> once they have agreed, and only then does it count in the total.</p>' +
-      (linesHTML() || '<p class="empty">No video upgrade yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="line-add"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add a video upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-director"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add the Film director upgrade</button></div></section>" +
+      (linesHTML() || '<p class="empty">No video upgrade yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="line-add"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add a video upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-director"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add the Film director upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-super16"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add the Super 16mm upgrade</button></div></section>" +
 
       '<section class="cr-card"><h2>Travel and accommodation</h2><label class="qe-chk"><input type="checkbox"' + tr("travelShow") + (W.travelShow ? " checked" : "") + "> Show a line saying travel / accommodation is included</label>" +
       '<label class="fld" style="margin-top:10px"><span>Note under the title of the lines</span><textarea rows="2" maxlength="300"' + tr("note") + ">" + esc(W.note) + "</textarea></label>" +
@@ -288,7 +297,9 @@
     var path = t.getAttribute("data-b"); if (!path) return;
     var v = t.type === "checkbox" ? t.checked : t.value;
     if (t.type === "checkbox" && /\.on\.\d+$/.test(path)) v = t.checked ? 1 : 0;
-    if ((/\.(price|qty)$/.test(path) || /^extra\.prices\.\d+$/.test(path)) && t.type === "number") v = t.value === "" ? 0 : +t.value;
+    if ((/\.(price|qty)$/.test(path) || /\.days\.(off|from)$/.test(path) || /^extra\.prices\.\d+$/.test(path)) && (t.type === "number" || t.type === "select-one")) v = t.value === "" ? 0 : +t.value;
+    var md = /^lines\.(\d+)\.days$/.exec(path);
+    if (md) { W.lines[+md[1]].days = t.checked ? { from: 2, off: 20 } : null; if (t.checked) { W.lines[+md[1]].unit = "day"; W.lines[+md[1]].qty = Math.min(W.lines[+md[1]].qty || 1, Q.DAYS_MAX); } draw(); return; }
     if (/\.(card|band)$/.test(path) || path === "extra.on") { setPath(path, v); draw(); return; }
     setPath(path, v);
     var mv = /^videos\.(\d+)\.url$/.exec(path);
@@ -315,6 +326,7 @@
       case "row-up": move(F, j, -1); break;
       case "row-down": move(F, j, 1); break;
       case "line-director": if (W.lines.length >= MAX_LINES) return; W.lines.push(directorLine()); break;
+      case "line-super16": if (W.lines.length >= MAX_LINES) return; W.lines.push(super16Line()); break;
       case "vid-add": if (W.videos.length >= 8) return; W.videos.push({ url: "", title: "", sub: "" }); break;
       case "vid-del": W.videos.splice(j, 1); break;
       case "vid-up": move(W.videos, j, -1); break;
@@ -361,12 +373,14 @@
   /* ---------------- what the client sent back for review (package + video upgrades picked on the quote page) ---------------- */
   function selInfo(p) {
     if (!p || !p.quote_custom || !p.client_selection || typeof p.client_selection !== "object") return null;
-    var d = Q.customClean(p.quote_custom), s = p.client_selection, ups = Array.isArray(s.ups) ? s.ups : [], idx = Q.customUpIdx(d);
-    var v = Q.customView(d, { chosen: s.chosen, ups: ups }), q = Q.customQuote(v), before = Q.customQuote(d);
-    var after = { chosen: v.chosen, ups: idx.filter(function (i) { return v.lines[i].on; }) };
+    var d = Q.customClean(p.quote_custom), s = Q.customSelNorm(d, p.client_selection), idx = Q.customUpIdx(d);
+    var v = Q.customView(d, s), q = Q.customQuote(v), before = Q.customQuote(d);
+    var after = { chosen: v.chosen, ups: idx.filter(function (i) { return v.lines[i].on; }), days: s.days };
+    /* an upgrade sold per day says its number of days */
+    var nameOf = function (L) { return function (i) { var l = L[i]; return l.days ? l.name + " × " + l.qty + (l.qty > 1 ? " days" : " day") : l.name; }; };
     return { d: d, v: v, q: q, before: before, same: Q.sameSel(Q.customSelOf(d), after),
       pk: v.packages.filter(function (x) { return x.id === v.chosen; })[0] || {}, pk0: d.packages.filter(function (x) { return x.id === d.chosen; })[0] || {},
-      ups: after.ups.map(function (i) { return d.lines[i].name; }), ups0: Q.customSelOf(d).ups.map(function (i) { return d.lines[i].name; }) };
+      ups: after.ups.map(nameOf(v.lines)), ups0: Q.customSelOf(d).ups.map(nameOf(d.lines)) };
   }
   function selBox(p) {
     var i = selInfo(p); if (!i) return "";

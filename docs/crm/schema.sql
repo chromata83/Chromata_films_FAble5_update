@@ -510,7 +510,7 @@ end $$;
 -- the selection from the back office. Works only on a custom quote that is not signed and not expired.
 create or replace function public.submit_selection(p_ref text, p_sel jsonb) returns jsonb
 language plpgsql security definer set search_path = public as $$
-declare pr public.projects; chosen text; ups jsonb; n int; e text; issued date;
+declare pr public.projects; chosen text; ups jsonb; dys jsonb; n int; e text; issued date;
 begin
   if coalesce(p_ref, '') !~ '^[a-z0-9]{10,16}$' then raise exception 'Invalid reference'; end if;
   select * into pr from public.projects where quote_ref = p_ref and quote_custom is not null;
@@ -527,9 +527,16 @@ begin
     select coalesce(jsonb_agg(s.i order by s.i), '[]'::jsonb) into ups
       from (select distinct (v #>> '{}')::int as i from jsonb_array_elements(p_sel -> 'ups') v where (v #>> '{}') ~ '^[0-9]{1,2}$') s where s.i < n;
   else ups := '[]'::jsonb; end if;
+  -- the number of days (1 to 5) of the lines sold per day, e.g. {"0": 3}: only line numbers that exist and whole numbers from 1 to 5 are kept
+  dys := '{}'::jsonb;
+  if jsonb_typeof(p_sel -> 'days') = 'object' then
+    select coalesce(jsonb_object_agg(s.k, s.d), '{}'::jsonb) into dys
+      from (select d.key as k, (d.value #>> '{}')::int as d from jsonb_each(p_sel -> 'days') d
+            where d.key ~ '^[0-9]{1,2}$' and (d.value #>> '{}') ~ '^[1-5]$' and d.key::int < n) s;
+  end if;
   e := lower(left(trim(coalesce(p_sel ->> 'email', '')), 160));
   if e !~ '^[^@\s]+@[^@\s]+\.[^@\s]{2,}$' then e := ''; end if;
-  update public.projects set client_selection = jsonb_build_object('chosen', chosen, 'ups', ups, 'email', e), client_selection_at = now() where id = pr.id;
+  update public.projects set client_selection = jsonb_build_object('chosen', chosen, 'ups', ups, 'days', dys, 'email', e), client_selection_at = now() where id = pr.id;
   return jsonb_build_object('ok', true, 'project', pr.id);
 end $$;
 

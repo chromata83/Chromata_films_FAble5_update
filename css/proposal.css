@@ -220,4 +220,25 @@ html.px-pdf .px-mcol { flex: 1 1 0; min-width: 0; }
   .px-dir__act { flex-direction: row; align-items: center; justify-content: space-between; text-align: left; flex-wrap: wrap; }
 }
 .px-locked .px-dir .px-up__sel { pointer-events: none; }
+/* a line sold per day (the Super 16mm): a row of 1 to 5 days, under the description */
+.px-days { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 26px; margin: 0; padding-top: 18px; border-top: 1px solid rgba(255,249,240,.25); }
+.px-dir .px-days { grid-column: 1 / -1; }
+.px-dir.is-sel .px-days { border-top-color: rgba(14,12,10,.22); }
+.px-days__t { margin: 0; display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); }
+.px-dir.is-sel .px-days__t { color: #6B5200; }
+.px-days__t small { font-size: 12.5px; letter-spacing: .02em; text-transform: none; opacity: .9; }
+.px-days__row { display: flex; gap: 8px; }
+.px-days__b { appearance: none; width: 46px; height: 46px; border: 1.5px solid currentColor; border-radius: 4px; background: transparent; color: inherit; font: inherit; font-size: 18px; font-weight: 600; cursor: pointer; transition: background .15s, color .15s; }
+.px-days__b:hover { background: rgba(255,255,255,.14); }
+.px-days__b.is-on { background: #fff; border-color: #fff; color: var(--panel-deep); }
+.px-dir.is-sel .px-days__b:hover { background: rgba(14,12,10,.1); }
+.px-dir.is-sel .px-days__b.is-on { background: var(--panel-deep); border-color: var(--panel-deep); color: var(--pop); }
+.px-up.is-sel .px-days__b.is-on { background: var(--upred); border-color: var(--upred); color: #fff; }
+.px-up .px-days { border-top: 0; padding: 4px 0 6px; }
+.px-up .px-days__t { color: #FFE9B0; }
+.px-up.is-sel .px-days__t { color: var(--upred); }
+.px-days__b:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.px-days__sum { margin: 0 0 0 auto; font-size: 15px; font-weight: 600; }
+@media (max-width: 700px) { .px-days__sum { margin-left: 0; } }
+.px-locked .px-days__b { pointer-events: none; }
 
