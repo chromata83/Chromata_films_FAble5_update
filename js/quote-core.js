@@ -113,7 +113,7 @@
       inc: ["Film director", "Streaming gear", "Streaming console", "Day-after edit (1 min)"] };
   }
   /* the Super 16mm video upgrade: a card of the red "Video upgrades" section, already ticked (included in the quote, the client can untick it) */
-  var DAYS_MAX = 5;
+  var DAYS_MAX = 5, DAYS_CAP = 8;   // (the builder offers 1 to 5; a quantity line made from the website options, like extra hours, goes up to 8)
   function super16Line() {
     return { name: "Super 16mm film camera with dedicated camera operator", price: 4200, qty: 1, unit: "", on: true, band: false, card: true, req: "", days: null,
       sub: "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. The grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nIn June, we accompany the family for a day of filming, in digital + 16mm film: unique memories, and a unique look to present on the evening of the Bat Mitzvah.\n\nFilm rolls: 2,200 EUR (8 rolls), excl. taxes.",
@@ -129,15 +129,16 @@
   /* a line sold per day: its amount (price x days, minus the multi-day discount) and the sentences that explain it */
   var money = function (n) { return Math.round(n * 100) / 100; };
   var daysMax = function (l) { return l.days && l.days.max ? l.days.max : DAYS_MAX; };
+  var dayWord = function (l) { return l.days && l.days.unit ? l.days.unit : l.days && l.days.extra ? "extra day" : "day"; };   // "day", "extra day", or the unit of a quantity (hour...)
   function lineAmt(l) { var a = l.price * l.qty; if (l.days && l.days.off > 0 && l.qty >= l.days.from) a = a * (100 - l.days.off) / 100; return money(a); }
   function dayInfo(l, n) {
-    var v = Object.assign({}, l, { qty: Math.max(1, Math.min(daysMax(l), Math.round(+n) || 1)) }), disc = !!(v.days && v.days.off > 0 && v.qty >= v.days.from), w = v.days && v.days.extra ? "extra day" : "day";
+    var v = Object.assign({}, l, { qty: Math.max(1, Math.min(daysMax(l), Math.round(+n) || 1)) }), disc = !!(v.days && v.days.off > 0 && v.qty >= v.days.from), w = dayWord(v);
     return { amount: lineAmt(v), disc: disc, sum: v.qty + " " + w + (v.qty > 1 ? "s" : "") + " × " + eur(v.price) + (disc ? " − " + v.days.off + "%" : "") + " = " + eur(lineAmt(v)) };
   }
   /* the row where the client picks the number of days (starts at 1) */
   function daysRow(l, i) {
     if (!l.days) return "";
-    var b = "", w = l.days.extra ? "extra day" : "day";
+    var b = "", w = dayWord(l);
     for (var n = 1; n <= daysMax(l); n++) b += '<button type="button" class="px-days__b' + (n === l.qty ? " is-on" : "") + '" role="radio" aria-checked="' + (n === l.qty) + '" data-i="' + i + '" data-n="' + n + '" aria-label="' + n + " " + w + (n > 1 ? "s" : "") + '">' + n + "</button>";
     var hint = l.days.off > 0 ? "<small>" + l.days.off + "% off " + (l.days.from <= 1 ? (l.days.extra ? "each extra day" : "every day") : "from " + l.days.from + " days") + "</small>" : "";
     return '<div class="px-days" data-i="' + i + '"><div class="px-days__t">Number of ' + w + 's' + hint + '</div><div class="px-days__row" role="radiogroup" aria-label="Number of ' + w + 's">' + b + '</div><div class="px-days__sum">' + esc(dayInfo(l, l.qty).sum) + "</div></div>";
@@ -210,8 +211,11 @@
       var price = num(l.price, -10000000, 10000000), qty = Math.round(+l.qty) || 1, req = l.req === "next" ? "next" : (l.req === true || l.req === 1 || l.req === "prev") ? "prev" : "";
       if (old && isXtra && dy) { if (dy.off > 0 && (+dy.from || 2) <= 1) price = Math.round(price * (100 - Math.min(90, +dy.off)) / 100); dy = null; qty = 1; if (!req) req = "prev"; }   // the "Extra day" is now one single day at its discounted price
       if (+r.v < 5 && (isXtra ? price === 4000 : nm === "Super 16mm film camera with dedicated camera operator" && price === 5000)) price = 4200;   // the untouched preset price: 4 200 EUR now, no 20% rule
-      var days = dy ? { from: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.from) || 2)), off: dy.off === undefined ? 20 : num(dy.off, 0, 90), max: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.max) || DAYS_MAX)), extra: dy.extra === true || dy.extra === 1 } : null;
-      return { name: nm, sub: sub0, price: price, qty: Math.max(1, Math.min(days ? days.max : 99, qty)), unit: days ? "day" : clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
+      var days = dy ? { from: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.from) || 2)), off: dy.off === undefined ? 20 : num(dy.off, 0, 90), max: Math.max(1, Math.min(DAYS_CAP, Math.round(+dy.max) || DAYS_MAX)), extra: dy.extra === true || dy.extra === 1, unit: clip(dy.unit, 12) } : null;
+      return { name: nm, sub: sub0, price: price, qty: Math.max(1, Math.min(days ? days.max : 99, qty)), unit: days ? (days.unit || "day") : clip(l.unit, 20),
+        group: l.group === "options" || l.group === "further" ? l.group : "",   // where the upgrade is listed on the quote: the red "Video upgrades" section, "Your options", or "Go further"
+        xor: clip(l.xor, 20),   // upgrades sharing a key are alternatives (e.g. the three lengths of a welcome event): picking one drops the others
+        on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
         req: req,   // "prev" / "next": this upgrade can only be picked together with the one above / below it
         band: isBand,   // a separate line under the comparison, its description readable at once
         card: !isBand && (l.card === true || l.card === 1 || (v1 && isDir && (l.band === true || l.band === 1)) || (old && isS16)),   // shown as a clickable card in the "Video upgrades" section of the quote
@@ -296,11 +300,13 @@
     d.lines.forEach(function (l, i) { if (l.days) { var n = Math.round(+dy[i]); days[i] = n >= 1 && n <= daysMax(l) ? n : base.days[i]; } });
     var ups = (Array.isArray(s.ups) ? s.ups : []).filter(function (i) { return okUps.indexOf(i) > -1; });
     ups = ups.filter(function (i) { var r = d.lines[i].req; return !r || ups.indexOf(r === "next" ? i + 1 : i - 1) > -1; });   // an upgrade that needs the one above / below only comes with it
+    var xs = {}; ups = ups.filter(function (i) { var x = d.lines[i].xor; if (!x) return true; if (xs[x]) return false; xs[x] = 1; return true; });   // one of each set of alternatives
     return { chosen: pkgById(d.packages, s.chosen) ? s.chosen : base.chosen, ups: ups, days: days };
   }
   /* ticks or unticks upgrade i in a list of picked upgrades: an upgrade that needs another one (req) also picks it, and unticking that one drops it */
   function customToggle(d, ups, i, on) {
     var u = ups.filter(function (x) { return x !== i; }), L = d.lines;
+    if (on && L[i] && L[i].xor) u = u.filter(function (k) { return !(L[k] && L[k].xor === L[i].xor); });   // alternatives: picking one drops the others
     if (on) { u.push(i); var p = L[i] && L[i].req ? (L[i].req === "next" ? i + 1 : i - 1) : -1; if (p > -1 && L[p] && u.indexOf(p) < 0) u.push(p); }
     else u = u.filter(function (k) { var r = L[k] && L[k].req; return !(r && (r === "next" ? k + 1 : k - 1) === i); });
     return u;
@@ -321,14 +327,27 @@
   var daysStr = function (o) { o = o || {}; return JSON.stringify(Object.keys(o).sort().map(function (k) { return [k, +o[k]]; })); };
   var sameSel = function (a, b) { return a.chosen === b.chosen && sortedStr(a.ups) === sortedStr(b.ups) && daysStr(a.days) === daysStr(b.days); };
   /* "Video upgrades": a red section under the summary. Every upgrade is a card the client selects (the total follows) and can open to read what it is. */
+  /* three sections can list the upgrades (line.group): the red "Video upgrades", "Your options" (the website's options) and "Go further" (the other extras), same cards */
+  var UP_GROUPS = {
+    "": { kicker: "Video upgrades", h: "Take it <em>further</em>", p: "Select the upgrades you would like: your total updates by itself. Then save your selection and send it to us for review." },
+    options: { kicker: "Your options", h: "Would you like to add <em>anything?</em>", p: "Tick the options you would like, or untick the ones you do not need: your total updates by itself. Then save your selection and send it to us for review." },
+    further: { kicker: "Go further", h: "Go <em>further</em>", p: "More ways to enrich your day and your films: add what you like, your total updates by itself. Then save your selection and send it to us for review." }
+  };
   function customUpgrades(d, o) {
     o = o || {};
-    var idx = customUpIdx(d).filter(function (i) { return !d.lines[i].band; });   // (the separate lines under the comparison are not in the red section)
-    if (!idx.length) return "";
+    var all = customUpIdx(d).filter(function (i) { return !d.lines[i].band; }), used = false;   // (the separate lines under the comparison are not in the red section)
+    return ["", "options", "further"].map(function (g) {
+      var idx = all.filter(function (i) { return (d.lines[i].group || "") === g; });
+      if (!idx.length) return "";
+      var id = !used && o.id ? o.id : ""; used = true;
+      return upSection(d, o, idx, UP_GROUPS[g], id);
+    }).join("");
+  }
+  function upSection(d, o, idx, T, id) {
     var sel = o.sel ? o.sel.ups : customSelOf(d).ups;
     var dv = o.sel && o.sel.days ? o.sel.days : {};   // the number of days the client picked, for the lines sold per day
-    return '<section class="px-ups"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">Video upgrades</p><h2 class="px-h2">Take it <em>further</em></h2>' +
-      '<p class="px-ups__p">Select the upgrades you would like: your total updates by itself. Then save your selection and send it to us for review.</p></div><div class="px-ups__list">' +
+    return '<section class="px-ups"' + (id ? ' id="' + id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">' + T.kicker + '</p><h2 class="px-h2">' + T.h + '</h2>' +
+      '<p class="px-ups__p">' + T.p + '</p></div><div class="px-ups__list">' +
       idx.map(function (i) {
         var l = d.lines[i], n = Math.round(+dv[i]); if (l.days && n >= 1 && n <= daysMax(l)) l = Object.assign({}, l, { qty: n });
         var on = sel.indexOf(i) > -1, price = lineAmt(l), paras = String(l.sub || "").split(/\n+/).filter(Boolean), has = paras.length || l.inc.length || l.days;

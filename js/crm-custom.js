@@ -121,6 +121,7 @@
           '<label class="fld"><span>At most</span><select' + tr("lines." + j + ".days.max") + ">" + [1, 2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === l.days.max ? " selected" : "") + ">" + n + (n > 1 ? " days" : " day") + "</option>"; }).join("") + "</select></label></div>" +
           "" : "") +
         '<label class="fld"><span>Comes with another upgrade <small>(for an extra day: the client can only pick it together with that upgrade)</small></span><select' + tr("lines." + j + ".req") + '>' + [["", "No, it can be picked alone"], ["next", "Yes: the upgrade just below it"], ["prev", "Yes: the upgrade just above it"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.req || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
+        '<label class="fld"><span>Listed in <small>(the section of the quote where the client finds it)</small></span><select' + tr("lines." + j + ".group") + '>' + [["", "Video upgrades (red section)"], ["options", "Your options"], ["further", "Go further"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.group || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
         '<label class="fld"><span>Description <small>(optional · a blank line starts a new paragraph)</small></span><textarea rows="' + (l.card || l.band ? 7 : 3) + '" maxlength="1500"' + tr("lines." + j + ".sub") + '>' + esc(l.sub) + '</textarea></label>' +
         '<label class="qe-chk" style="margin:4px 0 4px"><input type="checkbox"' + tr("lines." + j + ".band") + (l.band ? " checked" : "") + '> <strong>Show as a separate line under the comparison</strong> <small>(like the extra: the description and what is included are readable at once, with a box to add it to the quote)</small></label>' +
         (l.band ? "" : '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".card") + (l.card ? " checked" : "") + '> <strong>Show as a clickable card</strong> <small>(in the “Video upgrades” section of the quote: the client opens it to read the description and what is included)</small></label>') +
@@ -199,7 +200,7 @@
 
       extraHTML() +
 
-      '<section class="cr-card"><h2>Video upgrades</h2><p class="hint">Everything the client can add to the chosen package: extra hours, a second shooter, a drone, a discount (negative price)… Each line is price × quantity. A new line is only <strong>listed as an option</strong>: tick <strong>Validated by the client</strong> once they have agreed, and only then does it count in the total.</p>' +
+      '<section class="cr-card"><h2>Video upgrades</h2><p class="hint">Everything the client can add to the chosen package: extra hours, a second shooter, a drone, a discount (negative price)… Each line is price × quantity. A new line is <strong>included in the quote by itself</strong> (it counts in the total) and the client can untick it on their page. Untick <strong>Validated by the client</strong> to only offer it: it is then listed with its price, and counts once the client ticks it. Use <strong>Listed in</strong> to choose the section: video upgrades, “Your options” or “Go further”.</p>' +
       (linesHTML() || '<p class="empty">No video upgrade yet.</p>') + '<div class="acts"><button class="btn ghost" type="button" data-act="line-add"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add a video upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-director"' + (W.lines.length >= MAX_LINES ? " disabled" : "") + ">Add the Film director upgrade</button>" + '<button class="btn ghost" type="button" data-act="line-super16"' + (W.lines.length >= MAX_LINES - 1 ? " disabled" : "") + ">Add the Super 16mm upgrade (+ Extra day)</button></div></section>" +
 
       '<section class="cr-card"><h2>Travel and accommodation</h2><label class="qe-chk"><input type="checkbox"' + tr("travelShow") + (W.travelShow ? " checked" : "") + "> Show a travel / accommodation line in the quote</label>" +
@@ -239,7 +240,7 @@
 
   function draw() {
     var y = window.scrollY;
-    shell("tools", '<header class="top"><h1>' + (W.id ? "Custom quote" : "New custom quote") + '</h1><a class="btn ghost" href="#/tools">Back to Tools</a></header>' + (W.id ? selBox(byId(S.projects, W.id)) : "") + '<div class="qb-grid">' + formHTML() + asideHTML() + "</div>");
+    shell("tools", '<header class="top"><h1>' + (W.id ? "Custom quote" : "New custom quote") + '</h1><span class="acts">' + (W.id && W.url ? '<a class="btn" target="_blank" rel="noopener" href="' + esc(W.url) + '">Open the client’s page</a>' : "") + '<a class="btn ghost" href="#/tools">Back to Tools</a></span></header>' + (W.id ? selBox(byId(S.projects, W.id)) : "") + '<div class="qb-grid">' + formHTML() + asideHTML() + "</div>");
     wire(); paintPrev();
     window.scrollTo(0, y);
   }
@@ -347,7 +348,7 @@
       case "vid-del": W.videos.splice(j, 1); break;
       case "vid-up": move(W.videos, j, -1); break;
       case "vid-down": move(W.videos, j, 1); break;
-      case "line-add": if (W.lines.length >= MAX_LINES) return; W.lines.push({ name: "", sub: "", price: 0, qty: 1, unit: "", on: false }); break;
+      case "line-add": if (W.lines.length >= MAX_LINES) return; W.lines.push({ name: "", sub: "", price: 0, qty: 1, unit: "", on: true, card: true, group: "", incText: "" }); break;   // included in the quote by itself; the client can untick it
       case "line-del": W.lines.splice(j, 1); break;
       case "line-up": move(W.lines, j, -1); break;
       case "line-down": move(W.lines, j, 1); break;
