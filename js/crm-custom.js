@@ -444,7 +444,8 @@
     if (!p || day !== issuedOf(p)) row.quote_issued_at = day + "T12:00:00Z";
     if (p) row.id = p.id;
     var ref = (p && p.quote_ref) || nonce();
-    if (!p || !p.quote_ref) { row.quote_ref = ref; row.proposal_url = new URL(Q.customLink(ref, names), location.href).href; }
+    if (!p || !p.quote_ref) row.quote_ref = ref;
+    if (!p || !p.quote_ref || p._linkDerived || !p.proposal_url || !/^https?:\/\//.test(p.proposal_url)) row.proposal_url = new URL(Q.customLink(ref, names), location.href).href;   // (also repairs a project whose link was lost)
     if (!p) { row.status = "quote"; row.quote_sent_at = new Date().toISOString(); }
     var btn = $("#qbSave"); btn.disabled = true;
     api.saveProject(row).then(function (saved) {

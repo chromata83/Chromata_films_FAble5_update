@@ -29,6 +29,8 @@
 
   function reload() {
     return Promise.all([api.projects(), api.contracts(), api.payments(), api.settings(), api.contacts(), api.expenses(), api.quoteViews ? api.quoteViews() : []]).then(function (r) {
+      /* a custom quote always has its client link: rebuilt from its reference if the project lost it (the builder saves it back) */
+      (r[0] || []).forEach(function (p) { if (p.quote_custom && p.quote_ref && !p.proposal_url) { try { p.proposal_url = new URL(CQ.customLink(p.quote_ref, p.couple_names || ""), location.href).href; p._linkDerived = true; } catch (e) {} } });
       S.projects = r[0]; S.contracts = r[1]; S.payments = r[2]; S.settings = r[3] || {}; S.contacts = r[4]; S.expenses = r[5]; S.opens = r[6] || [];
     });
   }
