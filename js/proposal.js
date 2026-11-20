@@ -247,7 +247,7 @@
         if (db) {   // the number of days of a line sold per day (1 to 5): picking one also adds the upgrade to the quote
           e.preventDefault();
           var di = +db.getAttribute("data-i"); sel.days[di] = +db.getAttribute("data-n");
-          if (sel.ups.indexOf(di) < 0) sel.ups.push(di);
+          if (sel.ups.indexOf(di) < 0) sel.ups = Q.customToggle(C, sel.ups, di, true);   // (extra days also pick the line above)
           syncUps(); refresh();
           var nb = document.querySelector('.px-days__b[data-i="' + di + '"][data-n="' + sel.days[di] + '"]'); if (nb && nb.focus) nb.focus({ preventScroll: true });
           return;
@@ -256,7 +256,7 @@
         if (ub) {
           e.preventDefault();
           var i = +ub.getAttribute("data-i"), k = sel.ups.indexOf(i);
-          if (k > -1) sel.ups.splice(k, 1); else sel.ups.push(i);
+          sel.ups = Q.customToggle(C, sel.ups, i, k < 0);
           syncUps(); refresh();
         }
       });

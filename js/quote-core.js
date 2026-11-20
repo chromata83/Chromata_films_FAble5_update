@@ -112,26 +112,34 @@
       sub: "Choose the luxury of having a film director on your event. Receiving the live streams of every camera on site, they direct the crews in real time from what they see on screen, so that every shot is the strongest and the best optimised one, planned around the other cameras and the needs of the edit, right on set.\n\nWe no longer simply cover an event: we direct it visually, the way a true production would.",
       inc: ["Film director", "Streaming gear", "Streaming console", "Day-after edit (1 min)"] };
   }
-  /* the Super 16mm video upgrade: its own line under the comparison, sold per day (the client picks 1 to 5 days, 20% off from 2 days) */
+  /* the Super 16mm video upgrade: its own line under the comparison, one day of filming with its dedicated camera operator */
   var DAYS_MAX = 5;
   function super16Line() {
-    return { name: "Super 16mm film camera with dedicated camera operator", price: 5000, qty: 1, unit: "day", on: false, band: true, days: { from: 2, off: 20 },
-      sub: "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. A special film made on the side, with the grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nPrice per day of filming. Book several days and the discount follows.",
+    return { name: "Super 16mm film camera with dedicated camera operator", price: 5000, qty: 1, unit: "", on: false, band: true, days: null,
+      sub: "Real Super 16mm motion-picture film, shot by a camera operator who is dedicated to it for the day, beside the rest of the crew. A special film made on the side, with the grain, the halation and the colour that no filter reproduces, hand-developed and scanned, then layered into the edit.\n\nOne day of filming. Need more? Add extra days just below, each one at a reduced price.",
       inc: ["Super 16mm film camera", "Dedicated camera operator", "Film development and scan", "A short film made on the side"] };
+  }
+  /* "Super 16mm - Extra day": extra days of the line above (it needs it), the client picks 1 to 4 of them, 20% off each */
+  function super16ExtraLine() {
+    return { name: "Super 16mm - Extra day", price: 5000, qty: 1, unit: "day", on: false, band: true, req: true, days: { from: 1, off: 20, max: DAYS_MAX - 1, extra: true },
+      sub: "More days of Super 16mm film with the same dedicated camera operator, on top of the first day. Choose how many extra days you would like: each one is 20% off.",
+      inc: ["Super 16mm film camera", "Dedicated camera operator", "Film development and scan"] };
   }
   /* a line sold per day: its amount (price x days, minus the multi-day discount) and the sentences that explain it */
   var money = function (n) { return Math.round(n * 100) / 100; };
+  var daysMax = function (l) { return l.days && l.days.max ? l.days.max : DAYS_MAX; };
   function lineAmt(l) { var a = l.price * l.qty; if (l.days && l.days.off > 0 && l.qty >= l.days.from) a = a * (100 - l.days.off) / 100; return money(a); }
   function dayInfo(l, n) {
-    var v = Object.assign({}, l, { qty: Math.max(1, Math.min(DAYS_MAX, Math.round(+n) || 1)) }), disc = !!(v.days && v.days.off > 0 && v.qty >= v.days.from);
-    return { amount: lineAmt(v), disc: disc, sum: v.qty + (v.qty > 1 ? " days" : " day") + " × " + eur(v.price) + (disc ? " − " + v.days.off + "%" : "") + " = " + eur(lineAmt(v)) };
+    var v = Object.assign({}, l, { qty: Math.max(1, Math.min(daysMax(l), Math.round(+n) || 1)) }), disc = !!(v.days && v.days.off > 0 && v.qty >= v.days.from), w = v.days && v.days.extra ? "extra day" : "day";
+    return { amount: lineAmt(v), disc: disc, sum: v.qty + " " + w + (v.qty > 1 ? "s" : "") + " × " + eur(v.price) + (disc ? " − " + v.days.off + "%" : "") + " = " + eur(lineAmt(v)) };
   }
-  /* the row where the client picks the number of days (1 to 5) */
+  /* the row where the client picks the number of days (starts at 1) */
   function daysRow(l, i) {
     if (!l.days) return "";
-    var b = "";
-    for (var n = 1; n <= DAYS_MAX; n++) b += '<button type="button" class="px-days__b' + (n === l.qty ? " is-on" : "") + '" role="radio" aria-checked="' + (n === l.qty) + '" data-i="' + i + '" data-n="' + n + '" aria-label="' + n + (n > 1 ? " days" : " day") + '">' + n + "</button>";
-    return '<div class="px-days" data-i="' + i + '"><div class="px-days__t">Number of days' + (l.days.off > 0 ? "<small>" + l.days.off + "% off from " + l.days.from + " days</small>" : "") + '</div><div class="px-days__row" role="radiogroup" aria-label="Number of days">' + b + '</div><div class="px-days__sum">' + esc(dayInfo(l, l.qty).sum) + "</div></div>";
+    var b = "", w = l.days.extra ? "extra day" : "day";
+    for (var n = 1; n <= daysMax(l); n++) b += '<button type="button" class="px-days__b' + (n === l.qty ? " is-on" : "") + '" role="radio" aria-checked="' + (n === l.qty) + '" data-i="' + i + '" data-n="' + n + '" aria-label="' + n + " " + w + (n > 1 ? "s" : "") + '">' + n + "</button>";
+    var hint = l.days.off > 0 ? "<small>" + l.days.off + "% off " + (l.days.from <= 1 ? (l.days.extra ? "each extra day" : "every day") : "from " + l.days.from + " days") + "</small>" : "";
+    return '<div class="px-days" data-i="' + i + '"><div class="px-days__t">Number of ' + w + 's' + hint + '</div><div class="px-days__row" role="radiogroup" aria-label="Number of ' + w + 's">' + b + '</div><div class="px-days__sum">' + esc(dayInfo(l, l.qty).sum) + "</div></div>";
   }
   /* a YouTube or Vimeo link -> { yt } or { vm, h } (null when it is neither): the page then embeds the player */
   function parseVideo(u) {
@@ -156,7 +164,7 @@
         { k: "Highlight film", on: on([1, 1, 1]), d: ["2 min", "3 min", "4 min"] },
         { k: "Drone footage", on: on([0, 1, 1]), d: ["", "", ""] },
         { k: "A short film made for social media", on: on([0, 0, 1]), d: ["", "", ""] }],
-      lines: [super16Line(), directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: false, videos: [], videosTitle: "Stories we filmed", photos: [] };
+      lines: [super16Line(), super16ExtraLine(), directorLine()], extra: { on: false, label: "", sub: "", prices: [0, 0, 0] }, travel: { show: true }, note: "", about: { on: true, text: "" }, films: false, videos: [], videosTitle: "Stories we filmed", photos: [] };
   }
   /* a text that may keep its line breaks (the description of a video upgrade) */
   var clipML = function (s, n) { return String(s == null ? "" : s).replace(/\r/g, "").replace(/[\u0000-\u0009\u000b-\u001f]/g, " ").replace(/\n{3,}/g, "\n\n").trim().slice(0, n); };
@@ -191,8 +199,9 @@
       if (old && isDir && isBand) isBand = false;                       // the Film director is now in the red section...
       if (old && isS16 && (l.card === true || l.card === 1 || isBand)) isBand = true;   // ...and the Super 16mm line under the comparison
       var dy = l.days && typeof l.days === "object" ? l.days : (old && isS16 && isBand && l.days === undefined ? {} : null);   // a line sold per day: the client picks 1 to 5 days
-      var days = dy ? { from: Math.max(2, Math.min(DAYS_MAX, Math.round(+dy.from) || 2)), off: dy.off === undefined ? 20 : num(dy.off, 0, 90) } : null;
-      return { name: nm, sub: clipML(l.sub, 1500), price: num(l.price, -10000000, 10000000), qty: Math.max(1, Math.min(days ? DAYS_MAX : 99, Math.round(+l.qty) || 1)), unit: days ? "day" : clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
+      var days = dy ? { from: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.from) || 2)), off: dy.off === undefined ? 20 : num(dy.off, 0, 90), max: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.max) || DAYS_MAX)), extra: dy.extra === true || dy.extra === 1 } : null;
+      return { name: nm, sub: clipML(l.sub, 1500), price: num(l.price, -10000000, 10000000), qty: Math.max(1, Math.min(days ? days.max : 99, Math.round(+l.qty) || 1)), unit: days ? "day" : clip(l.unit, 20), on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
+        req: l.req === true || l.req === 1,   // extra days of the line above: it can only be picked together with it
         band: isBand,   // a separate line under the comparison, its description readable at once (the Super 16mm)
         card: !isBand && (l.card === true || l.card === 1 || (old && isDir && (l.band === true || l.band === 1))),   // shown as a clickable card in the "Video upgrades" section of the quote
         days: days,
@@ -223,7 +232,7 @@
     if (xp > 0) L.push({ key: "line", label: d.extra.label, sub: d.extra.sub, price: xp });   // the package-dependent extra is added by itself
     d.lines.forEach(function (l) {
       /* a featured upgrade has its description on its card: the summary row stays short */
-      var disc = l.days && l.days.off > 0 && l.qty >= l.days.from ? l.days.off + "% multi-day discount included" : "";
+      var disc = l.days && l.days.off > 0 && l.qty >= l.days.from ? l.days.off + (l.days.extra ? "% discount on the extra days included" : "% multi-day discount included") : "";
       L.push({ key: l.on ? "line" : "optional", label: l.name + qtyLabel(l), sub: (l.card || l.band) ? disc : l.sub, price: lineAmt(l) });
     });
     if (d.travel.show) L.push({ key: "travel", label: "Travel / accommodation", price: 0 });
@@ -272,8 +281,17 @@
   /* a selection as it comes back from the database (or from an older page) -> chosen package, upgrades, and a number of days (1 to 5) for every line sold per day */
   function customSelNorm(d, sel) {
     var base = customSelOf(d), s = sel && typeof sel === "object" ? sel : {}, okUps = customUpIdx(d), dy = s.days && typeof s.days === "object" ? s.days : {}, days = {};
-    d.lines.forEach(function (l, i) { if (l.days) { var n = Math.round(+dy[i]); days[i] = n >= 1 && n <= DAYS_MAX ? n : base.days[i]; } });
-    return { chosen: pkgById(d.packages, s.chosen) ? s.chosen : base.chosen, ups: (Array.isArray(s.ups) ? s.ups : []).filter(function (i) { return okUps.indexOf(i) > -1; }), days: days };
+    d.lines.forEach(function (l, i) { if (l.days) { var n = Math.round(+dy[i]); days[i] = n >= 1 && n <= daysMax(l) ? n : base.days[i]; } });
+    var ups = (Array.isArray(s.ups) ? s.ups : []).filter(function (i) { return okUps.indexOf(i) > -1; });
+    ups = ups.filter(function (i) { return !d.lines[i].req || ups.indexOf(i - 1) > -1; });   // extra days only come with the line above
+    return { chosen: pkgById(d.packages, s.chosen) ? s.chosen : base.chosen, ups: ups, days: days };
+  }
+  /* ticks or unticks upgrade i in a list of picked upgrades: extra days of a line also pick that line, and unticking a line drops its extra days */
+  function customToggle(d, ups, i, on) {
+    var u = ups.filter(function (x) { return x !== i; });
+    if (on) { u.push(i); if (d.lines[i] && d.lines[i].req && i > 0 && u.indexOf(i - 1) < 0) u.push(i - 1); }
+    else if (d.lines[i + 1] && d.lines[i + 1].req) u = u.filter(function (x) { return x !== i + 1; });
+    return u;
   }
   /* the definition as it reads with a client's selection { chosen, ups: [line numbers], days: { line number: 1..5 } } (without one, as the studio saved it) */
   function customView(d, sel) {
@@ -283,7 +301,7 @@
     var ups = Array.isArray(sel.ups) ? sel.ups : [], idx = customUpIdx(d), dy = sel.days && typeof sel.days === "object" ? sel.days : {};
     v.lines.forEach(function (l, i) {
       if (idx.indexOf(i) > -1) l.on = ups.indexOf(i) > -1;
-      var n = Math.round(+dy[i]); if (l.days && n >= 1 && n <= DAYS_MAX) l.qty = n;
+      var n = Math.round(+dy[i]); if (l.days && n >= 1 && n <= daysMax(l)) l.qty = n;
     });
     return v;
   }
@@ -300,7 +318,7 @@
     return '<section class="px-ups"' + (o.id ? ' id="' + o.id + '"' : "") + '><div class="px-wrap px-wrap--col"><p class="kicker">Video upgrades</p><h2 class="px-h2">Take it <em>further</em></h2>' +
       '<p class="px-ups__p">Select the upgrades you would like: your total updates by itself. Then save your selection and send it to us for review.</p></div><div class="px-ups__list">' +
       idx.map(function (i) {
-        var l = d.lines[i], n = Math.round(+dv[i]); if (l.days && n >= 1 && n <= DAYS_MAX) l = Object.assign({}, l, { qty: n });
+        var l = d.lines[i], n = Math.round(+dv[i]); if (l.days && n >= 1 && n <= daysMax(l)) l = Object.assign({}, l, { qty: n });
         var on = sel.indexOf(i) > -1, price = lineAmt(l), paras = String(l.sub || "").split(/\n+/).filter(Boolean), has = paras.length || l.inc.length || l.days;
         var head = '<button type="button" class="px-up__sel" role="checkbox" aria-checked="' + on + '" data-i="' + i + '" aria-label="Select ' + esc(l.name) + '"><span class="bx" aria-hidden="true"></span></button>' +
           '<span class="px-up__t">' + esc(titleOf(l)) + '</span><span class="px-up__p">' + (price < 0 ? "− " : "+ ") + eur(Math.abs(price)) + '</span><span class="px-up__s">' + (on ? "Selected" : "Not selected") + "</span>" + (has ? '<i class="px-up__chev" aria-hidden="true"></i>' : "<i></i>");
@@ -741,7 +759,7 @@
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
     up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection, photosSection: photosSection,
     ABOUT: ABOUT, ABOUT_GENERIC: ABOUT_GENERIC, safeImg: safeImg, emLast: emLast, customBlank: customBlank, customClean: customClean, customLines: customLines, customQuote: customQuote,
-    customCompare: customCompare, customUpgrades: customUpgrades, parseVideo: parseVideo, customVideoList: customVideoList, directorLine: directorLine, super16Line: super16Line, dayInfo: dayInfo, DAYS_MAX: DAYS_MAX, customSelNorm: customSelNorm, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
+    customCompare: customCompare, customUpgrades: customUpgrades, parseVideo: parseVideo, customVideoList: customVideoList, directorLine: directorLine, super16Line: super16Line, super16ExtraLine: super16ExtraLine, customToggle: customToggle, dayInfo: dayInfo, DAYS_MAX: DAYS_MAX, customSelNorm: customSelNorm, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,
