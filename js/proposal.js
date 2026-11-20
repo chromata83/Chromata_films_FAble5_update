@@ -216,13 +216,14 @@
     }
     function drawCompare() { var h = document.getElementById("collection"); if (h) h.outerHTML = Q.customCompare(Q.customView(C, sel), { id: "collection", pick: true }); }
     function syncUps() {
+      var RL = Q.customRated(Q.customView(C, sel)).lines;   // the lines as the client reads them (prices of the quote, planner rates inside when the studio applied them)
       Array.prototype.forEach.call(document.querySelectorAll(".px-up, .px-dir, .px-opt"), function (el) {
         var i = +el.getAttribute("data-i"), on = sel.ups.indexOf(i) > -1, b = el.querySelector(".px-up__sel"), t = el.querySelector(".px-up__s");
         el.classList.toggle("is-sel", on);
         if (b) b.setAttribute("aria-checked", String(on));
         if (t) t.textContent = el.classList.contains("px-dir") ? (on ? "Added to your quote" : "Add to my quote") : (on ? "Selected" : "Not selected");
         /* a line sold per day: the day buttons, the sentence under them and the price follow the number of days picked */
-        var l = C.lines[i];
+        var l = RL[i];
         if (l && l.days) {
           var n = sel.days[i] || l.qty, info = Q.dayInfo(l, n), sum = el.querySelector(".px-days__sum"), pr = el.querySelector(".px-dir__p, .px-up__p, .px-opt__p b");
           Array.prototype.forEach.call(el.querySelectorAll(".px-days__b"), function (d) { var is = +d.getAttribute("data-n") === n; d.classList.toggle("is-on", is); d.setAttribute("aria-checked", String(is)); });

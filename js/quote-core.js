@@ -184,7 +184,7 @@
     d.packages = (Array.isArray(r.packages) ? r.packages : []).slice(0, 4).map(function (p, i) {
       p = p || {}; var id = String(p.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 12) || "p" + (i + 1);
       while (seen[id]) id += "x"; seen[id] = 1;
-      return { id: id, name: clip(p.name, 60) || "Package " + (i + 1), sub: clip(p.sub, 2000), price: num(p.price, 0, 10000000) };
+      return { id: id, name: clip(p.name, 60) || "Package " + (i + 1), sub: clip(p.sub, 2000), price: num(p.price, 0, 10000000), rate: p.rate === undefined || p.rate === null ? MARKUP.c : num(p.rate, 0, 100) };   // rate: the wedding planner rate (%) of this package, only used when the quote has planner rates on
     });
     if (!d.packages.length) d.packages = [{ id: "a", name: "Package", sub: "", price: 0 }];
     var n = d.packages.length;
@@ -213,6 +213,7 @@
       if (+r.v < 5 && (isXtra ? price === 4000 : nm === "Super 16mm film camera with dedicated camera operator" && price === 5000)) price = 4200;   // the untouched preset price: 4 200 EUR now, no 20% rule
       var days = dy ? { from: Math.max(1, Math.min(DAYS_MAX, Math.round(+dy.from) || 2)), off: dy.off === undefined ? 20 : num(dy.off, 0, 90), max: Math.max(1, Math.min(DAYS_CAP, Math.round(+dy.max) || DAYS_MAX)), extra: dy.extra === true || dy.extra === 1, unit: clip(dy.unit, 12) } : null;
       return { name: nm, sub: sub0, price: price, qty: Math.max(1, Math.min(days ? days.max : 99, qty)), unit: days ? (days.unit || "day") : clip(l.unit, 20),
+        rate: l.rate === undefined || l.rate === null ? MARKUP.o : num(l.rate, 0, 100),   // the wedding planner rate (%) of this line, only used when the quote has planner rates on
         group: ["options", "further", "team", "privacy"].indexOf(l.group) > -1 ? l.group : "",   // where the upgrade is listed on the quote: the red "Video upgrades" section, "Your options", or "Go further"
         xor: clip(l.xor, 20),   // upgrades sharing a key are alternatives (e.g. the three lengths of a welcome event): picking one drops the others
         on: l.on !== false && l.on !== 0,   // on = validated by the client (counts in the total); older lines without the flag count
@@ -226,6 +227,7 @@
     var ex = r.extra && typeof r.extra === "object" ? r.extra : {};
     d.extra = { on: ex.on === true || ex.on === 1, label: clip(ex.label, 160), sub: clip(ex.sub, 300), prices: d.packages.map(function (p, i) { return num(Array.isArray(ex.prices) ? ex.prices[i] : 0, 0, 10000000); }) };
     if (!d.extra.label) d.extra.on = false;
+    d.wp = r.wp === true || r.wp === 1;   // the wedding planner rates are applied to every price (private: the client only reads the prices they give)
     d.travel = { show: !(r.travel && r.travel.show === false), tbc: !!(r.travel && (r.travel.tbc === true || r.travel.tbc === 1)), amount: num(r.travel && r.travel.amount, 0, 10000000) };   // amount: the travel / accommodation cost once confirmed (0 = included at no cost)
       // tbc: the line reads "TBC" (not in the total) instead of "Included"
     d.about = { on: !(r.about && r.about.on === false), text: clip(r.about && r.about.text, 1500) };
@@ -241,7 +243,22 @@
     return d;
   }
   /* priced lines of a custom quote: the chosen package, then the studio's extra lines, then travel */
+  /* Wedding planner rates (same percentages and rounding as the quotation-WP page: +10% collections, welcome event and brunch, +5% options, content creator and privacy, +0% extra team and extra hours;
+     with Premium or Ultimate AND both a welcome event and a brunch, the +10% is waived on those two). The definition keeps the studio's own prices: the client only ever reads the rated ones,
+     nothing says that rates were applied. Returns d itself when they are off, otherwise a copy (with wp off, so it is never rated twice). */
+  function customRated(d) {
+    if (!d || !d.wp) return d;
+    var v = JSON.parse(JSON.stringify(d)), mark = function (p, r) { return Math.round(p * (100 + (+r || 0)) / 100); };
+    var onx = function (k) { return v.lines.some(function (l) { return l.on && l.xor === k; }); };
+    var waive = EV_WAIVE.indexOf(v.chosen) > -1 && onx("welcome") && onx("brunch");
+    v.packages.forEach(function (p) { p.price = mark(p.price, p.rate); });
+    v.lines.forEach(function (l) { l.price = mark(l.price, waive && (l.xor === "welcome" || l.xor === "brunch") ? 0 : l.rate); });
+    if (v.extra && v.extra.prices) v.extra.prices = v.extra.prices.map(function (x, i) { return mark(x, v.packages[i] && v.packages[i].rate); });
+    v.wp = false;
+    return v;
+  }
   function customLines(d) {
+    d = customRated(d);
     var L = [], p = pkgById(d.packages, d.chosen) || d.packages[0];
     if (p) L.push({ key: "package", label: (d.kind ? d.kind + " · " : "") + p.name, sub: p.sub, price: p.price });
     var xi = d.packages.indexOf(p), xp = d.extra && d.extra.on && xi > -1 ? d.extra.prices[xi] : 0;
@@ -259,6 +276,7 @@
   function customQuote(d, o) { var r = spread(customLines(d), { travel: d.travel.show && d.travel.tbc ? null : d.travel.show ? d.travel.amount || 0 : 0 }); r.total = Math.max(0, r.total); if (o && o.client) r.rows = r.rows.filter(function (x) { return x.t !== "opt"; }); return r; }
   function customCompare(d, o) {
     o = o || {};
+    d = customRated(d);
     var word = d.word || "package", one = d.packages.length === 1;
     var cols = d.packages.map(function (p) { return { v: p.id, short: p.name, name: p.name, sub: p.sub, price: p.price }; });
     var rows = d.features.map(function (f) { return { k: f.k, on: f.on, t: f.on.map(function (x, i) { return f.d[i] ? f.k + " · " + f.d[i] : f.k; }) }; });
@@ -323,16 +341,16 @@
     var pkgs = COLLECTIONS.map(function (c) { return { id: c.v, name: c.name, sub: c.sub, price: sc(pr(c.price, "c")) }; });
     var L = [], add = function (l) { L.push(Object.assign({ qty: 1, unit: "", on: false, card: true, req: "", inc: [], sub: "", days: null, group: "" }, l)); };
     var team = a.team || [], opts = a.options || {};
-    TEAM.forEach(function (t) { add({ name: t.name, sub: t.sub, price: t.price, on: team.indexOf(t.v) > -1, group: "team" }); });
+    TEAM.forEach(function (t) { add({ name: t.name, sub: t.sub, price: t.price, on: team.indexOf(t.v) > -1, group: "team", rate: 0 }); });
     OPTIONS.forEach(function (o) {
       var q = opts[o.v] || 0;
-      add({ name: o.name, sub: o.sub, price: sc(o.nomk ? o.price : pr(o.price, "o")), on: q > 0, group: "options", qty: q || 1, days: o.max > 1 ? { from: 2, off: 0, max: o.max, extra: false, unit: o.unit } : null });
+      add({ name: o.name, sub: o.sub, price: sc(o.nomk ? o.price : pr(o.price, "o")), on: q > 0, group: "options", rate: o.nomk ? 0 : MARKUP.o, qty: q || 1, days: o.max > 1 ? { from: 2, off: 0, max: o.max, extra: false, unit: o.unit } : null });
     });
     [["welcome", "Welcome event", "w"], ["brunch", "Brunch / farewell party", "b"]].forEach(function (e) {
-      EVENT_HOURS.forEach(function (h) { if (h.price) add({ name: e[1] + " · " + h.short, price: sc(pr(h.price, e[2])), on: a[e[0]] === h.v, group: "further", xor: e[0] }); });
+      EVENT_HOURS.forEach(function (h) { if (h.price) add({ name: e[1] + " · " + h.short, price: sc(pr(h.price, e[2])), on: a[e[0]] === h.v, group: "further", xor: e[0], rate: MARKUP[e[2]] }); });
     });
-    add({ name: "Content creator, same day edit", sub: CREATOR[1].sub, price: sc(pr(CREATOR[1].price, "k")), on: a.creator === "1", group: "further" });
-    PRIVACY.forEach(function (x) { add({ name: x.label, price: x.price ? sc(pr(x.price, "p")) : 0, on: (a.privacy || "A") === x.v, group: "privacy", xor: "privacy" }); });
+    add({ name: "Content creator, same day edit", sub: CREATOR[1].sub, price: sc(pr(CREATOR[1].price, "k")), on: a.creator === "1", group: "further", rate: MARKUP.k });
+    PRIVACY.forEach(function (x) { add({ name: x.label, price: x.price ? sc(pr(x.price, "p")) : 0, on: (a.privacy || "A") === x.v, group: "privacy", xor: "privacy", rate: MARKUP.p }); });
     /* the package carries the rounding leftovers, so the total is exactly the one the couple has */
     var chosen = cur ? cur.v : pkgs[0].id, pk = pkgs.filter(function (k) { return k.id === chosen; })[0];
     pk.price = Math.max(0, target - L.reduce(function (s, l) { return l.on ? s + l.price * (l.days ? l.qty : 1) : s; }, 0));
@@ -374,11 +392,12 @@
   function customUpgrades(d, o) {
     o = o || {};
     var all = customUpIdx(d).filter(function (i) { return !d.lines[i].band; }), used = false;   // (the separate lines under the comparison are not in the red section)
+    var rd = customRated(o.sel ? customView(d, o.sel) : d);   // prices as the client reads them (planner rates, if any, already inside)
     return ["", "team", "options", "further", "privacy"].map(function (g) {
       var idx = all.filter(function (i) { return (d.lines[i].group || "") === g; });
       if (!idx.length) return "";
       var id = !used && o.id ? o.id : ""; used = true;
-      return upSection(d, o, idx, UP_GROUPS[g], id);
+      return upSection(rd, o, idx, UP_GROUPS[g], id);
     }).join("");
   }
   /* "Your options" style: a light section, one row per option (tick box, name, small description, price), the number of days / hours under it once ticked */
@@ -841,7 +860,7 @@
     by: by, blank: blank, lines: lines, total: total, recapText: recapText, selection: selection, fromSel: fromSel, priceTable: priceTable,
     up: up, MARKUP: MARKUP, evWaived: evWaived, COMPARE: COMPARE, compareSection: compareSection, aboutSection: aboutSection, photosSection: photosSection,
     ABOUT: ABOUT, ABOUT_GENERIC: ABOUT_GENERIC, safeImg: safeImg, emLast: emLast, customBlank: customBlank, customClean: customClean, customLines: customLines, customQuote: customQuote,
-    customCompare: customCompare, customUpgrades: customUpgrades, parseVideo: parseVideo, customVideoList: customVideoList, directorLine: directorLine, super16Line: super16Line, super16ExtraLine: super16ExtraLine, customToggle: customToggle, webToCustom: webToCustom, dayInfo: dayInfo, DAYS_MAX: DAYS_MAX, customSelNorm: customSelNorm, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
+    customCompare: customCompare, customUpgrades: customUpgrades, parseVideo: parseVideo, customVideoList: customVideoList, directorLine: directorLine, super16Line: super16Line, super16ExtraLine: super16ExtraLine, customToggle: customToggle, customRated: customRated, webToCustom: webToCustom, dayInfo: dayInfo, DAYS_MAX: DAYS_MAX, customSelNorm: customSelNorm, customView: customView, customSelOf: customSelOf, customUpIdx: customUpIdx, sameSel: sameSel, clipML: clipML, customLink: customLink, parseCustomLink: parseCustomLink,
     studioQuote: studioQuote, VALID_DAYS: VALID_DAYS, isoOf: isoOf, addDaysISO: addDaysISO, validUntil: validUntil, validityNote: validityNote,
     proposalUrl: proposalUrl, parseProposal: parseProposal, slug: slug,
     STEP_IMG: STEP_IMG, FILMS: FILMS, filmSrc: filmSrc, PHOTOS: PHOTOS, rowHTML: rowHTML, stackHTML: stackHTML,

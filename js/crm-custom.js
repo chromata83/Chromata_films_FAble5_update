@@ -44,14 +44,14 @@
   function fromDef(d, p) {
     return { id: p.id || "", ref: p.quote_ref || "", url: p.proposal_url || "", names: p.couple_names || "", email: p.couple_email || "", date: p.wedding_date || "", venue: p.venue || "", place: p.location || "",
       kind: d.kind, word: d.word, lead: d.lead, hero: d.hero, photosTitle: d.photosTitle, chosen: d.chosen, packages: copy(d.packages), features: copy(d.features), lines: d.lines.map(function (l) { var c = copy(l); c.incText = l.inc.join("\n"); return c; }), extra: copy(d.extra), photos: copy(d.photos),
-      travelShow: d.travel.show, travelTbc: d.travel.tbc, travelAmount: d.travel.amount || 0, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films, videos: copy(d.videos), videosTitle: d.videosTitle,
+      wp: !!d.wp, travelShow: d.travel.show, travelTbc: d.travel.tbc, travelAmount: d.travel.amount || 0, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films, videos: copy(d.videos), videosTitle: d.videosTitle,
       issued: p.id ? issuedOf(p) : iso(new Date()), status: p.status || "" };
   }
   function fresh() { var w = fromDef(Q.customClean(Q.customBlank()), {}); w.note = DEFAULT_NOTE; return w; }
   /* the form -> a clean definition (what is stored with the project) */
   function toDef() {
     var d = Q.customClean({ kind: W.kind, word: W.word, lead: W.lead, hero: W.hero, photosTitle: W.photosTitle, chosen: W.chosen, packages: W.packages, features: W.features, lines: W.lines.map(function (l) { return Object.assign({}, l, { inc: String(l.incText || "").split("\n") }); }), extra: W.extra, photos: W.photos,
-      travel: { show: W.travelShow, tbc: W.travelTbc, amount: W.travelAmount }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films, videos: W.videos, videosTitle: W.videosTitle });
+      wp: W.wp, travel: { show: W.travelShow, tbc: W.travelTbc, amount: W.travelAmount }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films, videos: W.videos, videosTitle: W.videosTitle });
     delete d.names; delete d.date; delete d.place; delete d.venue; delete d.planner;   // who it is for lives in the project columns
     return d;
   }
@@ -84,12 +84,17 @@
   var tr = function (b, key, extra) { return ' data-b="' + b + '"' + (extra || ""); };
   function thumb(src) { return '<img class="qb-img" alt="" src="' + esc(src) + '">'; }
 
+  /* the wedding planner rate of a package or a line (private: only used when the planner rates are on) */
+  function rateSel(path, val) {
+    var list = [0, 5, 10]; if (list.indexOf(+val) < 0) list.push(+val);
+    return '<label class="fld"><span>Planner rate <small>(private)</small></span><select' + tr(path) + ">" + list.map(function (r) { return '<option value="' + r + '"' + (r === +val ? " selected" : "") + ">+" + r + "%</option>"; }).join("") + "</select></label>";
+  }
   function packagesHTML() {
     var n = W.packages.length;
     return W.packages.map(function (p, i) {
       return '<div class="qb-pkg' + (W.chosen === p.id ? " on" : "") + '"><label class="qe-chk"><input type="radio" name="qbChosen" data-chosen="' + i + '"' + (W.chosen === p.id ? " checked" : "") + "> <strong>For this client</strong> <small>(the one in the quote, shown in yellow)</small></label>" +
         '<div class="grid2"><label class="fld"><span>Name</span><input type="text"' + tr("packages." + i + ".name") + ' maxlength="60" value="' + esc(p.name) + '"></label>' +
-        '<label class="fld"><span>Price (€)</span><input type="number" min="0" step="any"' + tr("packages." + i + ".price") + ' value="' + (p.price || "") + '" placeholder="0"></label></div>' +
+        '<label class="fld"><span>Price (€)</span><input type="number" min="0" step="any"' + tr("packages." + i + ".price") + ' value="' + (p.price || "") + '" placeholder="0"></label>' + (W.wp ? rateSel("packages." + i + ".rate", p.rate) : "") + '</div>' +
         '<label class="fld"><span>Description <small>(as long as you like, up to 2000 characters: under the name, in the comparison and on the quote line)</small></span><textarea rows="5" maxlength="2000"' + tr("packages." + i + ".sub") + ">" + esc(p.sub) + "</textarea></label>" +
         '<div class="qb-act">' + (i > 0 ? '<button class="btn ghost sm" type="button" data-act="pkg-left" data-i="' + i + '" aria-label="Move left">&larr; Left</button>' : "") +
         (i < n - 1 ? '<button class="btn ghost sm" type="button" data-act="pkg-right" data-i="' + i + '" aria-label="Move right">Right &rarr;</button>' : "") +
@@ -121,7 +126,7 @@
           '<label class="fld"><span>At most</span><select' + tr("lines." + j + ".days.max") + ">" + [1, 2, 3, 4, 5].map(function (n) { return '<option value="' + n + '"' + (n === l.days.max ? " selected" : "") + ">" + n + (n > 1 ? " days" : " day") + "</option>"; }).join("") + "</select></label></div>" +
           "" : "") +
         '<label class="fld"><span>Comes with another upgrade <small>(for an extra day: the client can only pick it together with that upgrade)</small></span><select' + tr("lines." + j + ".req") + '>' + [["", "No, it can be picked alone"], ["next", "Yes: the upgrade just below it"], ["prev", "Yes: the upgrade just above it"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.req || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
-        '<label class="fld"><span>Listed in <small>(the section of the quote where the client finds it)</small></span><select' + tr("lines." + j + ".group") + '>' + [["", "Video upgrades (red section)"], ["team", "Extra hands"], ["options", "Your options"], ["further", "Go further"], ["privacy", "About privacy"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.group || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
+        (W.wp ? rateSel("lines." + j + ".rate", l.rate) : "") + '<label class="fld"><span>Listed in <small>(the section of the quote where the client finds it)</small></span><select' + tr("lines." + j + ".group") + '>' + [["", "Video upgrades (red section)"], ["team", "Extra hands"], ["options", "Your options"], ["further", "Go further"], ["privacy", "About privacy"]].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === (l.group || "") ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>" +
         '<label class="fld"><span>Description <small>(optional · a blank line starts a new paragraph)</small></span><textarea rows="' + (l.card || l.band ? 7 : 3) + '" maxlength="1500"' + tr("lines." + j + ".sub") + '>' + esc(l.sub) + '</textarea></label>' +
         '<label class="qe-chk" style="margin:4px 0 4px"><input type="checkbox"' + tr("lines." + j + ".band") + (l.band ? " checked" : "") + '> <strong>Show as a separate line under the comparison</strong> <small>(like the extra: the description and what is included are readable at once, with a box to add it to the quote)</small></label>' +
         (l.band ? "" : '<label class="qe-chk" style="margin:4px 0 8px"><input type="checkbox"' + tr("lines." + j + ".card") + (l.card ? " checked" : "") + '> <strong>Show as a clickable card</strong> <small>(in the “Video upgrades” section of the quote: the client opens it to read the description and what is included)</small></label>') +
@@ -225,6 +230,9 @@
 
       videosHTML() +
 
+      '<section class="cr-card"><h2>Wedding planner rates <small>(private)</small></h2><label class="qe-chk"><input type="checkbox"' + tr("wp") + (W.wp ? " checked" : "") + '> <strong>Apply the wedding planner rates</strong> <small>(the same as on the planner quotation page: +10% on the ' + esc(W.word) + 's, the welcome event and the brunch, +5% on the options, the content creator and the privacy, +0% on the extra team and the extra hours; the +10% of the welcome event and the brunch is waived with Premium or Ultimate when both are chosen)</small></label>' +
+        '<p class="hint" style="margin:8px 0 0">Your own prices stay as you typed them. The client only reads the prices with the rates inside, every total and every line updates by itself, and nothing on their page says that rates were applied. You can change the rate of each ' + esc(W.word) + " or line once this is ticked.</p></section>" +
+
       '<section class="cr-card"><h2>Issue date</h2><div class="grid2"><label class="fld"><span>Issued on</span><input type="date" id="qbIssued"' + tr("issued") + ' value="' + esc(W.issued) + '"></label><div class="fld"><span>&nbsp;</span><button class="btn ghost" type="button" data-act="today">Issue again today</button></div></div>' +
       '<p class="hint" id="qbValid" style="margin:8px 0 0"></p></section></div>';
   }
@@ -251,7 +259,8 @@
     var d = toDef(), q = Q.customQuote(d), pk = (d.packages.filter(function (x) { return x.id === d.chosen; })[0]) || {};
     el.innerHTML = '<div class="sumcard">' + q.rows.map(function (x) { return '<div class="srow"><span class="sl">' + esc(x.l) + (x.s ? "<small>" + esc(x.s) + "</small>" : "") + '</span><span class="sr">' + (x.t === "tbc" ? "TBC" : x.t === "inc" ? "Included" : x.t === "opt" ? "Video upgrade · " + eur(x.p) : eur(x.p)) + "</span></div>"; }).join("") +
       '<div class="srow grand"><span class="sl">Total' + (d.travel.show ? (d.travel.tbc ? " · travel to be confirmed" : " · travel included") : "") + '</span><span class="sr">' + eur(q.total) + "</span></div></div>" +
-      '<p class="hint" style="margin:10px 0 0">' + esc(d.word) + " in this quote: <strong>" + esc(pk.name || "—") + "</strong></p>";
+      '<p class="hint" style="margin:10px 0 0">' + esc(d.word) + " in this quote: <strong>" + esc(pk.name || "—") + "</strong></p>" +
+      (d.wp ? (function () { var b = Q.customQuote(Object.assign({}, d, { wp: false })); return '<div class="qe-priv"><strong>Private, never shown to the client</strong>Planner rates applied. Your prices: ' + eur(b.total) + "<br>With the rates (what the client reads): <b>" + eur(q.total) + "</b><br>Planner share: " + eur(q.total - b.total) + "</div>"; })() : "");
     var v = $("#qbValid"), until = Q.validUntil(W.issued);
     if (v) v.textContent = until ? "Valid for " + Q.VALID_DAYS + " days: until " + C.fmtDate(until) + (until < iso(new Date()) ? " (already expired: the client cannot sign online until you issue it again)" : ".") : "";
   }
@@ -312,12 +321,12 @@
     var path = t.getAttribute("data-b"); if (!path) return;
     var v = t.type === "checkbox" ? t.checked : t.value;
     if (t.type === "checkbox" && /\.on\.\d+$/.test(path)) v = t.checked ? 1 : 0;
-    if ((/\.(price|qty)$/.test(path) || /\.days\.(off|from|max)$/.test(path) || /^extra\.prices\.\d+$/.test(path) || path === "travelAmount") && (t.type === "number" || t.type === "select-one")) v = t.value === "" ? 0 : +t.value;
+    if ((/\.(price|qty)$/.test(path) || /\.days\.(off|from|max)$/.test(path) || /^extra\.prices\.\d+$/.test(path) || path === "travelAmount" || /\.rate$/.test(path)) && (t.type === "number" || t.type === "select-one")) v = t.value === "" ? 0 : +t.value;
     var md = /^lines\.(\d+)\.days$/.exec(path);
     if (md) { W.lines[+md[1]].days = t.checked ? { from: 2, off: 20, max: Q.DAYS_MAX, extra: false } : null; if (t.checked) { W.lines[+md[1]].unit = "day"; W.lines[+md[1]].qty = Math.min(W.lines[+md[1]].qty || 1, Q.DAYS_MAX); } draw(); return; }
     var mm = /^lines\.(\d+)\.days\.max$/.exec(path);
     if (mm) { var ln = W.lines[+mm[1]]; ln.days.max = +t.value; ln.qty = Math.min(ln.qty || 1, ln.days.max); draw(); return; }
-    if (/\.(card|band)$/.test(path) || path === "extra.on" || path === "travelShow") { setPath(path, v); draw(); return; }
+    if (/\.(card|band)$/.test(path) || path === "extra.on" || path === "travelShow" || path === "wp") { setPath(path, v); draw(); return; }
     setPath(path, v);
     var mv = /^videos\.(\d+)\.url$/.exec(path);
     if (mv) { var vs = $('[data-vs="' + mv[1] + '"]'); if (vs) { var stt = videoStatus(v); vs.textContent = stt; vs.className = stt.charAt(0) === "✗" ? "bad" : "good"; } }
