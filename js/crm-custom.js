@@ -44,14 +44,14 @@
   function fromDef(d, p) {
     return { id: p.id || "", ref: p.quote_ref || "", url: p.proposal_url || "", names: p.couple_names || "", email: p.couple_email || "", date: p.wedding_date || "", venue: p.venue || "", place: p.location || "",
       kind: d.kind, word: d.word, lead: d.lead, hero: d.hero, photosTitle: d.photosTitle, chosen: d.chosen, packages: copy(d.packages), features: copy(d.features), lines: d.lines.map(function (l) { var c = copy(l); c.incText = l.inc.join("\n"); return c; }), extra: copy(d.extra), photos: copy(d.photos),
-      travelShow: d.travel.show, travelTbc: d.travel.tbc, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films, videos: copy(d.videos), videosTitle: d.videosTitle,
+      travelShow: d.travel.show, travelTbc: d.travel.tbc, travelAmount: d.travel.amount || 0, note: d.note, aboutOn: d.about.on, aboutText: d.about.text, films: d.films, videos: copy(d.videos), videosTitle: d.videosTitle,
       issued: p.id ? issuedOf(p) : iso(new Date()), status: p.status || "" };
   }
   function fresh() { var w = fromDef(Q.customClean(Q.customBlank()), {}); w.note = DEFAULT_NOTE; return w; }
   /* the form -> a clean definition (what is stored with the project) */
   function toDef() {
     var d = Q.customClean({ kind: W.kind, word: W.word, lead: W.lead, hero: W.hero, photosTitle: W.photosTitle, chosen: W.chosen, packages: W.packages, features: W.features, lines: W.lines.map(function (l) { return Object.assign({}, l, { inc: String(l.incText || "").split("\n") }); }), extra: W.extra, photos: W.photos,
-      travel: { show: W.travelShow, tbc: W.travelTbc }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films, videos: W.videos, videosTitle: W.videosTitle });
+      travel: { show: W.travelShow, tbc: W.travelTbc, amount: W.travelAmount }, note: W.note, about: { on: W.aboutOn, text: W.aboutText === Q.ABOUT_GENERIC ? "" : W.aboutText }, films: W.films, videos: W.videos, videosTitle: W.videosTitle });
     delete d.names; delete d.date; delete d.place; delete d.venue; delete d.planner;   // who it is for lives in the project columns
     return d;
   }
@@ -72,6 +72,9 @@
     else if (id.indexOf("copy-") === 0 && (p = byId(S.projects, id.slice(5))) && p.quote_custom) {
       W = fromDef(Q.customClean(p.quote_custom), Object.assign({}, p, { id: "", quote_ref: "", proposal_url: "" }));
       W.names = p.couple_names + " (copy)"; W.id = ""; W.ref = ""; W.url = ""; W.date = ""; W.issued = iso(new Date());
+    } else if (id.indexOf("from-") === 0 && (p = byId(S.projects, id.slice(5))) && !p.quote_custom && A.quoteEditor && A.quoteEditor.toCustom) {
+      /* a website quote (quotation / quotation-WP) opened in this builder: nothing is stored until "Save" */
+      W = fromDef(Q.customClean(A.quoteEditor.toCustom(p)), p); W._conv = true;
     } else if ((p = byId(S.projects, id)) && p.quote_custom) W = fromDef(Q.customClean(p.quote_custom), p);
     else { location.hash = "#/tools"; return; }
     libTarget = "";
@@ -177,6 +180,7 @@
     var kinds = KINDS.map(function (k) { return '<option value="' + esc(k) + '"></option>'; }).join("");
     var heroBlock = W.hero ? '<div class="qb-hero">' + thumb(W.hero) + '<button class="btn danger sm" type="button" data-act="hero-del">Remove</button></div>' : '<p class="hint">No cover photo chosen: the standard photograph of the quotation is used.</p>';
     return '<div class="qb-main">' +
+      (W._conv ? '<section class="cr-card"><div class="sh"><h2>Website quote opened for free editing</h2><span class="pill quote">Not saved yet</span></div><p class="hint">The quote the client built on the website is copied here: its collection is the package, every option / team member / extra it contains is a line you can change or remove, and the travel line is below. You can now change any price, add video upgrades the client can tick, set the travel amount… <strong>Nothing changes until you press Save</strong>; the client then keeps the <strong>same link</strong>, and it shows this version (the page uses the “custom quote” layout).</p></section>' : "") +
       '<section class="cr-card"><h2>The event</h2><div class="grid2">' +
         '<label class="fld"><span>Kind of event <small>(shown under the title)</small></span><input type="text" list="qbKinds"' + tr("kind") + ' maxlength="60" value="' + esc(W.kind) + '" placeholder="Christmas party, Bar Mitzvah…"><datalist id="qbKinds">' + kinds + "</datalist></label>" +
         '<label class="fld"><span>Prepared for <small>(name at the top of the page)</small></span><input type="text"' + tr("names") + ' maxlength="160" value="' + esc(W.names) + '" placeholder="e.g. Famille Cohen" required></label>' +
@@ -200,9 +204,10 @@
 
       '<section class="cr-card"><h2>Travel and accommodation</h2><label class="qe-chk"><input type="checkbox"' + tr("travelShow") + (W.travelShow ? " checked" : "") + "> Show a travel / accommodation line in the quote</label>" +
       (W.travelShow ? '<div class="qb-trv" role="radiogroup" aria-label="Travel line" style="margin:10px 0 0"><label class="qe-chk"><input type="radio" name="qbTrv" data-trv="1"' + (W.travelTbc ? " checked" : "") + '> <strong>To be confirmed</strong> <small>(“Travel fees and accommodation · TBC”, to be confirmed depending on the number of days and the dates; not in the total)</small></label>' +
-        '<label class="qe-chk"><input type="radio" name="qbTrv" data-trv="0"' + (W.travelTbc ? "" : " checked") + '> <strong>Included</strong> <small>(“Travel / accommodation · Included”, no cost)</small></label></div>' : "") +
+        '<label class="qe-chk"><input type="radio" name="qbTrv" data-trv="0"' + (W.travelTbc ? "" : " checked") + '> <strong>Included</strong> <small>(“Travel / accommodation · Included”: the client reads it as included in the total)</small></label>' +
+        (W.travelTbc ? "" : '<label class="fld" style="margin:6px 0 0 26px;max-width:260px"><span>Amount to add to the total (€) <small>(empty or 0 = included at no extra cost)</small></span><input type="number" min="0" step="any"' + tr("travelAmount") + ' value="' + (W.travelAmount || "") + '" placeholder="0"></label>') + "</div>" : "") +
       '<label class="fld" style="margin-top:10px"><span>Note under the title of the lines</span><textarea rows="2" maxlength="300"' + tr("note") + ">" + esc(W.note) + "</textarea></label>" +
-      '<p class="hint" style="margin:8px 0 0">Neither choice adds an amount to the total.</p></section>' +
+      '<p class="hint" style="margin:8px 0 0">“To be confirmed” adds nothing to the total. “Included” adds the amount above to it (the client then reads the final total, all travel and accommodation included).</p></section>' +
 
       '<section class="cr-card"><h2>Pictures</h2><div id="qbUp" class="hint" role="status"></div>' +
       '<h3 class="qb-h3">Cover photo <small>(the big picture at the top of the quote)</small></h3>' + heroBlock +
@@ -306,7 +311,7 @@
     var path = t.getAttribute("data-b"); if (!path) return;
     var v = t.type === "checkbox" ? t.checked : t.value;
     if (t.type === "checkbox" && /\.on\.\d+$/.test(path)) v = t.checked ? 1 : 0;
-    if ((/\.(price|qty)$/.test(path) || /\.days\.(off|from|max)$/.test(path) || /^extra\.prices\.\d+$/.test(path)) && (t.type === "number" || t.type === "select-one")) v = t.value === "" ? 0 : +t.value;
+    if ((/\.(price|qty)$/.test(path) || /\.days\.(off|from|max)$/.test(path) || /^extra\.prices\.\d+$/.test(path) || path === "travelAmount") && (t.type === "number" || t.type === "select-one")) v = t.value === "" ? 0 : +t.value;
     var md = /^lines\.(\d+)\.days$/.exec(path);
     if (md) { W.lines[+md[1]].days = t.checked ? { from: 2, off: 20, max: Q.DAYS_MAX, extra: false } : null; if (t.checked) { W.lines[+md[1]].unit = "day"; W.lines[+md[1]].qty = Math.min(W.lines[+md[1]].qty || 1, Q.DAYS_MAX); } draw(); return; }
     var mm = /^lines\.(\d+)\.days\.max$/.exec(path);

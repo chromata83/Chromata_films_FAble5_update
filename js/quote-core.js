@@ -222,7 +222,8 @@
     var ex = r.extra && typeof r.extra === "object" ? r.extra : {};
     d.extra = { on: ex.on === true || ex.on === 1, label: clip(ex.label, 160), sub: clip(ex.sub, 300), prices: d.packages.map(function (p, i) { return num(Array.isArray(ex.prices) ? ex.prices[i] : 0, 0, 10000000); }) };
     if (!d.extra.label) d.extra.on = false;
-    d.travel = { show: !(r.travel && r.travel.show === false), tbc: !!(r.travel && (r.travel.tbc === true || r.travel.tbc === 1)) };   // tbc: the line reads "TBC" (not in the total) instead of "Included"
+    d.travel = { show: !(r.travel && r.travel.show === false), tbc: !!(r.travel && (r.travel.tbc === true || r.travel.tbc === 1)), amount: num(r.travel && r.travel.amount, 0, 10000000) };   // amount: the travel / accommodation cost once confirmed (0 = included at no cost)
+      // tbc: the line reads "TBC" (not in the total) instead of "Included"
     d.about = { on: !(r.about && r.about.on === false), text: clip(r.about && r.about.text, 1500) };
     d.films = r.films === true || r.films === 1;   // the wedding films (the studio's own videos below replace them)
     d.videos = (Array.isArray(r.videos) ? r.videos : []).slice(0, 8).map(function (v) {
@@ -250,7 +251,7 @@
     return L;
   }
   /* rows the client reads + total, same shape as studioQuote (no commission in custom quotes); travel / accommodation is a line that reads "Included", or "TBC" (to be confirmed, not in the total) */
-  function customQuote(d, o) { var r = spread(customLines(d), { travel: d.travel.show && d.travel.tbc ? null : 0 }); r.total = Math.max(0, r.total); if (o && o.client) r.rows = r.rows.filter(function (x) { return x.t !== "opt"; }); return r; }
+  function customQuote(d, o) { var r = spread(customLines(d), { travel: d.travel.show && d.travel.tbc ? null : d.travel.show ? d.travel.amount || 0 : 0 }); r.total = Math.max(0, r.total); if (o && o.client) r.rows = r.rows.filter(function (x) { return x.t !== "opt"; }); return r; }
   function customCompare(d, o) {
     o = o || {};
     var word = d.word || "package", one = d.packages.length === 1;

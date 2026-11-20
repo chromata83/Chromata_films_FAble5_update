@@ -23,7 +23,26 @@
       '<p>Part of the address may have been cut when it was copied. Please open the link from your email again, or write to us and we will send it right away.</p>' +
       '<a class="btn-main" href="mailto:' + Q.EMAIL + '">' + Q.EMAIL + "</a></div></section>";
   }
-  if (P) start(P, null, null);
+  if (P) {
+    /* A website-quote link: if the studio has since opened this quote for free editing (custom builder), the same link shows that version
+       (packages, upgrades the client can tick...). Otherwise the page is the usual one. Never waits more than 4 s. */
+    var A0 = P.answers;
+    if (window.CQLink && window.CQLink.enabled && A0.nonce && A0.nonce.length >= 10 && Q.ISO.test(A0.date || "")) {
+      app.innerHTML = '<p class="px-loading" role="status">Opening your proposal…</p>';
+      var started = false;
+      var go = function (st) {
+        if (started) return; started = true;
+        var d = st && st.found && st.custom ? Q.customClean(st.custom) : null;
+        if (!d) { start(P, null, st && st.found ? st : null); return; }
+        var a = Q.blank();
+        a.names = d.names || A0.names || "Your proposal"; a.date = d.date || A0.date; a.place = d.place; a.venue = d.venue; a.nonce = A0.nonce;
+        a.role = d.planner ? "planner" : "couple"; a.planner = d.planner;
+        start({ answers: a, id: P.id, ts: st.issued ? new Date(st.issued + "T12:00:00").getTime() : P.ts }, d, st);
+      };
+      setTimeout(function () { go(null); }, 4000);
+      window.CQLink.status(A0).then(go, function () { go(null); });
+    } else start(P, null, null);
+  }
   else if (CU && window.CQLink && window.CQLink.enabled) {
     app.innerHTML = '<p class="px-loading" role="status">Opening your proposal…</p>';
     window.CQLink.status({ nonce: CU.ref }).then(function (st) {

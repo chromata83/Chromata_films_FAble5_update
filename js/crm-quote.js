@@ -65,6 +65,7 @@
         '<p class="hint" style="margin:-4px 0 0">Travel: once filled, the couple reads “Included” and the total contains it. Commission: added into the prices the couple sees, never shown as a line. A % applies to the quote including travel.</p>' +
         '<div class="grid2"><label class="fld"><span>Issued on</span><input id="qeIssued" type="date" value="' + esc(issuedISO(p)) + '"></label><div class="fld"><span>&nbsp;</span><button class="btn ghost" id="qeToday" type="button">Issue again today</button></div></div>' +
         '<p class="hint" id="qeValid" style="margin:-4px 0 0"></p>' +
+        '<div class="qe-free"><strong>Need more than this form?</strong> <a class="btn ghost sm" href="#/tools/quote/from-' + esc(p.id) + '">Edit freely in the quote builder</a><p class="hint" style="margin:6px 0 0">Opens this quote in the Tools builder: change any price, add or remove lines, add video upgrades the client can tick, set the travel amount. Nothing is saved until you press Save there, and the client keeps the same link.</p></div>' +
       '</div><aside class="qe-prev" aria-live="polite"><h3>What the couple sees</h3><div id="qePrev"></div><div id="qePriv"></div></aside></div>' +
       '<div class="acts"><button class="btn" id="qeSave" type="button">Save the quote' + (linked ? " and update the link" : " and create the link") + "</button>" +
       (linked && p.proposal_url ? '<a class="btn ghost" target="_blank" rel="noopener" href="' + esc(p.proposal_url) + '">View the couple’s page</a>' +
@@ -164,5 +165,25 @@
       list.slice(0, 20).map(function (v) { return "<li>" + esc(v.email) + " <small>" + esc(when(v.created_at)) + "</small></li>"; }).join("") + (list.length > 20 ? "<li><small>… and " + (list.length - 20) + " earlier</small></li>" : "") + "</ul></details>";
   }
 
-  A.quoteEditor = { html: html, wire: wire, validityLine: validityLine, expired: expired, opensBlock: opensBlock };
+  /* The quote as a free definition for the custom builder (Tools): the collection is the one package, every other priced row is a line
+     the studio can edit or remove, travel keeps its state (TBC, or its amount). Prices are the ones the couple reads now (planner
+     rates and commission already inside). Nothing is saved here. */
+  function toCustom(p) {
+    var a = startAnswers(p), rows = Array.isArray(p.quote_lines) && p.quote_lines.length ? p.quote_lines
+      : Q.studioQuote(a, { travel: p.travel_fees, commission: +p.quote_commission || 0 }).rows;
+    var col = Q.by(Q.COLLECTIONS, a.wedding), pi = -1;
+    rows.forEach(function (r, i) { if (pi < 0 && /^Wedding day · /.test(String(r.l || ""))) pi = i; });
+    var pk = { id: "a", name: col ? col.name : (pi > -1 ? String(rows[pi].l).replace(/^Wedding day · /, "") : "Wedding film"), sub: col ? col.sub : "", price: pi > -1 ? +rows[pi].p || 0 : 0 };
+    var d = { v: 5, kind: "Wedding", word: "collection", chosen: "a", packages: [pk], features: [], lines: [], travel: { show: true, tbc: true, amount: 0 }, films: true, about: { on: true, text: "" } };
+    rows.forEach(function (r, i) {
+      if (i === pi) return;
+      if (r.t === "tbc") d.travel = { show: true, tbc: true, amount: 0 };
+      else if (r.t === "inc") d.travel = { show: true, tbc: false, amount: +r.p || 0 };
+      else if (r.t === "opt") d.lines.push({ name: r.l, sub: r.s || "", price: +r.p || 0, on: false });
+      else d.lines.push({ name: r.l, sub: r.s || "", price: +r.p || 0, on: true });
+    });
+    return d;
+  }
+
+  A.quoteEditor = { toCustom: toCustom, html: html, wire: wire, validityLine: validityLine, expired: expired, opensBlock: opensBlock };
 })();
