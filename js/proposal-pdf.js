@@ -1,19 +1,27 @@
 /* ============================================================
    CHROMATA FILMS — "Save as PDF" of the couple's proposal page
-   The PDF is the page itself, as seen on a desktop screen: same photographs, collage illustrations, colours, fonts and
-   prices, on ONE long page (no cuts through the middle of a photo), without the videos. The buttons stay real links
-   (reply by email, WhatsApp, "Open it online", sign online once the studio validated the quote), and each film becomes
-   a link to watch it.
+   The PDF is the page itself, exactly as it looks in the window it is read in: same width, same layout, photographs,
+   collage illustrations, colours, fonts and prices, on ONE long page (no cuts through the middle of a photo), without the
+   videos. The buttons stay real links (reply by email, WhatsApp, "Open it online", sign online once the studio validated
+   the quote), and each film becomes a link to watch it.
 
-   How: the page is loaded once more in an invisible 1440 x 900 frame (a desktop screen), tidied up here, given a page
-   size equal to its own height, and printed. Browsers print "vh" lengths against the page height, so every vh in the
-   style sheets is first converted to the pixels it has on a 900px-high screen. Works best in Chrome or Edge:
-   choose "Save as PDF" as the destination.
+   How: the page is tidied up here, given a sheet size equal to the width of the window and to its own height (no margin,
+   so no white edge), and printed; it is then reloaded as it was. Media queries are decided once with the window, and
+   every "vh" length is converted to the pixels it has in that window (browsers print vh against the sheet height).
+   Works best in Chrome or Edge: choose "Save as PDF" as the destination and leave margins on "None" if asked.
    ============================================================ */
 (function (w) {
   "use strict";
   var Q = w.CQ;
+  /* The PDF has the width and the height of the window the page is read in (set by size() before every PDF) */
   var W = 1440, VH = 900, K = VH / 100;
+  var MAX_H = 19000;   // a printed page cannot be taller than about 200 inches (19200px): a very long page continues on a second sheet of the same width
+  function size() {
+    var root = w.document.documentElement;
+    W = Math.max(360, Math.min(2560, Math.round(root.clientWidth || w.innerWidth || 1440)));
+    VH = Math.max(500, Math.round(w.innerHeight || 900));
+    K = VH / 100;
+  }
   var VH_RE = /(-?\d*\.?\d+)\s*(?:s|d|l)?vh\b/g;
   var toPx = function (v) { return String(v).replace(VH_RE, function (m, n) { return (Math.round(+n * K * 100) / 100) + "px"; }); };
 
@@ -57,7 +65,8 @@
   /* Turns a loaded proposal page (in a 1440 x 900 window) into its PDF form and sets the page size. Returns the height. */
   function prepare(doc, onlineUrl) {
     var root = doc.documentElement;
-    ["#qxMenu", "#qxDrawer", "#qxLb", "#pxPrint"].forEach(function (s) { var e = doc.querySelector(s); if (e) e.remove(); });
+    ["#qxMenu", "#qxDrawer", "#qxLb", "#pxPrint", ".px-gate"].forEach(function (s) { var e = doc.querySelector(s); if (e) e.remove(); });
+    root.classList.remove("px-gated-wait");
     Array.prototype.forEach.call(doc.querySelectorAll(".px-ups, .px-send"), function (e) { e.remove(); });   // the selectable upgrades and the send button are for the screen; the chosen ones are in the summary
 
     /* the videos: no players, a clickable list of the films instead */
@@ -102,21 +111,31 @@
     /* no print-only "simplified" rules; every vh becomes the pixels it has on a desktop screen */
     var css = [];
     eachSheet(doc, function (s, rules) {
-      /* A printer evaluates "max-width" queries against a letter-size sheet (about 816px), which would give the PHONE layout.
-         This page is 1440px wide, so every "max-width" rule (phone and tablet layouts) is dropped, and so is the print-only sheet. */
-      for (var i = rules.length - 1; i >= 0; i--) { var r = rules[i]; if (r.type === 4 && /(^|\s)print\b|max-width/.test(r.conditionText || "")) s.deleteRule(i); }
+      /* The printer would evaluate every media query against the sheet (and "screen" rules do not apply when printing at all).
+         So each rule group is decided here, once, with the window the page is seen in: the print-only rules go, the groups that apply
+         on this screen become unconditional, the others go. The PDF is then exactly the layout of the visible page. */
+      for (var i = rules.length - 1; i >= 0; i--) {
+        var r = rules[i]; if (r.type !== 4) continue;
+        var cond = r.conditionText || (r.media && r.media.mediaText) || "", on = false;
+        if (!/(^|[\s,(])print\b/.test(cond)) { try { on = w.matchMedia(cond).matches; } catch (e) { on = false; } }
+        var inner = on ? Array.prototype.map.call(r.cssRules, function (x) { return x.cssText; }).join("\n") : "";
+        s.deleteRule(i);
+        if (on && inner) { try { s.insertRule("@media all{" + inner + "}", i); } catch (e) {} }
+      }
     });
     eachSheet(doc, function (s, rules) { vhRules(rules, css); });
     Array.prototype.forEach.call(doc.querySelectorAll('[style*="vh"]'), function (e) { e.setAttribute("style", toPx(e.getAttribute("style"))); });
     var st = doc.createElement("style");
     st.textContent = css.join("\n") + "\nhtml.px-pdf *{animation:none!important;transition:none!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}" +
-      "\nhtml.px-pdf, html.px-pdf body{width:" + W + "px!important;margin:0!important}";
+      "\nhtml.px-pdf, html.px-pdf body{width:" + W + "px!important;min-width:0!important;margin:0!important;padding-left:0!important;padding-right:0!important;overflow:visible!important}";
     doc.head.appendChild(st);
 
     var H = Math.ceil(Math.max(root.scrollHeight, doc.body.scrollHeight));
     var pg = doc.createElement("style");
-    /* the sheet is a few pixels taller than the content, and the content is clipped to its own height: no blank second page */
-    pg.textContent = "@page{size:" + W + "px " + (H + 6) + "px;margin:0}\nhtml.px-pdf{background:var(--panel-deep,#16130F)!important}";
+    /* the sheet is exactly as wide as the window the page is read in and as tall as the page: no margin, no white edge.
+       The page colour is also set on the sheet itself so that not one pixel is left white. */
+    var bg = (w.getComputedStyle(doc.body).backgroundColor || "").replace(/\s/g, ""), dark = !bg || bg === "rgba(0,0,0,0)" || bg === "transparent" ? "var(--panel-deep,#16130F)" : bg;
+    pg.textContent = "@page{size:" + W + "px " + Math.min(H + 2, MAX_H) + "px;margin:0}\nhtml.px-pdf,html.px-pdf body{background:" + dark + "!important}";
     doc.head.appendChild(pg);
     return H;
   }
@@ -126,24 +145,20 @@
     if (busy) return; busy = true;
     var label = btn ? btn.textContent : "";
     if (btn) { btn.disabled = true; btn.textContent = "Preparing the PDF…"; }
+    /* The page itself is printed (a browser always honours the sheet size of the page being printed, not of a hidden frame):
+       it is tidied up for the PDF in front of the reader, printed, then the page is reloaded as it was. */
     var online = new URL(w.location.href); online.search = "";
-    var src = new URL(w.location.href); src.search = "?frame=1";
-    var f = document.createElement("iframe");
-    f.setAttribute("aria-hidden", "true"); f.tabIndex = -1; f.title = "PDF";
-    f.style.cssText = "position:fixed;left:-30000px;top:0;width:" + W + "px;height:" + VH + "px;border:0;pointer-events:none";
-    var done = function () { busy = false; if (btn) { btn.disabled = false; btn.textContent = label; } if (f.parentNode) f.remove(); };
-    f.addEventListener("load", function () {
-      var win = f.contentWindow;
-      waitReady(win).then(function () {
-        prepare(win.document, online.href);
-        win.onafterprint = done;
-        win.focus(); win.print();
-        setTimeout(function () { if (btn && btn.disabled) { btn.disabled = false; btn.textContent = label; busy = false; } }, 1500);
-        setTimeout(done, 600000);
-      }).catch(function () { done(); w.print(); });
-    });
-    f.src = src.href;
-    document.body.appendChild(f);
+    size();
+    try { var clean = new URL(w.location.href); clean.search = clean.search.replace(/([?&])pdf=1&?/, "$1").replace(/[?&]$/, ""); w.history.replaceState(null, "", clean.pathname + clean.search + clean.hash); } catch (e) {}   // so that the reload does not start another PDF
+    var restored = false;
+    var restore = function () { if (restored) return; restored = true; w.location.reload(); };
+    waitReady(w).then(function () {
+      w.scrollTo(0, 0);
+      prepare(document, online.href);
+      w.onafterprint = restore;
+      setTimeout(function () { w.print(); }, 250);   // lets the new layout settle
+      setTimeout(restore, 900000);
+    }).catch(function () { restore(); });
   }
 
   w.CQPdf = { save: save, prepare: prepare, waitReady: waitReady, WIDTH: W, VH: VH };

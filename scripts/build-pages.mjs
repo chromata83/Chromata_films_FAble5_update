@@ -3347,8 +3347,8 @@ ${QX_MENU}
 <script src="js/crm-config.js?v=2"></script>
 <script src="js/quote-core.js?v=39"></script>
 <script src="js/quote-link.js?v=4"></script>
-<script src="js/proposal-pdf.js?v=4" defer></script>
-<script src="js/proposal.js?v=34" defer></script>
+<script src="js/proposal-pdf.js?v=5" defer></script>
+<script src="js/proposal.js?v=35" defer></script>
 </body>
 </html>
 `;
