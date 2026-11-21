@@ -130,7 +130,16 @@
       "\nhtml.px-pdf, html.px-pdf body{width:" + W + "px!important;min-width:0!important;margin:0!important;padding-left:0!important;padding-right:0!important;overflow:visible!important}";
     doc.head.appendChild(st);
 
-    var H = Math.ceil(Math.max(root.scrollHeight, doc.body.scrollHeight));
+    /* The PDF ends where the page's own content ends: the bottom of the company line under "Shall we make it real?" (plus the
+       padding of that last section). Whatever else makes the document taller (spacers, scroll effects, leftovers) is cut off. */
+    var tall = Math.ceil(Math.max(root.scrollHeight, doc.body.scrollHeight)), foot = doc.querySelector(".px-foot"), last = doc.querySelector(".px-close") || doc.getElementById("app"), H = tall;
+    var endEl = foot || last;
+    if (endEl) {
+      var bottom = endEl.getBoundingClientRect().bottom + (w.pageYOffset || 0);
+      if (foot && last && last.contains(foot)) bottom += parseFloat(w.getComputedStyle(last).paddingBottom) || 0;
+      if (bottom > 200) H = Math.min(tall, Math.ceil(bottom));
+    }
+    st.textContent += "\nhtml.px-pdf,html.px-pdf body{height:" + H + "px!important;max-height:" + H + "px!important;overflow:hidden!important}";
     var pg = doc.createElement("style");
     /* the sheet is exactly as wide as the window the page is read in and as tall as the page: no margin, no white edge.
        The page colour is also set on the sheet itself so that not one pixel is left white. */
