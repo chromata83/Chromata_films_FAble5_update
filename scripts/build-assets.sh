@@ -602,5 +602,19 @@ for pair in \
 done
 jpg "$PUB/quotation/magnific__closeup-high-fashion-mario-testino-style-photograp__43581.png" "$OUT/img/quote/n-kevin.jpg" 1400
 
+# ---------- private client delivery pages (madeira-mimi-casey-*.html, monaco-judith-laurent-*.html) ----------
+# Hand-picked photographs, web size (hero 2000px, gallery 1500px). Every folder gets a
+# noimageindex header so the pictures stay out of image search as well.
+for loc in madeira monaco; do
+  CP="$PUB/client_pages/$loc"; CPO="$OUT/img/client-pages/$loc"
+  mkdir -p "$CPO"
+  jpg "$CP/hero.jpg"   "$CPO/hero.jpg"   2000
+  jpg "$CP/thanks.jpg" "$CPO/thanks.jpg" 1500
+  for i in 01 02 03 04 05 06 07 08 09 10 11 12; do
+    jpg "$CP/g$i.jpg" "$CPO/g$i.jpg" 1500
+  done
+  printf '<IfModule mod_headers.c>\n  Header set X-Robots-Tag "noindex, nofollow, noimageindex"\n</IfModule>\n' > "$CPO/.htaccess"
+done
+
 echo "ASSET PIPELINE DONE"
 du -sm "$OUT"/*

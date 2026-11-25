@@ -401,7 +401,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow, noarchive, noimagei
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="preload" href="assets/fonts/GermanySans.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="stylesheet" href="css/main.css?v=71" />${headExtra ? "\n" + headExtra : ""}
+<link rel="stylesheet" href="css/main.css?v=77" />${headExtra ? "\n" + headExtra : ""}
 </head>
 <body data-page="${page}">
 
@@ -3630,6 +3630,237 @@ ${PRESS_FEATURES.map((p) => `        <div class="row"><span>${p.publisher}${p.da
   </script>`,
 });
 
+/* ============================== PRIVATE CLIENT PAGES (unlisted — reachable only by the link we send) ==============================
+   One page per couple: a thank-you, their films to watch, their Dropbox links
+   to download (with phone + TV instructions) and a few photographs. Hidden the
+   same way as the press room: noindex meta, X-Robots-Tag (.htaccess), left out
+   of sitemap.xml, never linked, and NOT in robots.txt. The file name also
+   carries a short random suffix so the address can't be guessed from the names. */
+const dropbox = (url, dl) => url.replace(/([?&])dl=\d/, `$1dl=${dl}`).replace(/&/g, "&amp;");
+const filmFrame = (f) => {
+  const src = f.provider === "youtube"
+    ? `https://www.youtube-nocookie.com/embed/${f.id}?rel=0&amp;modestbranding=1&amp;playsinline=1`
+    : `https://player.vimeo.com/video/${f.id}?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1`;
+  return `      <article class="cd-film">
+        <p class="kicker">— ${f.kicker}</p>
+        <h3 class="cd-film__title">${f.title}</h3>
+        <div class="cd-film__frame" style="aspect-ratio:${f.ratio}">
+          <iframe data-lazy-src="${src}" title="${f.title}" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </article>`;
+};
+const clientPage = (c) => {
+  const IMG = `assets/img/client-pages/${c.dir}`;
+  const url = `${SITE_URL}/${c.file}`;
+  const title = `${c.names.join(" &amp; ")} — Your films | Chromata Films`;
+  const desc = `A private page for ${c.names.join(" and ")}: your wedding films to watch, your files to download, and a few photographs.`;
+  return shell({
+    page: "clientpage",
+    noindex: true,
+    navPlate: true,
+    footerCta: false,
+    title,
+    description: desc,
+    // link-preview tags only (the page gets pasted into WhatsApp / email); nothing that invites indexing
+    headExtra: `<link rel="canonical" href="${url}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="${title}" />
+<meta property="og:description" content="${desc}" />
+<meta property="og:url" content="${url}" />
+<meta property="og:image" content="${SITE_URL}/${IMG}/hero.jpg" />
+<meta name="twitter:card" content="summary_large_image" />`,
+    main: `  <section class="cd-hero" data-section>
+    <div class="container cd-hero__grid">
+      <div>
+        <p class="kicker">— ${c.place}</p>
+        <h1 class="display-lg" style="margin-top:3vh">
+          <span class="line-mask"><span class="line-inner">${c.names[0]}</span></span>
+          <span class="line-mask"><span class="line-inner"><em>&amp;</em> ${c.names[1]}</span></span>
+        </h1>${c.venue ? `\n        <p class="cd-hero__place">${c.venue}</p>` : ""}
+        <p class="cd-hero__lead">Your wedding films, your files and a few photographs, all together on one private page, made for you.</p>
+        <nav class="press-index" aria-label="On this page">
+          <a href="#watch"><span>01</span>Watch your films</a>
+          <a href="#download"><span>02</span>Download your files</a>
+          <a href="#photos"><span>03</span>A few photographs</a>
+        </nav>
+      </div>
+      <figure class="cd-hero__art mat img-reveal" style="aspect-ratio:${c.hero.w}/${c.hero.h}"><img src="${IMG}/hero.jpg" alt="${c.hero.alt}" width="${c.hero.w}" height="${c.hero.h}"></figure>
+    </div>
+  </section>
+
+  <!-- ==================== THANK YOU (before the films) ==================== -->
+  <section class="cd-thanks" data-section>
+    <div class="container cd-thanks__grid">
+      <div class="cd-thanks__text">
+        <p class="kicker">— Thank you</p>
+        <p class="cd-thanks__salute">Dear ${c.names.join(" and ")},</p>
+        <p>Thank you for the trust you placed in us. You let us follow you through ${c.moment}, and we are deeply grateful for it. It was an honour to film your wedding.</p>
+        <p>This page was made just for you. Here you will find your personal links to watch your films, and to download your files as often as you like and keep them forever. Everything is below, in the order you will want it: first to watch, then to download, with a few photographs from your wedding at the end.</p>
+        <p class="cd-thanks__sign">With all our gratitude,<br>Kevin · Chromata Films</p>
+      </div>
+      <figure class="cd-thanks__art mat img-reveal" style="aspect-ratio:${c.thanks.w}/${c.thanks.h}"><img src="${IMG}/thanks.jpg" alt="${c.thanks.alt}" width="${c.thanks.w}" height="${c.thanks.h}" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <!-- ==================== 01 · WATCH ==================== -->
+  <section class="cd-films on-deep" id="watch" data-theme="dark" data-section>
+    <div class="container">
+      <p class="kicker">— 01 · Watch</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Your <em>films</em></span></span>
+      </h2>
+      <p class="body-copy" style="margin-top:4vh; max-width:40em">Press play, turn the sound up, and go full screen. For the best experience, watch them on the biggest screen you have.</p>
+${c.films.map(filmFrame).join("\n")}
+    </div>
+  </section>
+
+  <!-- ==================== 02 · DOWNLOAD (separate section) ==================== -->
+  <section class="cd-downloads pad-section" id="download" data-section>
+    <div class="container">
+      <p class="kicker">— 02 · Download</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">Your <em>files</em></span></span>
+      </h2>
+      <p class="body-copy" style="margin-top:4vh; max-width:40em">Each film is a single MP4 file, in full quality. Download them as often as you like, and please keep a copy on your computer and another on an external drive or in your cloud storage.</p>
+      <ul class="cd-dl-list">
+${c.downloads.map((d) => `        <li class="cd-dl">
+          <div class="cd-dl__info">
+            <p class="cd-dl__tag">${d.tag}</p>
+            <h3 class="cd-dl__title">${d.title}</h3>
+            <p class="cd-dl__desc">${d.desc}</p>
+          </div>
+          <div class="cd-dl__actions">
+            <a class="btn btn--coral" href="${dropbox(d.url, 1)}" rel="noopener noreferrer">Download <span aria-hidden="true">↓</span></a>
+            <a class="cd-dl__alt" href="${dropbox(d.url, 0)}" target="_blank" rel="noopener noreferrer">Open in Dropbox</a>
+          </div>
+        </li>`).join("\n")}
+      </ul>
+
+      <div class="cd-how">
+        <div class="cd-how__panel cd-how__panel--phone">
+          <p class="kicker">— On your phone</p>
+          <h3 class="cd-how__title">Save a film to your phone</h3>
+          <h4>iPhone and iPad</h4>
+          <ol class="cd-steps">
+            <li>Tap <strong>Download</strong> next to the film you want.</li>
+            <li>Safari asks whether you want to download the file. Tap <strong>Download</strong>.</li>
+            <li>Tap the <strong>↓</strong> icon at the top right of Safari, then tap your film.</li>
+            <li>Tap the <strong>Share</strong> button, then <strong>Save Video</strong>. The film is now in your Photos app. It is also kept in the Files app, under Downloads.</li>
+          </ol>
+          <h4>Android</h4>
+          <ol class="cd-steps">
+            <li>Tap <strong>Download</strong> next to the film you want, and confirm if Chrome asks.</li>
+            <li>When the download is complete, tap the notification, or open <strong>Files</strong> and go to <strong>Downloads</strong>.</li>
+            <li>Your gallery app (Google Photos for example) will show the film alongside your other videos.</li>
+          </ol>
+          <p class="cd-how__tip">Tips: use Wi-Fi, because the files are large. If you opened this page from WhatsApp, Instagram or an email app and nothing downloads, open the link in Safari or Chrome instead.</p>
+        </div>
+        <div class="cd-how__panel cd-how__panel--tv">
+          <p class="kicker">— On your TV</p>
+          <h3 class="cd-how__title">Watch on the big screen</h3>
+          <h4>Option 1 · Send it from your phone</h4>
+          <ol class="cd-steps">
+            <li>Save the film to your phone first (see "On your phone").</li>
+            <li><strong>Apple TV or an AirPlay TV:</strong> open the film in Photos, tap <strong>Share</strong>, then <strong>AirPlay</strong>, and choose your TV.</li>
+            <li><strong>Android TV, Google TV or Chromecast:</strong> open the film in Google Photos and tap the <strong>Cast</strong> icon.</li>
+          </ol>
+          <h4>Option 2 · A USB stick</h4>
+          <ol class="cd-steps">
+            <li>Download the film on a computer and copy it to a USB stick. Format the stick as <strong>exFAT</strong>, because the older FAT32 format cannot hold files larger than 4 GB.</li>
+            <li>Plug the stick into your TV or TV box, open its media player or <strong>USB</strong> source, and choose the film.</li>
+          </ol>
+          <p class="cd-how__tip">Your phone and your TV box must be on the same Wi-Fi network for AirPlay and Cast. You can also use the AirPlay or Cast icon of the player above to send a film straight to your TV.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 03 · PHOTOGRAPHS ==================== -->
+  <section class="cd-gallery pad-section on-deep" id="photos" data-theme="dark" data-section>
+    <div class="container">
+      <p class="kicker">— 03 · Photographs</p>
+      <h2 class="display-lg" style="margin-top:3vh">
+        <span class="line-mask"><span class="line-inner">A few <em>frames</em></span></span>
+      </h2>
+      <div class="gallery-grid gallery-grid--even cd-gallery__grid" style="margin-top:7vh">
+${c.gallery.map((p, i) => `        <figure class="gitem mat img-reveal"><img src="${IMG}/g${String(i + 1).padStart(2, "0")}.jpg" alt="${p}" width="${c.shot.w}" height="${c.shot.h}" loading="lazy"></figure>`).join("\n")}
+      </div>${c.credit ? `\n      <p class="cd-gallery__credit">${c.credit}</p>` : ""}
+      <p class="cd-gallery__contact">A question about your files? Write to us at <a href="mailto:${EMAIL}">${EMAIL}</a>, we are happy to help.</p>
+    </div>
+  </section>`,
+  });
+};
+
+const CLIENT_PAGES = [
+  {
+    file: "madeira-mimi-casey-x4m7.html",
+    dir: "madeira",
+    names: ["Mimi", "Casey"],
+    place: "Madeira, Portugal",
+    shot: { w: 1500, h: 2000 },
+    moment: "every moment of your wedding weekend in Madeira",
+    hero: { w: 1500, h: 2000, alt: "The newlyweds on a cliff above the Atlantic, in Madeira" },
+    thanks: { w: 1500, h: 2000, alt: "The couple laughing together on their wedding day" },
+    films: [
+      { id: "1236981221", kicker: "Highlight film", title: "Mimi &amp; Casey · Madeira Wedding Film", ratio: "426/240" },
+    ],
+    downloads: [
+      { tag: "Film · MP4", title: "Wedding highlight film", desc: "Your highlight film, in full quality.", url: "https://www.dropbox.com/scl/fi/0mqjz1e2xh9saqud8mfo9/Mimi_Casey_Madeira_wedding_film_highlight.mp4?rlkey=950046u7q70vt3rfbvixehymj&st=sqfpzs6q&dl=0" },
+      { tag: "Vertical · MP4", title: "Instagram teaser", desc: "The short vertical teaser, ready to post or share from your phone.", url: "https://www.dropbox.com/scl/fi/pmu6e6jb3b2lwu74yobpl/Mimi_Casey_Madeira_wedding_teaser.mp4?rlkey=8zdg49i1kllx5phqldp2hylm4&st=u9fhh6rv&dl=0" },
+    ],
+    gallery: [
+      "A floral gown against the pink wall at the welcome night",
+      "A couple walking down a Madeira street at the welcome night",
+      "Performing together on the terrace at the welcome night",
+      "An embrace in the pool at the pool party",
+      "Floating on a swan in the pool at the pool party",
+      "The seaside pool and its white parasols, seen from above",
+      "The couple at the rehearsal dinner",
+      "The couple in black and white, walking to the rehearsal dinner",
+      "A wedding gown and veil lifted by the wind on the terrace",
+      "The couple on the cliff edge, seen from above",
+      "The red and gold stage, lit with lanterns, for the wedding dinner",
+      "The wedding party gathered on the terrace",
+    ],
+  },
+  {
+    file: "monaco-judith-laurent-q8d2.html",
+    dir: "monaco",
+    names: ["Judith", "Laurent"],
+    place: "Monaco",
+    shot: { w: 1000, h: 1500 },
+    venue: "Fairmont Monte-Carlo",
+    moment: "your wedding day in Monaco",
+    hero: { w: 1500, h: 2000, alt: "The wedding ceremony under a floral arch on the terrace above the sea in Monaco" },
+    thanks: { w: 1333, h: 2000, alt: "The flower-lined aisle on the terrace in Monaco" },
+    credit: "Photographs by Marion Co Photography",
+    films: [
+      { id: "1227686613", kicker: "Highlight film", title: "Judith &amp; Laurent · Wedding Film Highlight", ratio: "426/198" },
+      { id: "SDrVOmhVFr4", provider: "youtube", kicker: "Feature film · 15 minutes", title: "Judith &amp; Laurent · Feature Film", ratio: "16/9" },
+    ],
+    downloads: [
+      { tag: "Film · MP4", title: "Wedding highlight film", desc: "Your highlight film, in full quality.", url: "https://www.dropbox.com/scl/fi/l7t242ztxeflox94aqlz3/Judith-Laurent-Wedding-Film-Highlight.mp4?rlkey=x20a2m3betm2znl8tv0a328nl&st=pxu1heh2&dl=0" },
+      { tag: "Vertical · MP4", title: "Vertical film for Instagram", desc: "The vertical version of your film, made for phones, stories and reels.", url: "https://www.dropbox.com/scl/fi/ps16caqeal9imwf1vpdma/IG_vertical.mp4?rlkey=yb9o9k8hzzqa9iprlipr0n81g&st=sv7g1oot&dl=0" },
+      { tag: "Film · MP4 · 15 minutes", title: "Feature film", desc: "Your 15 minute feature film, in full quality. This is the largest file, so we suggest a Wi-Fi connection.", url: "https://www.dropbox.com/scl/fi/ij8eevo8rgkq4w27qfakc/Judith-Laurent-feature_film-15min.mp4?rlkey=jjhqserevofnnn5iuutn91vhd&st=llbcgjjk&dl=0" },
+    ],
+    gallery: [
+      "The ceremony terrace seen from above, over the Mediterranean",
+      "The ceremony terrace with Monte-Carlo behind it",
+      "A sculptural floral arrangement in gold and pale pink",
+      "A guest in a white gown, seated in a convertible at dusk",
+      "A guest in a white gown, with flowers behind",
+      "A guest in a white dress with golden angel wings on the terrace",
+      "The long dinner tables dressed in pink and white flowers",
+      "Crystal candlesticks and orchids on the dinner table",
+      "A performer in a gold sculpted costume and headpiece",
+      "A performer in a red feathered headdress",
+      "A performer in a towering pink headdress on the dance floor",
+      "A performer in a red cape on the dance floor",
+    ],
+  },
+];
+for (const c of CLIENT_PAGES) pages[c.file] = clientPage(c);
+
 /* ============================== SERVICE-AREA LANDING PAGES ==============================
    Pages built for the way couples and planners actually search ("wedding
    videographer in France", "wedding filmmaker Italy"). Each one answers the
@@ -4697,7 +4928,7 @@ for (const [file, html] of Object.entries(pages)) {
    robots.txt is public, so it would advertise a page that should only be
    reachable by its link. */
 const NOINDEX_FILES = new Set(["gettoknowusmore.html"]);
-const HIDDEN_FILES = new Set(["press-room.html", "quotation.html", "quotation-WP.html", "proposal.html", "investment.html"]);
+const HIDDEN_FILES = new Set(["press-room.html", "quotation.html", "quotation-WP.html", "proposal.html", "investment.html", ...CLIENT_PAGES.map((c) => c.file)]);
 const sitemapFiles = ["index.html", ...Object.keys(pages).filter((f) => !NOINDEX_FILES.has(f) && !HIDDEN_FILES.has(f))];
 const today = new Date().toISOString().slice(0, 10);
 const isoSeconds = (d) => {

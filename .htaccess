@@ -16,7 +16,7 @@
 # Unlisted pages: keep them out of every search index even if someone links
 # to them. Sent as a header as well as the page's robots meta tag.
 <IfModule mod_headers.c>
-  <FilesMatch "^(press-room|quotation|quotation-WP|proposal|investment|crm|sign)\.html$">
+  <FilesMatch "^(press-room|quotation|quotation-WP|proposal|investment|crm|sign|madeira-mimi-casey-x4m7|monaco-judith-laurent-q8d2)\.html$">
     Header set X-Robots-Tag "noindex, nofollow, noarchive, noimageindex"
   </FilesMatch>
   # Film embeds (YouTube error 153) need the site origin as referrer; never send the full private link.
